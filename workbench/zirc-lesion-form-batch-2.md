@@ -1,0 +1,411 @@
+# ZIRC Lesion Form — Batch 2 (ZFIN-10379, 10380, 10399, 10400, 10403)
+
+Implementation plan for the second round of ZIRC submission-form lesion
+work, following ZFIN-10374–10378 (`3c43591d44`, "refine ZIRC lesion edit
+form"). All five tickets touch the Lesions section of the ZIRC line
+submission form; three of them hinge on shared pick-list components, so
+the components come first and the tickets are mostly schema data after
+that.
+
+Companion reading: `reference/zirc-architecture.md` §3 (the
+`FieldDescriptor` pattern) and §5 (the `options` vocabulary).
+
+---
+
+## 1. Where things stand
+
+The lesion form is server-driven. `ZircLesionFormSchema.java` emits both
+the JSON Schema and the JSON Forms uiSchema; React renderers under
+`frontend/javascript/react/zirc/schemaForm/renderers/` dispatch on
+`options.widget`. Three existing facts shape this batch:
+
+- **`AutoSizeRenderer.tsx`** already derives a live bp count from a
+  sibling sequence field (`options.sourceField`), mirrored server-side by
+  `ZircSubmissionService#recalcLesionSizes`. Auto-calculated sizes are
+  therefore already solved; what's missing is a *constrained* sequence
+  input to feed them.
+- **`Rule.showWhenIn`** drives every conditional reveal off `lesionType`.
+  Rules are single-scope, so AND-ing two conditions (e.g. `lesionType ==
+  insertion` **and** `insertionFromMutagenesis == true`) means nesting a
+  ruled `Group` inside a ruled `Group`. The mechanism already supports
+  this — `groupRevealedFor` is just a `Group` with a `Rule` — so no new
+  machinery is needed.
+- **Two tests guard every schema change.** `FormSchemaInvariantsTest`
+  asserts schema leaves ↔ `FIELDS` keys ↔ DTO record components line up
+  in both directions. `FormSchemaSnapshotTest` byte-diffs against
+  `test/resources/zirc/snapshot/lesion.form-schema.json`.
+
+### The vocabularies already exist in the database
+
+All four pick lists these tickets need are rows in
+`mutation_detail_controlled_vocabulary` (`mdcv`), ordered by
+`mdcv_term_order` — the same table the GWT curation interface reads.
+
+| `mdcv_used_in`                | rows today | this batch wants          |
+| ----------------------------- | ---------- | ------------------------- |
+| `amino_acid_term`             | Stop + 22  | unchanged — reusable as-is |
+| `protein_consequence_term`    | 7          | 9 (2 new) + reorder       |
+| `transcript_consequence_term` | 16         | 17 (1 new) + reorder      |
+| `dna_mutation_term`           | 12         | unchanged                 |
+
+The `amino_acid_term` rows match the ZFIN-10379 screenshot exactly
+(`Stop`, then `Ala [A]` … `Val [V]`, including `Pyl [O]` and `Sec [U]`).
+
+The reorder work in ZFIN-10399 and ZFIN-10380 is a genuine data fix, not
+cosmetics: `mdcv_term_order` currently contains **ties**. Transcript
+consequences have four rows at order 3, three at order 6, and three at
+order 7, which is why the rendered list looks arbitrary today.
+
+### Blocker: two new terms have no ontology backing
+
+`mdcv_term_zdb_id` is a hard FK to `term(term_zdb_id)`:
+
+```
+"mdcv_term_zdb_id_fk" FOREIGN KEY (mdcv_term_zdb_id)
+    REFERENCES term(term_zdb_id) ON UPDATE RESTRICT ON DELETE RESTRICT
+```
+
+- `inframe insertion` (ZFIN-10399) — **fine**. SO:0001821 already exists
+  as `ZDB-TERM-130401-1809`. A plain `INSERT` covers it.
+- `c-terminal peptide truncation` / `n-terminal peptide truncation`
+  (ZFIN-10380) — **no matching SO term exists** in the `term` table. The
+  nearest candidates are `polypeptide_truncation` (SO:0001617, already
+  used by the existing row), `feature_truncation` (SO:0001906), and
+  `sequence_variant_causing_polypeptide_truncation` (SO:1000098). None
+  mean "N/C-terminal." Since `term` is populated by the OBO loads,
+  hand-inserting a ZFIN-local row would be wiped by the next ontology
+  load.
+
+**Decision:** build ZFIN-10380 without the two new terms. Ship the
+deletion-type reveal, the multi-select, and the reorder of the existing
+seven. The two rows land in a follow-up once curators choose the
+ontology terms.
+
+---
+
+## 2. Phase 0 — Foundation ✅ done
+
+Commits: `789fa40c94`, `8017241ee6`, `092e1effeb`.
+
+### 0a. Refactor `Options` ✅
+
+Done by cherry-picking `398a908195` from the `zirc-options-lombok-with`
+branch, which annotates the record with Lombok `@With` and deletes the
+hand-written wither block, plus a private `@Builder` behind
+`Options.of()`.
+
+That is better than the builder-behind-the-existing-API approach this
+plan originally called for: Lombok generates the withers, so the "don't
+transpose two of the nine String components" invariant is enforced by the
+compiler rather than by hand. The cost is that call sites read
+`.withWidget(…)` instead of `.widget(…)` — 135 calls, already converted
+in that commit.
+
+Adding an option is now one line in the record header. The four this
+batch needed (`vocabulary`, `alphabet`, `toField`, `positionField`) went
+in as part of 0c.
+
+### 0b. Vocabulary endpoint ✅
+
+New `ZircVocabularyApiController` at `/api/zirc/vocabulary/{name}`,
+backed by a service that reads `mdcv` through the existing
+`HibernateControlledVocabularyRepository` (which already sorts by
+`mdcv_term_order`).
+
+Response shape:
+
+```json
+[{"id": "ZDB-TERM-130401-1609", "label": "polypeptide truncation", "abbreviation": null}]
+```
+
+Whitelist `{name}` against the four known `mdcv_used_in` values so the
+path parameter can't be used as an arbitrary probe.
+
+Client side: `useVocabulary` in `api/queries.ts`, caching for the life of
+the page (`staleTime: Infinity`, no refetch on mount or focus) — this data
+changes roughly once a year, and every lesion card on a submission would
+otherwise refetch the same list.
+
+**Ordering ties matter more than expected.** `mdcv_term_order` has
+duplicates, so sorting is done through
+`MutationDetailControlledVocabularyTerm.compareTo` (order, then display
+name) rather than the repository's `order by order` alone. This already
+pays off before any migration: amino acids have `His` and `Ile` both at
+order 10, and the raw query returns `Ile` first, so the tie-break is what
+makes the served list match the ZFIN-10379 screenshot exactly. The
+curation interface has the same latent nondeterminism in its own lists.
+
+**The name→`Class` map is load-bearing.**
+`HibernateControlledVocabularyRepository` builds HQL by concatenating
+`clazz.getSimpleName()`, so an unmapped name must never reach it. Mapping
+to `Class` rather than to a string makes that structural;
+`ZircVocabularyServiceTest` asserts an unknown name throws first.
+
+**Why an endpoint rather than baking the lists into `schema()`:** it
+keeps `schema()` free of database access. `FormSchemaSnapshotTest`
+serializes `schema()` directly, and `LesionStatusComputer` derives
+`REQUIRED_PATHS` from it in a static initializer; both would need a live
+database if the vocabulary were read at schema-build time. It also keeps
+ZIRC and the curation interface reading the same rows, which is what
+ZFIN-10399 explicitly asks for.
+
+### 0c. Four widgets ✅
+
+Each lives in `schemaForm/renderers/` and is registered in
+`aggregateRenderers.ts`. Nothing references them yet — the schema changes
+that use them are per-ticket work in Phase 1.
+
+**`NucleotideSequenceRenderer`** — `options.alphabet` (default `ACGTN`).
+Normalizes on every change and shows a live `n bp` count. Ranks at 30, so
+a Control can keep `options.multi` for its textarea shape and still land
+here rather than in `TextareaRowRenderer` (20).
+
+Two details in `nucleotides.ts` are load-bearing rather than polish, and
+are unit-tested as pure functions:
+
+- **FASTA headers are dropped as a line**, before the per-character
+  filter. A description is prose and prose contains bases: `">seq1
+  description here"` leaves `C`, `T`, `N` behind once everything else is
+  stripped, silently prepending three junk bases to the sequence.
+- **The caret is repositioned** by counting surviving characters before
+  the old position. The value is controlled, so a browser puts the caret
+  at the end of a programmatically-changed value, and typing a *lowercase
+  base mid-sequence* changes the string. Without this the field only
+  supports appending.
+
+The existing read-only `autoSize` rows stay as they are — they display
+the server's authoritative value from `recalcLesionSizes`; the inline
+count is only typing feedback.
+
+Still to do in Phase 1: apply the same normalization server-side in
+`ZircLesionFormSchema` (a `nucleotides()` sibling to `text()`) so a direct
+PATCH can't store what the UI would have stripped.
+
+Fields that switch to this widget: `deletedSequence`, `insertedSequence`,
+`transgeneSequence`, `fivePrimeFlank`, `threePrimeFlank`, plus the new
+`crisprSequence` and `talenSequence`.
+
+**`VocabularySelectRenderer`** — single select on `options.vocabulary`.
+View mode resolves the stored id back through the vocabulary; a value the
+vocabulary no longer offers still gets an `<option>` so the select can't
+show a placeholder while the field holds a value.
+
+**`VocabularyMultiSelectRenderer`** — adds one term at a time with
+removable chips, rather than `<select multiple>` or a checkbox column:
+the lists run to seventeen entries, a lesion normally carries one or two,
+and a multiple-select loses selections to a stray click with no undo.
+`diffLeaves` treats arrays as atomic leaves, so the whole array is one
+PATCH — same as the `previousNames` stringList.
+
+**`AminoAcidChangeRenderer`** — **revised from the original plan.** Binds
+to the "from" field and writes two named siblings (the
+`PhenotypeTimingRenderer` arrangement) rather than claiming a nested
+object scope. The lesion schema is flat, and nesting the three would push
+`from` / `to` / `position` into `LesionDTO` as component names —
+`FormSchemaInvariantsTest` matches on leaf segments — where they would
+read as belonging to nothing. Sibling names come from `options.toField` /
+`options.positionField` so field names stay declared only in the schema.
+
+**Label rule, shared by all three vocabulary widgets:** append the
+abbreviation when a term has one. Yields `Ala [A]` for amino acids,
+matching the curation interface, and plain labels for the consequence
+vocabularies, which have no abbreviations.
+
+### What Phase 0 is and isn't verified against
+
+Verified: the `options` reach the wire (checked against a live
+`/lesions/form-schema` payload with temporary Control wiring, since
+reverted); the endpoint returns the right terms in the right order for
+all three vocabularies, and 404s on an unknown name; 30 unit tests on the
+normalization and caret helpers; typecheck; lint; 43 zirc Java tests with
+the schema snapshot unchanged.
+
+Not verified: React rendering of the four widgets, which needs a
+logged-in session on the dev stack. The first Phase 1 ticket to wire a
+widget into the schema will exercise it.
+
+### Storage convention for multi-valued fields
+
+Postgres `text[]` columns holding **mdcv term ZDB IDs**, not display
+strings.
+
+Precedent: `LineSubmission.previousNames` is a `String[]` over a `text[]`
+column (migration `0090-zirc-previous-names-array.sql`), rendered by the
+`stringList` widget.
+
+IDs rather than labels because a display-name edit then can't orphan
+stored data, and the eventual ZIRC→curation load already speaks in term
+IDs. The vocabulary endpoint supplies labels at render time.
+
+---
+
+## 3. Phase 1 — Tickets
+
+Migrations go in `source/org/zfin/db/postGmakePostloaddb/1199/migrations/`
+(currently empty, already wired into the master changelog).
+
+Suggested order below: broadest first, and the most likely to stall last.
+
+### ZFIN-10399 — transcript consequence on all mutation types
+
+First, because it exercises the multi-select on every lesion type.
+
+- **SQL:** renumber `transcript_consequence_term` orders into the
+  ticket's 17-item sequence, which also resolves the existing ties at
+  3/6/7. Plus an `INSERT` for `inframe insertion` →
+  `ZDB-TERM-130401-1809` (SO:0001821).
+- **Schema:** `transcriptConsequences` array, always visible, placed
+  after `threePrimeFlank`. No exon/intron fields — the curation interface
+  has them, this form deliberately does not.
+- **Curation-side check:** this edits shared `mdcv` rows, so the GWT
+  feature editor's list order changes too. That is the intended blast
+  radius (the ticket confirms Holly approved it), but smoke-check it
+  deliberately rather than discovering it later.
+
+Target order:
+
+```
+premature stop, missense, frameshift, inframe deletion,
+inframe insertion (new), stop loss, start loss,
+3' UTR variant, 5' UTR variant, splicing variant, splice site,
+cryptic splice site, cryptic donor splice site,
+cryptic acceptor splice site, intron gain, exon loss, nonsynonymous
+```
+
+### ZFIN-10400 — insertion-type questions
+
+- **Columns:** `l_insertion_from_mutagenesis`, `l_insertion_from_construct`
+  (both nullable boolean), `l_crispr_sequence`, `l_talen_sequence`,
+  `l_construct_name`.
+- **UI:** two `yesNoRadio` controls inserted between `lesionType` and
+  `insertedSequence`:
+  - *Is the insertion a consequence of mutagenesis (CRISPR or TALEN)?*
+  - *Is the insertion due to insertion of construct or other species DNA?*
+- **Conditional reveals:** nest a `Rule.showWhenTrue` Group inside the
+  existing `groupRevealedFor(INSERTED_SEQ_TYPES, …)` Group — AND-ing by
+  nesting. CRISPR yes → CRISPR + TALEN sequence boxes
+  (`nucleotideSequence` widget). Construct yes → construct name (plain
+  text).
+- **"One is required to be answered":** status badge, see §4.
+
+### ZFIN-10403 — indel format and input boxes
+
+Reuses ZFIN-10400's CRISPR/TALEN block.
+
+- Drop `indel` from the `lesionSizeBp` reveal list (removes the "Lesion
+  size" box). Deletion and insertion sizes already auto-calculate for
+  indel in `recalcLesionSizes`, so that half is free.
+- Add the CRISPR/TALEN question and its two sequence boxes.
+- Add `transcriptConsequences` from ZFIN-10399.
+- Sequence inputs move to the `nucleotideSequence` widget, which covers
+  the ticket's "validate the sequence input is DNA."
+
+**Layout note:** the mockup shows sequence and size side by side in two
+columns. The current renderers are a label/value `<tr>` table with the
+size stacked directly under the sequence it measures — which is what
+ZFIN-10374–10378 deliberately shipped. Treating the mockup's columns as
+illustrative and keeping stacked rows, unless the layout rework is
+wanted as real scope.
+
+### ZFIN-10379 — mutated amino acids pick list
+
+- **Columns:** `l_aa_change_from`, `l_aa_change_to`,
+  `l_aa_position_start`.
+- **UI:** the `aminoAcidChange` composite replaces the
+  `mutatedAminoAcids` free-text control. `mutatedAminoAcidsHgvs` becomes
+  derived and read-only.
+- **Legacy data:** the old free-text `l_mutated_amino_acids` column stays
+  in place, unread by the form — the same treatment `locationInline`
+  already has in the invariants-test whitelist.
+- **"Either nucleotide or amino acid info":** status badge, see §4.
+
+### ZFIN-10380 — mutation consequence for deletion
+
+- Add `deletion` to `PROTEIN_TYPES`.
+- `proteinConsequences` multi-select (multiple selections enabled).
+- **SQL:** renumber the existing seven `protein_consequence_term` rows
+  into the ticket's relative order.
+- **Deferred:** `c-terminal peptide truncation` and `n-terminal peptide
+  truncation`. Leave a comment in the migration naming ZFIN-10380 and the
+  missing SO terms so the follow-up is discoverable.
+
+Target order (bracketed entries deferred):
+
+```
+polypeptide truncation
+[c-terminal peptide truncation]   ← deferred, no SO term
+[n-terminal peptide truncation]   ← deferred, no SO term
+amino acid substitution
+amino acid deletion
+amino acid insertion
+non conservative amino acid substitution
+elongated polypeptide
+polypeptide fusion
+```
+
+---
+
+## 4. The "visual indicator" for either/or requirements
+
+Both ZFIN-10379 ("nucleotide info **or** amino acid info") and
+ZFIN-10400 ("one of the two questions must be answered") ask for a
+placeholder indicator, not working validation — the tickets say so
+explicitly, so that real validation has something to test against later.
+
+`LesionStatusComputer` already renders `MISSING` badges through
+`StatusBadge`. Its `REQUIRED_PATHS` set is collected from the schema's
+`required` lists, which can only express per-field requirements. Add a
+small cross-field hook in `statusFor` for these two group-requirements.
+
+This reuses the shipped badge UI, and gives the eventual validation work
+a defined thing to replace rather than a parallel mechanism to reconcile.
+
+---
+
+## 5. Test obligations for every schema change
+
+All three, or CI fails:
+
+1. Add the new path to `ZircLesionFormSchema.FIELDS` **and** to
+   `LesionDTO`. `FormSchemaInvariantsTest` asserts both directions —
+   a schema leaf with no DTO component 500s on PATCH; a DTO component
+   with no schema entry silently round-trips past the form.
+2. Add the field to `LesionStatusComputer.Field`.
+3. Refresh the snapshot and read the diff before committing:
+
+```
+zrun -c "gradle test -Dzirc.snapshot.update=true \
+    --tests org.zfin.zirc.api.FormSchemaSnapshotTest"
+```
+
+Server-computed fields (`lesionSizeBp`, `insertionSizeBp`) stay out of
+`FIELDS` and are listed in the invariants test's `schemaExempt`
+whitelist. Any new derived field (e.g. `mutatedAminoAcidsHgvs`, once it
+becomes derived) belongs there too.
+
+---
+
+## 6. Decisions taken
+
+| Question | Decision |
+| --- | --- |
+| Vocabulary source | New `/api/zirc/vocabulary/{name}` endpoint reading `mdcv`. Keeps `schema()` DB-free and keeps ZIRC in sync with curation. |
+| ZFIN-10380's two new terms | Build the ticket without them; follow up once curators supply SO terms. |
+| Nucleotide alphabet | `ACGT` + `N`. |
+| Invalid characters | Strip silently, count what remains. Matches how `AutoSizeRenderer` already counts (tallies `[A-Za-z]` only). |
+| Multi-value storage | `text[]` of mdcv term ZDB IDs. |
+| Amino acid change wiring | Bound to the "from" field writing named siblings, not a nested object scope (revised during Phase 0 — nesting would put `from`/`to`/`position` into `LesionDTO` as bare component names). |
+| Position input | Single start value, not a range. The ZFIN-10379 screenshot shows two boxes with a dash, but that is the curation UI; the ticket says "position input box" singular. Widening to a range later is cheap. |
+| Amino acid change cardinality | One per lesion, not repeatable. Only the consequence lists are explicitly multi-valued (ZFIN-10380, ZFIN-10399). |
+| Construct question scope | Insertion only. The ZFIN-10403 mockup shows only the CRISPR/TALEN question for indel. |
+| Two-column layout | Not adopted; keeping the stacked rows from ZFIN-10374–10378. |
+
+## 7. Open items
+
+- SO terms for `c-terminal peptide truncation` and `n-terminal peptide
+  truncation` (blocks the remainder of ZFIN-10380).
+- Confirm with curators that a single position value is enough for the
+  amino acid change, or whether the start–end range in the curation UI is
+  meaningful here.
+- Decide whether the ZFIN-10403 two-column layout is wanted as real
+  scope.
