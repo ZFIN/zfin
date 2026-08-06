@@ -5,18 +5,7 @@ import { FormFor } from '../api/formHelpers';
 import { useAutosavedSchemaForm } from './useAutosavedSchemaForm';
 import { SaveStatusBadge } from '../components/SaveStatusBadge';
 import { AGGREGATES, AggregateKind } from './aggregateRegistry';
-import { sectionRendererEntry } from './renderers/SectionRenderer';
-import { rowControlRendererEntry } from './renderers/RowControlRenderer';
-import { verticalLayoutRendererEntry } from './renderers/VerticalLayoutRenderer';
-import { textareaRowRendererEntry } from './renderers/TextareaRowRenderer';
-import { yesNoRadioRendererEntry } from './renderers/YesNoRadioRenderer';
-import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
-import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
-import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
-import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
-import { autoSizeRendererEntry } from './renderers/AutoSizeRenderer';
-import { attachmentsRendererEntry } from './renderers/AttachmentsRenderer';
-import { phenotypeTimingRendererEntry } from './renderers/PhenotypeTimingRenderer';
+import { fieldRenderers } from './aggregateRenderers';
 
 /**
  * One schema-driven editor for any per-mutation aggregate (assay, gene,
@@ -36,22 +25,11 @@ import { phenotypeTimingRendererEntry } from './renderers/PhenotypeTimingRendere
  * and the parent id.
  */
 
-// Union of renderers across the four inline forms. JsonForms only fires
-// the ones a given uiSchema's Controls reference.
-const renderers = [
-    verticalLayoutRendererEntry,
-    sectionRendererEntry,
-    rowControlRendererEntry,
-    textareaRowRendererEntry,
-    yesNoRadioRendererEntry,
-    checkboxRendererEntry,
-    selectWithOtherRendererEntry,
-    publicationsListRendererEntry,
-    autocompleteRendererEntry,
-    autoSizeRendererEntry,
-    attachmentsRendererEntry,
-    phenotypeTimingRendererEntry,
-];
+// Shared with the view-mode registry in aggregateRenderers.ts. Restating
+// the list here is what let a widget be registered in one mode and not the
+// other, which shows up as a field silently falling back to a plain text
+// input. JsonForms only fires the ones a given uiSchema's Controls reference.
+const renderers = fieldRenderers;
 
 export type ZircEntityEditorProps<TDto extends object> = {
     kind: AggregateKind;
