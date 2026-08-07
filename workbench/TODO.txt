@@ -10,3 +10,6 @@ Before merging:
 
 Contents:
   - danre-mod-unified-load-plan.md   (working plan + QC findings)
+  - progress-summary.md              (decisions made/remaining, phase status)
+  - goex-danre-mod-qc-2026-08-06.md  (QC of Pascale's replacement DANRE-mod file)
+  - goex-dbdiff-vs-july-2026-08-07.md (legacy-vs-new DB comparison, same method as 07-07 report)
