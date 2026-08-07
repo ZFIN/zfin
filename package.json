@@ -19,9 +19,9 @@
     "clean": "rm -rf $TARGETROOT/home/dist",
     "compile": "webpack",
     "build": "npm run clean && npm run compile",
-    "lint": "eslint home/javascript/react/** --max-warnings 0",
+    "lint": "eslint frontend/javascript/react/** --max-warnings 0",
     "typecheck": "tsc -p tsconfig.typecheck.json",
-    "test": "node --import tsx --test home/javascript/__tests__/*.test.js home/javascript/react/components/curate-construct/__tests__/*.test.ts home/javascript/react/components/zirc/__tests__/*.test.ts"
+    "test": "node --import tsx --test frontend/javascript/__tests__/*.test.js frontend/javascript/react/components/curate-construct/__tests__/*.test.ts frontend/javascript/react/components/zirc/__tests__/*.test.ts"
   },
   "overrides": {
     "uuid": "^14.0.0"

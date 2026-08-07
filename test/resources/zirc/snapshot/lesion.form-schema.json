@@ -13,7 +13,7 @@
       },
       "fivePrimeFlank" : {
         "maxLength" : 5000,
-        "title" : "5′ flank",
+        "title" : "5′ flanking sequence",
         "type" : [ "string", "null" ]
       },
       "hasLargeVariant" : {
@@ -38,11 +38,6 @@
         "title" : "Lesion Type",
         "type" : [ "string", "null" ]
       },
-      "locationInline" : {
-        "maxLength" : 5000,
-        "title" : "Location (inline)",
-        "type" : [ "string", "null" ]
-      },
       "mutatedAminoAcids" : {
         "maxLength" : 2000,
         "title" : "Mutated amino acids",
@@ -60,7 +55,7 @@
       },
       "threePrimeFlank" : {
         "maxLength" : 5000,
-        "title" : "3′ flank",
+        "title" : "3′ flanking sequence",
         "type" : [ "string", "null" ]
       },
       "transgeneSequence" : {
@@ -77,62 +72,42 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "other", "unknown" ],
+          "standardLabels" : [ "Point Mutation", "Deletion", "Insertion", "Indel", "Transgene", "Unknown" ],
+          "standardValues" : [ "point_mutation", "deletion", "insertion", "indel", "transgene", "unknown" ],
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/lesionType",
         "type" : "Control"
-      }, {
-        "options" : {
-          "multi" : true
-        },
-        "scope" : "#/properties/additionalInfo",
-        "type" : "Control"
       } ],
       "type" : "Group"
     }, {
       "elements" : [ {
         "options" : {
-          "suffix" : "bp"
-        },
-        "scope" : "#/properties/lesionSizeBp",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "point_mutation", "deletion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "suffix" : "bp"
-        },
-        "scope" : "#/properties/insertionSizeBp",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "multi" : true,
-          "placeholder" : "WT → mutant, e.g. A → T"
+          "noOther" : true,
+          "standardValues" : [ "A>T", "A>C", "A>G", "T>A", "T>C", "T>G", "C>A", "C>T", "C>G", "G>A", "G>T", "G>C" ],
+          "widget" : "selectWithOther"
         },
         "scope" : "#/properties/nucleotideChange",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "point_mutation" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "constantValue" : 1,
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {
@@ -166,9 +141,49 @@
     }, {
       "elements" : [ {
         "options" : {
+          "sourceField" : "deletedSequence",
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/lesionSizeBp",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "deletion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
           "multi" : true
         },
         "scope" : "#/properties/insertedSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "sourceField" : "insertedSequence",
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/insertionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {
@@ -207,13 +222,6 @@
       "type" : "Group"
     }, {
       "elements" : [ {
-        "options" : {
-          "helpText" : "Annotated inline; list at least 5 nt before and after.",
-          "multi" : true
-        },
-        "scope" : "#/properties/locationInline",
-        "type" : "Control"
-      }, {
         "options" : {
           "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
@@ -263,6 +271,15 @@
         },
         "effect" : "SHOW"
       },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/additionalInfo",
+        "type" : "Control"
+      } ],
       "type" : "Group"
     } ],
     "type" : "VerticalLayout"

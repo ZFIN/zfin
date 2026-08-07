@@ -88,7 +88,8 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                         || StringUtils.length(variant.getFgmdSeqRef()) > 1) {
                                     System.out.println(feature.getZdbID());
                                 }
-                                if (StringUtils.isEmpty(variant.getFgmdSeqVar())) {
+                                if (StringUtils.isEmpty(variant.getFgmdSeqVar())
+                                        || variant.getFgmdSeqVar().length() > 1) {
                                     System.out.println(feature.getZdbID());
                                 }
                                 break;
