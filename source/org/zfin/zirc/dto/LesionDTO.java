@@ -48,6 +48,8 @@ public record LesionDTO(
         Integer aaPositionEnd,
         // Transcript-level: mdcv term ZDB IDs (ZFIN-10399)
         String[] transcriptConsequences,
+        // Protein-level: mdcv term ZDB IDs (ZFIN-10380)
+        String[] proteinConsequences,
         // Catch-all
         String additionalInfo) {
 
@@ -80,6 +82,8 @@ public record LesionDTO(
                 l.getAaPositionEnd(),
                 l.getTranscriptConsequences() == null
                         ? new String[0] : l.getTranscriptConsequences(),
+                l.getProteinConsequences() == null
+                        ? new String[0] : l.getProteinConsequences(),
                 l.getAdditionalInfo());
     }
 }

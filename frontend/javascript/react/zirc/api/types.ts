@@ -98,6 +98,7 @@ export interface LesionDTO {
     aaPositionStart: number | null;
     aaPositionEnd: number | null;
     transcriptConsequences: string[];
+    proteinConsequences: string[];
     additionalInfo: string | null;
 }
 

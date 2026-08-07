@@ -47,6 +47,7 @@ public final class LesionStatusComputer {
         AA_POSITION_START        ("aaPositionStart"),
         AA_POSITION_END          ("aaPositionEnd"),
         TRANSCRIPT_CONSEQUENCES  ("transcriptConsequences"),
+        PROTEIN_CONSEQUENCES     ("proteinConsequences"),
         ADDITIONAL_INFO          ("additionalInfo");
 
         private final String path;

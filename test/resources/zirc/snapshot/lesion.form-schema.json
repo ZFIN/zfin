@@ -84,6 +84,13 @@
         "title" : "Nucleotide change",
         "type" : [ "string", "null" ]
       },
+      "proteinConsequences" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Protein consequences",
+        "type" : "array"
+      },
       "talenSequence" : {
         "maxLength" : 5000,
         "title" : "TALEN sequence",
@@ -430,11 +437,20 @@
         },
         "scope" : "#/properties/mutatedAminoAcidsHgvs",
         "type" : "Control"
+      }, {
+        "options" : {
+          "addLabel" : "+ Add consequence",
+          "helpText" : "Add one entry per consequence.",
+          "vocabulary" : "protein_consequence_term",
+          "widget" : "vocabularyMultiSelect"
+        },
+        "scope" : "#/properties/proteinConsequences",
+        "type" : "Control"
       } ],
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "point_mutation" ]
+            "enum" : [ "point_mutation", "deletion" ]
           },
           "scope" : "#/properties/lesionType"
         },

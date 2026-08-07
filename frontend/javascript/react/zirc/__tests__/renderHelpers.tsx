@@ -25,6 +25,11 @@ export const AMINO_ACIDS: VocabularyTermDTO[] = [
     { id: 'ZDB-TERM-3', label: 'Val', abbreviation: 'V' },
 ];
 
+export const PROTEIN_CONSEQUENCES: VocabularyTermDTO[] = [
+    { id: 'ZDB-TERM-20', label: 'polypeptide truncation', abbreviation: null },
+    { id: 'ZDB-TERM-21', label: 'amino acid substitution', abbreviation: null },
+];
+
 export const TRANSCRIPT_CONSEQUENCES: VocabularyTermDTO[] = [
     { id: 'ZDB-TERM-10', label: 'premature stop', abbreviation: null },
     { id: 'ZDB-TERM-11', label: 'missense', abbreviation: null },

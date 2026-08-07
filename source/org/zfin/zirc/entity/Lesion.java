@@ -131,6 +131,15 @@ public class Lesion implements Serializable {
     @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] transcriptConsequences = new String[0];
 
+    /**
+     * Controlled-vocabulary term ZDB IDs from
+     * {@code protein_consequence_term} (ZFIN-10380). Same storage contract as
+     * {@link #transcriptConsequences}.
+     */
+    @Column(name = "l_protein_consequences", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] proteinConsequences = new String[0];
+
     @Column(name = "l_additional_info")
     private String additionalInfo;
 

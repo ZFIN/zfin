@@ -82,8 +82,10 @@ public final class ZircLesionFormSchema {
             List.of("transgene");
     private static final List<String> LOCATION_TYPES =
             List.of("point_mutation", "deletion", "insertion", "indel", "transgene");
+    // ZFIN-10380 adds deletion: a deletion can remove residues, so it wants
+    // the amino-acid section and the protein-consequence list too.
     private static final List<String> PROTEIN_TYPES =
-            List.of("point_mutation");
+            List.of("point_mutation", "deletion");
     // ZFIN-10400. Separate lists because the two questions do not travel
     // together: ZFIN-10403's mockup shows indel asking about mutagenesis but
     // not about a construct.
@@ -135,6 +137,11 @@ public final class ZircLesionFormSchema {
         properties.put("aaChangeTo",            StringSchema.of("Amino acid change (to)", 255));
         properties.put("aaPositionStart",       new NumberSchema("Position", Boolean.TRUE));
         properties.put("aaPositionEnd",         new NumberSchema("Position (end)", Boolean.TRUE));
+        // Protein-level consequences (ZFIN-10380): mdcv term ZDB IDs.
+        properties.put("proteinConsequences", new ArraySchema(
+                "Protein consequences",
+                new StringSchema(null, null, null, null, null),
+                null, null));
         // Transcript-level (ZFIN-10399): mdcv term ZDB IDs, any lesion type.
         properties.put("transcriptConsequences", new ArraySchema(
                 "Transcript consequences",
@@ -289,7 +296,18 @@ public final class ZircLesionFormSchema {
                                         .withPositionEndField("aaPositionEnd"),
                                 null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
-                                Options.of().withPlaceholder("HGVS protein notation"), null)
+                                Options.of().withPlaceholder("HGVS protein notation"), null),
+                        // ZFIN-10380. Sits inside the protein cluster rather
+                        // than in its own group because it belongs with the
+                        // amino-acid change, the way the curation interface
+                        // pairs them.
+                        new Control("#/properties/proteinConsequences",
+                                Options.of()
+                                        .withWidget("vocabularyMultiSelect")
+                                        .withVocabulary("protein_consequence_term")
+                                        .withAddLabel("+ Add consequence")
+                                        .withHelpText("Add one entry per consequence."),
+                                null)
                 )),
                 // Transcript consequences (ZFIN-10399) apply to every lesion
                 // type, so this group carries no reveal rule. It is placed
@@ -352,7 +370,11 @@ public final class ZircLesionFormSchema {
             field("/transcriptConsequences",
                     l -> l.getTranscriptConsequences() == null
                             ? new String[0] : l.getTranscriptConsequences(),
-                    (l, v) -> l.setTranscriptConsequences(stringArray(v)))
+                    (l, v) -> l.setTranscriptConsequences(stringArray(v))),
+            field("/proteinConsequences",
+                    l -> l.getProteinConsequences() == null
+                            ? new String[0] : l.getProteinConsequences(),
+                    (l, v) -> l.setProteinConsequences(stringArray(v)))
     );
 
     private static Map.Entry<String, FieldDescriptor> field(

@@ -3,7 +3,12 @@ import assert from 'node:assert/strict';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { cleanup, screen, waitFor } from '@testing-library/react';
-import { renderForm, TRANSCRIPT_CONSEQUENCES } from './renderHelpers';
+import {
+    AMINO_ACIDS,
+    PROTEIN_CONSEQUENCES,
+    TRANSCRIPT_CONSEQUENCES,
+    renderForm,
+} from './renderHelpers';
 
 /**
  * Reveal rules on the real lesion form, driven from the committed schema
@@ -28,7 +33,11 @@ function lesionForm(data: Record<string, unknown>) {
         schema: parsed.schema,
         uischema: parsed.uiSchema,
         data,
-        vocabularies: { transcript_consequence_term: TRANSCRIPT_CONSEQUENCES },
+        vocabularies: {
+            transcript_consequence_term: TRANSCRIPT_CONSEQUENCES,
+            protein_consequence_term: PROTEIN_CONSEQUENCES,
+            amino_acid_term: AMINO_ACIDS,
+        },
     });
 }
 
@@ -159,6 +168,33 @@ describe('lesion conditional reveals', () => {
         // type. Matched loosely because the flanking fields append their own
         // help text to the same node.
         assert.equal(screen.getAllByText(/A \/ C \/ G \/ T \/ N only/).length, 4);
+        h.cleanupFetch();
+    });
+
+    it('shows the amino-acid section on a deletion as well as a point mutation', async () => {
+        // ZFIN-10380. A deletion can remove residues, so it wants the
+        // amino-acid change and the protein-consequence list.
+        for (const lesionType of ['point_mutation', 'deletion']) {
+            const h = lesionForm({ lesionType });
+            await waitFor(() => {
+                assert.ok(
+                    screen.getByLabelText('Protein consequences'),
+                    `expected protein consequences for ${lesionType}`,
+                );
+            });
+            assert.ok(screen.getByLabelText('Amino Acid Change from'));
+            h.cleanupFetch();
+            cleanup();
+        }
+    });
+
+    it('keeps the amino-acid section off lesion types that have no protein effect', async () => {
+        const h = lesionForm({ lesionType: 'transgene' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Transcript consequences'));
+        });
+        assert.equal(screen.queryByLabelText('Protein consequences'), null);
+        assert.equal(screen.queryByLabelText('Amino Acid Change from'), null);
         h.cleanupFetch();
     });
 
