@@ -339,9 +339,23 @@ to the existing ones.
   text).
 - **"One is required to be answered":** status badge, see §4.
 
-### ZFIN-10403 — indel format and input boxes
+### ZFIN-10403 — indel format and input boxes ✅
 
-Reuses ZFIN-10400's CRISPR/TALEN block.
+Done in `7993c9299c`. Reuses ZFIN-10400's CRISPR/TALEN block.
+
+Two readings resolved in favour of the mockup:
+
+- **"Remove Lesion size box"** is a rename, not a deletion. The mockup keeps
+  the value and calls it "Deletion size (bp)", opposite "Insertion size
+  (bp)". Implemented as an `options.label` override on the same
+  `lesionSizeBp` property — nothing changes about what is stored or derived.
+  Needed `AutoSizeRenderer` to start honouring `options.label`.
+- **Deletion keeps "Lesion size"**, so the two types now differ in naming.
+  Scoped that way because the ticket is indel-only, but it is worth a
+  curator's eye.
+
+The consequences field needed no work — ZFIN-10399 already put it on every
+lesion type.
 
 - Drop `indel` from the `lesionSizeBp` reveal list (removes the "Lesion
   size" box). Deletion and insertion sizes already auto-calculate for
@@ -349,7 +363,9 @@ Reuses ZFIN-10400's CRISPR/TALEN block.
 - Add the CRISPR/TALEN question and its two sequence boxes.
 - Add `transcriptConsequences` from ZFIN-10399.
 - Sequence inputs move to the `nucleotideSequence` widget, which covers
-  the ticket's "validate the sequence input is DNA."
+  the ticket's "validate the sequence input is DNA." The Controls are
+  shared across lesion types, so deletion / insertion / transgene get the
+  constraint too — intended, not spillover.
 
 **Layout note:** the mockup shows sequence and size side by side in two
 columns. The current renderers are a label/value `<tr>` table with the
