@@ -397,15 +397,25 @@ ask for it; the field stays editable free text alongside the new control.
   already has in the invariants-test whitelist.
 - **"Either nucleotide or amino acid info":** status badge, see §4.
 
-### ZFIN-10380 — mutation consequence for deletion
+### ZFIN-10380 — mutation consequence for deletion ⚠️ done except the two terms
+
+Done in `1fc15fa088`.
+
+**No reorder migration was needed.** The stored seven are already in the
+ticket's relative order with no duplicate `mdcv_term_order` values — the
+only thing the ticket's list changes is inserting the two new terms at
+positions 2 and 3. Unlike ZFIN-10399, where the stored order was genuinely
+wrong and full of ties, there was nothing here to fix. The migration file
+carries the side-by-side comparison so this does not have to be re-derived.
+
 
 - Add `deletion` to `PROTEIN_TYPES`.
 - `proteinConsequences` multi-select (multiple selections enabled).
 - **SQL:** renumber the existing seven `protein_consequence_term` rows
   into the ticket's relative order.
-- **Deferred:** `c-terminal peptide truncation` and `n-terminal peptide
-  truncation`. Leave a comment in the migration naming ZFIN-10380 and the
-  missing SO terms so the follow-up is discoverable.
+- **Deferred, still open:** `c-terminal peptide truncation` and
+  `n-terminal peptide truncation` — blocked on curators choosing SO terms.
+  The migration documents the blocker and the rejected candidates.
 
 Target order (bracketed entries deferred):
 
@@ -479,6 +489,10 @@ becomes derived) belongs there too.
 | Two-column layout | Not adopted; keeping the stacked rows from ZFIN-10374–10378. |
 
 ## 7. Open items
+
+**Batch status: all five tickets implemented.** ZFIN-10380 ships without its
+two new vocabulary terms; everything else is complete.
+
 
 - SO terms for `c-terminal peptide truncation` and `n-terminal peptide
   truncation` (blocks the remainder of ZFIN-10380).
