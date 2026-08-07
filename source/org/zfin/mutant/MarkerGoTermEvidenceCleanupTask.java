@@ -6,6 +6,7 @@ import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -46,7 +47,11 @@ public class MarkerGoTermEvidenceCleanupTask extends AbstractScriptWrapper {
             System.out.println("exit code: " + exitValue);
         }
 
-        System.out.println("Check the csv files for more information: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv" );
+        // psql wrote the \copy output into its working directory, which is no longer the
+        // checkout, so say where the files actually are rather than just naming them
+        System.out.println("Check the csv files in " + new File(".").getAbsoluteFile().getParent()
+            + " for more information: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, "
+            + "tmp_inference_group_member_updates.csv, tmp_mgte_duplicates.csv");
     }
 
     public MarkerGoTermEvidenceCleanupTask() {

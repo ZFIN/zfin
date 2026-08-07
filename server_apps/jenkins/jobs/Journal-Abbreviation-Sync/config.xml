@@ -27,7 +27,9 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
     <hudson.tasks.Shell>
-      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSyncReport &amp;&amp; cp JournalAbbreviationSync.sql $WORKSPACE</command>
+      <!-- mv, not cp: the report is written into $SOURCEROOT and archived from the workspace,
+           so copying left an untracked duplicate in the git checkout after every run -->
+      <command>cd $SOURCEROOT &amp;&amp; gradle journalAbbreviationSyncReport &amp;&amp; mv JournalAbbreviationSync.sql $WORKSPACE</command>
     </hudson.tasks.Shell>
   </builders>
   <publishers>

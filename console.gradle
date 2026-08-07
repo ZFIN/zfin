@@ -45,6 +45,13 @@ task BatchNCBIFastaFetchTask(type: JavaExec) {
 task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.mutant.MarkerGoTermEvidenceCleanupTask'
+    // clean_marker_go_term_evidence.sql \copy's four debug csvs relative to psql's working
+    // directory, which is this task's; the .sql path itself is absolute (built from the
+    // SOURCEROOT property) so it keeps resolving. Nothing reads the csvs, but they are not
+    // gitignored, so writing them into the checkout left it dirty after every run.
+    workingDir = file(System.getProperty('job.output.basedir')
+            ?: System.getenv('TARGETROOT') ?: projectDir)
+    doFirst { workingDir.mkdirs() }
 }
 
 task thisseLegacyImportAnalysisTask(type: JavaExec) {
@@ -122,7 +129,14 @@ task imageThumbnailFixTask(type: JavaExec) {
 task runMeshChebiGenerator(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.ctd.LoadCtdData'
+    // LoadCtdData writes its downloads and its <JobName> report directory relative to the working
+    // directory, which is the git checkout because Jenkins runs "cd $SOURCEROOT && gradle
+    // runMeshChebiGenerator". The artifact archiver, the html publisher and the email's
+    // ${FILE,path=...} all read workspace-relative paths, and the workspace is $TARGETROOT, so run
+    // from there instead. -Djob.output.basedir overrides it the way the ontology loads do.
+    workingDir = file(System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT') ?: projectDir)
     doFirst {
+        workingDir.mkdirs()
         args JobName
     }
 }
@@ -133,19 +147,35 @@ task expressionExperimentAnalysisTask(type: JavaExec) {
     main = 'org.zfin.expression.task.ExpressionExperimentAnalysisTask'
 }
 
+// Everything the Ensembl transcript classes touch is resolved against the working
+// directory: the Danio_rerio.GRCz11.* fasta downloads and the combined .all.fa in
+// EnsemblTranscriptBase, ensembl-transcript-load-report.html, and the five report
+// files in EnsemblTranscriptFastaReadProcess. Update-Length-For-Ensembl-Transcript
+// runs "cd $SOURCEROOT && gradle runEnsemblTranscriptLengthUpdater", so all of it
+// landed in the checkout while the job's workspace is $TARGETROOT. All four tasks
+// share the downloads and the report name, so they have to agree on one directory.
+def ensemblWorkingDir = file(System.getProperty('job.output.basedir')
+        ?: System.getenv('TARGETROOT') ?: projectDir)
+
 task runEnsemblTranscriptLoader(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReadProcess'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task runEnsemblTranscriptChecker(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptTester'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task runEnsemblTranscriptLengthUpdater(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptUpdateLengthTask'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task createMeshChebiMappingFile(type: JavaExec) {
@@ -161,6 +191,8 @@ task importMissingFPBaseProteinsTask(type: JavaExec) {
 task createEnsemblTranscriptFastaFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.load.EnsemblTranscriptFastaReader'
+    workingDir = ensemblWorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task findEmptyPublicationFilesTask(type: JavaExec) {
@@ -254,16 +286,31 @@ task createGff3Files(type: JavaExec) {
     main = 'org.zfin.sequence.gff.Gff3Writer'
 }
 
+// Both NCBI GFF3 classes resolve every file against the working directory -- the
+// downloaded GCF_*.gff.gz, the gunzipped GFF3, the .test override and
+// gff3_ncbi_report.html. JavaExec defaults that to the project directory, so the
+// Load-NCBI-GFF3-File job (cd $SOURCEROOT && gradle loadGff3NcbiFile) dropped all of
+// it into the checkout, while Jenkins archives and mails gff3_ncbi_report.* from the
+// $TARGETROOT workspace. Run both from TARGETROOT: they share the download and the
+// report name, so they have to agree on one directory. -Djob.output.basedir overrides
+// it the way the ontology loads do.
+def ncbiGff3WorkingDir = file(System.getProperty('job.output.basedir')
+        ?: System.getenv('TARGETROOT') ?: projectDir)
+
 task loadGff3NcbiFile(type: JavaExec) {
     jvmArgs = ['-Xmx16g', '-Xms1g']
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3Processor'
+    workingDir = ncbiGff3WorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 task postLoadGff3NcbiFile(type: JavaExec) {
     jvmArgs = ['-Xmx16g', '-Xms1g']
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.NCBIGff3PostProcessor'
+    workingDir = ncbiGff3WorkingDir
+    doFirst { workingDir.mkdirs() }
 }
 
 //example usage:
