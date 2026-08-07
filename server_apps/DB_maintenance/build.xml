@@ -212,19 +212,22 @@
                    else="https://current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz">
             <isset property="env.DANRE_MOD_GPAD_URL"/>
         </condition>
+        <condition property="reportOnly" value="${env.GAF_LOAD_REPORT_ONLY}" else="true">
+            <isset property="env.GAF_LOAD_REPORT_ONLY"/>
+        </condition>
 
         <echo message="Running unified DANRE-mod GafLoadJob:"/>
         <echo message="  jobName: ${jobName}"/>
         <echo message="  organization: DANRE-mod"/>
         <echo message="  downloadUrl: ${downloadUrl}"/>
         <echo message="  parserClassName: org.zfin.datatransfer.go.DanreModGpadParser"/>
-        <echo message="  (report-only unless GAF_LOAD_REPORT_ONLY is overridden)"/>
+        <echo message="  reportOnly: ${reportOnly}"/>
 
         <java classname="org.zfin.datatransfer.go.service.GafLoadJob"
               fork="yes"
               classpathref="combined.classpath"
               failonerror="true">
-            <env key="GAF_LOAD_REPORT_ONLY" value="true"/>
+            <env key="GAF_LOAD_REPORT_ONLY" value="${reportOnly}"/>
             <arg value="${web-inf.dir}/zfin.properties"/><!-- propertyFilePath -->
             <arg value="${validateData}/gafLoad"/><!-- baseDir -->
             <arg value="${jobName}"/><!-- jobName -->
