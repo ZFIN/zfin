@@ -103,7 +103,10 @@ public record Options(
         // Named rather than derived so the schema stays the single place
         // field names are declared.
         String toField,
-        String positionField
+        String positionField,
+        // For the aminoAcidChange widget — the end of the position range.
+        // Optional: omit it and the widget renders a single position box.
+        String positionEndField
 ) {
 
     /**

@@ -128,8 +128,13 @@ public final class ZircLesionFormSchema {
         properties.put("talenSequence",          StringSchema.of("TALEN sequence", 5000));
         properties.put("constructName",          StringSchema.of("Construct name", 255));
         // Protein-level
-        properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
+        // Structured amino-acid change (ZFIN-10379). from/to are
+        // amino_acid_term ZDB IDs; the end of the range is optional.
+        properties.put("aaChangeFrom",          StringSchema.of("Amino Acid Change", 255));
+        properties.put("aaChangeTo",            StringSchema.of("Amino acid change (to)", 255));
+        properties.put("aaPositionStart",       new NumberSchema("Position", Boolean.TRUE));
+        properties.put("aaPositionEnd",         new NumberSchema("Position (end)", Boolean.TRUE));
         // Transcript-level (ZFIN-10399): mdcv term ZDB IDs, any lesion type.
         properties.put("transcriptConsequences", new ArraySchema(
                 "Transcript consequences",
@@ -270,9 +275,19 @@ public final class ZircLesionFormSchema {
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)
                 )),
+                // ZFIN-10379 — the curation interface's from > to + position
+                // control, replacing the free-text box that asked curators to
+                // hand-write HGVS. The old mutatedAminoAcids column is left in
+                // place but no longer surfaced; see the migration for why.
                 groupRevealedFor(PROTEIN_TYPES, List.of(
-                        new Control("#/properties/mutatedAminoAcids",
-                                Options.of().withPlaceholder("e.g. p.Gly12Val"), null),
+                        new Control("#/properties/aaChangeFrom",
+                                Options.of()
+                                        .withWidget("aminoAcidChange")
+                                        .withVocabulary("amino_acid_term")
+                                        .withToField("aaChangeTo")
+                                        .withPositionField("aaPositionStart")
+                                        .withPositionEndField("aaPositionEnd"),
+                                null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
                                 Options.of().withPlaceholder("HGVS protein notation"), null)
                 )),
@@ -329,8 +344,11 @@ public final class ZircLesionFormSchema {
             field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
             field("/talenSequence",         Lesion::getTalenSequence,          (l, v) -> l.setTalenSequence(nucleotides(v))),
             field("/constructName",         Lesion::getConstructName,          (l, v) -> l.setConstructName(text(v))),
-            field("/mutatedAminoAcids",     Lesion::getMutatedAminoAcids,      (l, v) -> l.setMutatedAminoAcids(text(v))),
             field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
+            field("/aaChangeFrom",          Lesion::getAaChangeFrom,           (l, v) -> l.setAaChangeFrom(text(v))),
+            field("/aaChangeTo",            Lesion::getAaChangeTo,             (l, v) -> l.setAaChangeTo(text(v))),
+            field("/aaPositionStart",       Lesion::getAaPositionStart,        (l, v) -> l.setAaPositionStart(intNullable(v))),
+            field("/aaPositionEnd",         Lesion::getAaPositionEnd,          (l, v) -> l.setAaPositionEnd(intNullable(v))),
             field("/transcriptConsequences",
                     l -> l.getTranscriptConsequences() == null
                             ? new String[0] : l.getTranscriptConsequences(),
@@ -387,6 +405,14 @@ public final class ZircLesionFormSchema {
             if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
         }
         return out.isEmpty() ? null : out.toString();
+    }
+
+    private static Integer intNullable(JsonNode v) {
+        if (v == null || v.isNull()) {return null;}
+        // The number input clears to null, but an empty string can arrive via
+        // a hand-built PATCH; treat it the same rather than storing 0.
+        if (v.isTextual() && v.asText().isBlank()) {return null;}
+        return v.asInt();
     }
 
     private static Boolean boolNullable(JsonNode v) {

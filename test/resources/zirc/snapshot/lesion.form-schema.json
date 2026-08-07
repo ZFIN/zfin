@@ -1,6 +1,24 @@
 {
   "schema" : {
     "properties" : {
+      "aaChangeFrom" : {
+        "maxLength" : 255,
+        "title" : "Amino Acid Change",
+        "type" : [ "string", "null" ]
+      },
+      "aaChangeTo" : {
+        "maxLength" : 255,
+        "title" : "Amino acid change (to)",
+        "type" : [ "string", "null" ]
+      },
+      "aaPositionEnd" : {
+        "title" : "Position (end)",
+        "type" : [ "number", "null" ]
+      },
+      "aaPositionStart" : {
+        "title" : "Position",
+        "type" : [ "number", "null" ]
+      },
       "additionalInfo" : {
         "maxLength" : 5000,
         "title" : "Additional Info",
@@ -54,11 +72,6 @@
       "lesionType" : {
         "maxLength" : 255,
         "title" : "Lesion Type",
-        "type" : [ "string", "null" ]
-      },
-      "mutatedAminoAcids" : {
-        "maxLength" : 2000,
-        "title" : "Mutated amino acids",
         "type" : [ "string", "null" ]
       },
       "mutatedAminoAcidsHgvs" : {
@@ -403,9 +416,13 @@
     }, {
       "elements" : [ {
         "options" : {
-          "placeholder" : "e.g. p.Gly12Val"
+          "positionEndField" : "aaPositionEnd",
+          "positionField" : "aaPositionStart",
+          "toField" : "aaChangeTo",
+          "vocabulary" : "amino_acid_term",
+          "widget" : "aminoAcidChange"
         },
-        "scope" : "#/properties/mutatedAminoAcids",
+        "scope" : "#/properties/aaChangeFrom",
         "type" : "Control"
       }, {
         "options" : {

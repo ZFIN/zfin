@@ -41,6 +41,11 @@ public record LesionDTO(
         // Protein-level
         String mutatedAminoAcids,
         String mutatedAminoAcidsHgvs,
+        // Structured amino-acid change (ZFIN-10379)
+        String aaChangeFrom,
+        String aaChangeTo,
+        Integer aaPositionStart,
+        Integer aaPositionEnd,
         // Transcript-level: mdcv term ZDB IDs (ZFIN-10399)
         String[] transcriptConsequences,
         // Catch-all
@@ -69,6 +74,10 @@ public record LesionDTO(
                 l.getConstructName(),
                 l.getMutatedAminoAcids(),
                 l.getMutatedAminoAcidsHgvs(),
+                l.getAaChangeFrom(),
+                l.getAaChangeTo(),
+                l.getAaPositionStart(),
+                l.getAaPositionEnd(),
                 l.getTranscriptConsequences() == null
                         ? new String[0] : l.getTranscriptConsequences(),
                 l.getAdditionalInfo());

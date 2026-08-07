@@ -237,7 +237,7 @@ describe('aminoAcidChange widget', () => {
             assert.equal(h.latest().aaChangeTo, 'ZDB-TERM-3');
         });
 
-        fireEvent.change(screen.getByLabelText('Position'), { target: { value: '12' } });
+        fireEvent.change(screen.getByLabelText('Amino Acid Change position'), { target: { value: '12' } });
         await waitFor(() => {
             assert.equal(h.latest().aaPosition, 12);
         });
@@ -246,6 +246,62 @@ describe('aminoAcidChange widget', () => {
         // earlier writes survive the later ones.
         assert.equal(h.latest().aaChangeFrom, 'ZDB-TERM-2');
         assert.equal(h.latest().aaChangeTo, 'ZDB-TERM-3');
+        h.cleanupFetch();
+    });
+
+    it('writes a position range when an end field is configured', async () => {
+        const rangeSchema = {
+            type: 'object',
+            properties: {
+                aaChangeFrom: { type: 'string', title: 'Amino Acid Change' },
+                aaChangeTo: { type: 'string' },
+                aaPositionStart: { type: 'integer' },
+                aaPositionEnd: { type: 'integer' },
+            },
+        };
+        const rangeUi = control('aminoAcidChange', 'aaChangeFrom', {
+            vocabulary: 'amino_acid_term',
+            toField: 'aaChangeTo',
+            positionField: 'aaPositionStart',
+            positionEndField: 'aaPositionEnd',
+        });
+        const h = renderForm({
+            schema: rangeSchema,
+            uischema: rangeUi,
+            data: { aaChangeFrom: '', aaChangeTo: '', aaPositionStart: null, aaPositionEnd: null },
+            vocabularies: { amino_acid_term: AMINO_ACIDS },
+        });
+
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Amino Acid Change position end'));
+        });
+        fireEvent.change(screen.getByLabelText('Amino Acid Change position'),
+            { target: { value: '12' } });
+        await waitFor(() => {
+            assert.equal(h.latest().aaPositionStart, 12);
+        });
+        fireEvent.change(screen.getByLabelText('Amino Acid Change position end'),
+            { target: { value: '15' } });
+        await waitFor(() => {
+            assert.equal(h.latest().aaPositionEnd, 15);
+        });
+        assert.equal(h.latest().aaPositionStart, 12);
+        h.cleanupFetch();
+    });
+
+    it('renders a single position box when no end field is configured', async () => {
+        // The end is opt-in, so a form that wants one coordinate gets one box
+        // rather than a range with a permanently empty half.
+        const h = renderForm({
+            schema,
+            uischema,
+            data: { aaChangeFrom: '', aaChangeTo: '', aaPosition: null },
+            vocabularies: { amino_acid_term: AMINO_ACIDS },
+        });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Amino Acid Change position'));
+        });
+        assert.equal(screen.queryByLabelText('Amino Acid Change position end'), null);
         h.cleanupFetch();
     });
 
@@ -258,9 +314,9 @@ describe('aminoAcidChange widget', () => {
         });
 
         await waitFor(() => {
-            assert.ok(screen.getByLabelText('Position'));
+            assert.ok(screen.getByLabelText('Amino Acid Change position'));
         });
-        fireEvent.change(screen.getByLabelText('Position'), { target: { value: '' } });
+        fireEvent.change(screen.getByLabelText('Amino Acid Change position'), { target: { value: '' } });
 
         await waitFor(() => {
             assert.equal(h.latest().aaPosition, null);

@@ -19,6 +19,8 @@ type AminoAcidChangeOptions = {
     vocabulary?: VocabularyName;
     toField?: string;
     positionField?: string;
+    /** Optional; omit for a single position box rather than a range. */
+    positionEndField?: string;
 };
 
 /**
@@ -55,6 +57,7 @@ function AminoAcidChangeRenderer({
 
     const toField = opts.toField;
     const positionField = opts.positionField;
+    const positionEndField = opts.positionEndField;
     // Bound path is e.g. "aaChangeFrom"; siblings sit alongside it under the
     // same parent, so swap the last segment.
     const siblingPath = (name: string) =>
@@ -66,14 +69,22 @@ function AminoAcidChangeRenderer({
     const position = positionField
         ? ((root[positionField] as number | null | undefined) ?? null)
         : null;
+    const positionEnd = positionEndField
+        ? ((root[positionEndField] as number | null | undefined) ?? null)
+        : null;
 
     if (view.readonly) {
         const parts = [
             from === '' ? null : labelById(terms, from),
             to === '' ? null : labelById(terms, to),
         ];
+        // "at 12" for a single residue, "at 12–15" for a range. An end with
+        // no start would be meaningless, so it only shows alongside one.
+        const where = position == null
+            ? ''
+            : ` at ${position}${positionEnd == null ? '' : `\u2013${positionEnd}`}`;
         const display = parts[0] || parts[1]
-            ? `${parts[0] ?? '?'} > ${parts[1] ?? '?'}${position == null ? '' : ` at ${position}`}`
+            ? `${parts[0] ?? '?'} > ${parts[1] ?? '?'}${where}`
             : null;
         return (
             <tr>
@@ -124,6 +135,30 @@ function AminoAcidChangeRenderer({
         </select>
     );
 
+    const positionInput = (
+        id: string,
+        aria: string,
+        value: number | null,
+        field: string | undefined,
+    ) => (
+        <input
+            id={id}
+            type='number'
+            min={1}
+            step={1}
+            className='form-control'
+            style={{ maxWidth: 120 }}
+            aria-label={aria}
+            value={value == null ? '' : String(value)}
+            onChange={(e) => {
+                if (!field) {return;}
+                const raw = e.target.value;
+                const n = raw === '' ? null : Number(raw);
+                handleChange(siblingPath(field), n !== null && Number.isFinite(n) ? n : null);
+            }}
+        />
+    );
+
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
@@ -137,24 +172,18 @@ function AminoAcidChangeRenderer({
                     {residueSelect(`${inputId}-to`, `${label} to`, to,
                         (v) => toField && handleChange(siblingPath(toField), v))}
                     <label htmlFor={`${inputId}-position`} className='mb-0 ml-2'>Position</label>
-                    <input
-                        id={`${inputId}-position`}
-                        type='number'
-                        min={1}
-                        step={1}
-                        className='form-control'
-                        style={{ maxWidth: 120 }}
-                        value={position == null ? '' : String(position)}
-                        onChange={(e) => {
-                            if (!positionField) {return;}
-                            const raw = e.target.value;
-                            const n = raw === '' ? null : Number(raw);
-                            handleChange(
-                                siblingPath(positionField),
-                                n !== null && Number.isFinite(n) ? n : null,
-                            );
-                        }}
-                    />
+                    {positionInput(`${inputId}-position`, `${label} position`, position, positionField)}
+                    {positionEndField && (
+                        <>
+                            <span aria-hidden='true'>&ndash;</span>
+                            {positionInput(
+                                `${inputId}-position-end`,
+                                `${label} position end`,
+                                positionEnd,
+                                positionEndField,
+                            )}
+                        </>
+                    )}
                 </div>
                 {isError && (
                     <small className='text-danger'>

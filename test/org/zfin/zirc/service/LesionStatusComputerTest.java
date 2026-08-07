@@ -69,6 +69,50 @@ public class LesionStatusComputerTest {
     }
 
     @Test
+    public void pointMutationWithNoNucleotideOrAminoAcidInfo_marksTheWholeGroup() {
+        // ZFIN-10379's "either nucleotide information or amino acid
+        // information", using the same mechanism as the ZFIN-10400 questions.
+        FieldStatusResult r = LesionStatusComputer.compute(lesion("point_mutation"));
+
+        assertEquals(FieldStatus.MISSING, r.byField().get("nucleotideChange"));
+        assertEquals(FieldStatus.MISSING, r.byField().get("aaChangeFrom"));
+        assertEquals(FieldStatus.MISSING, r.byField().get("aaPositionStart"));
+    }
+
+    @Test
+    public void nucleotideInfoAloneSatisfiesTheAminoAcidSide() {
+        Lesion l = lesion("point_mutation");
+        l.setNucleotideChange("A>T");
+
+        FieldStatusResult r = LesionStatusComputer.compute(l);
+
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("nucleotideChange"));
+        // The requirement is one side or the other, so filling the nucleotide
+        // side must clear the amino-acid fields rather than leaving them lit.
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("aaChangeFrom"));
+    }
+
+    @Test
+    public void aminoAcidInfoAloneSatisfiesTheNucleotideSide() {
+        Lesion l = lesion("point_mutation");
+        l.setAaChangeFrom("ZDB-TERM-130401-1438");
+
+        FieldStatusResult r = LesionStatusComputer.compute(l);
+
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("nucleotideChange"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("aaChangeTo"));
+    }
+
+    @Test
+    public void theEitherOrGroupIsScopedToPointMutations() {
+        // A deletion has neither box, so neither should be badged.
+        FieldStatusResult r = LesionStatusComputer.compute(lesion("deletion"));
+
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("nucleotideChange"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("aaChangeFrom"));
+    }
+
+    @Test
     public void lesionTypeItselfStaysTheOnlyPerFieldRequirement() {
         // Guards the group rule against bleeding into ordinary fields: an
         // untouched lesion is missing its type and nothing else beyond the

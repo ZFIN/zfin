@@ -95,8 +95,27 @@ public class Lesion implements Serializable {
     @Column(name = "l_construct_name")
     private String constructName;
 
+    /**
+     * Legacy free-text amino-acid box, replaced by the from/to/position
+     * columns below in ZFIN-10379. Retained but no longer read by the form,
+     * the same treatment locationInline has.
+     */
     @Column(name = "l_mutated_amino_acids")
     private String mutatedAminoAcids;
+
+    // ZFIN-10379 — structured amino-acid change. from/to are amino_acid_term
+    // ZDB IDs; end is null for a single-residue change.
+    @Column(name = "l_aa_change_from")
+    private String aaChangeFrom;
+
+    @Column(name = "l_aa_change_to")
+    private String aaChangeTo;
+
+    @Column(name = "l_aa_position_start")
+    private Integer aaPositionStart;
+
+    @Column(name = "l_aa_position_end")
+    private Integer aaPositionEnd;
 
     @Column(name = "l_mutated_amino_acids_hgvs")
     private String mutatedAminoAcidsHgvs;

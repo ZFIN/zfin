@@ -42,6 +42,10 @@ public final class LesionStatusComputer {
         CONSTRUCT_NAME           ("constructName"),
         MUTATED_AMINO_ACIDS      ("mutatedAminoAcids"),
         MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs"),
+        AA_CHANGE_FROM           ("aaChangeFrom"),
+        AA_CHANGE_TO             ("aaChangeTo"),
+        AA_POSITION_START        ("aaPositionStart"),
+        AA_POSITION_END          ("aaPositionEnd"),
         TRANSCRIPT_CONSEQUENCES  ("transcriptConsequences"),
         ADDITIONAL_INFO          ("additionalInfo");
 
@@ -72,9 +76,10 @@ public final class LesionStatusComputer {
      * at least one must be answered, and until one is, every member shows
      * MISSING.
      *
-     * <p>ZFIN-10400 asks for exactly this on the two insertion-origin
-     * questions. It cannot come from {@link ZircLesionFormSchema#schema()}'s
-     * {@code required} list, which can only express per-field requirements.
+     * <p>ZFIN-10400 asks for this on the two insertion-origin questions, and
+     * ZFIN-10379 on "either nucleotide information or amino acid information".
+     * Neither can come from {@link ZircLesionFormSchema#schema()}'s
+     * {@code required} list, which only expresses per-field requirements.
      *
      * <p>Deliberately a visual indicator only — nothing blocks a save. The
      * ticket defers real submission validation, and asks for a marker that
@@ -85,7 +90,18 @@ public final class LesionStatusComputer {
     private static final List<RequiredGroup> REQUIRED_GROUPS = List.of(
             new RequiredGroup(
                     List.of("insertionFromMutagenesis", "insertionFromConstruct"),
-                    List.of("insertion")));
+                    List.of("insertion")),
+            // ZFIN-10379: nucleotide information OR amino acid information.
+            // Modelled as one flat "any of these" group rather than a
+            // disjunction of two sub-groups. The two differ only once a
+            // curator has partly filled one side, and the ticket is explicit
+            // that this is a marker for validation that does not exist yet —
+            // so the simpler shape is the honest one until the real rule is
+            // specified.
+            new RequiredGroup(
+                    List.of("nucleotideChange", "aaChangeFrom", "aaChangeTo",
+                            "aaPositionStart", "mutatedAminoAcidsHgvs"),
+                    List.of("point_mutation")));
 
     private static FieldStatus statusFor(Lesion lz, String path) {
         Object value = readProperty(lz, path);

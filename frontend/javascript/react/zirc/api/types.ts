@@ -93,6 +93,10 @@ export interface LesionDTO {
     constructName: string | null;
     mutatedAminoAcids: string | null;
     mutatedAminoAcidsHgvs: string | null;
+    aaChangeFrom: string | null;
+    aaChangeTo: string | null;
+    aaPositionStart: number | null;
+    aaPositionEnd: number | null;
     transcriptConsequences: string[];
     additionalInfo: string | null;
 }
