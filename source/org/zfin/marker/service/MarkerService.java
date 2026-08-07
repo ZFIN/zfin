@@ -20,7 +20,7 @@ import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.presentation.MappedMarkerBean;
 import org.zfin.mapping.repository.LinkageRepository;
 import org.zfin.marker.*;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 import org.zfin.marker.presentation.*;
 import org.zfin.marker.repository.MarkerRepository;
@@ -1479,9 +1479,9 @@ public class MarkerService {
         return response;
     }
 
-    public JsonResultResponse<FluorescentMarker> getFfgFluorescenceJsonResultResponse(Pagination pagination) {
-        JsonResultResponse<FluorescentMarker> response = new JsonResultResponse<>();
-        List<FluorescentMarker> efgs = getMarkerRepository().getAllFluorescentEfgs();
+    public JsonResultResponse<FluorescentMarkerDTO> getFfgFluorescenceJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentMarkerDTO> response = new JsonResultResponse<>();
+        List<FluorescentMarkerDTO> efgs = getMarkerRepository().getAllFluorescentEfgs();
         if (efgs == null) {
             return response;
         }
@@ -1507,9 +1507,9 @@ public class MarkerService {
         return response;
     }
 
-    public JsonResultResponse<FluorescentMarker> getConstructFluorescenceJsonResultResponse(Pagination pagination) {
-        JsonResultResponse<FluorescentMarker> response = new JsonResultResponse<>();
-        List<FluorescentMarker> efgs = getMarkerRepository().getAllFluorescentConstructs();
+    public JsonResultResponse<FluorescentMarkerDTO> getConstructFluorescenceJsonResultResponse(Pagination pagination) {
+        JsonResultResponse<FluorescentMarkerDTO> response = new JsonResultResponse<>();
+        List<FluorescentMarkerDTO> efgs = getMarkerRepository().getAllFluorescentConstructs();
         if (efgs == null) {
             return response;
         }
