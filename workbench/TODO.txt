@@ -1,0 +1,15 @@
+REMOVE THIS workbench/ DIRECTORY BEFORE MERGING THE PR.
+
+This directory holds working notes for the ZFIN-10025 DANRE-mod unified GO load
+(planning, scratch analysis). It is scaffolding for development only and must NOT
+land on the main branch.
+
+Before merging:
+  git rm -r workbench/
+  git commit -m "Remove workbench scratch notes"
+
+Contents:
+  - danre-mod-unified-load-plan.md   (working plan + QC findings)
+  - progress-summary.md              (decisions made/remaining, phase status)
+  - goex-danre-mod-qc-2026-08-06.md  (QC of Pascale's replacement DANRE-mod file)
+  - goex-dbdiff-vs-july-2026-08-07.md (legacy-vs-new DB comparison, same method as 07-07 report)

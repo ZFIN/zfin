@@ -1,19 +1,8 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description>Import the GPAD file that comes from Noctua (GO) and contains Zebrafish-related annotations</description>
+  <description>ZFIN-10025: unified GO load. Imports GO Central's single MOD-ID-keyed DANRE-mod GPAD file (current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz), which is intended to replace the separate Load-GAF-GOA_m, Load-GPAD-Noctua_w, and Load-GAF-FP-Inference_m loads. Captures before/after marker_go_term_evidence snapshots and a DB-level diff for BOTH organizations the unified load owns (GOA and Noctua), so its per-org delta is directly comparable to the two legacy load jobs. NOTE: the load-gpad-danre-mod Ant target ships GAF_LOAD_REPORT_ONLY=true, so this currently writes nothing to the DB (before == after, empty diffs) and only produces the load QC report. At cutover, report-only comes off (and the legacy jobs are retired).</description>
   <keepDependencies>false</keepDependencies>
-    <properties>
-        <hudson.model.ParametersDefinitionProperty>
-            <parameterDefinitions>
-                <hudson.model.BooleanParameterDefinition>
-                    <name>SKIP_DOWNLOAD_IF_UNCHANGED</name>
-                    <description>This will skip the download and execution if the upstream file is unchanged from last run</description>
-                    <defaultValue>true</defaultValue>
-                </hudson.model.BooleanParameterDefinition>
-            </parameterDefinitions>
-        </hudson.model.ParametersDefinitionProperty>
-    </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -30,46 +19,48 @@
         <hudson.tasks.Shell>
             <command><![CDATA[
 set -e
-# Capture the BEFORE snapshot of Noctua marker_go_term_evidence (artifact).
-OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w
+# BEFORE snapshot of marker_go_term_evidence for each org the unified load owns.
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 mkdir -p "$OUT"
 PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
-$PSQL -v org=Noctua -v stage=tmp_gpad_mgoe_before -f $SQL/snapshot_mgte.sql
-$PSQL -c "\copy (SELECT * FROM tmp_gpad_mgoe_before ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_before.csv"
-echo "BEFORE snapshot rows: $(( $(wc -l < "$OUT/mgoe_before.csv") - 1 ))"
+for ORG in GOA Noctua; do
+  $PSQL -v org=$ORG -v stage=tmp_danre_mgoe_before_$ORG -f $SQL/snapshot_mgte.sql
+  $PSQL -c "\copy (SELECT * FROM tmp_danre_mgoe_before_$ORG ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_before_$ORG.csv"
+  echo "BEFORE $ORG rows: $(( $(wc -l < "$OUT/mgoe_before_$ORG.csv") - 1 ))"
+done
 ]]></command>
         </hudson.tasks.Shell>
         <hudson.tasks.Shell>
-            <!-- Need to use shell task to get unstable return code handling -->
-            <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
+            <!-- Shell task (not Ant task) so we can map exit code 2 to UNSTABLE. -->
+            <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-gpad-danre-mod -DjobName=Load-GPAD-DANRE-mod_m</command>
             <unstableReturn>2</unstableReturn>
         </hudson.tasks.Shell>
         <hudson.tasks.Shell>
             <command><![CDATA[
 set -e
-# Capture the AFTER snapshot (post-load) and produce the database-level diff.
-OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w
+# AFTER snapshot (post-load) + per-org database-level diff.
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
-$PSQL -v org=Noctua -v stage=tmp_gpad_mgoe_after -f $SQL/snapshot_mgte.sql
-$PSQL -c "\copy (SELECT * FROM tmp_gpad_mgoe_after ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_after.csv"
-$PSQL -c "DROP TABLE IF EXISTS tmp_gpad_mgoe_before, tmp_gpad_mgoe_after"
-
 cd $SOURCEROOT
-
-# Row-level (database) diff: key = every column except zdb_id, ignore zdb_id so a
-# row that only got a recycled id lands in updates_ignored rather than add+delete.
-# CSVDIFF_XLSX_ONLY -> single mgoe_dbdiff.xlsx workbook (deletes/adds/updated_1/
-# updated_2 sheets); the intermediate CSVs are removed.
+# CSVDIFF_XLSX_ONLY -> a single mgoe_dbdiff_<org>.xlsx workbook per org
+# (deletes/adds/updated_1/updated_2 sheets); intermediate CSVs removed.
 export CSVDIFF_XLSX_ONLY=true
-gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id,gene,go_id,go_term,go_aspect,relation_name"
+for ORG in GOA Noctua; do
+  $PSQL -v org=$ORG -v stage=tmp_danre_mgoe_after_$ORG -f $SQL/snapshot_mgte.sql
+  $PSQL -c "\copy (SELECT * FROM tmp_danre_mgoe_after_$ORG ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$OUT/mgoe_after_$ORG.csv"
+  $PSQL -c "DROP TABLE IF EXISTS tmp_danre_mgoe_before_$ORG, tmp_danre_mgoe_after_$ORG"
+  # key = every column except zdb_id; ignore zdb_id so a recycled id lands in
+  # updates_ignored rather than add+delete.
+  gradle csvDiff --args="$OUT/mgoe_dbdiff_$ORG $OUT/mgoe_before_$ORG.csv $OUT/mgoe_after_$ORG.csv marker,term,source,evidence,relation,created_by,contributed_by,protein_acc,inferred_from,annotation_extensions,noctua_model zdb_id,gene,go_id,go_term,go_aspect,relation_name"
+done
 ]]></command>
         </hudson.tasks.Shell>
     </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/mgoe_*.csv,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/mgoe_*.xlsx</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/Load-GPAD-DANRE-mod*,server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/mgoe_*.csv,server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/mgoe_*.xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
@@ -80,9 +71,9 @@ gradle csvDiff --args="$OUT/mgoe_dbdiff $OUT/mgoe_before.csv $OUT/mgoe_after.csv
           <email>
             <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua_w_summary.txt&quot;}
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/Load-GPAD-DANRE-mod_m_summary.txt&quot;}
 
-See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua_w_details.txt</body>
+See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/Load-GPAD-DANRE-mod_m_details.txt</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
@@ -98,7 +89,7 @@ See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load
           <email>
             <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
             <subject>$PROJECT_DEFAULT_SUBJECT</subject>
-            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua_w_errors.txt&quot;}</body>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-DANRE-mod_m/Load-GPAD-DANRE-mod_m_errors.txt&quot;}</body>
             <sendToDevelopers>false</sendToDevelopers>
             <sendToRequester>false</sendToRequester>
             <includeCulprits>false</includeCulprits>
