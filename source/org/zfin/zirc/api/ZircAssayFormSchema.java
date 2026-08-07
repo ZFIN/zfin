@@ -153,16 +153,16 @@ public final class ZircAssayFormSchema {
         // including the placement of the attachment buckets (e.g. SSLP
         // shows the gel-image upload right after the primers, before the
         // SSLP-specific fields).
-        Options actgnHelp = Options.of().helpText("ACTGN only.");
+        Options actgnHelp = Options.of().withHelpText("ACTGN only.");
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/assayType",
                                 Options.of()
-                                        .widget("selectWithOther")
-                                        .standardValues(ASSAY_TYPES)
-                                        .standardLabels(ASSAY_TYPE_LABELS)
-                                        .noOther(true)
-                                        .refreshesParent(true),
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(ASSAY_TYPES)
+                                        .withStandardLabels(ASSAY_TYPE_LABELS)
+                                        .withNoOther(true)
+                                        .withRefreshesParent(true),
                                 null)
                 )),
                 // Forward / Reverse primer — shown for the six types that
@@ -196,21 +196,21 @@ public final class ZircAssayFormSchema {
                 )),
                 groupRevealedFor(KASP_TYPES, List.of(
                         new Control("#/properties/kaspGenomicSequence",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 )),
                 // RFLP + dCAPS digest block — same fields for both types.
                 groupRevealedFor(DIGEST_TYPES, List.of(
                         new Control("#/properties/restrictionEnzymeName",
-                                Options.of().placeholder("e.g. BsmBI"), null),
+                                Options.of().withPlaceholder("e.g. BsmBI"), null),
                         new Control("#/properties/restrictionEnzymeCatalog",
                                 Options.of()
-                                        .placeholder("vendor + cat #")
-                                        .infoHref("https://international.neb.com/"),
+                                        .withPlaceholder("vendor + cat #")
+                                        .withInfoHref("https://international.neb.com/"),
                                 null),
                         new Control("#/properties/enzymeCleavesWt",
-                                Options.of().widget("checkbox"), null),
+                                Options.of().withWidget("checkbox"), null),
                         new Control("#/properties/enzymeCleavesMut",
-                                Options.of().widget("checkbox"), null),
+                                Options.of().withWidget("checkbox"), null),
                         Control.of("#/properties/expectedWtDigest"),
                         Control.of("#/properties/expectedMutDigest")
                 )),
@@ -226,7 +226,7 @@ public final class ZircAssayFormSchema {
                 // metadata fields all live here.
                 groupRevealedFor(SSLP_TYPES, List.of(
                         new Control("#/properties/sslpMarkerName",
-                                Options.of().placeholder("Search ZFIN SSLP markers…"), null),
+                                Options.of().withPlaceholder("Search ZFIN SSLP markers…"), null),
                         Control.of("#/properties/sslpDistance"),
                         Control.of("#/properties/sslpGenomicLocation"),
                         Control.of("#/properties/sslpInducedBackground"),
@@ -237,7 +237,7 @@ public final class ZircAssayFormSchema {
                 // Additional info — last row in every variant.
                 Group.of(null, List.of(
                         new Control("#/properties/additionalInfo",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 ))
         ));
     }
@@ -252,11 +252,11 @@ public final class ZircAssayFormSchema {
         return new Group(null,
                 List.of(new Control("#/properties/attachments",
                         Options.of()
-                                .widget("attachmentsList")
-                                .managesOwnPersistence(true)
-                                .label(label),
+                                .withWidget("attachmentsList")
+                                .withManagesOwnPersistence(true)
+                                .withLabel(label),
                         null)),
-                Options.of().layout("plain"),
+                Options.of().withLayout("plain"),
                 Rule.showWhenIn("#/properties/assayType", assayTypes));
     }
 
