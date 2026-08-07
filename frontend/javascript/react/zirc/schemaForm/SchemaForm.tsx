@@ -56,10 +56,10 @@ type Props = {
 
 const AUTOSAVE_DEBOUNCE_MS = 800;
 
-// Exported so nested schema-driven views (e.g. per-mutation cards inside
-// MutationsListRenderer) can reuse the same renderer registry — the schema
-// is the single source of truth for both top-level and per-aggregate forms.
-export const renderers = [
+// Submission-level registry. Exported so widgetRegistry.test.ts can assert
+// every widget the submission uiSchema declares is reachable here — this is
+// the one form whose renderer set is not shared with any other page.
+export const submissionRenderers = [
     verticalLayoutRendererEntry,
     sectionRendererEntry,
     rowControlRendererEntry,
@@ -270,7 +270,7 @@ export function SchemaForm({
                 schema={schemaResponse.schema}
                 uischema={schemaResponse.uiSchema}
                 data={formData}
-                renderers={renderers}
+                renderers={submissionRenderers}
                 cells={[]}
                 readonly={readonly}
                 config={{

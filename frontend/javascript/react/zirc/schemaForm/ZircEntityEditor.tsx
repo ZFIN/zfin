@@ -5,7 +5,7 @@ import { FormFor } from '../api/formHelpers';
 import { useAutosavedSchemaForm } from './useAutosavedSchemaForm';
 import { SaveStatusBadge } from '../components/SaveStatusBadge';
 import { AGGREGATES, AggregateKind } from './aggregateRegistry';
-import { fieldRenderers } from './aggregateRenderers';
+import { fieldRenderers } from './fieldRenderers';
 
 /**
  * One schema-driven editor for any per-mutation aggregate (assay, gene,
