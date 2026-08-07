@@ -108,6 +108,60 @@ describe('lesion conditional reveals', () => {
         h.cleanupFetch();
     });
 
+    it('asks an indel about mutagenesis but not about a construct', async () => {
+        // ZFIN-10403's mockup carries the CRISPR/TALEN question over to indel
+        // and stops there, which is why the two questions have separate type
+        // lists rather than one shared one.
+        const h = lesionForm({ lesionType: 'indel' });
+        await waitFor(() => {
+            assert.ok(screen.getByText(/Is the insertion a consequence of mutagenesis/));
+        });
+        assert.equal(
+            screen.queryByText(/Is the insertion due to insertion of construct/), null);
+        h.cleanupFetch();
+    });
+
+    it('names the deleted-sequence size per lesion type', async () => {
+        // Same property and same server-side derivation; only the label
+        // differs. On an indel it sits opposite an insertion size, where
+        // "Lesion size" would be ambiguous.
+        const indel = lesionForm({ lesionType: 'indel' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Deletion size (bp)'));
+        });
+        assert.ok(screen.getByLabelText('Insertion size (bp)'));
+        assert.equal(screen.queryByLabelText('Lesion size (bp)'), null);
+        indel.cleanupFetch();
+        cleanup();
+
+        const deletion = lesionForm({ lesionType: 'deletion' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Lesion size (bp)'));
+        });
+        assert.equal(screen.queryByLabelText('Deletion size (bp)'), null);
+        deletion.cleanupFetch();
+    });
+
+    it('constrains every sequence field on an indel to bases', async () => {
+        // "Validate the sequence input is DNA" (ZFIN-10403). The nucleotide
+        // widget announces its alphabet when empty, so its presence on a
+        // field is observable.
+        const h = lesionForm({ lesionType: 'indel' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Deleted sequence'));
+        });
+        for (const field of ['Deleted sequence', 'Inserted sequence',
+            '5′ flanking sequence', '3′ flanking sequence']) {
+            const input = screen.getByLabelText(field);
+            assert.equal(input.tagName, 'TEXTAREA', `${field} should be a sequence box`);
+        }
+        // One alphabet hint per constrained sequence field on this lesion
+        // type. Matched loosely because the flanking fields append their own
+        // help text to the same node.
+        assert.equal(screen.getAllByText(/A \/ C \/ G \/ T \/ N only/).length, 4);
+        h.cleanupFetch();
+    });
+
     it('shows transcript consequences regardless of lesion type', async () => {
         // ZFIN-10399 applies to every type, so it carries no reveal rule.
         for (const lesionType of ['insertion', 'deletion', 'point_mutation', 'transgene']) {

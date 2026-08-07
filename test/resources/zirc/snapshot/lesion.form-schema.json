@@ -161,7 +161,7 @@
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "insertion" ]
+            "enum" : [ "insertion", "indel" ]
           },
           "scope" : "#/properties/lesionType"
         },
@@ -188,7 +188,7 @@
         "condition" : {
           "conditions" : [ {
             "schema" : {
-              "enum" : [ "insertion" ]
+              "enum" : [ "insertion", "indel" ]
             },
             "scope" : "#/properties/lesionType"
           }, {
@@ -249,7 +249,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/deletedSequence",
         "type" : "Control"
@@ -277,7 +278,7 @@
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "deletion", "indel" ]
+            "enum" : [ "deletion" ]
           },
           "scope" : "#/properties/lesionType"
         },
@@ -287,7 +288,29 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true
+          "label" : "Deletion size (bp)",
+          "sourceField" : "deletedSequence",
+          "suffix" : "bp",
+          "widget" : "autoSize"
+        },
+        "scope" : "#/properties/lesionSizeBp",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/insertedSequence",
         "type" : "Control"
@@ -325,7 +348,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/transgeneSequence",
         "type" : "Control"
@@ -351,7 +375,8 @@
         "options" : {
           "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/fivePrimeFlank",
         "type" : "Control"
@@ -359,7 +384,8 @@
         "options" : {
           "helpText" : "At least 20 nt directly following the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/threePrimeFlank",
         "type" : "Control"

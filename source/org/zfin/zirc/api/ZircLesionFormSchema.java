@@ -88,7 +88,7 @@ public final class ZircLesionFormSchema {
     // together: ZFIN-10403's mockup shows indel asking about mutagenesis but
     // not about a construct.
     private static final List<String> MUTAGENESIS_ORIGIN_TYPES =
-            List.of("insertion");
+            List.of("insertion", "indel");
     private static final List<String> CONSTRUCT_ORIGIN_TYPES =
             List.of("insertion");
 
@@ -213,19 +213,33 @@ public final class ZircLesionFormSchema {
                 // (auto, read-only) lesion size.
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/deletedSequence",
-                                Options.of().withMulti(true), null)
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence"), null)
                 )),
-                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
+                groupRevealedFor(List.of("deletion"), List.of(
                         new Control("#/properties/lesionSizeBp",
                                 Options.of().withWidget("autoSize")
                                         .withSourceField("deletedSequence").withSuffix("bp"),
+                                null)
+                )),
+                // ZFIN-10403: on an indel this same column measures only the
+                // deleted part and sits opposite an insertion size, so the
+                // generic "Lesion size" name is ambiguous. Same property and
+                // same server-side derivation — a label override, not a new
+                // field.
+                groupRevealedFor(List.of("indel"), List.of(
+                        new Control("#/properties/lesionSizeBp",
+                                Options.of().withWidget("autoSize")
+                                        .withSourceField("deletedSequence").withSuffix("bp")
+                                        .withLabel("Deletion size (bp)"),
                                 null)
                 )),
                 // Insertion / indel: inserted sequence, then its length as the
                 // (auto, read-only) insertion size.
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
-                                Options.of().withMulti(true), null)
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence"), null)
                 )),
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertionSizeBp",
@@ -235,19 +249,22 @@ public final class ZircLesionFormSchema {
                 )),
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
-                                Options.of().withMulti(true), null),
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence"), null),
                         new Control("#/properties/hasLargeVariant",
                                 Options.of().withWidget("yesNoRadio"), null)
                 )),
                 groupRevealedFor(LOCATION_TYPES, List.of(
                         new Control("#/properties/fivePrimeFlank",
                                 Options.of()
+                                        .withWidget("nucleotideSequence")
                                         .withHelpText("At least 20 nt directly preceding the lesion / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null),
                         new Control("#/properties/threePrimeFlank",
                                 Options.of()
+                                        .withWidget("nucleotideSequence")
                                         .withHelpText("At least 20 nt directly following the lesion / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
@@ -301,11 +318,11 @@ public final class ZircLesionFormSchema {
             field("/lesionType",            Lesion::getLesionType,             (l, v) -> l.setLesionType(text(v))),
             field("/additionalInfo",        Lesion::getAdditionalInfo,         (l, v) -> l.setAdditionalInfo(text(v))),
             field("/nucleotideChange",      Lesion::getNucleotideChange,       (l, v) -> l.setNucleotideChange(text(v))),
-            field("/deletedSequence",       Lesion::getDeletedSequence,        (l, v) -> l.setDeletedSequence(text(v))),
-            field("/insertedSequence",      Lesion::getInsertedSequence,       (l, v) -> l.setInsertedSequence(text(v))),
-            field("/transgeneSequence",     Lesion::getTransgeneSequence,      (l, v) -> l.setTransgeneSequence(text(v))),
-            field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(text(v))),
-            field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(text(v))),
+            field("/deletedSequence",       Lesion::getDeletedSequence,        (l, v) -> l.setDeletedSequence(nucleotides(v))),
+            field("/insertedSequence",      Lesion::getInsertedSequence,       (l, v) -> l.setInsertedSequence(nucleotides(v))),
+            field("/transgeneSequence",     Lesion::getTransgeneSequence,      (l, v) -> l.setTransgeneSequence(nucleotides(v))),
+            field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(nucleotides(v))),
+            field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(nucleotides(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
             field("/insertionFromMutagenesis", Lesion::getInsertionFromMutagenesis, (l, v) -> l.setInsertionFromMutagenesis(boolNullable(v))),
             field("/insertionFromConstruct", Lesion::getInsertionFromConstruct, (l, v) -> l.setInsertionFromConstruct(boolNullable(v))),
