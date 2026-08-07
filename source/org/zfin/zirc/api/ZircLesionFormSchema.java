@@ -84,9 +84,18 @@ public final class ZircLesionFormSchema {
             List.of("point_mutation", "deletion", "insertion", "indel", "transgene");
     private static final List<String> PROTEIN_TYPES =
             List.of("point_mutation");
+    // ZFIN-10400. Separate lists because the two questions do not travel
+    // together: ZFIN-10403's mockup shows indel asking about mutagenesis but
+    // not about a construct.
+    private static final List<String> MUTAGENESIS_ORIGIN_TYPES =
+            List.of("insertion");
+    private static final List<String> CONSTRUCT_ORIGIN_TYPES =
+            List.of("insertion");
+
+    /** Bases accepted in sequence fields; matches DEFAULT_ALPHABET client-side. */
+    private static final String NUCLEOTIDE_ALPHABET = "ACGTN";
 
     // The twelve possible single-nucleotide substitutions, offered as a
-    // closed dropdown for point mutations (was free text). Token == label.
     private static final List<String> NUCLEOTIDE_CHANGES = List.of(
             "A>T", "A>C", "A>G",
             "T>A", "T>C", "T>G",
@@ -110,6 +119,14 @@ public final class ZircLesionFormSchema {
         properties.put("fivePrimeFlank",        StringSchema.of("5′ flanking sequence", 5000));
         properties.put("threePrimeFlank",       StringSchema.of("3′ flanking sequence", 5000));
         properties.put("hasLargeVariant",       BooleanSchema.nullable("Has large variant"));
+        // Insertion origin (ZFIN-10400)
+        properties.put("insertionFromMutagenesis", BooleanSchema.nullable(
+                "Is the insertion a consequence of mutagenesis (CRISPR or TALEN)?"));
+        properties.put("insertionFromConstruct",   BooleanSchema.nullable(
+                "Is the insertion due to insertion of construct or other species DNA?"));
+        properties.put("crisprSequence",         StringSchema.of("CRISPR sequence", 5000));
+        properties.put("talenSequence",          StringSchema.of("TALEN sequence", 5000));
+        properties.put("constructName",          StringSchema.of("Construct name", 255));
         // Protein-level
         properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
@@ -153,6 +170,45 @@ public final class ZircLesionFormSchema {
                                 Options.of().withWidget("autoSize").withConstantValue(1).withSuffix("bp"),
                                 null)
                 )),
+                // ZFIN-10400 — where the insertion came from. Placed here so it
+                // falls after the lesion-type picker and before the inserted
+                // sequence box, as the ticket specifies.
+                //
+                // The follow-up fields are gated on BOTH the lesion type and
+                // the answer. A rule on the boolean alone would leak: the flag
+                // survives a later change of lesion type, so a CRISPR box
+                // would reappear under, say, deletion. See Rule#showWhenAll
+                // for why this is an AND condition rather than nested Groups.
+                groupRevealedFor(MUTAGENESIS_ORIGIN_TYPES, List.of(
+                        new Control("#/properties/insertionFromMutagenesis",
+                                Options.of().withWidget("yesNoRadio"), null)
+                )),
+                new Group(null, List.of(
+                        new Control("#/properties/crisprSequence",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withMulti(true),
+                                null),
+                        new Control("#/properties/talenSequence",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withMulti(true),
+                                null)
+                        ), null,
+                        Rule.showWhenAll(
+                                Rule.in("#/properties/lesionType", MUTAGENESIS_ORIGIN_TYPES),
+                                Rule.isTrue("#/properties/insertionFromMutagenesis"))),
+                groupRevealedFor(CONSTRUCT_ORIGIN_TYPES, List.of(
+                        new Control("#/properties/insertionFromConstruct",
+                                Options.of().withWidget("yesNoRadio"), null)
+                )),
+                new Group(null, List.of(
+                        new Control("#/properties/constructName",
+                                Options.of().withPlaceholder("e.g. Tg(fli1a:EGFP)"), null)
+                        ), null,
+                        Rule.showWhenAll(
+                                Rule.in("#/properties/lesionType", CONSTRUCT_ORIGIN_TYPES),
+                                Rule.isTrue("#/properties/insertionFromConstruct"))),
                 // Deletion / indel: deleted sequence, then its length as the
                 // (auto, read-only) lesion size.
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
@@ -251,6 +307,11 @@ public final class ZircLesionFormSchema {
             field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(text(v))),
             field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(text(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
+            field("/insertionFromMutagenesis", Lesion::getInsertionFromMutagenesis, (l, v) -> l.setInsertionFromMutagenesis(boolNullable(v))),
+            field("/insertionFromConstruct", Lesion::getInsertionFromConstruct, (l, v) -> l.setInsertionFromConstruct(boolNullable(v))),
+            field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
+            field("/talenSequence",         Lesion::getTalenSequence,          (l, v) -> l.setTalenSequence(nucleotides(v))),
+            field("/constructName",         Lesion::getConstructName,          (l, v) -> l.setConstructName(text(v))),
             field("/mutatedAminoAcids",     Lesion::getMutatedAminoAcids,      (l, v) -> l.setMutatedAminoAcids(text(v))),
             field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
             field("/transcriptConsequences",
@@ -289,6 +350,26 @@ public final class ZircLesionFormSchema {
             }
         }
         return out.toArray(new String[0]);
+    }
+
+    /**
+     * Sequence fields: uppercase and drop anything that is not a base.
+     *
+     * The nucleotideSequence widget applies the same rule as the curator
+     * types, but a PATCH can be made directly against the field path, so the
+     * constraint has to live here too or it is decorative. Kept deliberately
+     * simple — it mirrors normalizeSequence in nucleotides.ts, minus the
+     * FASTA-header handling, which is a paste affordance rather than part of
+     * what the column is allowed to hold.
+     */
+    private static String nucleotides(JsonNode v) {
+        String s = text(v);
+        if (s == null) {return null;}
+        StringBuilder out = new StringBuilder(s.length());
+        for (char c : s.toUpperCase().toCharArray()) {
+            if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
+        }
+        return out.isEmpty() ? null : out.toString();
     }
 
     private static Boolean boolNullable(JsonNode v) {

@@ -32,6 +32,12 @@ public record LesionDTO(
         String fivePrimeFlank,
         String threePrimeFlank,
         Boolean hasLargeVariant,
+        // Insertion origin (ZFIN-10400)
+        Boolean insertionFromMutagenesis,
+        Boolean insertionFromConstruct,
+        String crisprSequence,
+        String talenSequence,
+        String constructName,
         // Protein-level
         String mutatedAminoAcids,
         String mutatedAminoAcidsHgvs,
@@ -56,6 +62,11 @@ public record LesionDTO(
                 l.getFivePrimeFlank(),
                 l.getThreePrimeFlank(),
                 l.getHasLargeVariant(),
+                l.getInsertionFromMutagenesis(),
+                l.getInsertionFromConstruct(),
+                l.getCrisprSequence(),
+                l.getTalenSequence(),
+                l.getConstructName(),
                 l.getMutatedAminoAcids(),
                 l.getMutatedAminoAcidsHgvs(),
                 l.getTranscriptConsequences() == null

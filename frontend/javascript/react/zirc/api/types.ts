@@ -86,6 +86,11 @@ export interface LesionDTO {
     fivePrimeFlank: string | null;
     threePrimeFlank: string | null;
     hasLargeVariant: boolean | null;
+    insertionFromMutagenesis: boolean | null;
+    insertionFromConstruct: boolean | null;
+    crisprSequence: string | null;
+    talenSequence: string | null;
+    constructName: string | null;
     mutatedAminoAcids: string | null;
     mutatedAminoAcidsHgvs: string | null;
     transcriptConsequences: string[];

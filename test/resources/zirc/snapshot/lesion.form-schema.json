@@ -6,6 +6,16 @@
         "title" : "Additional Info",
         "type" : [ "string", "null" ]
       },
+      "constructName" : {
+        "maxLength" : 255,
+        "title" : "Construct name",
+        "type" : [ "string", "null" ]
+      },
+      "crisprSequence" : {
+        "maxLength" : 5000,
+        "title" : "CRISPR sequence",
+        "type" : [ "string", "null" ]
+      },
       "deletedSequence" : {
         "maxLength" : 5000,
         "title" : "Deleted sequence",
@@ -24,6 +34,14 @@
         "maxLength" : 5000,
         "title" : "Inserted sequence",
         "type" : [ "string", "null" ]
+      },
+      "insertionFromConstruct" : {
+        "title" : "Is the insertion due to insertion of construct or other species DNA?",
+        "type" : [ "boolean", "null" ]
+      },
+      "insertionFromMutagenesis" : {
+        "title" : "Is the insertion a consequence of mutagenesis (CRISPR or TALEN)?",
+        "type" : [ "boolean", "null" ]
       },
       "insertionSizeBp" : {
         "title" : "Insertion size (bp)",
@@ -51,6 +69,11 @@
       "nucleotideChange" : {
         "maxLength" : 2000,
         "title" : "Nucleotide change",
+        "type" : [ "string", "null" ]
+      },
+      "talenSequence" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence",
         "type" : [ "string", "null" ]
       },
       "threePrimeFlank" : {
@@ -123,6 +146,102 @@
             "enum" : [ "point_mutation" ]
           },
           "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/insertionFromMutagenesis",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/crisprSequence",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/talenSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/insertionFromMutagenesis"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/insertionFromConstruct",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. Tg(fli1a:EGFP)"
+        },
+        "scope" : "#/properties/constructName",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/insertionFromConstruct"
+          } ],
+          "type" : "AND"
         },
         "effect" : "SHOW"
       },

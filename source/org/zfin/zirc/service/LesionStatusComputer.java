@@ -35,6 +35,11 @@ public final class LesionStatusComputer {
         FIVE_PRIME_FLANK         ("fivePrimeFlank"),
         THREE_PRIME_FLANK        ("threePrimeFlank"),
         HAS_LARGE_VARIANT        ("hasLargeVariant"),
+        INSERTION_FROM_MUTAGENESIS ("insertionFromMutagenesis"),
+        INSERTION_FROM_CONSTRUCT ("insertionFromConstruct"),
+        CRISPR_SEQUENCE          ("crisprSequence"),
+        TALEN_SEQUENCE           ("talenSequence"),
+        CONSTRUCT_NAME           ("constructName"),
         MUTATED_AMINO_ACIDS      ("mutatedAminoAcids"),
         MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs"),
         TRANSCRIPT_CONSEQUENCES  ("transcriptConsequences"),
@@ -62,10 +67,54 @@ public final class LesionStatusComputer {
         return out;
     }
 
+    /**
+     * Fields that are required as a <em>group</em> rather than individually:
+     * at least one must be answered, and until one is, every member shows
+     * MISSING.
+     *
+     * <p>ZFIN-10400 asks for exactly this on the two insertion-origin
+     * questions. It cannot come from {@link ZircLesionFormSchema#schema()}'s
+     * {@code required} list, which can only express per-field requirements.
+     *
+     * <p>Deliberately a visual indicator only — nothing blocks a save. The
+     * ticket defers real submission validation, and asks for a marker that
+     * the eventual validation work has something concrete to replace.
+     */
+    private record RequiredGroup(List<String> paths, List<String> lesionTypes) {}
+
+    private static final List<RequiredGroup> REQUIRED_GROUPS = List.of(
+            new RequiredGroup(
+                    List.of("insertionFromMutagenesis", "insertionFromConstruct"),
+                    List.of("insertion")));
+
     private static FieldStatus statusFor(Lesion lz, String path) {
         Object value = readProperty(lz, path);
         if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
+        if (isEmpty(value) && groupUnanswered(lz, path)) return FieldStatus.MISSING;
         return FieldStatus.COMPLETE;
+    }
+
+    /**
+     * True when {@code path} belongs to a required group that applies to this
+     * lesion's type and no member of that group has been answered yet.
+     *
+     * <p>Gated on lesion type so the badge doesn't appear on a deletion, where
+     * the questions are not even rendered.
+     */
+    private static boolean groupUnanswered(Lesion lz, String path) {
+        // A lesion is created with no type — that is the state every one of
+        // them starts in — and List.of(...).contains(null) throws rather than
+        // returning false, so this must short-circuit before the lookup.
+        String type = lz.getLesionType();
+        if (type == null) return false;
+        for (RequiredGroup g : REQUIRED_GROUPS) {
+            if (!g.paths().contains(path)) continue;
+            if (!g.lesionTypes().contains(type)) continue;
+            boolean anyAnswered = g.paths().stream()
+                    .anyMatch(p -> !isEmpty(readProperty(lz, p)));
+            if (!anyAnswered) return true;
+        }
+        return false;
     }
 
     private LesionStatusComputer() {}

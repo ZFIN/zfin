@@ -77,6 +77,24 @@ public class Lesion implements Serializable {
     @Column(name = "l_has_large_variant")
     private Boolean hasLargeVariant;
 
+    // ZFIN-10400 — where an insertion came from. Nullable three-state:
+    // null is "unanswered", which the status computer treats differently
+    // from an explicit false.
+    @Column(name = "l_insertion_from_mutagenesis")
+    private Boolean insertionFromMutagenesis;
+
+    @Column(name = "l_insertion_from_construct")
+    private Boolean insertionFromConstruct;
+
+    @Column(name = "l_crispr_sequence")
+    private String crisprSequence;
+
+    @Column(name = "l_talen_sequence")
+    private String talenSequence;
+
+    @Column(name = "l_construct_name")
+    private String constructName;
+
     @Column(name = "l_mutated_amino_acids")
     private String mutatedAminoAcids;
 
