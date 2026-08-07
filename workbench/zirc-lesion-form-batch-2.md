@@ -462,7 +462,7 @@ becomes derived) belongs there too.
 | Invalid characters | Strip silently, count what remains. Matches how `AutoSizeRenderer` already counts (tallies `[A-Za-z]` only). |
 | Multi-value storage | `text[]` of mdcv term ZDB IDs. |
 | Amino acid change wiring | Bound to the "from" field writing named siblings, not a nested object scope (revised during Phase 0 — nesting would put `from`/`to`/`position` into `LesionDTO` as bare component names). |
-| Position input | Single start value, not a range. The ZFIN-10379 screenshot shows two boxes with a dash, but that is the curation UI; the ticket says "position input box" singular. Widening to a range later is cheap. |
+| Position input | **Start–end range** (revised). The ticket text says "position input box" singular but its screenshot shows a start–end pair, and the ticket asks for something "similar to the curation interface". End is nullable, so a single-residue change is a start with an empty end — which satisfies the literal reading too. A single value could not express an in-frame deletion spanning residues without falling back to free text. Settled before ZFIN-10379 so `l_aa_position_end` lands in the same migration. |
 | Amino acid change cardinality | One per lesion, not repeatable. Only the consequence lists are explicitly multi-valued (ZFIN-10380, ZFIN-10399). |
 | Construct question scope | Insertion only. The ZFIN-10403 mockup shows only the CRISPR/TALEN question for indel. |
 | Two-column layout | Not adopted; keeping the stacked rows from ZFIN-10374–10378. |
@@ -471,8 +471,8 @@ becomes derived) belongs there too.
 
 - SO terms for `c-terminal peptide truncation` and `n-terminal peptide
   truncation` (blocks the remainder of ZFIN-10380).
-- Confirm with curators that a single position value is enough for the
-  amino acid change, or whether the start–end range in the curation UI is
-  meaningful here.
+- The curation screenshot also shows two small boxes labelled `aa` (counts
+  of residues removed / added). The ticket does not mention them and they
+  are not being reproduced.
 - Decide whether the ZFIN-10403 two-column layout is wanted as real
   scope.
