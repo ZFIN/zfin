@@ -307,7 +307,23 @@ cryptic splice site, cryptic donor splice site,
 cryptic acceptor splice site, intron gain, exon loss, nonsynonymous
 ```
 
-### ZFIN-10400 — insertion-type questions
+### ZFIN-10400 — insertion-type questions ✅
+
+Done in `bbe78a4817`. Two notes that change the plan for ZFIN-10403:
+
+- **Nested ruled Groups do not work.** `SectionRenderer` wraps each Group's
+  children in a `<table><tbody>`, so a Group inside a Group puts a
+  `<section>` inside a `<tbody>`. AND-ing two conditions uses JSON Forms'
+  `{type: "AND", conditions: [...]}` instead, via `Rule.showWhenAll`. The
+  plan's "AND-ing by nesting" line was wrong.
+- The mutagenesis and construct questions have **separate type lists**
+  (`MUTAGENESIS_ORIGIN_TYPES`, `CONSTRUCT_ORIGIN_TYPES`), so ZFIN-10403 adds
+  `"indel"` to the first one only.
+
+The server-side `nucleotides()` normalization that Phase 0 left open also
+landed here, applied to the two new sequence fields; ZFIN-10403 extends it
+to the existing ones.
+
 
 - **Columns:** `l_insertion_from_mutagenesis`, `l_insertion_from_construct`
   (both nullable boolean), `l_crispr_sequence`, `l_talen_sequence`,
