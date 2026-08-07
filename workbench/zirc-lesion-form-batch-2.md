@@ -374,13 +374,24 @@ ZFIN-10374–10378 deliberately shipped. Treating the mockup's columns as
 illustrative and keeping stacked rows, unless the layout rework is
 wanted as real scope.
 
-### ZFIN-10379 — mutated amino acids pick list
+### ZFIN-10379 — mutated amino acids pick list ✅
+
+Done in `104d85af6f`.
+
+**Deliberately not done: deriving HGVS.** The plan proposed generating
+`p.Gly12Val` from the three picks and making `mutatedAminoAcidsHgvs`
+read-only. Dropped on reflection — that syntax is only correct for a simple
+substitution (a range implies deletion/insertion syntax instead), and
+emitting subtly wrong nomenclature is worse than emitting none, since
+curators rely on it being standard. Making the field read-only would also
+remove the only place a complex change can be recorded. The ticket does not
+ask for it; the field stays editable free text alongside the new control.
+
 
 - **Columns:** `l_aa_change_from`, `l_aa_change_to`,
-  `l_aa_position_start`.
+  `l_aa_position_start`, `l_aa_position_end` (end nullable).
 - **UI:** the `aminoAcidChange` composite replaces the
-  `mutatedAminoAcids` free-text control. `mutatedAminoAcidsHgvs` becomes
-  derived and read-only.
+  `mutatedAminoAcids` free-text control.
 - **Legacy data:** the old free-text `l_mutated_amino_acids` column stays
   in place, unread by the form — the same treatment `locationInline`
   already has in the invariants-test whitelist.
