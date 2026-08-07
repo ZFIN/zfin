@@ -37,6 +37,7 @@ public final class LesionStatusComputer {
         HAS_LARGE_VARIANT        ("hasLargeVariant"),
         MUTATED_AMINO_ACIDS      ("mutatedAminoAcids"),
         MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs"),
+        TRANSCRIPT_CONSEQUENCES  ("transcriptConsequences"),
         ADDITIONAL_INFO          ("additionalInfo");
 
         private final String path;

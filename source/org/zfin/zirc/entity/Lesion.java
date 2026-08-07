@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -80,6 +82,17 @@ public class Lesion implements Serializable {
 
     @Column(name = "l_mutated_amino_acids_hgvs")
     private String mutatedAminoAcidsHgvs;
+
+    /**
+     * Controlled-vocabulary term ZDB IDs from
+     * {@code transcript_consequence_term} (ZFIN-10399). Ids rather than
+     * display names so a term rename cannot orphan stored data; see
+     * {@code ZircVocabularyService}. Empty array, never null, matching
+     * {@code LineSubmission.previousNames}.
+     */
+    @Column(name = "l_transcript_consequences", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] transcriptConsequences = new String[0];
 
     @Column(name = "l_additional_info")
     private String additionalInfo;

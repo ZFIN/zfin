@@ -2,6 +2,7 @@ package org.zfin.zirc.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.zfin.zirc.api.jsonschema.ArraySchema;
 import org.zfin.zirc.api.jsonschema.BooleanSchema;
 import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
@@ -15,6 +16,7 @@ import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Lesion;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,6 +113,11 @@ public final class ZircLesionFormSchema {
         // Protein-level
         properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
+        // Transcript-level (ZFIN-10399): mdcv term ZDB IDs, any lesion type.
+        properties.put("transcriptConsequences", new ArraySchema(
+                "Transcript consequences",
+                new StringSchema(null, null, null, null, null),
+                null, null));
         return ObjectSchema.of(null, properties, List.of("lesionType"));
     }
 
@@ -196,6 +203,21 @@ public final class ZircLesionFormSchema {
                         new Control("#/properties/mutatedAminoAcidsHgvs",
                                 Options.of().withPlaceholder("HGVS protein notation"), null)
                 )),
+                // Transcript consequences (ZFIN-10399) apply to every lesion
+                // type, so this group carries no reveal rule. It is placed
+                // after the location group, which is where the 3' flanking
+                // sequence lives — the ticket asks for the pick list to follow
+                // that box. Unlike the curation interface's version there are
+                // no exon / intron inputs.
+                Group.of(null, List.of(
+                        new Control("#/properties/transcriptConsequences",
+                                Options.of()
+                                        .withWidget("vocabularyMultiSelect")
+                                        .withVocabulary("transcript_consequence_term")
+                                        .withAddLabel("+ Add consequence")
+                                        .withHelpText("Add one entry per consequence."),
+                                null)
+                )),
                 // Always-visible, and kept last so it sits below every
                 // per-type field cluster regardless of the lesion type.
                 Group.of(null, List.of(
@@ -230,7 +252,11 @@ public final class ZircLesionFormSchema {
             field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(text(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
             field("/mutatedAminoAcids",     Lesion::getMutatedAminoAcids,      (l, v) -> l.setMutatedAminoAcids(text(v))),
-            field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v)))
+            field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
+            field("/transcriptConsequences",
+                    l -> l.getTranscriptConsequences() == null
+                            ? new String[0] : l.getTranscriptConsequences(),
+                    (l, v) -> l.setTranscriptConsequences(stringArray(v)))
     );
 
     private static Map.Entry<String, FieldDescriptor> field(
@@ -246,6 +272,23 @@ public final class ZircLesionFormSchema {
         if (v == null || v.isNull()) {return null;}
         String s = v.asText();
         return s.isBlank() ? null : s.trim();
+    }
+
+    /**
+     * JSON array to a trimmed String[] with blanks dropped. Same contract as
+     * {@code ZircFormSchema.stringArray} — the array widgets can pass empty
+     * strings through mid-edit and those should not reach the column.
+     */
+    private static String[] stringArray(JsonNode v) {
+        if (v == null || v.isNull() || !v.isArray()) {return new String[0];}
+        List<String> out = new ArrayList<>(v.size());
+        for (int i = 0; i < v.size(); i++) {
+            String s = v.get(i).asText();
+            if (s != null && !s.isBlank()) {
+                out.add(s.trim());
+            }
+        }
+        return out.toArray(new String[0]);
     }
 
     private static Boolean boolNullable(JsonNode v) {

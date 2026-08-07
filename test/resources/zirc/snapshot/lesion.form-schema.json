@@ -58,6 +58,13 @@
         "title" : "3′ flanking sequence",
         "type" : [ "string", "null" ]
       },
+      "transcriptConsequences" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Transcript consequences",
+        "type" : "array"
+      },
       "transgeneSequence" : {
         "maxLength" : 5000,
         "title" : "Transgene sequence",
@@ -271,6 +278,18 @@
         },
         "effect" : "SHOW"
       },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "addLabel" : "+ Add consequence",
+          "helpText" : "Add one entry per consequence.",
+          "vocabulary" : "transcript_consequence_term",
+          "widget" : "vocabularyMultiSelect"
+        },
+        "scope" : "#/properties/transcriptConsequences",
+        "type" : "Control"
+      } ],
       "type" : "Group"
     }, {
       "elements" : [ {

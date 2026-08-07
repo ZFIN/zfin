@@ -88,6 +88,7 @@ export interface LesionDTO {
     hasLargeVariant: boolean | null;
     mutatedAminoAcids: string | null;
     mutatedAminoAcidsHgvs: string | null;
+    transcriptConsequences: string[];
     additionalInfo: string | null;
 }
 

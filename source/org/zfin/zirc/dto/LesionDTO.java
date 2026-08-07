@@ -35,6 +35,8 @@ public record LesionDTO(
         // Protein-level
         String mutatedAminoAcids,
         String mutatedAminoAcidsHgvs,
+        // Transcript-level: mdcv term ZDB IDs (ZFIN-10399)
+        String[] transcriptConsequences,
         // Catch-all
         String additionalInfo) {
 
@@ -56,6 +58,8 @@ public record LesionDTO(
                 l.getHasLargeVariant(),
                 l.getMutatedAminoAcids(),
                 l.getMutatedAminoAcidsHgvs(),
+                l.getTranscriptConsequences() == null
+                        ? new String[0] : l.getTranscriptConsequences(),
                 l.getAdditionalInfo());
     }
 }
