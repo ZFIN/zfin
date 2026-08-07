@@ -150,19 +150,27 @@ equivalent content to `GOA` (`assigned_by=InterPro`/`UniProt` → GOA). A per-or
 never compares across orgs, so the old copies read "unchanged in UniProt" (0/0) while the
 new copies land as "GOA adds":
 
-| `*2go` stream | pub | legacy `UniProt` | GO_REF | in `DANRE-mod` (→GOA) | in `DANRE-uniprot` |
+| `*2go` stream | pub | legacy `UniProt` | GO_REF | in `DANRE-mod` (→GOA) | in `DANRE-uniprot` (raw rows) |
 |---|---|--:|---|--:|--:|
 | InterPro2GO | ZDB-PUB-020724-1 | 65,327 | GO_REF:0000002 | 28,509 | 43,882 |
 | **UniProtKB-Keyword (kw2go/spkw2go)** | ZDB-PUB-020723-1 | **41,027** | GO_REF:0000004 | **0** | **0** |
 | EC2GO | ZDB-PUB-031118-3 | 4,735 | GO_REF:0000003 | 3,161 | 5,400 |
+
+> ⚠️ **The `DANRE-uniprot` column is RAW ROWS and is misleading — see the 2026-08-07
+> measurement below. Gene-collapsed, `DANRE-uniprot` and `DANRE-mod` carry the SAME content
+> (InterPro2GO 28,501 in both).** The apparent surplus is per-accession multiplicity.
 
 Three problems at cutover:
 - **Duplication.** The unified load's removal scope is GOA+Noctua only, so it never
   touches the 111,089 UniProt-org rows — dropping the secondary `*2go` handlers leaves
   those *and* the new GOA copies, storing each mapping twice. Purge by
   `gafOrganization='UniProt'`, **not** `created_by=ZFIN` (which also tags Noctua).
-- **Under-coverage.** `DANRE-mod` supplies only **28,509** InterPro2GO vs the secondary
-  load's **65,327** (< half); `DANRE-uniprot` has **43,882** (closer, still short).
+  The UniProt org is *exactly* these three streams (65,327 + 41,027 + 4,735 = 111,089),
+  so the purge is cleanly scoped — verified 2026-08-07.
+- **Under-coverage.** `DANRE-mod` (06-17) supplied only **28,509** InterPro2GO vs the
+  secondary load's **65,327**. ⚠️ **Substantially improved by GO's 2026-08-04 fix: now
+  40,731** (see `workbench/goex-danre-mod-qc-2026-08-06.md`). Switching source files does
+  *not* close the remainder — `DANRE-uniprot` carries the same content (below).
 - **kw2go is dropped entirely.** GO Central retired keyword→GO mapping (`GO_REF:0000004`);
   it is absent from *both* files. So the 41,027 UniProtKB-Keyword annotations have **no
   file successor** — the branch's `GoDefaultPublication` maps GO_REF:0000002/0000003 but
@@ -185,15 +193,44 @@ rescuable), ec2go **14%**, interpro2go **2%** (InterPro maps to specific terms t
 aren't retained). So the true-path rule rescues only ~a quarter — the bulk is genuine loss
 relative to `DANRE-mod`.
 
-**Two caveats pull in opposite directions.** (i) This is measured against the sparse,
-gene-keyed `DANRE-mod`. The specific terms that *would* subsume many lost broad terms exist
-in `DANRE-uniprot` (protein-keyed) — e.g. igfbp2a's lost `GO:0019838 growth factor binding`
-is subsumed by `GO:0005520 insulin-like growth factor binding`, urod's lost `lyase`/
-`carboxy-lyase` by `uroporphyrinogen decarboxylase activity`, dlc's `cell differentiation`
-by `epithelial cell differentiation` — but those aren't in `DANRE-mod`, so they count as
-losses here. A `DANRE-uniprot`-based load would rescue far more, so **76% is the pessimistic
-`DANRE-mod` bound**. (ii) Some accessions have a gene↔protein `db_link` gap (e.g. ppardb/
-A9C4A5) — genuinely uncovered in either file.
+**Caveat: `db_link` gaps.** Some accessions have a gene↔protein `db_link` gap (e.g.
+ppardb/A9C4A5) — genuinely uncovered in either file.
+
+> ❌ **RETRACTED (2026-08-07): "76% is the pessimistic `DANRE-mod` bound."** An earlier
+> version of this section argued the subsumption rate was a floor, because specific terms
+> that would rescue lost broad terms supposedly existed only in the protein-keyed
+> `DANRE-uniprot`. **That premise is false.** All three examples cited (igfbp2a
+> `GO:0005520`, urod `GO:0004853`, dlc `GO:0030855`) are present in `DANRE-mod` as well —
+> verified directly. `DANRE-uniprot` carries no rescuing content `DANRE-mod` lacks, so
+> **76% is the actual true-loss rate, not a pessimistic bound**, and the kw2go decision is
+> correspondingly *worse*, not better, than previously recorded.
+
+### 2a. RESOLVED (2026-08-07) — `DANRE-uniprot` adds nothing; use `DANRE-mod`
+
+Open decision #2 (source file) is settled. `DANRE-uniprot` was mapped accession→ZFIN gene
+through `db_link` (`ZDB-FDBCONT-040412-47`, 89,836 accessions → gene), collapsed to distinct
+`(gene, relation, GO, GO_REF, ECO)`, and diffed against `DANRE-mod` of the **same 06-17
+vintage**:
+
+| | distinct annotations | (gene, GO) pairs |
+|---|--:|--:|
+| `DANRE-uniprot` (191,821 raw rows) | 136,853 | 104,444 |
+| `DANRE-mod` (142,612 raw rows) | 136,891 | 104,486 |
+| in both | 136,844 | 104,439 |
+| **`DANRE-uniprot` ONLY** | **9** | **5** |
+| `DANRE-mod` ONLY | 47 | 47 |
+
+Per stream, gene-collapsed: InterPro2GO **28,501 in both**; EC2GO **3,161 in both** — i.e.
+the "43,882 vs 28,691" and "5,400 vs 3,161" surpluses in the table above were **raw
+per-accession rows**, not additional annotations. Multiple UniProt accessions map to one
+ZFIN gene, so the protein-keyed file restates the same annotation once per accession.
+
+**Conclusion: consuming `DANRE-uniprot`, or both files, buys ~9 annotations and costs an
+accession→gene mapping layer with its own `db_link` gaps. Stay on `DANRE-mod`.** This also
+removes the only argument for deferring the kw2go decision to a source-file change.
+
+_Reproduce: `workbench/` scripts `uniprot_vs_mod.py` / `check_examples.py` (see
+`goex-dbdiff-vs-july-2026-08-07.md`)._
 
 ### 3. `ECO:0007322 → IEA` mapping (done)
 `DANRE-mod` tags ~17,350 UniProtKB-SubCell annotations with `ECO:0007322` ("curator
@@ -266,24 +303,21 @@ entryId remap was fully broken before, so every merged subject id was erroring).
 ## Open decisions before cutover
 
 1. **Noctua loss** (finding 1) — GO/curator conversation; the largest, highest-impact item.
-2. **Source file** — `DANRE-mod` vs `DANRE-uniprot` vs both. Both live at
-   `https://current.geneontology.org/annotations/gpad/` (⚠️ `http://` 301-redirects —
-   fetch via `https`/`curl -L`, or you get a 167-byte redirect page that looks empty).
-   `DANRE-uniprot` carries far more of the UniProt-derived IEA the secondary load replaces
-   (InterPro2GO 43,882 vs 28,691; UniProt 71,243 vs 52,732; RNAcentral 8,969 vs 55; GOC
-   6,477 vs 2,125) — **but it is keyed by UniProtKB accession, not ZFIN gene id**, so
-   consuming it needs a UniProt→gene `db_link` mapping layer (like the legacy GAF-GOA path,
-   with its own protein↔gene gaps). `DANRE-mod` (gene-keyed) is a drop-in but under-covers
-   mapping2go. Neither file recovers the Noctua loss or carries keyword2go.
+2. ~~**Source file** — `DANRE-mod` vs `DANRE-uniprot` vs both.~~ **✅ DECIDED 2026-08-07:
+   stay on `DANRE-mod`.** Gene-collapsed, the two files carry the same content —
+   `DANRE-uniprot` ONLY = **9 annotations** (see §2a). Its apparent surplus was raw
+   per-accession rows. Consuming it would add an accession→gene mapping layer, with its own
+   `db_link` gaps, for nothing.
 3. **`*2go` ownership org** — route the `*2go` GO_REFs to the same org the secondary load
    uses (`UniProt`) or add an explicit `UniProt`-org purge/migration at cutover, so old and
    new copies don't coexist.
 4. **kw2go (UniProtKB-Keyword, 41,027 rows)** — no file successor (GO retired
    `GO_REF:0000004`). Keep the secondary load's `spkw2go` handler, or accept the loss?
    Quantified: only ~32% of would-be-lost kw2go pairs are subsumed by a more-specific
-   retained term in `DANRE-mod` — the rest are genuine losses there (though a
-   `DANRE-uniprot`-based load would rescue more). Decision is entangled with the source-file
-   choice (#2).
+   retained term in `DANRE-mod`; the other ~68% are genuine losses. ⚠️ **No longer
+   entangled with #2** — `DANRE-uniprot` carries the same content (§2a), so there is no
+   source-file change that rescues these. The choice is a straight one: keep the `spkw2go`
+   handler, or accept losing ~28k annotations.
 5. **`GO_REF:0000108` (GOC, ~2,125)** — adopt (net-new content) or keep rejecting?
 6. **`GO_REF:0000115` (RNAcentral, 55)** and **`ECO:0005547` (manual, ~21)** — map or leave.
 7. **`EXP` evidence (105) — DECIDED: allow** (ZFIN-10258). All 105 EXP (`ECO:0000269`)
