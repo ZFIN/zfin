@@ -1,0 +1,13 @@
+Gaf Entries
+processed: 142612 gaf entries 
+added: 66282
+updated: 1807
+removed: 88014
+errors: 3307
+existing: 71214
+cell Terms: 0
+subset Failures: 17
+col 8 Inferences with Pipes: 0
+col 8 Inferences with Commas: 0
+col 8 Inferences with Both: 0
+time: 892.52 seconds
