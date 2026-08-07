@@ -2955,10 +2955,12 @@ public class HibernateMarkerRepository implements MarkerRepository {
         if (!markerTypes.isEmpty()) {
             hql += "and marker.markerType in (:markerType)  ";
         }
-        hql += "order by marker.abbreviation  ";
+        // bump an exact match (case-insensitive) to the top of the list
+        hql += "order by case when lower(marker.abbreviation) = :exactMatch then 0 else 1 end, marker.abbreviation  ";
 
         return HibernateUtil.currentSession().createQuery(hql)
                 .setParameter("lookupString", "%" + lookupString.toLowerCase() + "%")
+                .setParameter("exactMatch", lookupString.toLowerCase())
                 .setParameterList("markerType", markerTypes).setResultTransformer(
 
             (Object[] tuple, String[] targetGeneAbrevs) -> {
