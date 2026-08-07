@@ -275,9 +275,15 @@ Migrations go in `source/org/zfin/db/postGmakePostloaddb/1199/migrations/`
 
 Suggested order below: broadest first, and the most likely to stall last.
 
-### ZFIN-10399 — transcript consequence on all mutation types
+### ZFIN-10399 — transcript consequence on all mutation types ✅
 
-First, because it exercises the multi-select on every lesion type.
+Done in `6e05b59a1a`. Two migrations in `1199/migrations/`: the vocabulary
+reorder plus `inframe insertion`, and the `l_transcript_consequences
+text[]` column. Verified end to end — endpoint order, PATCH round-trip,
+and labels rendering in the form with adds persisting.
+
+The curation-side check is still worth doing by eye: the reorder moves the
+GWT feature editor's list too.
 
 - **SQL:** renumber `transcript_consequence_term` orders into the
   ticket's 17-item sequence, which also resolves the existing ties at
