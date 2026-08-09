@@ -270,14 +270,20 @@ IDs. The vocabulary endpoint supplies labels at render time.
 
 ## 3. Phase 1 — Tickets
 
-Migrations go in `source/org/zfin/db/postGmakePostloaddb/1199/migrations/`
-(currently empty, already wired into the master changelog).
+Migrations go in `source/org/zfin/db/postGmakePostloaddb/1184/migrations/`
+— the release directory currently accumulating changes, alongside the
+ZFIN-10357 / ZFIN-10367 / liftover sets.
+
+1185–1199 all exist and are wired into the master changelog, but they are
+empty scaffolding for future releases. An empty `migrations/` directory that
+`includeAll` already picks up is not evidence that it is the right one; check
+which directory recent commits actually landed in.
 
 Suggested order below: broadest first, and the most likely to stall last.
 
 ### ZFIN-10399 — transcript consequence on all mutation types ✅
 
-Done in `6e05b59a1a`. Two migrations in `1199/migrations/`: the vocabulary
+Done in `6e05b59a1a`. Two migrations in `1184/migrations/`: the vocabulary
 reorder plus `inframe insertion`, and the `l_transcript_consequences
 text[]` column. Verified end to end — endpoint order, PATCH round-trip,
 and labels rendering in the form with adds persisting.
