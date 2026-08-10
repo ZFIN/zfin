@@ -4,8 +4,15 @@
  * caret lands afterwards — are testable without a DOM.
  */
 
-/** Accepted bases when a Control doesn't name its own alphabet. */
-export const DEFAULT_ALPHABET = 'ACGTN';
+/**
+ * Accepted bases when a Control doesn't name its own alphabet.
+ *
+ * The lesion schema names one on every sequence Control, so this is a
+ * fallback rather than the operative value — kept in step with
+ * ZircLesionFormSchema.NUCLEOTIDE_ALPHABET so an un-annotated Control
+ * behaves the same as an annotated one.
+ */
+export const DEFAULT_ALPHABET = 'ACGT';
 
 /**
  * Reduce raw input to bases: drop FASTA description lines, uppercase the

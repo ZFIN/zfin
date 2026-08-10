@@ -39,9 +39,9 @@ describe('nucleotideSequence widget', () => {
         fireEvent.change(input, { target: { value: 'acgt 123 nnxx acgt' } });
 
         await waitFor(() => {
-            assert.equal(h.latest().deletedSequence, 'ACGTNNACGT');
+            assert.equal(h.latest().deletedSequence, 'ACGTACGT');
         });
-        assert.ok(screen.getByText('10 bp'), 'expected a live base count');
+        assert.ok(screen.getByText('8 bp'), 'expected a live base count');
         h.cleanupFetch();
     });
 
@@ -62,15 +62,29 @@ describe('nucleotideSequence widget', () => {
         h.cleanupFetch();
     });
 
-    it('honours a custom alphabet', async () => {
+    it('honours a per-Control alphabet that widens the default', async () => {
+        // Default is strict ACGT; a Control can opt back into N.
         const h = renderForm({
             schema: stringSchema('crisprSequence'),
-            uischema: control('nucleotideSequence', 'crisprSequence', { alphabet: 'ACGT' }),
+            uischema: control('nucleotideSequence', 'crisprSequence', { alphabet: 'ACGTN' }),
             data: { crisprSequence: '' },
         });
         fireEvent.change(screen.getByLabelText('crisprSequence'), { target: { value: 'ACGTN' } });
         await waitFor(() => {
-            assert.equal(h.latest().crisprSequence, 'ACGT');
+            assert.equal(h.latest().crisprSequence, 'ACGTN');
+        });
+        h.cleanupFetch();
+    });
+
+    it('drops N when the Control does not widen the alphabet', async () => {
+        const h = renderForm({
+            schema: stringSchema('deletedSequence'),
+            uischema: control('nucleotideSequence', 'deletedSequence'),
+            data: { deletedSequence: '' },
+        });
+        fireEvent.change(screen.getByLabelText('deletedSequence'), { target: { value: 'ACGTN' } });
+        await waitFor(() => {
+            assert.equal(h.latest().deletedSequence, 'ACGT');
         });
         h.cleanupFetch();
     });

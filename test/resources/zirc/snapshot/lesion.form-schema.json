@@ -191,6 +191,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
@@ -198,6 +199,7 @@
         "type" : "Control"
       }, {
         "options" : {
+          "alphabet" : "ACGT",
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
@@ -269,6 +271,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
@@ -329,6 +332,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
@@ -368,6 +372,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
@@ -393,6 +398,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
           "multi" : true,
@@ -402,6 +408,7 @@
         "type" : "Control"
       }, {
         "options" : {
+          "alphabet" : "ACGT",
           "helpText" : "At least 20 nt directly following the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
           "multi" : true,

@@ -167,8 +167,27 @@ describe('lesion conditional reveals', () => {
         // One alphabet hint per constrained sequence field on this lesion
         // type. Matched loosely because the flanking fields append their own
         // help text to the same node.
-        assert.equal(screen.getAllByText(/A \/ C \/ G \/ T \/ N only/).length, 4);
+        assert.equal(screen.getAllByText(/A \/ C \/ G \/ T only/).length, 4);
         h.cleanupFetch();
+    });
+
+    it('declares an alphabet on every sequence Control rather than relying on the default', async () => {
+        // Two defaults that can drift is the failure mode this guards: the
+        // schema names the alphabet, so the widget never has to guess.
+        const parsed = JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8'));
+        const missing: string[] = [];
+        const walk = (n: unknown) => {
+            if (Array.isArray(n)) { n.forEach(walk); return; }
+            if (!n || typeof n !== 'object') { return; }
+            const node = n as Record<string, unknown>;
+            const opts = node.options as Record<string, unknown> | undefined;
+            if (opts?.widget === 'nucleotideSequence' && typeof opts.alphabet !== 'string') {
+                missing.push(String(node.scope));
+            }
+            Object.values(node).forEach(walk);
+        };
+        walk(parsed.uiSchema);
+        assert.deepEqual(missing, [], 'these sequence Controls declare no alphabet');
     });
 
     it('shows the amino-acid section on a deletion as well as a point mutation', async () => {

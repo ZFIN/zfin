@@ -94,8 +94,21 @@ public final class ZircLesionFormSchema {
     private static final List<String> CONSTRUCT_ORIGIN_TYPES =
             List.of("insertion");
 
-    /** Bases accepted in sequence fields; matches DEFAULT_ALPHABET client-side. */
-    private static final String NUCLEOTIDE_ALPHABET = "ACGTN";
+    /**
+     * Bases accepted in sequence fields. Declared here and emitted onto every
+     * nucleotideSequence Control, so the widget and the server-side
+     * normalization are driven by one value rather than two defaults that can
+     * drift apart.
+     *
+     * <p>Per-field variation is a matter of passing a different constant to
+     * both {@code withAlphabet} and {@code nucleotides} at that field's call
+     * sites — they are deliberately adjacent for that reason.
+     *
+     * <p>N was accepted until curator feedback asked for strict bases only.
+     * Existing stored sequences containing N are left as they are; a field is
+     * only re-normalized when someone edits it.
+     */
+    private static final String NUCLEOTIDE_ALPHABET = "ACGT";
 
     // The twelve possible single-nucleotide substitutions, offered as a
     private static final List<String> NUCLEOTIDE_CHANGES = List.of(
@@ -199,11 +212,13 @@ public final class ZircLesionFormSchema {
                         new Control("#/properties/crisprSequence",
                                 Options.of()
                                         .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withMulti(true),
                                 null),
                         new Control("#/properties/talenSequence",
                                 Options.of()
                                         .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withMulti(true),
                                 null)
                         ), null,
@@ -226,7 +241,8 @@ public final class ZircLesionFormSchema {
                 groupRevealedFor(DELETED_SEQ_TYPES, List.of(
                         new Control("#/properties/deletedSequence",
                                 Options.of().withMulti(true)
-                                        .withWidget("nucleotideSequence"), null)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null)
                 )),
                 groupRevealedFor(List.of("deletion"), List.of(
                         new Control("#/properties/lesionSizeBp",
@@ -251,7 +267,8 @@ public final class ZircLesionFormSchema {
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
                                 Options.of().withMulti(true)
-                                        .withWidget("nucleotideSequence"), null)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null)
                 )),
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertionSizeBp",
@@ -262,7 +279,8 @@ public final class ZircLesionFormSchema {
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
                                 Options.of().withMulti(true)
-                                        .withWidget("nucleotideSequence"), null),
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null),
                         new Control("#/properties/hasLargeVariant",
                                 Options.of().withWidget("yesNoRadio"), null)
                 )),
@@ -270,6 +288,7 @@ public final class ZircLesionFormSchema {
                         new Control("#/properties/fivePrimeFlank",
                                 Options.of()
                                         .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withHelpText("At least 20 nt directly preceding the lesion / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
@@ -277,6 +296,7 @@ public final class ZircLesionFormSchema {
                         new Control("#/properties/threePrimeFlank",
                                 Options.of()
                                         .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withHelpText("At least 20 nt directly following the lesion / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
@@ -420,11 +440,15 @@ public final class ZircLesionFormSchema {
      * what the column is allowed to hold.
      */
     private static String nucleotides(JsonNode v) {
+        return nucleotides(v, NUCLEOTIDE_ALPHABET);
+    }
+
+    private static String nucleotides(JsonNode v, String alphabet) {
         String s = text(v);
         if (s == null) {return null;}
         StringBuilder out = new StringBuilder(s.length());
         for (char c : s.toUpperCase().toCharArray()) {
-            if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
+            if (alphabet.indexOf(c) >= 0) {out.append(c);}
         }
         return out.isEmpty() ? null : out.toString();
     }

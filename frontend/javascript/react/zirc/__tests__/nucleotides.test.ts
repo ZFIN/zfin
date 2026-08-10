@@ -12,8 +12,9 @@ describe('normalizeSequence', () => {
         assert.equal(normalizeSequence('acgt'), 'ACGT');
     });
 
-    it('keeps N', () => {
-        assert.equal(normalizeSequence('ACNGT'), 'ACNGT');
+    it('drops N by default', () => {
+        // N was accepted until curator feedback asked for strict bases only.
+        assert.equal(normalizeSequence('ACNGT'), 'ACGT');
     });
 
     it('drops characters outside the alphabet', () => {
@@ -38,7 +39,8 @@ describe('normalizeSequence', () => {
     });
 
     it('honours a custom alphabet', () => {
-        assert.equal(normalizeSequence('ACGTN', 'ACGT'), 'ACGT');
+        // The alphabet is per-Control, so a field that does want N can say so.
+        assert.equal(normalizeSequence('ACGTN', 'ACGTN'), 'ACGTN');
     });
 
     it('returns empty for input with no bases', () => {
@@ -84,8 +86,8 @@ describe('baseCount', () => {
         assert.equal(baseCount(''), 0);
     });
 
-    it('defaults to the ACGTN alphabet', () => {
-        assert.equal(DEFAULT_ALPHABET, 'ACGTN');
-        assert.equal(baseCount('ACGTN'), 5);
+    it('defaults to the ACGT alphabet', () => {
+        assert.equal(DEFAULT_ALPHABET, 'ACGT');
+        assert.equal(baseCount('ACGTN'), 4);
     });
 });
