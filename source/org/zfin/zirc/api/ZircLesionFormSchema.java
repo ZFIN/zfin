@@ -190,6 +190,10 @@ public final class ZircLesionFormSchema {
                                         .withNoOther(true),
                                 null)
                 )),
+                // The one surviving autoSize row. A point mutation is 1 bp by
+                // definition and has no sequence box to carry the number, so
+                // this is the only place it appears — not a duplicate of
+                // anything.
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/lesionSizeBp",
                                 Options.of().withWidget("autoSize").withConstantValue(1).withSuffix("bp"),
@@ -236,45 +240,38 @@ public final class ZircLesionFormSchema {
                         Rule.showWhenAll(
                                 Rule.in("#/properties/lesionType", CONSTRUCT_ORIGIN_TYPES),
                                 Rule.isTrue("#/properties/insertionFromConstruct"))),
-                // Deletion / indel: deleted sequence, then its length as the
-                // (auto, read-only) lesion size.
-                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
+                // Deletion / indel: the deleted sequence, with its length
+                // named inline. There is no separate read-only size row —
+                // the box already counts what it holds, and a second field
+                // repeating that number was pure redundancy.
+                //
+                // Split by lesion type only so the count can name itself: on
+                // an indel it measures the deleted part and sits opposite an
+                // insertion size, where the generic "Lesion size" would be
+                // ambiguous. Same column, same server-side derivation.
+                groupRevealedFor(List.of("deletion"), List.of(
                         new Control("#/properties/deletedSequence",
                                 Options.of().withMulti(true)
                                         .withWidget("nucleotideSequence")
-                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null)
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Lesion size"), null)
                 )),
-                groupRevealedFor(List.of("deletion"), List.of(
-                        new Control("#/properties/lesionSizeBp",
-                                Options.of().withWidget("autoSize")
-                                        .withSourceField("deletedSequence").withSuffix("bp"),
-                                null)
-                )),
-                // ZFIN-10403: on an indel this same column measures only the
-                // deleted part and sits opposite an insertion size, so the
-                // generic "Lesion size" name is ambiguous. Same property and
-                // same server-side derivation — a label override, not a new
-                // field.
                 groupRevealedFor(List.of("indel"), List.of(
-                        new Control("#/properties/lesionSizeBp",
-                                Options.of().withWidget("autoSize")
-                                        .withSourceField("deletedSequence").withSuffix("bp")
-                                        .withLabel("Deletion size (bp)"),
-                                null)
+                        new Control("#/properties/deletedSequence",
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Deletion size"), null)
                 )),
-                // Insertion / indel: inserted sequence, then its length as the
-                // (auto, read-only) insertion size.
+                // Insertion / indel: the inserted sequence, likewise carrying
+                // its own size. One label for both types — "Insertion size" is
+                // unambiguous either way.
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
                                 Options.of().withMulti(true)
                                         .withWidget("nucleotideSequence")
-                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null)
-                )),
-                groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
-                        new Control("#/properties/insertionSizeBp",
-                                Options.of().withWidget("autoSize")
-                                        .withSourceField("insertedSequence").withSuffix("bp"),
-                                null)
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Insertion size"), null)
                 )),
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",

@@ -273,29 +273,10 @@
         "options" : {
           "alphabet" : "ACGT",
           "multi" : true,
+          "sizeLabel" : "Lesion size",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/deletedSequence",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "deletion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "sourceField" : "deletedSequence",
-          "suffix" : "bp",
-          "widget" : "autoSize"
-        },
-        "scope" : "#/properties/lesionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {
@@ -311,12 +292,12 @@
     }, {
       "elements" : [ {
         "options" : {
-          "label" : "Deletion size (bp)",
-          "sourceField" : "deletedSequence",
-          "suffix" : "bp",
-          "widget" : "autoSize"
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "sizeLabel" : "Deletion size",
+          "widget" : "nucleotideSequence"
         },
-        "scope" : "#/properties/lesionSizeBp",
+        "scope" : "#/properties/deletedSequence",
         "type" : "Control"
       } ],
       "rule" : {
@@ -334,29 +315,10 @@
         "options" : {
           "alphabet" : "ACGT",
           "multi" : true,
+          "sizeLabel" : "Insertion size",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/insertedSequence",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "sourceField" : "insertedSequence",
-          "suffix" : "bp",
-          "widget" : "autoSize"
-        },
-        "scope" : "#/properties/insertionSizeBp",
         "type" : "Control"
       } ],
       "rule" : {

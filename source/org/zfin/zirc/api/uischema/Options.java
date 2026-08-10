@@ -93,6 +93,11 @@ public record Options(
         // see ZircVocabularyService for the served set. The stored value is
         // the term's ZDB ID, not its display name.
         String vocabulary,
+        // For the nucleotideSequence widget — names the inline base count,
+        // e.g. "Lesion size: 13 bp" instead of a bare "13 bp". Set where the
+        // count IS the lesion measurement, so the field carries it directly
+        // rather than needing a second read-only row beside it.
+        String sizeLabel,
         // For the nucleotideSequence widget — the accepted character set.
         // Input is uppercased and anything outside this set is dropped, so
         // a pasted FASTA record or numbered sequence normalizes to bases.

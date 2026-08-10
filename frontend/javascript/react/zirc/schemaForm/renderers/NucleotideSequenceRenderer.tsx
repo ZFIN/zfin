@@ -17,6 +17,8 @@ import { ValueDisplay } from '../../components/ValueDisplay';
 
 type NucleotideOptions = {
     alphabet?: string;
+    /** Names the count, e.g. "Lesion size: 13 bp". Bare "13 bp" when unset. */
+    sizeLabel?: string;
     multi?: boolean;
     placeholder?: string;
     helpText?: string;
@@ -67,6 +69,8 @@ function NucleotideSequenceRenderer({
     const labelId = `fr-label-${fieldName}`;
     const opts = ((uischema as { options?: NucleotideOptions } | undefined)?.options) ?? {};
     const alphabet = opts.alphabet ?? DEFAULT_ALPHABET;
+    const sizeText = (v: string) =>
+        `${opts.sizeLabel ? `${opts.sizeLabel}: ` : ''}${baseCount(v, alphabet)} bp`;
     const view = viewConfigFrom(config);
     const value = (data as string | undefined) ?? '';
 
@@ -82,9 +86,7 @@ function NucleotideSequenceRenderer({
                         <ValueDisplay value={data}/>
                     </div>
                     {value !== '' && (
-                        <small className='form-text text-muted'>
-                            {baseCount(value, alphabet)} bp
-                        </small>
+                        <small className='form-text text-muted'>{sizeText(value)}</small>
                     )}
                     <FieldHistory
                         recId={view.recId}
@@ -154,7 +156,7 @@ function NucleotideSequenceRenderer({
                     <small className='form-text text-muted'>
                         {value === ''
                             ? `${alphabet.toUpperCase().split('').join(' / ')} only`
-                            : `${baseCount(value, alphabet)} bp`}
+                            : sizeText(value)}
                         {opts.helpText && <> — {opts.helpText}</>}
                     </small>
                     {errors && <small className='text-danger'>{errors}</small>}

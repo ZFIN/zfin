@@ -130,25 +130,44 @@ describe('lesion conditional reveals', () => {
         h.cleanupFetch();
     });
 
-    it('names the deleted-sequence size per lesion type', async () => {
-        // Same property and same server-side derivation; only the label
-        // differs. On an indel it sits opposite an insertion size, where
-        // "Lesion size" would be ambiguous.
-        const indel = lesionForm({ lesionType: 'indel' });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('Deletion size (bp)'));
+    it('carries the size inline on the sequence box, with no separate row', async () => {
+        // The read-only size fields were redundant: the sequence box already
+        // counts what it holds. Only the count remains, and it names itself.
+        const indel = lesionForm({
+            lesionType: 'indel',
+            deletedSequence: 'CACCAGAATGAAA',
+            insertedSequence: 'ACGT',
         });
-        assert.ok(screen.getByLabelText('Insertion size (bp)'));
+        await waitFor(() => {
+            assert.ok(screen.getByText('Deletion size: 13 bp'));
+        });
+        assert.ok(screen.getByText('Insertion size: 4 bp'));
+        // The separate read-only rows are gone, not merely relabelled.
+        assert.equal(screen.queryByLabelText('Deletion size (bp)'), null);
+        assert.equal(screen.queryByLabelText('Insertion size (bp)'), null);
         assert.equal(screen.queryByLabelText('Lesion size (bp)'), null);
         indel.cleanupFetch();
         cleanup();
 
-        const deletion = lesionForm({ lesionType: 'deletion' });
+        const deletion = lesionForm({
+            lesionType: 'deletion',
+            deletedSequence: 'CACCAGAATGAAA',
+        });
+        await waitFor(() => {
+            assert.ok(screen.getByText('Lesion size: 13 bp'));
+        });
+        assert.equal(screen.queryByLabelText('Lesion size (bp)'), null);
+        deletion.cleanupFetch();
+    });
+
+    it('keeps the read-only size row for a point mutation, which has no sequence box', async () => {
+        // 1 bp is definitional there and has nowhere else to appear, so this
+        // row is not the redundancy the others were.
+        const h = lesionForm({ lesionType: 'point_mutation' });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('Lesion size (bp)'));
         });
-        assert.equal(screen.queryByLabelText('Deletion size (bp)'), null);
-        deletion.cleanupFetch();
+        h.cleanupFetch();
     });
 
     it('constrains every sequence field on an indel to bases', async () => {
