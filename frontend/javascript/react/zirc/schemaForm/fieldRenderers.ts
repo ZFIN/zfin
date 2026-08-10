@@ -4,6 +4,7 @@ import { rowControlRendererEntry } from './renderers/RowControlRenderer';
 import { textareaRowRendererEntry } from './renderers/TextareaRowRenderer';
 import { yesNoRadioRendererEntry } from './renderers/YesNoRadioRenderer';
 import { checkboxRendererEntry } from './renderers/CheckboxRenderer';
+import { checkboxGroupRendererEntry } from './renderers/CheckboxGroupRenderer';
 import { selectWithOtherRendererEntry } from './renderers/SelectWithOtherRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
@@ -40,6 +41,7 @@ export const fieldRenderers = [
     textareaRowRendererEntry,
     yesNoRadioRendererEntry,
     checkboxRendererEntry,
+    checkboxGroupRendererEntry,
     selectWithOtherRendererEntry,
     publicationsListRendererEntry,
     autocompleteRendererEntry,

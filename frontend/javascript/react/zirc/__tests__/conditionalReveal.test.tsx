@@ -46,87 +46,89 @@ afterEach(() => {
 });
 
 describe('lesion conditional reveals', () => {
-    it('hides the origin questions for a lesion type that is not asked', async () => {
+    it('hides the origin checklist for a lesion type that cannot carry an insertion', async () => {
         const h = lesionForm({ lesionType: 'deletion' });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('Deleted sequence'));
         });
-        assert.equal(
-            screen.queryByText(/Is the insertion a consequence of mutagenesis/), null);
+        assert.equal(screen.queryByText('The insertion is a consequence of'), null);
         h.cleanupFetch();
     });
 
-    it('asks both questions on an insertion, with follow-ups hidden until answered', async () => {
-        const h = lesionForm({
-            lesionType: 'insertion',
-            insertionFromMutagenesis: null,
-            insertionFromConstruct: null,
-        });
+    it('offers the checklist on an insertion with every follow-up hidden', async () => {
+        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: [] });
         await waitFor(() => {
-            assert.ok(screen.getByText(/Is the insertion a consequence of mutagenesis/));
+            assert.ok(screen.getByLabelText('CRISPR'));
         });
-        assert.ok(screen.getByText(/Is the insertion due to insertion of construct/));
+        for (const box of ['TALEN', 'Construct or other species DNA', 'Other', 'Unknown']) {
+            assert.ok(screen.getByLabelText(box), `expected a ${box} box`);
+        }
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
         assert.equal(screen.queryByLabelText('TALEN sequence'), null);
+        assert.equal(screen.queryByLabelText('Construct name'), null);
+        assert.equal(screen.queryByLabelText('Other origin'), null);
+        h.cleanupFetch();
+    });
+
+    it('reveals only the follow-up belonging to each ticked box', async () => {
+        // The old form opened CRISPR and TALEN together off one "yes"; each
+        // box now stands alone.
+        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['talen'] });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('TALEN sequence'));
+        });
+        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
         assert.equal(screen.queryByLabelText('Construct name'), null);
         h.cleanupFetch();
     });
 
-    it('reveals the CRISPR and TALEN boxes once mutagenesis is answered yes', async () => {
+    it('reveals several follow-ups when origins combine', async () => {
+        // A CRISPR knock-in of a construct is both, which is why this is a
+        // checklist and not a single choice.
         const h = lesionForm({
             lesionType: 'insertion',
-            insertionFromMutagenesis: true,
-            insertionFromConstruct: null,
+            insertionOrigins: ['crispr', 'construct'],
         });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('CRISPR sequence'));
         });
-        assert.ok(screen.getByLabelText('TALEN sequence'));
-        // The other branch stays closed — the two questions are independent.
-        assert.equal(screen.queryByLabelText('Construct name'), null);
+        assert.ok(screen.getByLabelText('Construct name'));
+        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
         h.cleanupFetch();
     });
 
-    it('reveals only the construct name when that question is answered yes', async () => {
-        const h = lesionForm({
-            lesionType: 'insertion',
-            insertionFromMutagenesis: null,
-            insertionFromConstruct: true,
-        });
+    it('reveals a free-text box for Other', async () => {
+        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['other'] });
         await waitFor(() => {
-            assert.ok(screen.getByLabelText('Construct name'));
+            assert.ok(screen.getByLabelText('Other origin'));
         });
-        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
         h.cleanupFetch();
     });
 
-    it('does not leak the follow-ups to another lesion type when the answer persists', async () => {
-        // The point of the AND condition. A stale "yes" from an earlier
+    it('does not leak a follow-up to another lesion type when the tokens persist', async () => {
+        // The AND condition's reason for being: a stale token from an earlier
         // insertion must not surface a CRISPR box on a deletion.
         const h = lesionForm({
             lesionType: 'deletion',
-            insertionFromMutagenesis: true,
-            insertionFromConstruct: true,
+            insertionOrigins: ['crispr', 'construct'],
         });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('Deleted sequence'));
         });
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
         assert.equal(screen.queryByLabelText('Construct name'), null);
         h.cleanupFetch();
     });
 
-    it('asks an indel about mutagenesis but not about a construct', async () => {
-        // ZFIN-10403's mockup carries the CRISPR/TALEN question over to indel
-        // and stops there, which is why the two questions have separate type
-        // lists rather than one shared one.
+    it('offers the same checklist on an indel', async () => {
+        // Unifying the two questions means one option list, so indel now
+        // offers "construct" where ZFIN-10403's mockup showed only the
+        // CRISPR/TALEN question.
         const h = lesionForm({ lesionType: 'indel' });
         await waitFor(() => {
-            assert.ok(screen.getByText(/Is the insertion a consequence of mutagenesis/));
+            assert.ok(screen.getByLabelText('CRISPR'));
         });
-        assert.equal(
-            screen.queryByText(/Is the insertion due to insertion of construct/), null);
+        assert.ok(screen.getByLabelText('Construct or other species DNA'));
         h.cleanupFetch();
     });
 

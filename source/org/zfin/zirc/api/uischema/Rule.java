@@ -94,4 +94,22 @@ public record Rule(Effect effect, Condition condition) {
     public static Condition isTrue(String scope) {
         return new RuleCondition(scope, Map.of("const", true));
     }
+
+    /**
+     * Condition building block: the scoped array contains {@code value}.
+     *
+     * <p>JSON Schema's {@code contains}, which JSON Forms evaluates through
+     * Ajv like any other schema-based condition. Lets a checklist reveal one
+     * follow-up field per box ticked.
+     *
+     * <p>{@code type: "array"} is not decoration. {@code contains} applies
+     * only to arrays and is ignored for anything else, so against an absent
+     * or null value the condition would pass and reveal every follow-up at
+     * once. Requiring the type makes the absent case fail closed.
+     */
+    public static Condition arrayContains(String scope, String value) {
+        return new RuleCondition(scope, Map.of(
+                "type", "array",
+                "contains", Map.of("const", value)));
+    }
 }

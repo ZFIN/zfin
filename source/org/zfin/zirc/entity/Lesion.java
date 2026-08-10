@@ -77,14 +77,18 @@ public class Lesion implements Serializable {
     @Column(name = "l_has_large_variant")
     private Boolean hasLargeVariant;
 
-    // ZFIN-10400 — where an insertion came from. Nullable three-state:
-    // null is "unanswered", which the status computer treats differently
-    // from an explicit false.
-    @Column(name = "l_insertion_from_mutagenesis")
-    private Boolean insertionFromMutagenesis;
+    /**
+     * ZFIN-10400 — where an insertion came from, as a check-all-that-apply
+     * list of stable tokens (crispr / talen / construct / other / unknown).
+     * Origins combine: a CRISPR knock-in of a construct is both. Empty means
+     * unanswered, which is distinct from the "unknown" token.
+     */
+    @Column(name = "l_insertion_origins", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] insertionOrigins = new String[0];
 
-    @Column(name = "l_insertion_from_construct")
-    private Boolean insertionFromConstruct;
+    @Column(name = "l_insertion_origin_other")
+    private String insertionOriginOther;
 
     @Column(name = "l_crispr_sequence")
     private String crisprSequence;

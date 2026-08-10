@@ -93,6 +93,10 @@ public record Options(
         // see ZircVocabularyService for the served set. The stored value is
         // the term's ZDB ID, not its display name.
         String vocabulary,
+        // For the checkboxGroup widget — a value that cannot coexist with any
+        // other. Ticking it clears the rest and vice versa. Used for answers
+        // like "unknown" that contradict every specific one.
+        String exclusiveValue,
         // For the nucleotideSequence widget — names the inline base count,
         // e.g. "Lesion size: 13 bp" instead of a bare "13 bp". Set where the
         // count IS the lesion measurement, so the field carries it directly

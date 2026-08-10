@@ -53,13 +53,17 @@
         "title" : "Inserted sequence",
         "type" : [ "string", "null" ]
       },
-      "insertionFromConstruct" : {
-        "title" : "Is the insertion due to insertion of construct or other species DNA?",
-        "type" : [ "boolean", "null" ]
+      "insertionOriginOther" : {
+        "maxLength" : 255,
+        "title" : "Other origin",
+        "type" : [ "string", "null" ]
       },
-      "insertionFromMutagenesis" : {
-        "title" : "Is the insertion a consequence of mutagenesis (CRISPR or TALEN)?",
-        "type" : [ "boolean", "null" ]
+      "insertionOrigins" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "The insertion is a consequence of",
+        "type" : "array"
       },
       "insertionSizeBp" : {
         "title" : "Insertion size (bp)",
@@ -173,9 +177,13 @@
     }, {
       "elements" : [ {
         "options" : {
-          "widget" : "yesNoRadio"
+          "exclusiveValue" : "unknown",
+          "helpText" : "Check all that apply.",
+          "standardLabels" : [ "CRISPR", "TALEN", "Construct or other species DNA", "Other", "Unknown" ],
+          "standardValues" : [ "crispr", "talen", "construct", "other", "unknown" ],
+          "widget" : "checkboxGroup"
         },
-        "scope" : "#/properties/insertionFromMutagenesis",
+        "scope" : "#/properties/insertionOrigins",
         "type" : "Control"
       } ],
       "rule" : {
@@ -197,7 +205,30 @@
         },
         "scope" : "#/properties/crisprSequence",
         "type" : "Control"
-      }, {
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "crispr"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
         "options" : {
           "alphabet" : "ACGT",
           "multi" : true,
@@ -215,29 +246,14 @@
             "scope" : "#/properties/lesionType"
           }, {
             "schema" : {
-              "const" : true
+              "contains" : {
+                "const" : "talen"
+              },
+              "type" : "array"
             },
-            "scope" : "#/properties/insertionFromMutagenesis"
+            "scope" : "#/properties/insertionOrigins"
           } ],
           "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "widget" : "yesNoRadio"
-        },
-        "scope" : "#/properties/insertionFromConstruct",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion" ]
-          },
-          "scope" : "#/properties/lesionType"
         },
         "effect" : "SHOW"
       },
@@ -254,14 +270,46 @@
         "condition" : {
           "conditions" : [ {
             "schema" : {
-              "enum" : [ "insertion" ]
+              "enum" : [ "insertion", "indel" ]
             },
             "scope" : "#/properties/lesionType"
           }, {
             "schema" : {
-              "const" : true
+              "contains" : {
+                "const" : "construct"
+              },
+              "type" : "array"
             },
-            "scope" : "#/properties/insertionFromConstruct"
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. Tol2 transposon"
+        },
+        "scope" : "#/properties/insertionOriginOther",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "other"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
           } ],
           "type" : "AND"
         },

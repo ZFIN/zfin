@@ -25,47 +25,41 @@ public class LesionStatusComputerTest {
     }
 
     @Test
-    public void insertionWithNeitherOriginQuestionAnswered_marksBoth() {
+    public void insertionWithNoOriginChecked_isMarked() {
         FieldStatusResult r = LesionStatusComputer.compute(lesion("insertion"));
 
-        assertEquals(FieldStatus.MISSING, r.byField().get("insertionFromMutagenesis"));
-        assertEquals(FieldStatus.MISSING, r.byField().get("insertionFromConstruct"));
+        assertEquals(FieldStatus.MISSING, r.byField().get("insertionOrigins"));
     }
 
     @Test
-    public void answeringEitherQuestionClearsBoth() {
+    public void checkingAnyOriginSatisfiesIt() {
         Lesion l = lesion("insertion");
-        l.setInsertionFromMutagenesis(Boolean.TRUE);
+        l.setInsertionOrigins(new String[] {"crispr"});
 
         FieldStatusResult r = LesionStatusComputer.compute(l);
 
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromMutagenesis"));
-        // The requirement is "one of the two", so the unanswered sibling is
-        // satisfied by its partner rather than being separately required.
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromConstruct"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionOrigins"));
     }
 
     @Test
-    public void answeringNoStillCounts() {
-        // "No" is an answer. Only null is unanswered, which is why the columns
-        // are nullable booleans rather than defaulting to false.
+    public void unknownIsAnAnswer() {
+        // "unknown" is a ticked box, not an empty list — the point of having
+        // it as an option rather than letting people leave the field blank.
         Lesion l = lesion("insertion");
-        l.setInsertionFromConstruct(Boolean.FALSE);
+        l.setInsertionOrigins(new String[] {"unknown"});
 
         FieldStatusResult r = LesionStatusComputer.compute(l);
 
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromMutagenesis"));
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromConstruct"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionOrigins"));
     }
 
     @Test
     public void otherLesionTypesAreNotAsked() {
-        // The questions aren't rendered for a deletion, so badging them would
-        // point at fields the curator cannot see.
+        // The checklist isn't rendered for a deletion, so badging it would
+        // point at a field the curator cannot see.
         FieldStatusResult r = LesionStatusComputer.compute(lesion("deletion"));
 
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromMutagenesis"));
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromConstruct"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionOrigins"));
     }
 
     @Test
@@ -123,6 +117,6 @@ public class LesionStatusComputerTest {
         assertEquals(FieldStatus.COMPLETE, r.byField().get("deletedSequence"));
         assertEquals(FieldStatus.COMPLETE, r.byField().get("transcriptConsequences"));
         // Null lesion type matches no group, so the origin questions are quiet.
-        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionFromMutagenesis"));
+        assertEquals(FieldStatus.COMPLETE, r.byField().get("insertionOrigins"));
     }
 }
