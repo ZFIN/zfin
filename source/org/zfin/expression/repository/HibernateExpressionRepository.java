@@ -129,7 +129,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
         String sql = "  select distinct p from Publication p " +
                      "join p.expressionExperiments ee " +
                      "where ee.gene = :gene " +
-                     "and ee.assay.name = 'mRNA in situ hybridization' " +
+                     "and ee.assay.name in ('mRNA in situ hybridization', 'HCR in situ hybridization') " +
                      "and not exists (from Clone as clone " +
                      "where ee.probe = clone and clone.problem = :chimeric)";
         Query query = HibernateUtil.currentSession().createQuery(sql);
@@ -488,7 +488,7 @@ public class HibernateExpressionRepository implements ExpressionRepository {
                      join expression_result2 on expression_figure_stage.efs_pk_id = expression_result2.xpatres_efs_id
                      join expression_experiment2 on xpatex_zdb_id = expression_figure_stage.efs_xpatex_zdb_id
                       where xpatex_gene_zdb_id = :markerZdbID 
-                      and xpatex_assay_name = 'mRNA in situ hybridization' 
+                      and xpatex_assay_name in ('mRNA in situ hybridization', 'HCR in situ hybridization')
                      and not exists 
                      ( 
                        select 'x' from marker 

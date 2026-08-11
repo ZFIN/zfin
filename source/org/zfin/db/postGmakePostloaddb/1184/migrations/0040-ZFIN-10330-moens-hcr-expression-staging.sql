@@ -10,9 +10,10 @@
 -- Cleaned, column-complete source data for the HCR in situ expression annotations,
 -- one row per (figure, superterm, subterm) observation. Source spreadsheet:
 -- Italia_ImageDataLoad_MoensLab-2.xlsx. This changeset ONLY stages the cleaned
--- data; a follow-up changeset resolves the OBO/ZFS ids to term/stage ZDB ids,
--- creates the fish_experiment / expression_experiment2 / expression_figure_stage /
--- expression_result2 records under ZDB-PUB-260717-17, and drops this table.
+-- data; moens-hcr-expression-records.sql, run by org.zfin.figure.MoensHcrImageLoad,
+-- resolves the OBO/ZFS ids to term/stage ZDB ids and creates the fish_experiment /
+-- expression_experiment2 / expression_figure_stage / expression_result2 records under
+-- ZDB-PUB-260717-17.
 --
 -- Cleaning applied to the raw spreadsheet:
 --   * legend rows (col1 = "Color Key:" / "Yellow = ...") dropped
@@ -21,16 +22,50 @@
 --   * multi-structure rows split to ONE superterm + ONE subterm per row
 --     (super/sub pipe-delimited values expanded; single-super*single-sub kept)
 --   * multi-GENE rows split to ONE gene per row: a cell holding two gene ids is one
---     expression annotation per gene. Affects sheet row 88 (vipb + isl1a) only; the other
---     multi-gene row, sheet row 19 (mnx2b + cntn2), is excluded here as an unreconciled
---     image and additionally needs per-gene structures (see MULTI_GENE_ROWS.txt).
+--     expression annotation per gene. Affects sheet rows 88 (vipb + isl1a), 19 and 21
+--     (both mnx2b + cntn2). Rows 19 and 21 additionally needed per-gene STRUCTURES, not
+--     just a per-gene split, and row 21 had no mnx2b gene id at all -- both resolved
+--     2026-08-11, see below and MULTI_GENE_ROWS.txt.
 --   * mhel_image_stem = source image filename without the .tif extension; joins to
 --     moens_hcr_image_load_map (written by org.zfin.figure.MoensHcrImageLoad) to reach
---     the loaded figure. Every row maps to one of the 99 loaded figures.
+--     the loaded figure. Every row maps to one of the 105 loaded figures.
 --   * of the 6 rows whose image filename could not be reconciled to a file on disk
 --     (spreadsheet rows 17,19,21,29,57,92), the curator confirmed on 2026-08-04 that
 --     17, 57 and 92 should use the disk image as found -- those are now included.
---     Rows 19, 21 and 29 remain EXCLUDED; they are to be assigned a different image.
+--     On 2026-08-10 the curator supplied images for the remaining three. All six are now
+--     included; nothing is held back. The decisions that unblocked rows 19 and 21 --
+--       - RESOLVED 2026-08-11: both rows label abducens motor neuron as ZFA:0007133,
+--         which is MIGRATORY FACIAL motor neuron. The curator confirmed the abducens
+--         annotation on these two rows uses ZFA:0007132 (abducens motor neuron).
+--         Scoped to rows 19 and 21 only: the five staged rows carrying ZFA:0007133
+--         (sheet rows 40, 90, 103 -- gata2b, vwc2l, znf385d) are correct, their captions
+--         all read migrating / have-migrated facial motor neuron at 26-28 hpf, so
+--         nothing already loaded is affected.
+--       - RESOLVED 2026-08-11: row 19 splits into two genes against two DIFFERENT
+--         structures, and the superterms are the rhombomeres the caption names, NOT the
+--         plain hindbrain the sheet's anatomy column records. Curator confirmed:
+--             mnx2b  ZDB-GENE-040415-2  -> ZFA:0007132 abducens motor neuron,
+--                                          super ZFA:0000823 (r5) and ZFA:0000069 (r6)
+--             cntn2  ZDB-GENE-990630-12 -> ZFA:0007129 facial motor neuron,
+--                                          super ZFA:0000069 (r6)
+--         Two superterms for mnx2b = two rows, so sheet row 19 becomes 3 staging rows
+--         (same broadcast shape already used for sheet rows 17 and 29).
+--       - RESOLVED 2026-08-11: row 21 is a multi-GENE row mis-recorded as a
+--         multi-structure row. Its gene column holds only cntn2, so mnx2b's id was added
+--         and its two substructures assigned to the two genes. It is NOT row 19 at a later
+--         stage: this caption also states cntn2 is expressed in a subset of the abducens
+--         neurons, so cntn2 is recorded in abducens as well as facial (5 rows vs row 19's
+--         3). See its rows below.
+--       - RESOLVED 2026-08-11: the manifest stems for both rows name files that do not
+--         exist on disk; four mnx2b files were delivered instead. Row 19 takes the cyan
+--         48hpf/emb2/260114 file, and its caption was amended "mnx2b (red)" -> "(cyan)" to
+--         match. Row 21 takes the cyan_annotated 3dpf/emb1/251219 file; its caption already
+--         said "mnx2b (cyan)" and needed no amendment.
+--         Both rows were APPENDED to the manifest rather than flipped in place, following
+--         sheet rows 17/57/92/29, so the earlier rows keep the Fig. N they already had.
+--         Rows 19 and 21 are Fig. 104 and Fig. 105.
+--       - STILL OPEN: mnx2b_red_cntn2_magenta_3dpf_emb2_251219 is emb2 and matches no
+--         sheet row at all -- a spare, or a row missing from the spreadsheet?
 --   * uniform columns: fish = ZDB-FISH-260717-2, assay = MMO_0000643 (HCR in situ),
 --     publication = ZDB-PUB-260717-17, expression_found = true
 --
@@ -42,14 +77,15 @@ drop table if exists moens_hcr_expression_load;
 -- Written one row at a time by org.zfin.figure.MoensHcrImageLoad as each image is
 -- loaded. Keeps the source filename -> loaded figure/image mapping outside of
 -- fig_label / img_label, which stay on the site-wide "Fig. N" convention. Doubles as
--- the loader's re-run guard (a stem present here is skipped) and as the join the
--- follow-up expression changeset uses to reach fig_zdb_id.
+-- the loader's re-run guard (a stem present here is skipped) and as the join
+-- moens-hcr-expression-records.sql uses to reach fig_zdb_id.
 --
 -- NOT dropped here, unlike the staging data table above. This changeset is
 -- runOnChange:true, and its contents are written by a separate load step, not by this
 -- file -- dropping it on every re-run would discard the record of what was already
--- loaded and the loader would then create a second set of 99 figures on its next run.
--- It is dropped by the follow-up expression changeset, once it has served its purpose.
+-- loaded and the loader would then create a second set of 105 figures on its next run.
+-- Both staging tables are dropped by moens-hcr-drop-staging.sql, run explicitly via
+-- ./gradlew loadMoensHcrImages -PdropStaging once the load has been checked.
 create table if not exists moens_hcr_image_load_map (
   mhilm_image_stem      text    primary key,  -- source filename without .tif
   mhilm_fig_zdb_id      text    not null,     -- ZDB-FIG-... created by the loader
@@ -103,6 +139,16 @@ values
   ('dgkaa_magenta_3dpf_20251009_emb4_mX_lateral_(RGB)', 'ZDB-GENE-060616-305', 'dgkaa', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
   ('MAX_crabp1b_48h_20250502__emb1_mIX.tif (RGB)-1', 'ZDB-GENE-040624-3', 'crabp1b', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007127'),
   ('MAX_crabp1b_48h_20250502__emb1_mIX.tif (RGB)-1', 'ZDB-GENE-040624-3', 'crabp1b', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126'),
+  -- Sheet row 29, the 3 dpf counterpart of the two rows above. Held since the original
+  -- load because its spreadsheet filename matched nothing on disk; the curator supplied
+  -- the image on 2026-08-10. Same broadcast shape as row 28: one superterm (hindbrain)
+  -- against both substructures the sheet lists, glossopharyngeal and vagus motor neuron.
+  -- NOTE the supplied file is byte-identical to the previously unmatched disk file
+  -- crabp1b_3dpf__20240920_emb3_ventral_mX_single(RGB).tif, renamed mX -> mIX. The sheet,
+  -- the caption ("CN IX and/or anterior-most CN X") and row 28 all carry both nuclei, so
+  -- both are staged; drop the ZFA:0007126 row if the curator means CN IX alone.
+  ('crabp1b_magenta_3dpf_20240920_emb3_ventral_mIX_(RGB)', 'ZDB-GENE-040624-3', 'crabp1b', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007127'),
+  ('crabp1b_magenta_3dpf_20240920_emb3_ventral_mIX_(RGB)', 'ZDB-GENE-040624-3', 'crabp1b', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
   ('efna2b_magenta_48h_20250623_emb4_mX_ventral_(RGB)', 'ZDB-GENE-141120-2', 'efna2b', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126'),
   ('efna2b_48h_20250623_emb1_mX_lateral_(RGB)', 'ZDB-GENE-141120-2', 'efna2b', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126'),
   ('efna2b_magenta_3dpf_20250527_emb4_mX_ventral_(RGB)', 'ZDB-GENE-141120-2', 'efna2b', 'ZFS:0000035', 'ZFA:0000029', 'ZFA:0007126'),
@@ -191,13 +237,46 @@ values
 
   -- Sheet rows 17, 57 and 92: originally held back because the image filename in the
   -- spreadsheet did not match any file on disk. Curator confirmed 2026-08-04 to use the
-  -- disk image as found, so these are now loaded (Fig. 100-102) and annotated here from
-  -- their spreadsheet rows unchanged. Sheet rows 19, 21 and 29 remain excluded -- they are
-  -- to be assigned a different image when one is available.
+  -- disk image as found, so these are now loaded and annotated here from their
+  -- spreadsheet rows unchanged. Sheet rows 19 and 29 were resolved later and follow
+  -- below; sheet row 21 is still excluded (see the header).
   -- sheet row 17 -- cntn2, 48 hpf, r6 + r7 / facial motor neuron (2 superterms -> 2 rows)
   ('cntn2_magenta_48h_20250815_emb4_mVII r7_ventral_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000033', 'ZFA:0000069', 'ZFA:0007129'),
   ('cntn2_magenta_48h_20250815_emb4_mVII r7_ventral_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000033', 'ZFA:0000949', 'ZFA:0007129'),
   -- sheet row 57 -- ptgir, 48 hpf, rhombomere 2 / trigeminal motor neuron
   ('ptgir_magenta_48hpf_20250930_emb2_mV r2_ventral_PMT Light_(RGB)', 'ZDB-GENE-120511-1', 'ptgir', 'ZFS:0000033', 'ZFA:0000822', 'ZFA:0007130'),
   -- sheet row 92 -- vwc2l, 48 hpf (2 dpf), hindbrain / vagus motor neuron
-  ('vwc2l_magenta_2dpf_20260529_emb1_lateral_mX_(RGB)', 'ZDB-GENE-081104-169', 'vwc2l', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126');
+  ('vwc2l_magenta_2dpf_20260529_emb1_lateral_mX_(RGB)', 'ZDB-GENE-081104-169', 'vwc2l', 'ZFS:0000033', 'ZFA:0000029', 'ZFA:0007126'),
+
+  -- Sheet row 19 -- the multi-gene, multi-structure row, resolved by the curator on
+  -- 2026-08-11 (see the header for the three decisions). Two genes against two DIFFERENT
+  -- structures, and the superterms are the rhombomeres the caption names rather than the
+  -- plain hindbrain the sheet's anatomy column recorded:
+  --     mnx2b -> abducens motor neuron (ZFA:0007132) in r5 and r6
+  --     cntn2 -> facial motor neuron   (ZFA:0007129) in r6
+  -- ZFA:0007132 is used, NOT the sheet's ZFA:0007133 (migratory facial motor neuron).
+  -- The image is the cyan file supplied 2026-08-10, appended to the manifest rather than
+  -- flipped in place so the earlier figure numbering stays put, and its caption was
+  -- amended red -> cyan to match the image.
+  ('mnx2b_cyan_cntn2_magenta_48hpf_emb2_260114_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-040415-2', 'mnx2b', 'ZFS:0000033', 'ZFA:0000823', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_48hpf_emb2_260114_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-040415-2', 'mnx2b', 'ZFS:0000033', 'ZFA:0000069', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_48hpf_emb2_260114_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000033', 'ZFA:0000069', 'ZFA:0007129'),
+
+  -- Sheet row 21 -- the 3 dpf counterpart of row 19, resolved by the curator on
+  -- 2026-08-11. Recorded as a multi-GENE row, not the multi-structure row the sheet made
+  -- it: the sheet's gene column holds only cntn2, so mnx2b's id is added here, and its
+  -- two substructures (facial | abducens) belong to the two genes.
+  --
+  -- NOT simply row 19 at a later stage. Row 19's caption puts cntn2 in facial neurons
+  -- only; this caption additionally says "Mnx2 marks CN VI motor neurons, some of which
+  -- also express cntn2 at this stage", so cntn2 is recorded in abducens as well as in
+  -- facial -- 5 rows rather than row 19's 3:
+  --     mnx2b -> abducens (ZFA:0007132) in r5 and r6
+  --     cntn2 -> abducens (ZFA:0007132) in r5 and r6   <- the "also express" statement
+  --     cntn2 -> facial   (ZFA:0007129) in r6
+  -- ZFA:0007132 again replaces the sheet's ZFA:0007133 (migratory facial motor neuron).
+  ('mnx2b_cyan_cntn2_magenta_3dpf_emb1_251219_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-040415-2', 'mnx2b', 'ZFS:0000035', 'ZFA:0000823', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_3dpf_emb1_251219_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-040415-2', 'mnx2b', 'ZFS:0000035', 'ZFA:0000069', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_3dpf_emb1_251219_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000035', 'ZFA:0000823', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_3dpf_emb1_251219_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000035', 'ZFA:0000069', 'ZFA:0007132'),
+  ('mnx2b_cyan_cntn2_magenta_3dpf_emb1_251219_mVII_mVI_ventral_annotated_(RGB)', 'ZDB-GENE-990630-12', 'cntn2', 'ZFS:0000035', 'ZFA:0000069', 'ZFA:0007129');

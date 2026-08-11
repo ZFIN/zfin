@@ -1,29 +1,36 @@
---liquibase formatted sql
---changeset cmpich:0050-ZFIN-10330-moens-hcr-expression-records
-
 -- ZFIN-10330 / ZFINHELP-5462 : Moens lab HCR in situ expression records.
 --
--- Turns the cleaned staging rows from migration 0040 into real expression data and
--- then throws the staging away. Runs after org.zfin.figure.MoensHcrImageLoad has
--- created the 102 figures/images, which is what populates moens_hcr_image_load_map.
+-- Turns the cleaned staging rows from migration 0040 into real expression data.
 --
--- What 113 staging rows become:
+-- NOT a liquibase changeset. Every insert below that produces figure/stage or result
+-- rows inner-joins moens_hcr_image_load_map, which is populated by the image load, so
+-- this can only run after org.zfin.figure.MoensHcrImageLoad has created the figures.
+-- Liquibase has no way to pause mid-pass for that, and as a changeset alongside 0040 it
+-- would either halt the release or -- worse -- insert nothing and report success. It is
+-- therefore executed by MoensHcrImageLoad itself, immediately after the image load, via
+-- MoensHcrImageLoad#EXPRESSION_RECORDS_SQL. The whole load is one command:
+--     0040, 0045 (liquibase)  ->  ./gradlew loadMoensHcrImages
+--
+-- Statements are executed as a single script over one JDBC connection, inside one
+-- transaction, so keep every statement semicolon-terminated and keep comments on their
+-- own lines.
+--
+-- What 123 staging rows become:
 --     1 fish_experiment      -- fh474Tg (AB) under standard conditions
---    34 expression_experiment2  -- one per gene (fish/assay/pub are uniform)
---   103 expression_figure_stage -- one per gene x figure x stage
---   113 expression_result2      -- one per staging row (superterm + subterm)
+--    35 expression_experiment2  -- one per gene (fish/assay/pub are uniform)
+--   108 expression_figure_stage -- one per gene x figure x stage
+--   123 expression_result2      -- one per staging row (superterm + subterm)
 --
--- ASSAY. The spreadsheet says "HCR in situ / MMO_0000643", but MMO:0000643 is the
--- generic parent term "in situ expression assay" and no row of expression_pattern_assay
--- carries it -- xpatex_assay_name is a FK to that table, so the source value cannot be
--- stored as given. HCR is an RNA in situ hybridization method, so these load under the
--- existing "mRNA in situ hybridization" (MMO:0000658, ISH). Change the single literal
--- below if the curator wants a dedicated HCR assay added to expression_pattern_assay
--- instead; that is a wider change (curation dropdown, display order, Alliance export).
+-- ASSAY. These load under "HCR in situ hybridization", the dedicated assay added by
+-- migration 0045, which therefore has to be applied before this runs -- xpatex_assay_name
+-- is a FK to expression_pattern_assay. The spreadsheet's MMO_0000643 rides along on that
+-- row; see 0045 for why the generic parent term is used rather than an HCR-specific one.
 --
--- Sheet rows 19, 21 and 29 are absent throughout: their spreadsheet image filename
--- matched no file on disk and the curator is assigning a different image. They were
--- never staged, so nothing here has to exclude them explicitly.
+-- Every sheet row is now staged; none are held back. Sheet row 29 was resolved on
+-- 2026-08-10, and rows 19 and 21 on 2026-08-11 (see 0040 for the anatomy decisions).
+-- Row 19 is what takes the gene count to 35 -- mnx2b appears nowhere else in the
+-- spreadsheet. Rows 21 and 29 did not change the count: their genes already had records
+-- from sheet rows 19 and 28 respectively.
 
 -- The standard (unmanipulated) environment for the paper's fish. ZDB-EXP-041102-1 is
 -- the site-wide "_Standard" experiment; genox_is_standard is filled in by a trigger.
@@ -41,7 +48,7 @@ where not exists (
 insert into expression_experiment2
   (xpatex_zdb_id, xpatex_assay_name, xpatex_gene_zdb_id, xpatex_genox_zdb_id, xpatex_source_zdb_id)
 select get_id_and_insert_active_data('XPAT'),
-       'mRNA in situ hybridization',
+       'HCR in situ hybridization',
        genes.mhel_gene_zdb_id,
        genox.genox_zdb_id,
        'ZDB-PUB-260717-17'
@@ -79,6 +86,7 @@ join expression_figure_stage efs on efs.efs_xpatex_zdb_id = xpatex.xpatex_zdb_id
 join term super on super.term_ont_id = load.mhel_superterm_zfa
 join term sub on sub.term_ont_id = load.mhel_subterm_zfa;
 
--- Both staging tables are deliberately left in place here; migration 0060 drops them
--- once the records above have been checked. Keeping them past this changeset means a
--- bad load can be deleted and rebuilt from the same source rows.
+-- Both staging tables are deliberately left in place here. moens-hcr-drop-staging.sql
+-- drops them once the records above have been checked, as a separate deliberate step
+-- (./gradlew loadMoensHcrImages -PdropStaging). Keeping them until then means a bad
+-- load can be deleted and rebuilt from the same source rows.

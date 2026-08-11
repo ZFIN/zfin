@@ -18,6 +18,9 @@ import org.zfin.publication.Publication;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,16 +44,26 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
  * Figures are labelled "Fig. N" by position among the included manifest rows, matching
  * the convention every other publication in the database uses. The source filename is
  * recorded in moens_hcr_image_load_map (created by migration 0040) rather than in
- * fig_label or img_label, so the follow-up expression changeset can still join a
- * staging row to the figure it belongs to.
+ * fig_label or img_label, so the expression records can still join a staging row to the
+ * figure it belongs to.
+ * <p>
+ * The expression records are created here too, by running {@link #EXPRESSION_RECORDS_SQL}
+ * once the figures exist. They used to be a liquibase changeset, but every insert in that
+ * script joins moens_hcr_image_load_map, which only this loader can populate -- liquibase
+ * cannot pause mid-pass for it, so as a changeset it would either halt the release or
+ * insert nothing and report success. Keeping them together makes the whole load one
+ * command, after migrations 0040 (staging) and 0045 (assay) have been applied.
  * <p>
  * Args:
  * [0] manifest TSV path
  * [1] directory containing the image files named in disk_filename
+ * [2] optional "--drop-staging": drop both staging tables after loading. Off by default
+ * so the source rows outlive the load and a bad load can be rebuilt from them.
  * <p>
- * Re-runnable: a row is skipped if its filename stem is already in the load map.
- * Labels are derived from manifest position, not from a running counter, so a re-run
- * after a partial failure keeps the numbering it assigned the first time.
+ * Re-runnable: a row is skipped if its filename stem is already in the load map, and the
+ * expression records are skipped outright if this publication already has any. Labels are
+ * derived from manifest position, not from a running counter, so a re-run after a partial
+ * failure keeps the numbering it assigned the first time.
  */
 @Log4j2
 public class MoensHcrImageLoad extends AbstractScriptWrapper {
@@ -62,8 +75,13 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
     // override image.owner explicitly below to keep the whole load attributed here.
     static final String OWNER_ZDB_ID = "ZDB-PERS-060413-1";
 
+    // Classpath resources; source/ is configured as a resources srcDir in build.gradle.
+    static final String EXPRESSION_RECORDS_SQL = "/org/zfin/figure/moens-hcr-expression-records.sql";
+    static final String DROP_STAGING_SQL = "/org/zfin/figure/moens-hcr-drop-staging.sql";
+
     private final String manifestPath;
     private final File imageDirectory;
+    private final boolean dropStaging;
     private Person owner;
 
     // Map the spreadsheet's free-text values to the controlled vocabularies that
@@ -89,17 +107,19 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
     private int skippedExisting = 0;
     private int errors = 0;
 
-    public MoensHcrImageLoad(String manifestPath, String imageDirectory) {
+    public MoensHcrImageLoad(String manifestPath, String imageDirectory, boolean dropStaging) {
         this.manifestPath = manifestPath;
         this.imageDirectory = new File(imageDirectory);
+        this.dropStaging = dropStaging;
     }
 
     public static void main(String[] args) {
         if (args.length < 2) {
-            System.err.println("Usage: MoensHcrImageLoad <manifest.tsv> <imageDirectory>");
+            System.err.println("Usage: MoensHcrImageLoad <manifest.tsv> <imageDirectory> [--drop-staging]");
             System.exit(1);
         }
-        MoensHcrImageLoad load = new MoensHcrImageLoad(args[0], args[1]);
+        boolean dropStaging = args.length > 2 && "--drop-staging".equals(args[2]);
+        MoensHcrImageLoad load = new MoensHcrImageLoad(args[0], args[1], dropStaging);
         load.initAll();
         load.run();
         System.exit(0);
@@ -136,7 +156,91 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
             // across re-runs even when earlier rows are skipped as already loaded.
             loadRow(rows.get(i), i + 1, publication);
         }
-        log.info("Done. loaded={} skippedExisting={} errors={}", loaded, skippedExisting, errors);
+        log.info("Images done. loaded={} skippedExisting={} errors={}", loaded, skippedExisting, errors);
+
+        if (errors > 0) {
+            // The expression inserts inner-join the load map, so a missing figure would
+            // silently drop its annotations instead of failing. Stop while the staging
+            // is still intact and the image load can be corrected and re-run.
+            throw new RuntimeException("Image load finished with " + errors + " error(s); "
+                + "expression records not created. Fix the failing rows and re-run.");
+        }
+
+        loadExpressionRecords();
+
+        if (dropStaging) {
+            log.info("Dropping staging tables");
+            runSqlScript(DROP_STAGING_SQL);
+        } else {
+            log.info("Staging tables left in place. Drop them once the load has been checked: "
+                + "./gradlew loadMoensHcrImages -PdropStaging");
+        }
+    }
+
+    /**
+     * Runs {@link #EXPRESSION_RECORDS_SQL}, which turns the staging rows into
+     * fish_experiment / expression_experiment2 / expression_figure_stage /
+     * expression_result2 records.
+     */
+    private void loadExpressionRecords() {
+        if (expressionRecordCount() > 0) {
+            log.info("SKIP expression records: {} already exist for {}", expressionRecordCount(), PUBLICATION_ZDB_ID);
+            return;
+        }
+        // Guards what used to be migration 0050's precondition: with an empty load map
+        // every insert in the script matches nothing, so it would report success having
+        // created no expression data at all.
+        Number mapped = (Number) HibernateUtil.currentSession()
+            .createNativeQuery("select count(*) from moens_hcr_image_load_map")
+            .uniqueResult();
+        if (mapped == null || mapped.intValue() == 0) {
+            throw new RuntimeException("moens_hcr_image_load_map is empty; no figures to attach "
+                + "expression records to. Has migration 0040 run and been followed by the image load?");
+        }
+
+        log.info("Creating expression records from staging");
+        runSqlScript(EXPRESSION_RECORDS_SQL);
+        log.info("Expression records done. {} experiments for {}", expressionRecordCount(), PUBLICATION_ZDB_ID);
+    }
+
+    private int expressionRecordCount() {
+        Number count = (Number) HibernateUtil.currentSession()
+            .createNativeQuery("select count(*) from expression_experiment2 where xpatex_source_zdb_id = :pub")
+            .setParameter("pub", PUBLICATION_ZDB_ID)
+            .uniqueResult();
+        return count == null ? 0 : count.intValue();
+    }
+
+    /**
+     * Execute a multi-statement SQL resource as one script in one transaction. Handed to
+     * the driver whole rather than split on semicolons: PgJDBC accepts a multi-statement
+     * simple query, and splitting it here would be a parser we do not need.
+     */
+    private void runSqlScript(String resourceName) {
+        String sql = readResource(resourceName);
+        Transaction tx = HibernateUtil.createTransaction();
+        try {
+            HibernateUtil.currentSession().doWork(connection -> {
+                try (java.sql.Statement statement = connection.createStatement()) {
+                    statement.execute(sql);
+                }
+            });
+            tx.commit();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            throw new RuntimeException("Failed running " + resourceName + ": " + e.getMessage(), e);
+        }
+    }
+
+    private String readResource(String resourceName) {
+        try (InputStream in = getClass().getResourceAsStream(resourceName)) {
+            if (in == null) {
+                throw new RuntimeException("SQL resource not found on classpath: " + resourceName);
+            }
+            return new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException("Could not read SQL resource: " + resourceName, e);
+        }
     }
 
     private void loadRow(String[] row, int figureNumber, Publication publication) {

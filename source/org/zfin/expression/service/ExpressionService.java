@@ -1029,7 +1029,7 @@ ToDo: Might need some adjustment that need to be taken care of when making use o
 
     public void addInSituFilter(SolrQuery query, boolean onlyInSitu) {
         if (onlyInSitu) {
-            query.addFilterQuery("assay:\"mRNA in situ hybridization\"");
+            query.addFilterQuery("assay:(\"mRNA in situ hybridization\" OR \"HCR in situ hybridization\")");
         }
     }
 }
