@@ -39,4 +39,8 @@ ${PGBINDIR}/psql -v ON_ERROR_STOP=1 -d $DBNAME -f load_knockdown_reagents_grcz12
 
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # update sequence_feature_chromosome_location_generated table
-psql -v ON_ERROR_STOP=1 -d $DB_NAME -a -f ../../../Ensembl/updateSequenceFeatureChromosomeLocation.sql
+# See load_knockdown_reagents.sh: the SQL opens 'begin work;' with no COMMIT, so
+# commit.sql has to be appended or the refresh is rolled back on disconnect.
+cat ../../../Ensembl/updateSequenceFeatureChromosomeLocation.sql \
+    ../../../Ensembl/commit.sql \
+  | psql -v ON_ERROR_STOP=1 -d $DB_NAME -a
