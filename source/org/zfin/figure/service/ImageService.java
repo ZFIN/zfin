@@ -13,9 +13,13 @@ import org.zfin.profile.Person;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.repository.RepositoryFactory;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
 import javax.imageio.stream.ImageInputStream;
+import javax.imageio.stream.ImageOutputStream;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
@@ -28,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +46,14 @@ public class ImageService {
 
     private final static String MEDIUM = "_medium";
     private final static String MEDIUM_DIMENSIONS = "500x550";
+
+    // Formats a browser will actually render. Anything else -- TIFF above all -- is
+    // re-encoded as JPEG on the way in: Chrome and Firefox draw nothing for a .tif,
+    // however valid the file is, so an unconverted upload is an invisible figure.
+    private final static Set<String> WEB_SAFE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif", "webp");
+    private final static String CONVERTED_EXTENSION = "jpg";
+    // ImageIO's ~0.75 default is visibly lossy on confocal fluorescence detail.
+    private final static float JPEG_QUALITY = 0.9f;
 
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner, String publicationZdbId) throws IOException {
@@ -108,7 +121,9 @@ public class ImageService {
     private static Image processImage(Figure figure, Person owner, Boolean isVideoStill, String fileName, InputStream imageStream, String publicationZdbId) throws IOException {
         Image image = createPlaceholderImage(figure, owner, isVideoStill);
 
-        String extension = FilenameUtils.getExtension(fileName);
+        String sourceExtension = FilenameUtils.getExtension(fileName);
+        String extension = outputExtension(sourceExtension);
+        boolean convertToJpeg = !extension.equals(sourceExtension);
 
         createDestinationParentDirectoryIfNotExists(publicationZdbId);
         File destinationDirectory = getDestinationParentDirectory(publicationZdbId, false);
@@ -131,7 +146,13 @@ public class ImageService {
         RepositoryFactory.getInfrastructureRepository().insertUpdatesTable(figure.getPublication(), "img_zdb_id",
             "create new record", image.getZdbID(), null);
 
-        Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        // Re-encode rather than copy when the source format is not web-safe, so the
+        // stored bytes always match the .jpg extension recorded above.
+        if (convertToJpeg) {
+            copyAsJpeg(imageStream, destinationFile);
+        } else {
+            Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        }
 
         try {
             convertImageToThumbnail(destinationFile.getAbsolutePath(), thumbnailFile.getAbsolutePath(), false);
@@ -193,9 +214,17 @@ public class ImageService {
                 (double) maxWidth / original.getWidth(),
                 (double) maxHeight / original.getHeight());
 
-        // Don't upscale
+        String extension = FilenameUtils.getExtension(outputFile.getName()).toLowerCase();
+
+        // Don't upscale. Copying the source verbatim is only correct when the
+        // destination is the same format; otherwise it would store the source's bytes
+        // under an extension that lies about them.
         if (scale >= 1.0) {
-            Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (extension.equals(FilenameUtils.getExtension(inputFile.getName()).toLowerCase())) {
+                Files.copy(inputFile.toPath(), outputFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            } else {
+                writeImage(toRgb(original), outputFile, extension);
+            }
             return;
         }
 
@@ -204,13 +233,35 @@ public class ImageService {
 
         BufferedImage resized = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = resized.createGraphics();
+        // White ground: a transparent source would otherwise composite onto black,
+        // since the RGB canvas has no alpha to carry it.
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, w, h);
         g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
         g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g.drawImage(original, 0, 0, w, h, null);
         g.dispose();
 
-        String extension = FilenameUtils.getExtension(outputFile.getName()).toLowerCase();
+        writeImage(resized, outputFile, extension);
+    }
+
+    /**
+     * The extension the three stored files share. Web-safe uploads keep their own
+     * extension verbatim, case included, so existing .PNG rows keep behaving exactly as
+     * they always have; everything else becomes a lowercase .jpg.
+     */
+    private static String outputExtension(String sourceExtension) {
+        String normalized = sourceExtension == null ? "" : sourceExtension.toLowerCase();
+        return WEB_SAFE_EXTENSIONS.contains(normalized) ? sourceExtension : CONVERTED_EXTENSION;
+    }
+
+    /**
+     * Write the image in whatever format the destination's extension asks for. The
+     * tif/tiff case is kept for the existing rows whose derivative filenames still end
+     * in .tif and get regenerated by {@link ImageThumbnailFixTask}.
+     */
+    private static void writeImage(BufferedImage image, File outputFile, String extension) throws IOException {
         String formatName = switch (extension) {
             case "png" -> "png";
             case "gif" -> "gif";
@@ -218,11 +269,64 @@ public class ImageService {
             default -> "jpg";
         };
 
-        if (!ImageIO.write(resized, formatName, outputFile)) {
+        if ("jpg".equals(formatName)) {
+            writeJpeg(image, outputFile);
+            return;
+        }
+        if (!ImageIO.write(image, formatName, outputFile)) {
             // Fallback to JPEG if the format isn't supported
             log.warn("Could not write format '" + formatName + "', falling back to JPEG: " + outputFile.getName());
-            ImageIO.write(resized, "jpg", outputFile);
+            writeJpeg(image, outputFile);
         }
+    }
+
+    /**
+     * Decode the incoming stream and store it as JPEG. The stream is spooled to a temp
+     * file first because {@link #readImage} needs a File to retry alternate ImageIO
+     * readers with, which a one-shot InputStream cannot support.
+     */
+    private static void copyAsJpeg(InputStream imageStream, File destinationFile) throws IOException {
+        File sourceCopy = Files.createTempFile("zfin-image-", ".tmp").toFile();
+        try {
+            Files.copy(imageStream, sourceCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            BufferedImage source = readImage(sourceCopy);
+            if (source == null) {
+                throw new IOException("Unable to read image for JPEG conversion: " + destinationFile.getName());
+            }
+            writeJpeg(toRgb(source), destinationFile);
+        } finally {
+            FileUtils.deleteQuietly(sourceCopy);
+        }
+    }
+
+    private static void writeJpeg(BufferedImage image, File outputFile) throws IOException {
+        ImageWriter writer = ImageIO.getImageWritersByFormatName(CONVERTED_EXTENSION).next();
+        try (ImageOutputStream output = ImageIO.createImageOutputStream(outputFile)) {
+            writer.setOutput(output);
+            ImageWriteParam params = writer.getDefaultWriteParam();
+            params.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+            params.setCompressionQuality(JPEG_QUALITY);
+            writer.write(null, new IIOImage(image, null, null), params);
+        } finally {
+            writer.dispose();
+        }
+    }
+
+    /**
+     * Flatten onto a white RGB canvas. JPEG carries neither an alpha channel nor CMYK,
+     * and without the white fill a transparent source composites onto black.
+     */
+    private static BufferedImage toRgb(BufferedImage image) {
+        if (image.getType() == BufferedImage.TYPE_INT_RGB) {
+            return image;
+        }
+        BufferedImage rgb = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = rgb.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, image.getWidth(), image.getHeight());
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return rgb;
     }
 
     /**

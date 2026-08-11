@@ -156,6 +156,7 @@ public class HibernateFigureRepository implements FigureRepository {
                 and (
                   figureStage.expressionExperiment.assay.name = 'Immunohistochemistry'
                   or figureStage.expressionExperiment.assay.name = 'mRNA in situ hybridization'
+                  or figureStage.expressionExperiment.assay.name = 'HCR in situ hybridization'
                 )
               )
             )

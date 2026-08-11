@@ -89,6 +89,23 @@ task createBasicPhenotypeInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicPhenotypeInfo'
 }
 
+// ZFIN-10330 — one-off Moens lab HCR image load.
+// Pass -Pmanifest=<manifest.tsv> -PimageDir=<dir with the .tif files>
+// Loads the ZFIN-10330 figures/images AND the expression records that hang off them.
+// Requires migrations 0040 (staging) and 0045 (HCR assay) to have been applied first.
+// Pass -PdropStaging once the load has been checked to drop the staging tables.
+task loadMoensHcrImages(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.figure.MoensHcrImageLoad'
+    doFirst {
+        args = [project.findProperty('manifest') ?: 'source/org/zfin/db/postGmakePostloaddb/1184/image_load_manifest.tsv',
+                project.findProperty('imageDir') ?: 'tasks/ZFIN-10330/Moens Lab Images']
+        if (project.hasProperty('dropStaging')) {
+            args += '--drop-staging'
+        }
+    }
+}
+
 task createBasicWTExpressionInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicExpressionInfo'
