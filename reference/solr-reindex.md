@@ -35,9 +35,16 @@ The batches mirror the legacy `solr-reindex-pipeline.sh` ordering (heavy → med
 
 | Batch    | Entities                                                                                                                              |
 |----------|----------------------------------------------------------------------------------------------------------------------------------------|
-| `heavy`  | figure, phenotype, phenotype_misexpressed_gene, expression, feature, expression_result, phenotype_observation                          |
+| *(heavy, one entity per batch)* | figure · phenotype · phenotype_misexpressed_gene · expression · feature · expression_result · phenotype_observation — **each its own batch**, so a RELOAD runs between them |
 | `medium` | fish, construct, gene, marker, str, antibody, term, publication                                                                       |
 | `light`  | person, **lab** *(Java)*, company, journal, go_annotation, str_relationship                                                            |
+
+> The seven heavy entities are split one-per-batch (rather than a single `heavy`
+> batch) so the inter-batch core RELOAD releases Lucene's `IndexWriter` buffers
+> between each. Indexing all seven before the first reload accumulated past the 12g
+> heap and hit `OutOfMemoryError` partway through `expression` (~600k docs buffered
+> from figure + phenotype). Each entity fits comfortably in 12g alone; the split
+> costs a few extra reloads for crash-safety as the index grows.
 
 ## Migrating an entity off DIH
 

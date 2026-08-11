@@ -1,25 +1,22 @@
 create or replace function create_color_info ()
 returns void as $$
 
-declare  
+declare
 
 begin
 
+    -- excitation color is bucketed from the EXCITATION length (was mistakenly the
+    -- emission length); emission from the emission length. BETWEEN matches the
+    -- bucketing used by the construct/fish/expression/feature DIH sub-entities.
     update fluorescent_protein set fp_excitation_color = (
         select fc_color from fluorescent_color
-        where fc_lower_bound < fp_emission_length AND fc_upper_bound > fp_emission_length);
+        where fp_excitation_length between fc_lower_bound and fc_upper_bound);
 
     update fluorescent_protein set fp_emission_color = (
         select fc_color from fluorescent_color
-        where fc_lower_bound < fp_emission_length AND fc_upper_bound > fp_emission_length);
+        where fp_emission_length between fc_lower_bound and fc_upper_bound);
 
-    update fluorescent_marker set fm_excitation_color = (
-        select fc_color from fluorescent_color
-        where fc_lower_bound < fm_excitation_length AND fc_upper_bound > fm_excitation_length);
-
-    update fluorescent_marker set fm_emission_color = (
-        select fc_color from fluorescent_color
-        where fc_lower_bound < fm_emission_length AND fc_upper_bound > fm_emission_length);
+    -- NB: the fluorescent_marker table was retired (ZFIN-10352); nothing to update there.
 
 end
 

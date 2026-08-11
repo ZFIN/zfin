@@ -6,7 +6,6 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.View;
 import org.zfin.framework.presentation.LookupEntry;
 import org.zfin.marker.Marker;
-import org.zfin.marker.fluorescence.FluorescentMarker;
 import org.zfin.marker.fluorescence.FluorescentProtein;
 
 import jakarta.servlet.http.HttpServletResponse;
@@ -67,12 +66,9 @@ public class EfgAPIController {
             return fpbaseDTO;
         }
 
-        FluorescentMarker flMarker = new FluorescentMarker();
-        flMarker.setEfg(efg);
-        flMarker.setProtein(protein);
-        flMarker.setEmissionLength(protein.getEmissionLength());
-        flMarker.setExcitationLength(protein.getExcitationLength());
-        HibernateUtil.currentSession().save(flMarker);
+        // ZFIN-10352: fluorescent_marker retired. Marker.fluorescentProteinEfgs is the owning
+        // side of the fpProtein_efg join, so adding to it persists the link; the old
+        // save(flMarker) into fluorescent_marker was a redundant, now-nonexistent cache write.
         efg.getFluorescentProteinEfgs().add(protein);
         HibernateUtil.flushAndCommitCurrentSession();
         return new FpbaseDTO(protein.getID(), protein.getName(), Optional.empty());

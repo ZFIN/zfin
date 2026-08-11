@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
+import org.zfin.framework.HibernateUtil;
 
 import java.io.IOException;
 import java.net.URL;
@@ -55,6 +56,43 @@ public class FPBaseService {
         } catch (IOException e) {
             return null;
         }
+    }
+
+    /**
+     * Link EFG markers to their FPBase {@code fluorescent_protein} rows by exact
+     * base name — the protein name with any trailing {@code " (State)"} suffix
+     * removed (FPBase models multi-state/photoconvertible proteins as separate
+     * rows: {@code Kaede (Green)}, {@code Kaede (Red)}), matched case-insensitively
+     * against the EFG's abbreviation or name. Every matching state row is linked,
+     * so a photoconvertible EFG gets all of its colors. Idempotent — links that
+     * already exist are skipped (there is no unique constraint on the join table).
+     *
+     * <p>Without this, {@link #importMissingProteins()} keeps the
+     * {@code fluorescent_protein} table current but nothing connects a new protein
+     * to its EFG marker, so the reporter/emission colors that read through
+     * {@code fpProtein_efg} never appear (this was ZFIN-10352 for {@code mClover3}).
+     *
+     * <p>Exact base-name matching is deliberately conservative so it is safe to run
+     * unattended: it self-links future multi-state proteins without the false
+     * positives that prefix/fuzzy matching produces (e.g. the {@code Cre}
+     * recombinase vs the {@code CreiLOV} protein, or {@code AM} vs {@code amCyan}).
+     * Version-drift cases ({@code KikGR} marker vs {@code KikGR1} protein) and
+     * generic reporters ({@code GFP}, {@code RFP}) do not match exactly and are
+     * left to curation.
+     *
+     * @return the number of new links created
+     */
+    public int linkEfgsToProteinsByName() {
+        String sql = """
+            insert into fpProtein_efg (fe_mrkr_zdb_id, fe_fl_protein_id)
+            select m.mrkr_zdb_id, p.fp_pk_id
+            from marker m
+            join fluorescent_protein p
+              on lower(regexp_replace(p.fp_name, ' \\(.*\\)$', '')) in (lower(m.mrkr_abbrev), lower(m.mrkr_name))
+            where m.mrkr_type = 'EFG'
+            on conflict on constraint fpprotein_efg_uq do nothing
+            """;
+        return HibernateUtil.currentSession().createNativeQuery(sql).executeUpdate();
     }
 
     public List<FluorescentProtein> importMissingProteins() {
