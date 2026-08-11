@@ -250,8 +250,9 @@ public class CreateMeshChebiMappingFile extends AbstractScriptWrapper {
             MeshCasChebiRelation relation = new MeshCasChebiRelation();
             relation.setChebi(reference.getTerm().getOboID());
             relation.setChebiName(reference.getTerm().getTermName());
-            if (reference.getPrefix().equals("CAS")) {
-                relation.setCas(reference.getPrefix() + ":" + reference.getAccessionNumber());
+            // CTD reports CAS IDs as CAS:<accession>, so normalize the obo prefix casing to match
+            if (reference.getPrefix().equalsIgnoreCase("CAS")) {
+                relation.setCas("CAS:" + reference.getAccessionNumber());
             }
             relations.add(relation);
         });

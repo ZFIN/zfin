@@ -1337,13 +1337,15 @@ public class HibernateOntologyRepository implements OntologyRepository {
     public Map<String, List<TermExternalReference>> getAllTermExternalReference() {
         if (casMap != null)
             return casMap;
+        // the prefix is taken verbatim from the obo xrefs, and its case varies by ontology release
+        // (ChEBI switched from 'CAS:' to 'cas:'), so match and key on the upper-cased prefix
         String hql = """
-            from TermExternalReference where prefix in (:prefix)
+            from TermExternalReference where upper(prefix) in (:prefix)
             """;
         org.hibernate.query.Query<TermExternalReference> query = HibernateUtil.currentSession().createQuery(hql, TermExternalReference.class);
         query.setParameterList("prefix", List.of("CAS", "MESH"));
         List<TermExternalReference> list = query.list();
-        casMap = list.stream().collect(groupingBy(TermExternalReference::getPrefix));
+        casMap = list.stream().collect(groupingBy(reference -> reference.getPrefix().toUpperCase()));
         return casMap;
     }
 
@@ -1375,7 +1377,7 @@ public class HibernateOntologyRepository implements OntologyRepository {
 
     @Override
     public List<TermExternalReference> getAllCasReferences() {
-        return getAllTermExternalReference().get("CAS");
+        return getAllTermExternalReference().getOrDefault("CAS", List.of());
     }
 
     @Override

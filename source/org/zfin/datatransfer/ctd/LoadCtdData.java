@@ -42,6 +42,9 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     private String jobName;
+    // every file this load writes -- downloads, mapping csvs and the statistics report -- goes in
+    // here, so a single directory under the Jenkins workspace holds everything that gets archived
+    private File outputDirectory;
     private MeshCasChebiMappings mapping = new MeshCasChebiMappings();
 
     public static void main(String[] arguments) throws IOException {
@@ -55,6 +58,10 @@ public class LoadCtdData extends AbstractScriptWrapper {
 
     private void execute() throws IOException {
         initAll();
+        outputDirectory = new File(jobName);
+        if (!outputDirectory.isDirectory() && !outputDirectory.mkdirs()) {
+            throw new IOException("Could not create output directory " + outputDirectory.getAbsolutePath());
+        }
         dao = new MeshChebiDAO(HibernateUtil.currentSession());
         vocabularyDao = new VocabularyDAO(HibernateUtil.currentSession());
         vocabularyTermDao = new VocabularyTermDAO(HibernateUtil.currentSession());
@@ -74,7 +81,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         Map<String, Object> summary = new LinkedHashMap<>();
         reportEntries.forEach(reportEntry -> summary.put(reportEntry.entryName, reportEntry.entryValue));
         stats.addSummaryTable("Statistics", summary);
-        stats.writeFiles(new File(jobName), "statistics");
+        stats.writeFiles(outputDirectory, "statistics");
 /*
         reportOneToNRelations();
 */
@@ -261,7 +268,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
         String fileName = "CTD_references.csv";
         String url = "https://ctdbase.org/query.go?type=reference&d-1340579-e=1&action=Search&taxon=TAXON%3A7955&reviewStatus=curated&6578706f7274=1";
         try {
-            downloadedPublicationFile = downloadService.downloadFile(new File(fileName), new URL(url), false);
+            downloadedPublicationFile = downloadService.downloadFile(outputFile(fileName), new URL(url), false);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
@@ -271,10 +278,14 @@ public class LoadCtdData extends AbstractScriptWrapper {
         String fileName = "CTD_chemicals.csv";
         String url = "https://ctdbase.org/reports/" + fileName + ".gz";
         try {
-            downloadedChemicalFile = downloadService.downloadFile(new File(fileName), new URL(url), false);
+            downloadedChemicalFile = downloadService.downloadFile(outputFile(fileName), new URL(url), false);
         } catch (MalformedURLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private File outputFile(String fileName) {
+        return new File(outputDirectory, fileName);
     }
 
     private MeshChebiDAO dao;
@@ -287,14 +298,21 @@ public class LoadCtdData extends AbstractScriptWrapper {
     private List<MeshCasChebiRelation> getChebiToCasMapping() {
 
         List<TermExternalReference> referenceList = getOntologyRepository().getAllCasReferences();
+        if (referenceList.isEmpty()) {
+            // without any CAS xrefs the mapping below is empty, which would delete every
+            // existing mesh-chebi mapping record, so stop before that happens
+            throw new RuntimeException("No CAS cross references found on CHEBI terms. " +
+                "Check that the CHEBI ontology load populated term_xref with CAS accessions.");
+        }
         List<MeshCasChebiRelation> relations = new ArrayList<>();
 
         referenceList.forEach(reference -> {
             MeshCasChebiRelation relation = new MeshCasChebiRelation();
             relation.setChebi(reference.getTerm().getOboID());
             relation.setChebiName(reference.getTerm().getTermName());
-            if (reference.getPrefix().equals("CAS")) {
-                relation.setCas(reference.getPrefix() + ":" + reference.getAccessionNumber());
+            // CTD reports CAS IDs as CAS:<accession>, so normalize the obo prefix casing to match
+            if (reference.getPrefix().equalsIgnoreCase("CAS")) {
+                relation.setCas("CAS:" + reference.getAccessionNumber());
             }
             relations.add(relation);
         });
@@ -320,7 +338,7 @@ public class LoadCtdData extends AbstractScriptWrapper {
     }
 
     private void writeOutMultipleFile(List<String> multipleList, String fileName) {
-        Path file = Path.of(fileName);
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         multipleList.forEach(id -> {
             buffer.append(id);
@@ -362,8 +380,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         return record.toString();
     }
 
-    private static void writeOutFile(Map<String, List<String>> map, String fileName) {
-        Path file = Path.of(fileName);
+    private void writeOutFile(Map<String, List<String>> map, String fileName) {
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         map.forEach((s, strings) -> {
             buffer.append(s + "," + String.join("|", strings));
@@ -376,8 +394,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void writeOutFile(Collection<String> list, String fileName) {
-        Path file = Path.of(fileName);
+    private void writeOutFile(Collection<String> list, String fileName) {
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         list.forEach(id -> {
             buffer.append(id);
@@ -390,8 +408,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void writeFile(Collection<MeshCasChebiRelation> list, String fileName) {
-        Path file = Path.of(fileName);
+    private void writeFile(Collection<MeshCasChebiRelation> list, String fileName) {
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         list.forEach(relation -> {
             StringJoiner joiner = new StringJoiner("\t");
@@ -410,8 +428,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void writeMappingToFile(Collection<MeshChebiMapping> list, String fileName) {
-        Path file = Path.of(fileName);
+    private void writeMappingToFile(Collection<MeshChebiMapping> list, String fileName) {
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         list.forEach(relation -> {
             StringJoiner joiner = new StringJoiner("\t");
@@ -429,8 +447,8 @@ public class LoadCtdData extends AbstractScriptWrapper {
         }
     }
 
-    private static void writeOneToOneFile1(Collection<MeshChebiMapping> list, String fileName) {
-        Path file = Path.of(fileName);
+    private void writeOneToOneFile1(Collection<MeshChebiMapping> list, String fileName) {
+        Path file = outputFile(fileName).toPath();
         StringBuffer buffer = new StringBuffer();
         list.forEach(relation -> {
             StringJoiner joiner = new StringJoiner("\t");
