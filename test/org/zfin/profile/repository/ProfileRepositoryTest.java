@@ -18,6 +18,7 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.*;
+import static org.junit.Assume.assumeTrue;
 
 public class ProfileRepositoryTest extends AbstractDatabaseTest {
 	private static final String REAL_PERSON_1_ZDB_ID = "ZDB-PERS-960805-676"; //Monte;
@@ -500,6 +501,63 @@ public class ProfileRepositoryTest extends AbstractDatabaseTest {
 	public void emailExists() {
 		boolean exists = profileRepository.emailExists("cmpich@zfin.org");
 		assertTrue(exists);
+	}
+
+	/**
+	 * Sample rows are read from the database rather than hard coded, so cleaning up an ORCID does
+	 * not turn into a confusing test failure.
+	 */
+	private Person aPersonWithOrcidOfLength(int length) {
+		return HibernateUtil.currentSession()
+				.createQuery("from Person where orcidID is not null and length(orcidID) = :len", Person.class)
+				.setParameter("len", length)
+				.setMaxResults(1)
+				.uniqueResult();
+	}
+
+	@Test
+	public void findsPersonByOrcidInAnyFormTheyMightType() {
+		Person stored = aPersonWithOrcidOfLength(19);
+		assumeTrue("no canonical ORCID in the database to test with", stored != null);
+		String canonical = stored.getOrcidID();
+
+		assertEquals(stored.getZdbID(), profileRepository.getPersonByOrcid(canonical).getZdbID());
+		assertEquals(stored.getZdbID(),
+				profileRepository.getPersonByOrcid(canonical.replace("-", "")).getZdbID());
+		assertEquals(stored.getZdbID(),
+				profileRepository.getPersonByOrcid("https://orcid.org/" + canonical).getZdbID());
+		assertEquals(stored.getZdbID(),
+				profileRepository.getPersonByOrcid("  " + canonical + "  ").getZdbID());
+	}
+
+	/**
+	 * A few records kept the digits without the dashes; that is the same identifier, so submitting
+	 * the canonical form has to find them or we would allow a duplicate.
+	 */
+	@Test
+	public void findsPersonWhoseOrcidIsStoredWithoutDashes() {
+		Person stored = aPersonWithOrcidOfLength(16);
+		assumeTrue("no dash-less ORCID in the database to test with", stored != null);
+		String bare = stored.getOrcidID();
+		String canonical = bare.substring(0, 4) + "-" + bare.substring(4, 8) + "-"
+				+ bare.substring(8, 12) + "-" + bare.substring(12, 16);
+
+		Person found = profileRepository.getPersonByOrcid(canonical);
+		assertNotNull("canonical form should find the dash-less record", found);
+		assertEquals(stored.getZdbID(), found.getZdbID());
+	}
+
+	@Test
+	public void returnsNullWhenNoOneHoldsTheOrcid() {
+		assertNull(profileRepository.getPersonByOrcid("0000-0000-0000-0000"));
+	}
+
+	@Test
+	public void returnsNullForAnUnreadableOrcid() {
+		assertNull(profileRepository.getPersonByOrcid("rPlgedlRSUqMgwEAx"));
+		assertNull(profileRepository.getPersonByOrcid("N/A"));
+		assertNull(profileRepository.getPersonByOrcid(""));
+		assertNull(profileRepository.getPersonByOrcid(null));
 	}
 
 }

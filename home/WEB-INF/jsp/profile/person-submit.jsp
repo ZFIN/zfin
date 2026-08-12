@@ -8,6 +8,17 @@
         <p>Please fill out the following information and we will get back to you as soon as we have reviewed it
             and approved the request.</p>
 
+        <c:if test="${not empty validationErrors}">
+            <div class="alert alert-danger">
+                <p>Your request could not be submitted. Please correct the following and try again:</p>
+                <ul class="mb-0">
+                    <c:forEach var="validationError" items="${validationErrors}">
+                        <li>${validationError}</li>
+                    </c:forEach>
+                </ul>
+            </div>
+        </c:if>
+
         <form:form action="" method="POST" modelAttribute="submission" id="nomenclature">
 
             <div class="form-group row">
@@ -90,9 +101,16 @@
             </div>
 
             <div class="form-group row">
-                <form:label path="orcid" cssClass="col-md-3 col-form-label">ORCID</form:label>
+                <form:label path="orcid" cssClass="col-md-3 col-form-label required">ORCID iD</form:label>
                 <div class="col-md-5">
-                    <form:input path="orcid" cssClass="form-control"/>
+                    <form:input path="orcid" cssClass="form-control" required="true"
+                                placeholder="0000-0002-1825-0097"
+                                pattern="\s*(https?://)?(www\.)?(orcid\.org/)?\d{4}-?\d{4}-?\d{4}-?\d{3}[\dXx]\s*"
+                                title="16 digits, for example 0000-0002-1825-0097"/>
+                    <small class="form-text text-muted">
+                        Required. If you do not have an ORCID iD, you can
+                        <a href="https://orcid.org/register" target="_blank" rel="noopener">register for a free one</a>.
+                    </small>
                 </div>
             </div>
 

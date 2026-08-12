@@ -82,6 +82,16 @@ configurations.all { config ->
     exclude group: 'xalan', module: 'xalan'
     exclude group: 'xml-apis', module: 'xml-apis'
 
+    // Keep the legacy javax.mail 1.4 spec off the classpath. Axiom pulls it in (directly and via
+    // neethi), and its META-INF/mailcap registers org.apache.geronimo.mail.handlers.HtmlHandler
+    // for text/html. Jakarta Activation reads every mailcap it can find, so that handler can win
+    // over the jakarta.mail one and HTML mail then dies with "HtmlHandler cannot be cast to
+    // jakarta.activation.DataContentHandler". Which handler wins depends on classpath scan order,
+    // so this has to be an exclusion rather than luck. We are on jakarta.mail 2.0 and nothing in
+    // source/ imports javax.mail. Excluded for all configurations because the dependency arrives
+    // by several paths and a per-path exclusion only covers the path it is declared on.
+    exclude group: 'org.apache.geronimo.specs', module: 'geronimo-javamail_1.4_spec'
+
     // Skip Jackson version forcing for gwtSources — it must stay at 2.11.x
     // because GWT can't compile jackson-annotations 2.12+ (uses String.format).
     if (config.name != 'gwtSources') {

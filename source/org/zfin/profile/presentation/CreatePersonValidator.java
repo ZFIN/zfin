@@ -7,6 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 import org.zfin.profile.Person;
 import org.zfin.profile.repository.ProfileRepository;
+import org.zfin.util.OrcidUtil;
 
 /**
  */
@@ -51,6 +52,22 @@ public class CreatePersonValidator implements Validator{
 
         if(profileRepository.emailExists(person.getEmail())){
             errors.reject("", "A User with that email already exists.");
+        }
+
+        // An unreadable ORCID would otherwise be silently dropped when it is canonicalized, or
+        // breach the 19 character limit on the column, which this path does not catch.
+        if(StringUtils.isNotEmpty(person.getOrcidID())){
+            if(!OrcidUtil.isValid(person.getOrcidID())){
+                errors.rejectValue("orcidID","","ORCID iD must be 16 digits in the form 0000-0002-1825-0097.");
+            } else {
+                // An ORCID identifies one researcher, so two person records must never share one.
+                Person existing = profileRepository.getPersonByOrcid(person.getOrcidID());
+                if(existing != null){
+                    errors.rejectValue("orcidID","","That ORCID iD already belongs to "
+                            + existing.getFullName() + " (" + existing.getZdbID()
+                            + "). Update that record rather than creating a second one.");
+                }
+            }
         }
     }
 }
