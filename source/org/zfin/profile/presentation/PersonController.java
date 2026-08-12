@@ -15,10 +15,13 @@ import org.zfin.framework.presentation.Area;
 import org.zfin.framework.presentation.LookupStrings;
 import org.zfin.gwt.root.util.StringUtils;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
+import org.zfin.infrastructure.submission.SubmissionLog;
+import org.zfin.infrastructure.submission.SubmissionLogService;
 import org.zfin.profile.*;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.BeanFieldUpdate;
 import org.zfin.profile.service.ProfileService;
+import org.zfin.util.OrcidUtil;
 import org.zfin.zirc.entity.LineSubmission;
 import org.zfin.zirc.service.LineSubmissionStatusComputer;
 import org.zfin.zirc.service.LineSubmissionStatusComputer.FieldStatus;
@@ -353,12 +356,14 @@ public class PersonController {
 
     @RequestMapping(value = "/person/create", method = RequestMethod.GET)
     public String createPersonSetup(@RequestParam(value = "organization", required = false) String organizationZdbId,
+                                    @RequestParam(value = "prefill_from_submission", required = false) String submissionId,
                                     Model model,
                                     Person person,
                                     Errors errors,
                                     HttpServletRequest request) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Add Person");
+        model.addAttribute("countryList", profileService.getCountries());
 
         //get prefilled values if any are provided
         String firstName = request.getParameter("firstName");
@@ -367,6 +372,21 @@ public class PersonController {
         model.addAttribute("lastName", lastName);
         String email = request.getParameter("email");
         model.addAttribute("email", email);
+
+        // The "create the account" link in the coordinator's notification email carries the id of
+        // the logged submission, so the whole request prefills rather than the few fields that fit
+        // in a query string. Parsed rather than bound as a Long: this arrives from a link in an
+        // email, and a mail client that appends a stray character should cost the prefill, not the
+        // whole page.
+        if (!StringUtils.isEmpty(submissionId)) {
+            SubmissionLog submission = SubmissionLogService.getById(parseSubmissionId(submissionId));
+            if (SubmissionPrefill.apply(submission, person)) {
+                model.addAttribute("submission", submission);
+            } else {
+                logger.warn("Could not prefill person form from submission '" + submissionId + "'");
+                model.addAttribute("prefillFailed", true);
+            }
+        }
 
         if (!StringUtils.isEmpty(organizationZdbId)) {
             return createPersonSetupWithOrganization(organizationZdbId, model, person, errors);
@@ -385,12 +405,21 @@ public class PersonController {
                                                     Person person,
                                                     Errors errors) {
         model.addAttribute(LookupStrings.FORM_BEAN, person);
+        model.addAttribute("countryList", profileService.getCountries());
 
         logger.debug("passed in an organization");
 
         setupPersonCreationModelForOrganization(organizationZdbID, model);
 
         return "profile/create-person";
+    }
+
+    private Long parseSubmissionId(String submissionId) {
+        try {
+            return Long.valueOf(submissionId.trim());
+        } catch (NumberFormatException e) {
+            return null;
+        }
     }
 
     private void setupPersonCreationModelForOrganization(String organizationZdbID, Model model) {
@@ -420,10 +449,16 @@ public class PersonController {
         createPersonValidator.validate(person, errors);
         if (errors.hasErrors()) {
             model.addAttribute(LookupStrings.ERRORS, errors);
+            model.addAttribute("countryList", profileService.getCountries());
             if (!StringUtils.isEmpty(person.getOrganizationZdbId())) {
                 setupPersonCreationModelForOrganization(person.getOrganizationZdbId(), model);
             }
             return "profile/create-person";
+        }
+        // Validation has confirmed the ORCID is readable, so store it in canonical form.
+        person.setOrcidID(OrcidUtil.normalize(person.getOrcidID()));
+        if (person.getOrcidID().isEmpty()) {
+            person.setOrcidID(null);
         }
 
         Organization organization = profileRepository.getOrganizationByZdbID(person.getOrganizationZdbId());

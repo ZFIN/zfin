@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.framework.mail.MailSender;
-import org.zfin.profile.OrganizationSubmission;
-import org.zfin.profile.PersonSubmission;
+import org.zfin.infrastructure.spam.SpamAssessment;
+import org.zfin.infrastructure.spam.SpamDetector;
+import org.zfin.infrastructure.submission.SubmissionLog;
+import org.zfin.infrastructure.submission.SubmissionLogService;
+import org.zfin.infrastructure.submission.SubmissionOutcome;
+import org.zfin.infrastructure.submission.SubmissionType;
 import org.zfin.properties.ZfinPropertiesEnum;
 
 import java.io.IOException;
@@ -56,6 +60,11 @@ public class UserCommentController {
                                                             ) {
         MailSender mailer = AbstractZfinMailSender.getInstance();
 
+        SubmissionLog logEntry = SubmissionLogService.build(SubmissionType.USER_COMMENT, request);
+        SubmissionLogService.setSubmitter(logEntry, name, email, null);
+        SubmissionLogService.setDetails(logEntry,
+                String.format(ADMIN_EMAIL_TEMPLATE, name, email, institution, referer, comments));
+
         // none of the regular fields should be blank. client-side validation should have prevented that. if any of them
         // are blank or the *hidden* email input is not blank then this was probably a spammy request, so just stop
         // here.
@@ -65,6 +74,9 @@ public class UserCommentController {
                 StringUtils.isEmpty(subject) ||
                 StringUtils.isEmpty(comments) ||
                 !StringUtils.isEmpty(hiddenEmail)) {
+            SubmissionLogService.save(logEntry, StringUtils.isEmpty(hiddenEmail)
+                    ? SubmissionOutcome.RETURNED_INVALID
+                    : SubmissionOutcome.REJECTED_HONEYPOT);
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid field"), HttpStatus.BAD_REQUEST);
         }
 
@@ -81,16 +93,25 @@ public class UserCommentController {
                 log.error("Error verifying captcha for user comment submission", e);
             }
             if (!isCaptchaValid) {
+                SubmissionLogService.save(logEntry, SubmissionOutcome.REJECTED_CAPTCHA);
                 return new ResponseEntity<>(new JSONStatusResponse("CaptchaRequired", "Captcha verification required"), HttpStatus.BAD_REQUEST);
             }
         }
 
         logSubmissionRequest(request, name, institution, email, subject);
-        if (flagSpam(name, institution)) {
-            log.error("New Person Submission Flagged as Spam: ");
+
+        SpamAssessment assessment = SpamDetector.examine()
+                .name("name", name)
+                .name("institution", institution)
+                .text("subject", subject)
+                .freeText("comments", comments)
+                .assess();
+        SubmissionLogService.setAssessment(logEntry, assessment);
+        if (assessment.isSpam()) {
+            log.error("User Comment Flagged as Spam: " + assessment.describe());
+            SubmissionLogService.save(logEntry, SubmissionOutcome.REJECTED_SPAM);
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Invalid Form Data"), HttpStatus.BAD_REQUEST);
         }
-
 
         // send mail to admin
         boolean sent = mailer.sendMail(subject,
@@ -99,54 +120,18 @@ public class UserCommentController {
                 email,
                 ZfinPropertiesEnum.JSD_EMAIL.value().split(" "));
         if (sent) {
+            SubmissionLogService.save(logEntry, SubmissionOutcome.ACCEPTED);
             return new ResponseEntity<>(new JSONStatusResponse("OK", ""), HttpStatus.OK);
         } else {
+            SubmissionLogService.save(logEntry, SubmissionOutcome.ERROR_SENDING);
             return new ResponseEntity<>(new JSONStatusResponse("Error", "Internal error"), HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    private boolean flagSpam(String name, String institution) {
-        //Look for submissions like: WsEjiJCJYOXBXrWPWNLAwq KyliyDPBwGnfnAiVOoKCl
-        boolean entirelyUpperCaseCheck = StringUtils.isAllUpperCase(name) && StringUtils.isAllUpperCase(institution);
-        if (entirelyUpperCaseCheck) {
-            //some legitimate names are all uppercase
-            return false;
-        }
-
-        int countOfLettersThreshold = 10;
-
-        int upperCaseThreshold = 3;
-        if (numberOfUpperCaseLetters(name) >= upperCaseThreshold && name.length() >= countOfLettersThreshold) {
-            if (StringUtils.countMatches(name, " ") == 0) {
-                return true;
-            }
-        }
-        if (numberOfUpperCaseLetters(institution) >= upperCaseThreshold && institution.length() >= countOfLettersThreshold) {
-            if (StringUtils.countMatches(institution, " ") == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private int numberOfUpperCaseLetters(String firstName) {
-        int count = 0;
-        for (char c : firstName.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
     private void logSubmissionRequest(HttpServletRequest request, String name, String institution, String email, String subject) {
         log.error("New Feedback Submission: name: %s, institution: %s, email: %s, subject: %s".formatted(name, institution, email, subject));
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if (ipAddress == null) {
-            ipAddress = request.getRemoteAddr();
-        }
-        log.error("Submission IP Address: " + ipAddress);
+        log.error("Submission IP Address: " + SubmissionLogService.getClientIpAddress(request));
 
         //get cookies:
         StringBuilder cookies = new StringBuilder();
