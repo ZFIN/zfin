@@ -90,7 +90,11 @@ task createBasicPhenotypeInfoFile(type: JavaExec) {
 }
 
 // ZFIN-10330 — one-off Moens lab HCR image load.
-// Pass -Pmanifest=<manifest.tsv> -PimageDir=<dir with the .tif files>
+// By default reads both the manifest and the .tif files from -PdataDir, which points at
+// /research/zunloads/Moens-2026 — the shared drop the curators put the load data in.
+// Override individually with -PimageDir=<dir with the .tif files> and/or
+// -Pmanifest=<manifest.tsv>; the manifest falls back to the copy checked in under
+// source/org/zfin/db/postGmakePostloaddb/1184/ when the data directory has none.
 // Loads the ZFIN-10330 figures/images AND the expression records that hang off them.
 // Requires migrations 0040 (staging) and 0045 (HCR assay) to have been applied first.
 // Pass -PdropStaging once the load has been checked to drop the staging tables.
@@ -98,8 +102,12 @@ task loadMoensHcrImages(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.figure.MoensHcrImageLoad'
     doFirst {
-        args = [project.findProperty('manifest') ?: 'source/org/zfin/db/postGmakePostloaddb/1184/image_load_manifest.tsv',
-                project.findProperty('imageDir') ?: 'tasks/ZFIN-10330/Moens Lab Images']
+        def dataDir = project.findProperty('dataDir') ?: '/research/zunloads/Moens-2026'
+        def dataDirManifest = new File(dataDir as String, 'image_load_manifest.tsv')
+        def defaultManifest = dataDirManifest.isFile() ? dataDirManifest.path
+                : 'source/org/zfin/db/postGmakePostloaddb/1184/image_load_manifest.tsv'
+        args = [project.findProperty('manifest') ?: defaultManifest,
+                project.findProperty('imageDir') ?: dataDir]
         if (project.hasProperty('dropStaging')) {
             args += '--drop-staging'
         }
