@@ -201,6 +201,25 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
 
         if (CollectionUtils.isNotEmpty(markerGoTermEvidence.getGoTermAnnotationExtnGroup())) {
             for (MarkerGoTermAnnotationExtnGroup mgtaeGroup : markerGoTermEvidence.getGoTermAnnotationExtnGroup()) {
+                // Only persist groups that are actually NEW.
+                //
+                // mgtaeg_annotation_extension_group_id is @GeneratedValue(IDENTITY), so save() on
+                // an already-persisted group does not update it -- it assigns a fresh id and
+                // INSERTs a second copy, leaving the original behind. The GAF/GPAD update path
+                // reaches here with the entity loaded FROM the database (GafService passes the
+                // `existing` annotation out of GafAnnotationExistsError, mutating only
+                // modifiedWhen), so its collection holds every group already stored. Re-saving
+                // them turned N groups into 2N on every run that saw a newer date: syn2b reached
+                // exactly 2^16 = 65,536 groups and syn1 ~2^18 = 262,140, all carrying a SINGLE
+                // distinct extension value. 99.6% of marker_go_term_annotation_extension was this
+                // duplication, and it made the load's details report unreadable.
+                //
+                // Skipping persisted groups leaves genuinely new ones (id == null) inserted as
+                // before. Replacing an existing group's CONTENTS is not supported here and never
+                // was -- save() could only ever add.
+                if (mgtaeGroup.getId() != null) {
+                    continue;
+                }
                 mgtaeGroup.setMgtaegMarkerGoEvidence(markerGoTermEvidence);
                 HibernateUtil.currentSession().save(mgtaeGroup);
                 for (MarkerGoTermAnnotationExtn mgtaedata : mgtaeGroup.getMgtAnnoExtns()) {
