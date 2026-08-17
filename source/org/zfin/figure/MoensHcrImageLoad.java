@@ -55,10 +55,13 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
  * command, after migrations 0040 (staging) and 0045 (assay) have been applied.
  * <p>
  * Args:
- * [0] manifest TSV path
+ * [0] manifest TSV path, or a directory holding {@value #MANIFEST_FILENAME}
  * [1] directory containing the image files named in disk_filename
  * [2] optional "--drop-staging": drop both staging tables after loading. Off by default
  * so the source rows outlive the load and a bad load can be rebuilt from them.
+ * <p>
+ * Both paths default to {@value #DEFAULT_DATA_DIR}, the shared drop the load data is
+ * delivered to, so the usual invocation passes no paths at all.
  * <p>
  * Re-runnable: a row is skipped if its filename stem is already in the load map, and the
  * expression records are skipped outright if this publication already has any. Labels are
@@ -78,6 +81,10 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
     // Classpath resources; source/ is configured as a resources srcDir in build.gradle.
     static final String EXPRESSION_RECORDS_SQL = "/org/zfin/figure/moens-hcr-expression-records.sql";
     static final String DROP_STAGING_SQL = "/org/zfin/figure/moens-hcr-drop-staging.sql";
+
+    // Where the curators drop the load data (manifest + .tif files) on the shared filer.
+    static final String DEFAULT_DATA_DIR = "/research/zunloads/Moens-2026";
+    static final String MANIFEST_FILENAME = "image_load_manifest.tsv";
 
     private final String manifestPath;
     private final File imageDirectory;
@@ -108,18 +115,37 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
     private int errors = 0;
 
     public MoensHcrImageLoad(String manifestPath, String imageDirectory, boolean dropStaging) {
-        this.manifestPath = manifestPath;
-        this.imageDirectory = new File(imageDirectory);
+        this.imageDirectory = new File(isBlank(imageDirectory) ? DEFAULT_DATA_DIR : imageDirectory);
+        // A directory instead of a file means "the manifest that came with the data", so
+        // the common case only has to name the drop directory once.
+        File manifest = isBlank(manifestPath) ? new File(this.imageDirectory, MANIFEST_FILENAME)
+            : new File(manifestPath);
+        if (manifest.isDirectory()) {
+            manifest = new File(manifest, MANIFEST_FILENAME);
+        }
+        this.manifestPath = manifest.getPath();
         this.dropStaging = dropStaging;
     }
 
     public static void main(String[] args) {
-        if (args.length < 2) {
-            System.err.println("Usage: MoensHcrImageLoad <manifest.tsv> <imageDirectory> [--drop-staging]");
+        if (args.length > 0 && ("-h".equals(args[0]) || "--help".equals(args[0]))) {
+            System.err.println("Usage: MoensHcrImageLoad [<manifest.tsv|dataDir>] [<imageDirectory>] [--drop-staging]");
+            System.err.println("Both paths default to " + DEFAULT_DATA_DIR);
             System.exit(1);
         }
-        boolean dropStaging = args.length > 2 && "--drop-staging".equals(args[2]);
-        MoensHcrImageLoad load = new MoensHcrImageLoad(args[0], args[1], dropStaging);
+        // The flag can sit anywhere: with both paths defaulted it is the only argument.
+        List<String> paths = new ArrayList<>();
+        boolean dropStaging = false;
+        for (String arg : args) {
+            if ("--drop-staging".equals(arg)) {
+                dropStaging = true;
+            } else if (!isBlank(arg)) {
+                paths.add(arg);
+            }
+        }
+        String manifestPath = paths.size() > 0 ? paths.get(0) : null;
+        String imageDirectory = paths.size() > 1 ? paths.get(1) : null;
+        MoensHcrImageLoad load = new MoensHcrImageLoad(manifestPath, imageDirectory, dropStaging);
         load.initAll();
         load.run();
         System.exit(0);
@@ -129,6 +155,10 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
         if (!imageDirectory.isDirectory()) {
             throw new RuntimeException("Image directory not found: " + imageDirectory.getAbsolutePath());
         }
+        if (!new File(manifestPath).isFile()) {
+            throw new RuntimeException("Manifest not found: " + new File(manifestPath).getAbsolutePath());
+        }
+        log.info("Reading manifest {} with images from {}", manifestPath, imageDirectory.getAbsolutePath());
         List<String[]> rows = readManifest();
 
         Publication publication = getPublicationRepository().getPublication(PUBLICATION_ZDB_ID);
@@ -342,6 +372,10 @@ public class MoensHcrImageLoad extends AbstractScriptWrapper {
             throw new RuntimeException("Could not read manifest: " + manifestPath, e);
         }
         return rows;
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.trim().isEmpty();
     }
 
     private static String col(String[] row, int i) {
