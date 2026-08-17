@@ -52,8 +52,8 @@ public class UiSchemaSerializationTest {
     public void controlWithMetadataOptionsSerializesAlphabetized() throws Exception {
         Control c = new Control("#/properties/forwardPrimer",
                 Options.of()
-                        .placeholder("5′ → 3′")
-                        .helpText("Forward primer sequence"),
+                        .withPlaceholder("5′ → 3′")
+                        .withHelpText("Forward primer sequence"),
                 null);
         String json = MAPPER.writeValueAsString(c);
         assertEquals(

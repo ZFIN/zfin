@@ -1,9 +1,37 @@
 {
   "schema" : {
     "properties" : {
+      "aaChangeFrom" : {
+        "maxLength" : 255,
+        "title" : "Amino Acid Change",
+        "type" : [ "string", "null" ]
+      },
+      "aaChangeTo" : {
+        "maxLength" : 255,
+        "title" : "Amino acid change (to)",
+        "type" : [ "string", "null" ]
+      },
+      "aaPositionEnd" : {
+        "title" : "Position (end)",
+        "type" : [ "number", "null" ]
+      },
+      "aaPositionStart" : {
+        "title" : "Position",
+        "type" : [ "number", "null" ]
+      },
       "additionalInfo" : {
         "maxLength" : 5000,
         "title" : "Additional Info",
+        "type" : [ "string", "null" ]
+      },
+      "constructName" : {
+        "maxLength" : 255,
+        "title" : "Construct name",
+        "type" : [ "string", "null" ]
+      },
+      "crisprSequence" : {
+        "maxLength" : 5000,
+        "title" : "CRISPR sequence",
         "type" : [ "string", "null" ]
       },
       "deletedSequence" : {
@@ -25,6 +53,18 @@
         "title" : "Inserted sequence",
         "type" : [ "string", "null" ]
       },
+      "insertionOriginOther" : {
+        "maxLength" : 255,
+        "title" : "Other origin",
+        "type" : [ "string", "null" ]
+      },
+      "insertionOrigins" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "The insertion is a consequence of",
+        "type" : "array"
+      },
       "insertionSizeBp" : {
         "title" : "Insertion size (bp)",
         "type" : [ "number", "null" ]
@@ -38,11 +78,6 @@
         "title" : "Lesion Type",
         "type" : [ "string", "null" ]
       },
-      "mutatedAminoAcids" : {
-        "maxLength" : 2000,
-        "title" : "Mutated amino acids",
-        "type" : [ "string", "null" ]
-      },
       "mutatedAminoAcidsHgvs" : {
         "maxLength" : 2000,
         "title" : "Mutated amino acids (HGVS)",
@@ -53,10 +88,29 @@
         "title" : "Nucleotide change",
         "type" : [ "string", "null" ]
       },
+      "proteinConsequences" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Protein consequences",
+        "type" : "array"
+      },
+      "talenSequence" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence",
+        "type" : [ "string", "null" ]
+      },
       "threePrimeFlank" : {
         "maxLength" : 5000,
         "title" : "3′ flanking sequence",
         "type" : [ "string", "null" ]
+      },
+      "transcriptConsequences" : {
+        "items" : {
+          "type" : "string"
+        },
+        "title" : "Transcript consequences",
+        "type" : "array"
       },
       "transgeneSequence" : {
         "maxLength" : 5000,
@@ -123,7 +177,152 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true
+          "exclusiveValue" : "unknown",
+          "helpText" : "Check all that apply.",
+          "standardLabels" : [ "CRISPR", "TALEN", "Construct or other species DNA", "Other", "Unknown" ],
+          "standardValues" : [ "crispr", "talen", "construct", "other", "unknown" ],
+          "widget" : "checkboxGroup"
+        },
+        "scope" : "#/properties/insertionOrigins",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "insertion", "indel" ]
+          },
+          "scope" : "#/properties/lesionType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/crisprSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "crispr"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/talenSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "talen"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. Tg(fli1a:EGFP)"
+        },
+        "scope" : "#/properties/constructName",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "construct"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "placeholder" : "e.g. Tol2 transposon"
+        },
+        "scope" : "#/properties/insertionOriginOther",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "conditions" : [ {
+            "schema" : {
+              "enum" : [ "insertion", "indel" ]
+            },
+            "scope" : "#/properties/lesionType"
+          }, {
+            "schema" : {
+              "contains" : {
+                "const" : "other"
+              },
+              "type" : "array"
+            },
+            "scope" : "#/properties/insertionOrigins"
+          } ],
+          "type" : "AND"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "sizeLabel" : "Lesion size",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/deletedSequence",
         "type" : "Control"
@@ -131,7 +330,7 @@
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "deletion", "indel" ]
+            "enum" : [ "deletion" ]
           },
           "scope" : "#/properties/lesionType"
         },
@@ -141,17 +340,18 @@
     }, {
       "elements" : [ {
         "options" : {
-          "sourceField" : "deletedSequence",
-          "suffix" : "bp",
-          "widget" : "autoSize"
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "sizeLabel" : "Deletion size",
+          "widget" : "nucleotideSequence"
         },
-        "scope" : "#/properties/lesionSizeBp",
+        "scope" : "#/properties/deletedSequence",
         "type" : "Control"
       } ],
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "deletion", "indel" ]
+            "enum" : [ "indel" ]
           },
           "scope" : "#/properties/lesionType"
         },
@@ -161,7 +361,10 @@
     }, {
       "elements" : [ {
         "options" : {
-          "multi" : true
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "sizeLabel" : "Insertion size",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/insertedSequence",
         "type" : "Control"
@@ -179,27 +382,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "sourceField" : "insertedSequence",
-          "suffix" : "bp",
-          "widget" : "autoSize"
-        },
-        "scope" : "#/properties/insertionSizeBp",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "multi" : true
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/transgeneSequence",
         "type" : "Control"
@@ -223,17 +408,21 @@
     }, {
       "elements" : [ {
         "options" : {
+          "alphabet" : "ACGT",
           "helpText" : "At least 20 nt directly preceding the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/fivePrimeFlank",
         "type" : "Control"
       }, {
         "options" : {
+          "alphabet" : "ACGT",
           "helpText" : "At least 20 nt directly following the lesion / transgene.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
-          "multi" : true
+          "multi" : true,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/threePrimeFlank",
         "type" : "Control"
@@ -251,9 +440,13 @@
     }, {
       "elements" : [ {
         "options" : {
-          "placeholder" : "e.g. p.Gly12Val"
+          "positionEndField" : "aaPositionEnd",
+          "positionField" : "aaPositionStart",
+          "toField" : "aaChangeTo",
+          "vocabulary" : "amino_acid_term",
+          "widget" : "aminoAcidChange"
         },
-        "scope" : "#/properties/mutatedAminoAcids",
+        "scope" : "#/properties/aaChangeFrom",
         "type" : "Control"
       }, {
         "options" : {
@@ -261,16 +454,37 @@
         },
         "scope" : "#/properties/mutatedAminoAcidsHgvs",
         "type" : "Control"
+      }, {
+        "options" : {
+          "addLabel" : "+ Add consequence",
+          "helpText" : "Add one entry per consequence.",
+          "vocabulary" : "protein_consequence_term",
+          "widget" : "vocabularyMultiSelect"
+        },
+        "scope" : "#/properties/proteinConsequences",
+        "type" : "Control"
       } ],
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "point_mutation" ]
+            "enum" : [ "point_mutation", "deletion" ]
           },
           "scope" : "#/properties/lesionType"
         },
         "effect" : "SHOW"
       },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "addLabel" : "+ Add consequence",
+          "helpText" : "Add one entry per consequence.",
+          "vocabulary" : "transcript_consequence_term",
+          "widget" : "vocabularyMultiSelect"
+        },
+        "scope" : "#/properties/transcriptConsequences",
+        "type" : "Control"
+      } ],
       "type" : "Group"
     }, {
       "elements" : [ {

@@ -124,9 +124,13 @@ public class FormSchemaInvariantsTest {
                 ZircLesionFormSchema.uiSchema(),
                 ZircLesionFormSchema.FIELDS.keySet(),
                 LesionDTO.class,
-                // locationInline is no longer edited through the form (its
-                // box was removed) but the column/DTO component remains.
-                Set.of("id", "mutationId", "sortOrder", "locationInline"),
+                // locationInline and mutatedAminoAcids are no longer edited
+                // through the form — their boxes were removed (the latter by
+                // ZFIN-10379, replaced by the structured aaChange* fields) —
+                // but the columns and DTO components remain so previously
+                // entered values are not discarded.
+                Set.of("id", "mutationId", "sortOrder", "locationInline",
+                        "mutatedAminoAcids"),
                 // lesionSizeBp / insertionSizeBp are server-computed
                 // (recalcLesionSizes) and read-only, so they're in the schema
                 // + DTO but deliberately absent from the patchable FIELDS map.
