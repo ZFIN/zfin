@@ -59,7 +59,8 @@ public final class GenerateTypeScript {
             AssayFileDTO.class,
             PhenotypeSummaryDTO.class,
             PhenotypeDTO.class,
-            AutocompleteItemDTO.class);
+            AutocompleteItemDTO.class,
+            VocabularyTermDTO.class);
 
     /** Extra interfaces emitted by hand — types the React client uses
      *  that don't have a matching Java DTO (the RFC 7807 problem

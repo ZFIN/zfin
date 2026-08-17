@@ -17,6 +17,13 @@ type AutoSizeOptions = {
     /** Fixed value, when the size is definitional (point mutation = 1 bp). */
     constantValue?: number;
     suffix?: string;
+    /**
+     * Overrides the schema title. One property can be measured under
+     * different names depending on lesion type — lesionSizeBp is "Lesion size"
+     * on a deletion but "Deletion size" on an indel, where it sits opposite an
+     * insertion size and the generic name would be ambiguous.
+     */
+    label?: string;
 };
 
 /**
@@ -41,6 +48,7 @@ function AutoSizeRenderer({ path, label, uischema, visible, config }: ControlPro
 
     const opts = ((uischema as { options?: AutoSizeOptions } | undefined)?.options) ?? {};
     const { sourceField, constantValue, suffix } = opts;
+    const displayLabel = opts.label ?? label;
     const fieldName = leafOf(path);
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
@@ -57,8 +65,8 @@ function AutoSizeRenderer({ path, label, uischema, visible, config }: ControlPro
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
                 {view.readonly && <StatusBadge status={view.fieldStatus[fieldName]}/>}
                 {view.readonly
-                    ? label
-                    : <label htmlFor={inputId} className='mb-0'>{label}</label>}
+                    ? displayLabel
+                    : <label htmlFor={inputId} className='mb-0'>{displayLabel}</label>}
             </th>
             <td>
                 <div style={{ maxWidth: '40em' }}>
@@ -70,7 +78,7 @@ function AutoSizeRenderer({ path, label, uischema, visible, config }: ControlPro
                             value={display}
                             readOnly
                             disabled
-                            aria-label={label ?? fieldName}
+                            aria-label={displayLabel ?? fieldName}
                         />
                         {suffix && (
                             <div className='input-group-append'>

@@ -2,6 +2,7 @@ package org.zfin.zirc.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.zfin.zirc.api.jsonschema.ArraySchema;
 import org.zfin.zirc.api.jsonschema.BooleanSchema;
 import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
@@ -15,6 +16,7 @@ import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Lesion;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,11 +82,45 @@ public final class ZircLesionFormSchema {
             List.of("transgene");
     private static final List<String> LOCATION_TYPES =
             List.of("point_mutation", "deletion", "insertion", "indel", "transgene");
+    // ZFIN-10380 adds deletion: a deletion can remove residues, so it wants
+    // the amino-acid section and the protein-consequence list too.
     private static final List<String> PROTEIN_TYPES =
-            List.of("point_mutation");
+            List.of("point_mutation", "deletion");
+    // ZFIN-10400. One checklist for both types that can carry an insertion.
+    // The separate mutagenesis / construct lists are gone: unifying the two
+    // questions into one picker means one option list, so indel now offers
+    // "construct" where ZFIN-10403's mockup showed only the CRISPR/TALEN
+    // question. An indel whose inserted part came from a construct is a real
+    // case, so this is a widening rather than a mistake — worth a curator's
+    // eye all the same.
+    private static final List<String> INSERTION_ORIGIN_TYPES =
+            List.of("insertion", "indel");
+
+    // Stable tokens, not mdcv term ids: this list has no Sequence Ontology
+    // counterpart and is specific to the submission form.
+    private static final List<String> INSERTION_ORIGINS = List.of(
+            "crispr", "talen", "construct", "other", "unknown");
+    private static final List<String> INSERTION_ORIGIN_LABELS = List.of(
+            "CRISPR", "TALEN", "Construct or other species DNA",
+            "Other", "Unknown");
+
+    /**
+     * Bases accepted in sequence fields. Declared here and emitted onto every
+     * nucleotideSequence Control, so the widget and the server-side
+     * normalization are driven by one value rather than two defaults that can
+     * drift apart.
+     *
+     * <p>Per-field variation is a matter of passing a different constant to
+     * both {@code withAlphabet} and {@code nucleotides} at that field's call
+     * sites — they are deliberately adjacent for that reason.
+     *
+     * <p>N was accepted until curator feedback asked for strict bases only.
+     * Existing stored sequences containing N are left as they are; a field is
+     * only re-normalized when someone edits it.
+     */
+    private static final String NUCLEOTIDE_ALPHABET = "ACGT";
 
     // The twelve possible single-nucleotide substitutions, offered as a
-    // closed dropdown for point mutations (was free text). Token == label.
     private static final List<String> NUCLEOTIDE_CHANGES = List.of(
             "A>T", "A>C", "A>G",
             "T>A", "T>C", "T>G",
@@ -108,9 +144,33 @@ public final class ZircLesionFormSchema {
         properties.put("fivePrimeFlank",        StringSchema.of("5′ flanking sequence", 5000));
         properties.put("threePrimeFlank",       StringSchema.of("3′ flanking sequence", 5000));
         properties.put("hasLargeVariant",       BooleanSchema.nullable("Has large variant"));
+        // Insertion origin (ZFIN-10400)
+        properties.put("insertionOrigins", new ArraySchema(
+                "The insertion is a consequence of",
+                new StringSchema(null, null, null, null, null),
+                null, null));
+        properties.put("insertionOriginOther", StringSchema.of("Other origin", 255));
+        properties.put("crisprSequence",         StringSchema.of("CRISPR sequence", 5000));
+        properties.put("talenSequence",          StringSchema.of("TALEN sequence", 5000));
+        properties.put("constructName",          StringSchema.of("Construct name", 255));
         // Protein-level
-        properties.put("mutatedAminoAcids",     StringSchema.of("Mutated amino acids", 2000));
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
+        // Structured amino-acid change (ZFIN-10379). from/to are
+        // amino_acid_term ZDB IDs; the end of the range is optional.
+        properties.put("aaChangeFrom",          StringSchema.of("Amino Acid Change", 255));
+        properties.put("aaChangeTo",            StringSchema.of("Amino acid change (to)", 255));
+        properties.put("aaPositionStart",       new NumberSchema("Position", Boolean.TRUE));
+        properties.put("aaPositionEnd",         new NumberSchema("Position (end)", Boolean.TRUE));
+        // Protein-level consequences (ZFIN-10380): mdcv term ZDB IDs.
+        properties.put("proteinConsequences", new ArraySchema(
+                "Protein consequences",
+                new StringSchema(null, null, null, null, null),
+                null, null));
+        // Transcript-level (ZFIN-10399): mdcv term ZDB IDs, any lesion type.
+        properties.put("transcriptConsequences", new ArraySchema(
+                "Transcript consequences",
+                new StringSchema(null, null, null, null, null),
+                null, null));
         return ObjectSchema.of(null, properties, List.of("lesionType"));
     }
 
@@ -123,10 +183,10 @@ public final class ZircLesionFormSchema {
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/lesionType",
-                                Options.of().widget("selectWithOther")
-                                        .standardValues(LESION_TYPES)
-                                        .standardLabels(LESION_TYPE_LABELS)
-                                        .refreshesParent(true),
+                                Options.of().withWidget("selectWithOther")
+                                        .withStandardValues(LESION_TYPES)
+                                        .withStandardLabels(LESION_TYPE_LABELS)
+                                        .withRefreshesParent(true),
                                 null)
                 )),
                 // Sizes are always derived (never user-entered) and rendered
@@ -136,71 +196,165 @@ public final class ZircLesionFormSchema {
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/nucleotideChange",
                                 Options.of()
-                                        .widget("selectWithOther")
-                                        .standardValues(NUCLEOTIDE_CHANGES)
-                                        .noOther(true),
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(NUCLEOTIDE_CHANGES)
+                                        .withNoOther(true),
                                 null)
                 )),
+                // The one surviving autoSize row. A point mutation is 1 bp by
+                // definition and has no sequence box to carry the number, so
+                // this is the only place it appears — not a duplicate of
+                // anything.
                 groupRevealedFor(NUCLEOTIDE_CHANGE_TYPES, List.of(
                         new Control("#/properties/lesionSizeBp",
-                                Options.of().widget("autoSize").constantValue(1).suffix("bp"),
+                                Options.of().withWidget("autoSize").withConstantValue(1).withSuffix("bp"),
                                 null)
                 )),
-                // Deletion / indel: deleted sequence, then its length as the
-                // (auto, read-only) lesion size.
-                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
+                // ZFIN-10400 — where the insertion came from. Placed here so it
+                // falls after the lesion-type picker and before the inserted
+                // sequence box, as the ticket specifies.
+                //
+                // One "check all that apply" list, each box revealing only its
+                // own follow-up. Every follow-up is gated on BOTH the lesion
+                // type and the box, because the tokens survive a later change
+                // of lesion type — without the type leg a CRISPR box would
+                // reappear under a deletion. See Rule#showWhenAll.
+                groupRevealedFor(INSERTION_ORIGIN_TYPES, List.of(
+                        new Control("#/properties/insertionOrigins",
+                                Options.of()
+                                        .withWidget("checkboxGroup")
+                                        .withStandardValues(INSERTION_ORIGINS)
+                                        .withStandardLabels(INSERTION_ORIGIN_LABELS)
+                                        .withExclusiveValue("unknown")
+                                        .withHelpText("Check all that apply."),
+                                null)
+                )),
+                originFollowUp("crispr", List.of(
+                        new Control("#/properties/crisprSequence",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                null))),
+                originFollowUp("talen", List.of(
+                        new Control("#/properties/talenSequence",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                null))),
+                originFollowUp("construct", List.of(
+                        new Control("#/properties/constructName",
+                                Options.of().withPlaceholder("e.g. Tg(fli1a:EGFP)"), null))),
+                originFollowUp("other", List.of(
+                        new Control("#/properties/insertionOriginOther",
+                                Options.of().withPlaceholder("e.g. Tol2 transposon"), null))),
+                // Deletion / indel: the deleted sequence, with its length
+                // named inline. There is no separate read-only size row —
+                // the box already counts what it holds, and a second field
+                // repeating that number was pure redundancy.
+                //
+                // Split by lesion type only so the count can name itself: on
+                // an indel it measures the deleted part and sits opposite an
+                // insertion size, where the generic "Lesion size" would be
+                // ambiguous. Same column, same server-side derivation.
+                groupRevealedFor(List.of("deletion"), List.of(
                         new Control("#/properties/deletedSequence",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Lesion size"), null)
                 )),
-                groupRevealedFor(DELETED_SEQ_TYPES, List.of(
-                        new Control("#/properties/lesionSizeBp",
-                                Options.of().widget("autoSize")
-                                        .sourceField("deletedSequence").suffix("bp"),
-                                null)
+                groupRevealedFor(List.of("indel"), List.of(
+                        new Control("#/properties/deletedSequence",
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Deletion size"), null)
                 )),
-                // Insertion / indel: inserted sequence, then its length as the
-                // (auto, read-only) insertion size.
+                // Insertion / indel: the inserted sequence, likewise carrying
+                // its own size. One label for both types — "Insertion size" is
+                // unambiguous either way.
                 groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
                         new Control("#/properties/insertedSequence",
-                                Options.of().multi(true), null)
-                )),
-                groupRevealedFor(INSERTED_SEQ_TYPES, List.of(
-                        new Control("#/properties/insertionSizeBp",
-                                Options.of().widget("autoSize")
-                                        .sourceField("insertedSequence").suffix("bp"),
-                                null)
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withSizeLabel("Insertion size"), null)
                 )),
                 groupRevealedFor(TRANSGENE_TYPES, List.of(
                         new Control("#/properties/transgeneSequence",
-                                Options.of().multi(true), null),
+                                Options.of().withMulti(true)
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET), null),
                         new Control("#/properties/hasLargeVariant",
-                                Options.of().widget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null)
                 )),
                 groupRevealedFor(LOCATION_TYPES, List.of(
                         new Control("#/properties/fivePrimeFlank",
                                 Options.of()
-                                        .helpText("At least 20 nt directly preceding the lesion / transgene.")
-                                        .multi(true)
-                                        .infoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withHelpText("At least 20 nt directly preceding the lesion / transgene.")
+                                        .withMulti(true)
+                                        .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null),
                         new Control("#/properties/threePrimeFlank",
                                 Options.of()
-                                        .helpText("At least 20 nt directly following the lesion / transgene.")
-                                        .multi(true)
-                                        .infoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withHelpText("At least 20 nt directly following the lesion / transgene.")
+                                        .withMulti(true)
+                                        .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)
                 )),
+                // ZFIN-10379 — the curation interface's from > to + position
+                // control, replacing the free-text box that asked curators to
+                // hand-write HGVS. The old mutatedAminoAcids column is left in
+                // place but no longer surfaced; see the migration for why.
                 groupRevealedFor(PROTEIN_TYPES, List.of(
-                        new Control("#/properties/mutatedAminoAcids",
-                                Options.of().placeholder("e.g. p.Gly12Val"), null),
+                        new Control("#/properties/aaChangeFrom",
+                                Options.of()
+                                        .withWidget("aminoAcidChange")
+                                        .withVocabulary("amino_acid_term")
+                                        .withToField("aaChangeTo")
+                                        .withPositionField("aaPositionStart")
+                                        .withPositionEndField("aaPositionEnd"),
+                                null),
                         new Control("#/properties/mutatedAminoAcidsHgvs",
-                                Options.of().placeholder("HGVS protein notation"), null)
+                                Options.of().withPlaceholder("HGVS protein notation"), null),
+                        // ZFIN-10380. Sits inside the protein cluster rather
+                        // than in its own group because it belongs with the
+                        // amino-acid change, the way the curation interface
+                        // pairs them.
+                        new Control("#/properties/proteinConsequences",
+                                Options.of()
+                                        .withWidget("vocabularyMultiSelect")
+                                        .withVocabulary("protein_consequence_term")
+                                        .withAddLabel("+ Add consequence")
+                                        .withHelpText("Add one entry per consequence."),
+                                null)
+                )),
+                // Transcript consequences (ZFIN-10399) apply to every lesion
+                // type, so this group carries no reveal rule. It is placed
+                // after the location group, which is where the 3' flanking
+                // sequence lives — the ticket asks for the pick list to follow
+                // that box. Unlike the curation interface's version there are
+                // no exon / intron inputs.
+                Group.of(null, List.of(
+                        new Control("#/properties/transcriptConsequences",
+                                Options.of()
+                                        .withWidget("vocabularyMultiSelect")
+                                        .withVocabulary("transcript_consequence_term")
+                                        .withAddLabel("+ Add consequence")
+                                        .withHelpText("Add one entry per consequence."),
+                                null)
                 )),
                 // Always-visible, and kept last so it sits below every
                 // per-type field cluster regardless of the lesion type.
                 Group.of(null, List.of(
                         new Control("#/properties/additionalInfo",
-                                Options.of().multi(true), null)
+                                Options.of().withMulti(true), null)
                 ))
         ));
     }
@@ -210,6 +364,17 @@ public final class ZircLesionFormSchema {
      * in [...]" pattern. Mirrors the assay-form's groupRevealedFor. Groups
      * are headless so children render as bare rows under the editor card.
      */
+    /**
+     * A follow-up cluster for one ticked origin: visible only when the lesion
+     * type can carry an insertion AND that token is in the list.
+     */
+    private static Group originFollowUp(String token, List<UiSchemaElement> elements) {
+        return new Group(null, elements, null,
+                Rule.showWhenAll(
+                        Rule.in("#/properties/lesionType", INSERTION_ORIGIN_TYPES),
+                        Rule.arrayContains("#/properties/insertionOrigins", token)));
+    }
+
     private static Group groupRevealedFor(
             List<String> lesionTypes, List<UiSchemaElement> elements) {
         return new Group(null, elements, null,
@@ -223,14 +388,33 @@ public final class ZircLesionFormSchema {
             field("/lesionType",            Lesion::getLesionType,             (l, v) -> l.setLesionType(text(v))),
             field("/additionalInfo",        Lesion::getAdditionalInfo,         (l, v) -> l.setAdditionalInfo(text(v))),
             field("/nucleotideChange",      Lesion::getNucleotideChange,       (l, v) -> l.setNucleotideChange(text(v))),
-            field("/deletedSequence",       Lesion::getDeletedSequence,        (l, v) -> l.setDeletedSequence(text(v))),
-            field("/insertedSequence",      Lesion::getInsertedSequence,       (l, v) -> l.setInsertedSequence(text(v))),
-            field("/transgeneSequence",     Lesion::getTransgeneSequence,      (l, v) -> l.setTransgeneSequence(text(v))),
-            field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(text(v))),
-            field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(text(v))),
+            field("/deletedSequence",       Lesion::getDeletedSequence,        (l, v) -> l.setDeletedSequence(nucleotides(v))),
+            field("/insertedSequence",      Lesion::getInsertedSequence,       (l, v) -> l.setInsertedSequence(nucleotides(v))),
+            field("/transgeneSequence",     Lesion::getTransgeneSequence,      (l, v) -> l.setTransgeneSequence(nucleotides(v))),
+            field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(nucleotides(v))),
+            field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(nucleotides(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
-            field("/mutatedAminoAcids",     Lesion::getMutatedAminoAcids,      (l, v) -> l.setMutatedAminoAcids(text(v))),
-            field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v)))
+            field("/insertionOrigins",
+                    l -> l.getInsertionOrigins() == null
+                            ? new String[0] : l.getInsertionOrigins(),
+                    (l, v) -> l.setInsertionOrigins(stringArray(v))),
+            field("/insertionOriginOther", Lesion::getInsertionOriginOther, (l, v) -> l.setInsertionOriginOther(text(v))),
+            field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
+            field("/talenSequence",         Lesion::getTalenSequence,          (l, v) -> l.setTalenSequence(nucleotides(v))),
+            field("/constructName",         Lesion::getConstructName,          (l, v) -> l.setConstructName(text(v))),
+            field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
+            field("/aaChangeFrom",          Lesion::getAaChangeFrom,           (l, v) -> l.setAaChangeFrom(text(v))),
+            field("/aaChangeTo",            Lesion::getAaChangeTo,             (l, v) -> l.setAaChangeTo(text(v))),
+            field("/aaPositionStart",       Lesion::getAaPositionStart,        (l, v) -> l.setAaPositionStart(intNullable(v))),
+            field("/aaPositionEnd",         Lesion::getAaPositionEnd,          (l, v) -> l.setAaPositionEnd(intNullable(v))),
+            field("/transcriptConsequences",
+                    l -> l.getTranscriptConsequences() == null
+                            ? new String[0] : l.getTranscriptConsequences(),
+                    (l, v) -> l.setTranscriptConsequences(stringArray(v))),
+            field("/proteinConsequences",
+                    l -> l.getProteinConsequences() == null
+                            ? new String[0] : l.getProteinConsequences(),
+                    (l, v) -> l.setProteinConsequences(stringArray(v)))
     );
 
     private static Map.Entry<String, FieldDescriptor> field(
@@ -246,6 +430,55 @@ public final class ZircLesionFormSchema {
         if (v == null || v.isNull()) {return null;}
         String s = v.asText();
         return s.isBlank() ? null : s.trim();
+    }
+
+    /**
+     * JSON array to a trimmed String[] with blanks dropped. Same contract as
+     * {@code ZircFormSchema.stringArray} — the array widgets can pass empty
+     * strings through mid-edit and those should not reach the column.
+     */
+    private static String[] stringArray(JsonNode v) {
+        if (v == null || v.isNull() || !v.isArray()) {return new String[0];}
+        List<String> out = new ArrayList<>(v.size());
+        for (int i = 0; i < v.size(); i++) {
+            String s = v.get(i).asText();
+            if (s != null && !s.isBlank()) {
+                out.add(s.trim());
+            }
+        }
+        return out.toArray(new String[0]);
+    }
+
+    /**
+     * Sequence fields: uppercase and drop anything that is not a base.
+     *
+     * The nucleotideSequence widget applies the same rule as the curator
+     * types, but a PATCH can be made directly against the field path, so the
+     * constraint has to live here too or it is decorative. Kept deliberately
+     * simple — it mirrors normalizeSequence in nucleotides.ts, minus the
+     * FASTA-header handling, which is a paste affordance rather than part of
+     * what the column is allowed to hold.
+     */
+    private static String nucleotides(JsonNode v) {
+        return nucleotides(v, NUCLEOTIDE_ALPHABET);
+    }
+
+    private static String nucleotides(JsonNode v, String alphabet) {
+        String s = text(v);
+        if (s == null) {return null;}
+        StringBuilder out = new StringBuilder(s.length());
+        for (char c : s.toUpperCase().toCharArray()) {
+            if (alphabet.indexOf(c) >= 0) {out.append(c);}
+        }
+        return out.isEmpty() ? null : out.toString();
+    }
+
+    private static Integer intNullable(JsonNode v) {
+        if (v == null || v.isNull()) {return null;}
+        // The number input clears to null, but an empty string can arrive via
+        // a hand-built PATCH; treat it the same rather than storing 0.
+        if (v.isTextual() && v.asText().isBlank()) {return null;}
+        return v.asInt();
     }
 
     private static Boolean boolNullable(JsonNode v) {

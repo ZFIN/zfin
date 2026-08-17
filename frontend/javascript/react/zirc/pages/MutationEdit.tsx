@@ -36,7 +36,13 @@ export default function MutationEdit(props: MutationEditProps) {
 
 type FormDataShape = FormFor<MutationDTO>;
 
-const renderers = [
+/**
+ * Mutation-page registry. Unlike ZircEntityEditor's fieldRenderers this
+ * includes the four child-list renderers, because the mutation uiSchema
+ * nests assays / genes / lesions / phenotypes. Exported for
+ * widgetRegistry.test.ts.
+ */
+export const mutationRenderers = [
     verticalLayoutRendererEntry,
     sectionRendererEntry,
     rowControlRendererEntry,
@@ -87,7 +93,7 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
                 schema={schemaQuery.data.schema}
                 uischema={schemaQuery.data.uiSchema}
                 data={formData}
-                renderers={renderers}
+                renderers={mutationRenderers}
                 cells={[]}
                 config={{ mutationId: idNum, submissionId }}
                 onChange={({ data }) => setFormData(data as FormDataShape)}

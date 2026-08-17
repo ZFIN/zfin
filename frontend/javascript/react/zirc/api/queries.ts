@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './client';
-import { AssayDTO, AutocompleteItemDTO, GeneDTO, LesionDTO, LineSubmissionDTO, LinkedFeatureDTO, MutationDTO, PhenotypeDTO } from './types';
+import { AssayDTO, AutocompleteItemDTO, GeneDTO, LesionDTO, LineSubmissionDTO, LinkedFeatureDTO, MutationDTO, PhenotypeDTO, VocabularyTermDTO } from './types';
 
 export const lineSubmissionKey = (id: string) => ['zirc', 'lineSubmission', id] as const;
 
@@ -260,6 +260,42 @@ export function useDeletePhenotype() {
         onSuccess: (_data, vars) => {
             qc.invalidateQueries({ queryKey: mutationKey(vars.mutationId) });
         },
+    });
+}
+
+// ─── Controlled vocabularies ────────────────────────────────────────────────
+
+/**
+ * An {@code mdcv_used_in} discriminator value. Must stay in step with
+ * {@code ZircVocabularyService.VOCABULARIES}; an unknown name 404s rather
+ * than returning an empty list, so a typo surfaces instead of rendering a
+ * silently empty dropdown.
+ */
+export type VocabularyName =
+    | 'amino_acid_term'
+    | 'protein_consequence_term'
+    | 'transcript_consequence_term'
+    | 'dna_mutation_term'
+    | 'gene_localization_term';
+
+/**
+ * Pick-list terms for the vocabulary-backed select widgets, already in
+ * display order (the server sorts by {@code mdcv_term_order}, breaking ties
+ * on display name).
+ *
+ * These lists are curator-managed reference data that changes roughly once
+ * a year, so cache for the life of the page: no {@code staleTime} expiry,
+ * and no refetch on remount or window focus. Every lesion card on a
+ * submission mounts the same pick lists, and refetching per card would be
+ * pure waste.
+ */
+export function useVocabulary(name: VocabularyName) {
+    return useQuery({
+        queryKey: ['zirc', 'vocabulary', name],
+        queryFn: () => api.get<VocabularyTermDTO[]>(`/vocabulary/${name}`),
+        staleTime: Infinity,
+        refetchOnMount: false,
+        refetchOnWindowFocus: false,
     });
 }
 

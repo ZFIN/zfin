@@ -57,29 +57,29 @@ public final class ZircGeneFormSchema {
                 Group.of(null, java.util.List.of(
                         new Control("#/properties/mutatedGeneZdbID",
                                 Options.of()
-                                        .widget("autocomplete")
+                                        .withWidget("autocomplete")
                                         // Searches the markers endpoint
                                         // narrowed to GENEDOM (gene/pseudogene/
                                         // miRNA etc.) so non-gene markers like
                                         // SSLPs or BACs don't pollute the
                                         // dropdown. The selected item's value
                                         // (ZDB-ID) is what we PATCH back.
-                                        .searchEndpoint("markers")
-                                        .typeGroup("GENEDOM")
-                                        .placeholder("Start typing a gene name…")
-                                        .helpText("Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.")
+                                        .withSearchEndpoint("markers")
+                                        .withTypeGroup("GENEDOM")
+                                        .withPlaceholder("Start typing a gene name…")
+                                        .withHelpText("Resolves to the ZFIN marker ZDB-ID. Leave blank if unknown.")
                                         // The parent gene card shows the denormalized marker
                                         // abbreviation derived from this id — refresh it on change.
-                                        .refreshesParent(true),
+                                        .withRefreshesParent(true),
                                 null),
                         new Control("#/properties/linkageGroup",
-                                Options.of().placeholder("e.g. 5"),
+                                Options.of().withPlaceholder("e.g. 5"),
                                 null),
                         new Control("#/properties/genbankGenomicDna",
-                                Options.of().placeholder("Accession, e.g. NC_007112.7"),
+                                Options.of().withPlaceholder("Accession, e.g. NC_007112.7"),
                                 null),
                         new Control("#/properties/genbankCdna",
-                                Options.of().placeholder("Accession, e.g. NM_001077291"),
+                                Options.of().withPlaceholder("Accession, e.g. NM_001077291"),
                                 null)
                 ))
         ));

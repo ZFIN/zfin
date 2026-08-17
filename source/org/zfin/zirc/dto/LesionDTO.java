@@ -32,9 +32,24 @@ public record LesionDTO(
         String fivePrimeFlank,
         String threePrimeFlank,
         Boolean hasLargeVariant,
+        // Insertion origin (ZFIN-10400)
+        String[] insertionOrigins,
+        String insertionOriginOther,
+        String crisprSequence,
+        String talenSequence,
+        String constructName,
         // Protein-level
         String mutatedAminoAcids,
         String mutatedAminoAcidsHgvs,
+        // Structured amino-acid change (ZFIN-10379)
+        String aaChangeFrom,
+        String aaChangeTo,
+        Integer aaPositionStart,
+        Integer aaPositionEnd,
+        // Transcript-level: mdcv term ZDB IDs (ZFIN-10399)
+        String[] transcriptConsequences,
+        // Protein-level: mdcv term ZDB IDs (ZFIN-10380)
+        String[] proteinConsequences,
         // Catch-all
         String additionalInfo) {
 
@@ -54,8 +69,21 @@ public record LesionDTO(
                 l.getFivePrimeFlank(),
                 l.getThreePrimeFlank(),
                 l.getHasLargeVariant(),
+                l.getInsertionOrigins() == null ? new String[0] : l.getInsertionOrigins(),
+                l.getInsertionOriginOther(),
+                l.getCrisprSequence(),
+                l.getTalenSequence(),
+                l.getConstructName(),
                 l.getMutatedAminoAcids(),
                 l.getMutatedAminoAcidsHgvs(),
+                l.getAaChangeFrom(),
+                l.getAaChangeTo(),
+                l.getAaPositionStart(),
+                l.getAaPositionEnd(),
+                l.getTranscriptConsequences() == null
+                        ? new String[0] : l.getTranscriptConsequences(),
+                l.getProteinConsequences() == null
+                        ? new String[0] : l.getProteinConsequences(),
                 l.getAdditionalInfo());
     }
 }
