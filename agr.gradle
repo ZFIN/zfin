@@ -1,5 +1,16 @@
 def env = System.getenv()
-def log4jConfig = env['SOURCEROOT'] + "/home/WEB-INF/conf/log4j2.xml"
+// SOURCEROOT is exported by the ZFIN shell profile but not by every shell a load gets
+// run from -- a bare `docker compose run compile bash` leaves it unset. Unset used to
+// interpolate to the literal path "null/home/WEB-INF/conf/log4j2.xml", and log4j2 then
+// silently fell back to console-ERROR-only ("Reconfiguration failed: No configuration
+// found ... at 'null' in 'null'"), swallowing every INFO line a load writes. A load that
+// did its whole job and one that did nothing then look identical from the terminal.
+// The config lives in the checkout being built, so fall back to the project directory.
+def sourceRoot = env['SOURCEROOT'] ?: rootProject.projectDir.toString()
+def log4jConfig = "${sourceRoot}/home/WEB-INF/conf/log4j2.xml"
+if (!file(log4jConfig).isFile()) {
+    logger.warn("WARNING: log4j config not found at ${log4jConfig}; loads will log at ERROR only")
+}
 tasks.withType(JavaExec) {
     systemProperty "log4j2.configurationFile", log4jConfig
     systemProperty "com.mchange.v2.log.MLog", "log4j2"
