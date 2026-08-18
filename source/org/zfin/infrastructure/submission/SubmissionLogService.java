@@ -3,6 +3,7 @@ package org.zfin.infrastructure.submission;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.query.Query;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.spam.SpamAssessment;
 
@@ -79,6 +80,55 @@ public class SubmissionLogService {
             log.error("Failed to load submission_log entry " + id, e);
             return null;
         }
+    }
+
+    /**
+     * The most recently logged submissions, newest first, for the review page. Rejected submissions
+     * are included: they are the only record that a spam heuristic fired, and the only way to spot
+     * one that fired on a real request.
+     *
+     * @param outcome restrict to this outcome, or null for all of them
+     * @param limit   most rows to return
+     */
+    public static List<SubmissionLog> getRecent(SubmissionOutcome outcome, int limit) {
+        String hql = "select entry from SubmissionLog entry"
+                + where(outcome)
+                + " order by entry.date desc";
+        try {
+            Query<SubmissionLog> query = HibernateUtil.currentSession().createQuery(hql, SubmissionLog.class);
+            if (outcome != null) {
+                query.setParameter("outcome", outcome);
+            }
+            return query.setMaxResults(limit).list();
+        } catch (Exception e) {
+            log.error("Failed to read submission_log", e);
+            return List.of();
+        }
+    }
+
+    /**
+     * How many submissions match, so the review page can say when it is showing only the newest of
+     * them rather than leaving the reader to assume they have seen everything.
+     *
+     * @param outcome restrict to this outcome, or null for all of them
+     * @return the count, or -1 if it could not be read
+     */
+    public static long count(SubmissionOutcome outcome) {
+        String hql = "select count(entry) from SubmissionLog entry" + where(outcome);
+        try {
+            Query<Long> query = HibernateUtil.currentSession().createQuery(hql, Long.class);
+            if (outcome != null) {
+                query.setParameter("outcome", outcome);
+            }
+            return query.uniqueResult();
+        } catch (Exception e) {
+            log.error("Failed to count submission_log rows", e);
+            return -1;
+        }
+    }
+
+    private static String where(SubmissionOutcome outcome) {
+        return outcome == null ? "" : " where entry.outcome = :outcome";
     }
 
     public static void setAssessment(SubmissionLog entry, SpamAssessment assessment) {
