@@ -948,10 +948,18 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             """;
         Query query = session.createQuery(hql);
         query.setParameter("pubID", pubID);
-        setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]);
 
-        PaginationResult<Ortholog> paginationResult = PaginationResultFactory.createResultFromScrollableResultAndClose(
-            searchBean.getFirstRecordOnPage() - 1, searchBean.getLastRecordOnPage(), query.scroll());
+        // list(), not scroll(): a tuple transformer combined with scroll() throws
+        // "You can't operate on a closed ResultSet" under Hibernate 6 -- see the note on
+        // HibernateUpgradeHelper.setTupleResultAndListTransformer. An ortholog list for one
+        // publication is small, so paginating the materialized list costs nothing.
+        List<Ortholog> orthologs = new ArrayList<>(new LinkedHashSet<>(
+            (List<Ortholog>) setTupleResultTransformer(query, (Object[] tuple, String[] aliases) -> tuple[0]).list()));
+
+        int fromIndex = Math.min(Math.max(searchBean.getFirstRecordOnPage() - 1, 0), orthologs.size());
+        int toIndex = Math.min(Math.max(searchBean.getLastRecordOnPage(), fromIndex), orthologs.size());
+        PaginationResult<Ortholog> paginationResult =
+            new PaginationResult<>(orthologs.size(), orthologs.subList(fromIndex, toIndex));
         paginationResult.setStart(searchBean.getFirstRecord());
 
         return paginationResult;
