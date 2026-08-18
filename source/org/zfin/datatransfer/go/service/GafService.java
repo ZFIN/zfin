@@ -55,6 +55,7 @@ public class GafService {
 
     protected Logger logger = LogManager.getLogger(GafService.class);
     protected static final String PUBMED_PREFIX = "PMID:";
+    protected static final String ZFIN_PREFIX = "ZFIN:";
 
     protected SequenceRepository sequenceRepository = RepositoryFactory.getSequenceRepository();
     protected PublicationRepository publicationRepository = RepositoryFactory.getPublicationRepository();
@@ -658,7 +659,7 @@ public class GafService {
         if (StringUtils.isEmpty(pubMedID)) {
             throw new GafValidationError("Must have a Pubmed ID", gafEntry);
         }
-        if (pubMedID.startsWith("ZFIN:") && getZfinPubId(pubMedID) != null) {
+        if (pubMedID.startsWith(ZFIN_PREFIX) && getZfinPubId(pubMedID) != null) {
             publication = RepositoryFactory.getPublicationRepository().getPublication(getZfinPubId(pubMedID));
             if (publication == null) {
                 throw new GafValidationError("No pub found for zdbID : " + getZfinPubId(pubMedID), gafEntry);
@@ -891,8 +892,8 @@ public class GafService {
             if (entryId != null) {
                 String prefix = "";
                 String bareId = entryId;
-                if (StringUtils.startsWith(entryId, "ZFIN:")) {
-                    prefix = "ZFIN:";
+                if (StringUtils.startsWith(entryId, ZFIN_PREFIX)) {
+                    prefix = ZFIN_PREFIX;
                     bareId = entryId.substring(prefix.length());
                 }
                 if (StringUtils.startsWith(bareId, "ZDB-") && oldNewZDBIds.containsKey(bareId)) {
@@ -924,7 +925,7 @@ public class GafService {
             for (int i = 0; i <= withFieldPieces.length - 1; i++) {
                 String currentWithField = withFieldPieces[i];
 
-                if (StringUtils.startsWith(currentWithField, "ZFIN:")) {
+                if (StringUtils.startsWith(currentWithField, ZFIN_PREFIX)) {
                     String[] withFieldsZFIN = currentWithField.split(":");
                     String withFieldZDBId = withFieldsZFIN[1];
                     if (StringUtils.startsWith(withFieldZDBId, "ZDB-")) {
