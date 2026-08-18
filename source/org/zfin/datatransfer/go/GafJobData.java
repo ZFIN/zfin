@@ -17,6 +17,9 @@ public class GafJobData {
     private List<GafEntry> cellEntries = new ArrayList<>();
     private List<GafEntry> subsetFailureEntries = new ArrayList<>();
     private List<GafValidationError> errors = new ArrayList<>();
+    // Merged/retyped object ids corrected against zdb_replaced_data during load, each as
+    // {oldId, newId, newSymbol} — surfaced in the load report.
+    private List<String[]> remappedMarkerIds = new ArrayList<>();
      private int gafEntryCount = 0;
     private int infPipeCount=0;
     private int infCommaCount=0;
@@ -65,6 +68,14 @@ public class GafJobData {
     public List<GafValidationError> getErrors() {
         Collections.sort(errors);
         return errors;
+    }
+
+    public List<String[]> getRemappedMarkerIds() {
+        return remappedMarkerIds;
+    }
+
+    public void setRemappedMarkerIds(List<String[]> remappedMarkerIds) {
+        this.remappedMarkerIds = remappedMarkerIds;
     }
 
     public Set<MarkerGoTermEvidence> getNewEntries() {
