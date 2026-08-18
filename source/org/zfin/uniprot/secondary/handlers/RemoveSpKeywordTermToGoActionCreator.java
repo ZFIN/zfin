@@ -9,6 +9,8 @@ import org.zfin.uniprot.secondary.SecondaryTerm2GoTerm;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.zfin.sequence.ForeignDB.AvailableName.UNIPROTKB;
 import static org.zfin.uniprot.secondary.handlers.MarkerGoTermEvidenceActionCreator.filterTerms;
@@ -50,15 +52,31 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
 
         List<SecondaryTermLoadAction> filteredMarkerGoTermEvidences = filterTerms(newMarkerGoTermEvidenceLoadActions);
 
-        //difference:
-        //existingRecords - newMarkerGoTermEvidenceLoadActions
-        //this is the list of marker_go_term_evidence entries that need to be removed
+        //difference: existingRecords - filteredMarkerGoTermEvidences => records to remove.
+        //Precompute the keys of the records we will persist once (parsing each action's DTO a
+        //single time) so this set-difference is O(N+M) instead of O(N*M) with a fromMap() parse
+        //on every comparison. This handler dominated load time (~31m for ~1700 results).
+        Set<String> persistedRecordKeys = filteredMarkerGoTermEvidences.stream()
+                .map(action -> {
+                    MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
+                    return recordKey(dto.getGoID(), action.getGeneZdbID(), dto.getInferredFrom());
+                })
+                .collect(Collectors.toSet());
+
         List<MarkerGoTermEvidenceSlimDTO> recordsToRemove = existingRecords.stream().filter(
-                record -> !recordsToPersistContainsExistingRecord(filteredMarkerGoTermEvidences, record)
+                record -> !persistedRecordKeys.contains(
+                        recordKey(record.getGoID(), record.getMarkerZdbID(), record.getInferredFrom()))
         ).toList();
 
         //create actions to remove marker_go_term_evidence entries
         return createMarkerGoTermEvidenceLoadActionsToRemove(recordsToRemove);
+    }
+
+    //Key for comparing an existing marker_go_term_evidence record against the records to persist.
+    //Mirrors the equality previously in recordsToPersistContainsExistingRecord: goID + markerZdbID
+    //+ inferredFrom (space-delimited; GO IDs, ZDB IDs and inferredFrom values contain no spaces).
+    private static String recordKey(String goID, String markerZdbID, String inferredFrom) {
+        return goID + ' ' + markerZdbID + ' ' + inferredFrom;
     }
 
     private List<SecondaryTermLoadAction> createMarkerGoTermEvidenceLoadActionsToRemove(List<MarkerGoTermEvidenceSlimDTO> recordsToRemove) {
@@ -72,17 +90,5 @@ public class RemoveSpKeywordTermToGoActionCreator implements ActionCreator {
                         .geneZdbID(record.getMarkerZdbID())
                         .build()
         ).toList();
-    }
-
-    public static boolean recordsToPersistContainsExistingRecord(List<SecondaryTermLoadAction> recordsToPersist, MarkerGoTermEvidenceSlimDTO record) {
-        return recordsToPersist.stream().anyMatch(action -> {
-            MarkerGoTermEvidenceSlimDTO actionSlimDTO = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
-            String goID = actionSlimDTO.getGoID();
-            String inferredFrom = actionSlimDTO.getInferredFrom();
-            String markerZdbID = action.getGeneZdbID();
-            return record.getGoID().equals(goID) &&
-                    record.getMarkerZdbID().equals(markerZdbID) &&
-                    record.getInferredFrom().equals(inferredFrom);
-        });
     }
 }

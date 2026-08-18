@@ -2,7 +2,7 @@ package org.zfin.uniprot.secondary.handlers;
 
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.tuple.Tuple2;
-import org.zfin.uniprot.persistence.BatchInserter;
+import org.zfin.uniprot.persistence.BatchOperations;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
@@ -50,7 +50,7 @@ public class InterproProteinActionProcessor implements ActionProcessor {
                 .toList();
 
         log.info("Inserting Active Data ZDB IDs for protein table");
-        BatchInserter.bulkLoadActiveDataZdbIDs(uniprotIds);
+        BatchOperations.bulkLoadActiveDataZdbIDs(uniprotIds);
 
         log.info("Bulk loading protein records into temp table");
         currentSession().createNativeQuery("""
@@ -64,7 +64,7 @@ public class InterproProteinActionProcessor implements ActionProcessor {
                         "up_fdbcont_zdb_id", FDBCONTID,
                         "up_length", action.v2()))
                 .toList();
-        BatchInserter.bulkInsert("temp_protein", insertionRows);
+        BatchOperations.loadRowsIntoTable("temp_protein", insertionRows);
 
         log.info("Updating protein records");
         currentSession().createNativeQuery("""
@@ -88,11 +88,12 @@ public class InterproProteinActionProcessor implements ActionProcessor {
     }
 
     private static void processDeleteQueries(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action: actions) {
-                currentSession().createNativeQuery("DELETE FROM protein WHERE up_uniprot_id = :uniprot")
-                        .setParameter("uniprot", action.getAccession())
-                        .executeUpdate();
-        }
+        // Bulk delete via a temp-table join instead of one DELETE per action (which ran ~0.4s/row
+        // -> ~2h for 16k deletes on staging).
+        List<Map<String, Object>> keyRows = actions.stream()
+                .map(action -> Map.of("up_uniprot_id", (Object) action.getAccession()))
+                .toList();
+        BatchOperations.bulkDelete("protein", List.of("up_uniprot_id"), keyRows);
     }
 
 }

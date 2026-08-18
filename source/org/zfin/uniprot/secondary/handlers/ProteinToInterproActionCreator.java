@@ -28,7 +28,10 @@ public class ProteinToInterproActionCreator implements ActionCreator {
     public List<SecondaryTermLoadAction> createActions(UniprotReleaseRecords uniProtRecords, List<SecondaryTermLoadAction> actions, SecondaryLoadContext context) {
 
         List<ProteinToInterproDTO> existingRecords = (context.getExistingProteinToInterproRecords() != null) ? context.getExistingProteinToInterproRecords() : new java.util.ArrayList<>();
-        List<ProteinToInterproDTO> keepRecords = new java.util.ArrayList<>(); //all the records to keep (not delete) includes new records too
+        // HashSets for O(1) membership (existing-set for the "is it new?" check, keepRecords for the
+        // delete-loop check); these were ArrayList.contains, making the handler O(N*M).
+        Set<ProteinToInterproDTO> existingRecordsSet = new java.util.HashSet<>(existingRecords);
+        Set<ProteinToInterproDTO> keepRecords = new java.util.HashSet<>(); //all the records to keep (not delete) includes new records too
         List<SecondaryTermLoadAction> newActions = new java.util.ArrayList<>();
 
         for(String uniprotKey : uniProtRecords.getAccessions()) {
@@ -48,7 +51,7 @@ public class ProteinToInterproActionCreator implements ActionCreator {
 
             for(String ipr : iprs) {
                 ProteinToInterproDTO newRecord = new ProteinToInterproDTO(uniprotKey, ipr);
-                if (!existingRecords.contains(newRecord)) {
+                if (!existingRecordsSet.contains(newRecord)) {
                     newActions.add(createLoadAction(newRecord, richSequenceAdapter));
                 }
                 keepRecords.add(newRecord);

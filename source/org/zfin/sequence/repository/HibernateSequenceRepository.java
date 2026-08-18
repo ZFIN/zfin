@@ -174,7 +174,12 @@ public class HibernateSequenceRepository implements SequenceRepository {
     public Map<String, Collection<MarkerDBLink>> getMarkerDBLinks(ReferenceDatabase... referenceDatabases) {
         Session session = HibernateUtil.currentSession();
 
-        Query<MarkerDBLink> query = session.createQuery("select mdl from MarkerDBLink mdl join fetch mdl.marker join fetch mdl.publications where mdl.referenceDatabase in (:referenceDatabase) order by mdl.accessionNumber", MarkerDBLink.class);
+        // left join fetch mdl.accession: the accession (accession_bank) is an EAGER @ManyToOne on
+        // DBLink, so without fetching it here Hibernate issues a separate accession_bank query per
+        // link (~262k during a full UniProt load). Fetch it in this query instead. Use a LEFT join
+        // so links without a matching accession_bank row are still returned (matches the eager
+        // nullable behavior).
+        Query<MarkerDBLink> query = session.createQuery("select mdl from MarkerDBLink mdl join fetch mdl.marker left join fetch mdl.accession join fetch mdl.publications where mdl.referenceDatabase in (:referenceDatabase) order by mdl.accessionNumber", MarkerDBLink.class);
         query.setParameterList("referenceDatabase", referenceDatabases);
         List<MarkerDBLink> dbLinks = query.list();
 
