@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -367,19 +368,6 @@ public class MarkerMergeService {
 
             int rowsForDeleted = countRows(conn, schemaTable, fkColumn, toBeDeleted);
             if (rowsForDeleted > 0 && !"record_attribution".equals(childTable)) {
-                // Non-FK columns of any UNIQUE constraint, and whether the FK is part of one.
-                List<String> uniqueCols = new ArrayList<>();
-                boolean fkInUnique = false;
-                int numUniqueCols = 0;
-                for (String col : constraintColumns(conn, childTable, "UNIQUE")) {
-                    if (col.equals(fkColumn)) {
-                        fkInUnique = true;
-                    } else {
-                        uniqueCols.add(col);
-                    }
-                    numUniqueCols++;
-                }
-
                 // Primary-key columns; track whether the FK is (part of) the PK.
                 List<String> pkCols = new ArrayList<>();
                 String soloPk = null;
@@ -397,25 +385,40 @@ public class MarkerMergeService {
                     numPkCols++;
                 }
 
-                // Scenario 1: FK is part of a multi-column UNIQUE constraint and the PK is a single
-                // (non-FK) column. Delete the conflicting "deleted" rows and recurse on the PK.
-                // The Perl only handles unique constraints of exactly 2, 3, or 4 columns (explicit
-                // if/elsif branches); for any other column count it does NO conflict resolution and
-                // just emits the plain UPDATE. We cap to [2,4] to match that behavior exactly --
-                // notably, wide unique constraints like expression_experiment2's (6-7 columns) get
-                // only the UPDATE, never conflict deletes.
-                if (fkInUnique && numUniqueCols >= 2 && numUniqueCols <= 4 && numPkCols == 1) {
-                    String selectList = String.join(", ", uniqueCols);
-                    Map<String, String> mergedCombos =
-                            comboToPk(conn, schemaTable, pkOfChild, selectList, fkColumn, toBeMergedInto);
-                    if (!mergedCombos.isEmpty()) {
-                        Map<String, String> deletedCombos =
-                                comboToPk(conn, schemaTable, pkOfChild, selectList, fkColumn, toBeDeleted);
+                // Scenario 1: the FK is part of a UNIQUE constraint, so rewriting it would collide
+                // with a row already on the surviving id. Delete the deleted side's row instead and
+                // recurse on its PK. Per constraint, and at any width -- the previous code flattened
+                // every UNIQUE column on the table into one key and only handled widths 2-4, which
+                // is why merges failed on both wide and single-column constraints (ZFIN-10457).
+                //
+                // A single-column constraint means one row per id, so the survivor's row wins.
+                if (numPkCols == 1) {
+                    Set<String> alreadyDeleted = new HashSet<>();
+                    for (UniqueConstraint uc : uniqueConstraints(conn, childSchema, childTable)) {
+                        if (!uc.columns().contains(fkColumn)) {
+                            continue;
+                        }
+                        List<String> otherCols = new ArrayList<>(uc.columns());
+                        otherCols.remove(fkColumn);
+                        // Nothing else to compare when the constraint is just the FK: one shared
+                        // key means any deleted-side row conflicts with any surviving one.
+                        String selectList = otherCols.isEmpty() ? lit("") : String.join(", ", otherCols);
+                        Map<String, String> mergedCombos = comboToPk(conn, schemaTable, pkOfChild,
+                                selectList, fkColumn, toBeMergedInto, uc.nullsNotDistinct());
+                        if (mergedCombos.isEmpty()) {
+                            continue;
+                        }
+                        Map<String, String> deletedCombos = comboToPk(conn, schemaTable, pkOfChild,
+                                selectList, fkColumn, toBeDeleted, uc.nullsNotDistinct());
                         for (Map.Entry<String, String> e : deletedCombos.entrySet()) {
-                            if (mergedCombos.containsKey(e.getKey())) {
-                                String deletedPk = e.getValue();
-                                mergeSQLs.put("delete from " + schemaTable + " where " + pkOfChild
-                                        + " = '" + deletedPk + "'", depth);
+                            if (!mergedCombos.containsKey(e.getKey())) {
+                                continue;
+                            }
+                            String deletedPk = e.getValue();
+                            mergeSQLs.put("delete from " + schemaTable + " where " + pkOfChild
+                                    + " = '" + deletedPk + "'", depth);
+                            // Two constraints can flag the same row; only recurse for it once.
+                            if (alreadyDeleted.add(deletedPk)) {
                                 recursivelyGetSQLs(conn, deletedPk, mergedCombos.get(e.getKey()),
                                         childTable, pkOfChild, depth);
                             }
@@ -789,20 +792,89 @@ public class MarkerMergeService {
     }
 
     /** Map of concatenated unique-column values -> primary-key value, for rows where FK = id. */
+    /**
+     * Comparison key -> primary key, for rows whose FK is {@code id}.
+     *
+     * <p>{@code nullsNotDistinct} must match the constraint. Under NULLS NOT DISTINCT a NULL is
+     * just another value; under an ordinary UNIQUE a row with a NULL cannot collide, so it is
+     * skipped rather than deleted. Values are delimited because plain concatenation made
+     * ("a","bc") and ("ab","c") identical.</p>
+     */
     private Map<String, String> comboToPk(Connection conn, String schemaTable, String pkColumn,
-                                          String selectList, String fkColumn, String id) throws SQLException {
+                                          String selectList, String fkColumn, String id,
+                                          boolean nullsNotDistinct) throws SQLException {
         Map<String, String> result = new HashMap<>();
         String sql = "select " + pkColumn + ", " + selectList + " from " + schemaTable
                 + " where " + fkColumn + " = " + lit(id);
         try (Statement st = conn.createStatement(); ResultSet rs = st.executeQuery(sql)) {
             int colCount = rs.getMetaData().getColumnCount();
             while (rs.next()) {
-                StringBuilder combo = new StringBuilder();
-                for (int i = 2; i <= colCount; i++) {
-                    combo.append(nz(rs.getString(i))); // NULL -> "" (Perl concatenates undef as "")
+                String combo = comboKey(rs, colCount, nullsNotDistinct);
+                if (combo != null) {
+                    result.put(combo, rs.getString(1));
                 }
-                result.put(combo.toString(), rs.getString(1));
             }
+        }
+        return result;
+    }
+
+    /** The row's comparison key, or null if it cannot collide because a NULL makes it distinct. */
+    private static String comboKey(ResultSet rs, int colCount, boolean nullsNotDistinct)
+            throws SQLException {
+        StringBuilder combo = new StringBuilder();
+        for (int i = 2; i <= colCount; i++) {
+            String value = rs.getString(i);
+            if (value == null && !nullsNotDistinct) {
+                return null;
+            }
+            combo.append(COMBO_DELIMITER).append(nz(value));
+        }
+        return combo.toString();
+    }
+
+    /** Key separator; cannot occur in column data. */
+    private static final String COMBO_DELIMITER = "\u0001";
+
+    /** One UNIQUE constraint: its columns, and whether NULLs collide. */
+    private record UniqueConstraint(String name, List<String> columns, boolean nullsNotDistinct) {
+    }
+
+    /**
+     * The UNIQUE constraints on a table, each with its own column list and null semantics.
+     *
+     * <p>{@code pg_catalog} rather than {@code information_schema}: the latter does not expose
+     * {@code indnullsnotdistinct}.</p>
+     */
+    private List<UniqueConstraint> uniqueConstraints(Connection conn, String schema, String table)
+            throws SQLException {
+        String sql = """
+                select c.conname, i.indnullsnotdistinct, a.attname
+                  from pg_constraint c
+                  join pg_class t on t.oid = c.conrelid
+                  join pg_namespace ns on ns.oid = t.relnamespace
+                  join pg_index i on i.indexrelid = c.conindid
+                  cross join unnest(c.conkey) with ordinality as k(attnum, ord)
+                  join pg_attribute a on a.attrelid = c.conrelid and a.attnum = k.attnum
+                 where t.relname = ? and ns.nspname = ? and c.contype = 'u'
+                 order by c.conname, k.ord
+                """;
+        Map<String, List<String>> columnsByName = new LinkedHashMap<>();
+        Map<String, Boolean> nndByName = new HashMap<>();
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, table);
+            ps.setString(2, schema);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String name = rs.getString(1);
+                    columnsByName.computeIfAbsent(name, k -> new ArrayList<>()).add(rs.getString(3));
+                    nndByName.put(name, rs.getBoolean(2));
+                }
+            }
+        }
+        List<UniqueConstraint> result = new ArrayList<>();
+        for (Map.Entry<String, List<String>> e : columnsByName.entrySet()) {
+            result.add(new UniqueConstraint(e.getKey(), e.getValue(),
+                    Boolean.TRUE.equals(nndByName.get(e.getKey()))));
         }
         return result;
     }
