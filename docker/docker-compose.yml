@@ -73,8 +73,13 @@ services:
       - gradle_cache:/home/gradle/.gradle
   db:
     build: ./postgresql/
-    image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}
-    command: -c 'max_connections=7500' -c 'shared_buffers=16GB' -c 'huge_pages=try' -c 'temp_buffers=2GB' -c 'work_mem=8GB' -c 'maintenance_work_mem=12GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
+    image: ghcr.io/zfin/zfin-db:${ZFIN_RELEASE}${DOCKER_ARCH:-}
+    # Memory settings sized down from a prior 16g shared_buffers / 8g work_mem
+    # configuration that contributed to repeated container OOMs during heavy
+    # DIH workloads on a 32g host. Dial back up if you have a clearly RAM-rich
+    # host and a workload that benefits.
+    # work_mem is 128MB, paired with the 2g shm_size below -- the two have to be chosen together.
+    command: -c 'max_connections=7500' -c 'shared_buffers=4GB' -c 'huge_pages=try' -c 'temp_buffers=256MB' -c 'work_mem=128MB' -c 'maintenance_work_mem=1GB' -c 'max_wal_size=10GB' -c 'timezone=America/Los_Angeles' -c 'shared_preload_libraries="pg_stat_statements"'
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/pg_pass
