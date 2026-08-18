@@ -1345,6 +1345,13 @@ public class HibernateSequenceRepository implements SequenceRepository {
     }
 
     @Override
+    public void deleteGenomeLocation(GenomeLocation genomeLocation) {
+        Session session = HibernateUtil.currentSession();
+        session.remove(genomeLocation);
+        session.flush();
+    }
+
+    @Override
     public List<FeatureDeletionSizeRow> getDeletionSizeDriftCandidates(Collection<FeatureTypeEnum> featureTypes) {
         // FeatureLocation is the discriminator-mapped child of Location (table
         // sequence_feature_chromosome_location, FK sfcl_feature_zdb_id). Feature
