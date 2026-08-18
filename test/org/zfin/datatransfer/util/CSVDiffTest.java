@@ -223,4 +223,155 @@ public class CSVDiffTest {
 
         return new Tuple2<>(beforeFile.toFile(), afterFile.toFile());
     }
+
+    /**
+     * ZFIN-8948: CSVDiff assumes the composite key is UNIQUE within each file. When two rows
+     * share a key, results are wrong in two compounding ways:
+     *
+     *   1. findUpdatedRecords / findUpdatedRecordsOnlyInIgnoredColumns build
+     *      Map<String, CSVRecord> -- one record per key -- so only ONE member of a key group
+     *      is ever reported.
+     *   2. removeRecordsFromLists then removes EVERY row sharing that key from the working
+     *      lists, so the unreported members never fall through to deletes/adds either.
+     *
+     * Net effect: rows silently disappear from the output, and the accounting invariant
+     *   retained + ignoredUpdated + updated + deleted == beforeCount
+     * no longer holds. Because the counts get *smaller*, the summary looks healthier than
+     * before, which is the dangerous part.
+     *
+     * Below: 2 before + 2 after rows all sharing key (john,doe), differing only in the
+     * IGNORED `date` column. Correct output is 2 ignored-updates per side and no
+     * deletes/adds. Actual today: 1 per side, and one before-row appears nowhere.
+     *
+     * This is what the GO loads depend on. Their csvDiff key deliberately excludes
+     * `protein_acc` so UniProt isoform reassignment reads as an update instead of a
+     * delete+add, and that makes keys non-unique: 3,175 colliding key groups over 14,037 rows
+     * on the 2026.07.05.1 GOA snapshot. Before this was fixed, that configuration would have
+     * silently lost rows. See server_apps/DB_maintenance/gafLoad/mgte_csvdiff.sh.
+     */
+    @Test
+    public void testDuplicateCompositeKeysAreAllReported() throws IOException {
+        Tuple2<File, File> beforeAfterFiles = generateTestData(
+                """
+                        fname,lname,date
+                        john,doe,2020-01-01
+                        john,doe,2020-01-02""",
+                """
+                        fname,lname,date
+                        john,doe,2021-01-01
+                        john,doe,2021-01-02""");
+
+        Map<String, List<CSVRecord>> subsets = diffTool.processToMap(
+                beforeAfterFiles.v1().getAbsolutePath(), beforeAfterFiles.v2().getAbsolutePath());
+
+        // Both rows differ only in an ignored column, so both are ignored-updates.
+        assertCounts(subsets, 0, 2, 2, 0, 0, 0, 0);
+    }
+
+    /**
+     * ZFIN-8948: asymmetric duplicate key groups. 3 before-rows and 2 after-rows share a key and
+     * differ only in the ignored column, so 2 pair off as ignored-updates and the third before-row
+     * is a genuine delete. Guards the "leftovers must fall through" half of the fix -- the old
+     * key-based removal swept unpaired members out of the working lists entirely.
+     */
+    @Test
+    public void testDuplicateKeysWithUnevenGroupSizes() throws IOException {
+        Tuple2<File, File> beforeAfterFiles = generateTestData(
+                """
+                        fname,lname,date
+                        john,doe,2020-01-01
+                        john,doe,2020-01-02
+                        john,doe,2020-01-03""",
+                """
+                        fname,lname,date
+                        john,doe,2021-01-01
+                        john,doe,2021-01-02""");
+
+        Map<String, List<CSVRecord>> subsets = diffTool.processToMap(
+                beforeAfterFiles.v1().getAbsolutePath(), beforeAfterFiles.v2().getAbsolutePath());
+
+        assertCounts(subsets, 0, 2, 2, 0, 0, 1, 0);
+    }
+
+    /**
+     * ZFIN-8948: duplicate FULL-record rows exercise findRetainedRecords, which had the same
+     * one-record-per-key flaw. Two byte-identical before-rows against one identical after-row is
+     * 1 retained + 1 genuine delete. The old code reported 2 retained (more than existed on the
+     * after side) and lost the delete.
+     */
+    @Test
+    public void testDuplicateIdenticalRowsRetainOneAndDeleteTheRest() throws IOException {
+        Tuple2<File, File> beforeAfterFiles = generateTestData(
+                """
+                        fname,lname,date
+                        john,doe,2020-01-01
+                        john,doe,2020-01-01""",
+                """
+                        fname,lname,date
+                        john,doe,2020-01-01""");
+
+        Map<String, List<CSVRecord>> subsets = diffTool.processToMap(
+                beforeAfterFiles.v1().getAbsolutePath(), beforeAfterFiles.v2().getAbsolutePath());
+
+        assertCounts(subsets, 1, 0, 0, 0, 0, 1, 0);
+    }
+
+    /**
+     * ZFIN-8948: a genuine update living inside a duplicate key group. One pair is byte-identical
+     * (retained), the other differs in a non-ignored column (a real update). Both must be
+     * classified independently rather than one shadowing the other.
+     */
+    @Test
+    public void testGenuineUpdateWithinDuplicateKeyGroup() throws IOException {
+        Tuple2<File, File> beforeAfterFiles = generateTestData(
+                """
+                        fname,lname,date,age
+                        john,doe,2020-01-01,25
+                        john,doe,2020-01-02,30""",
+                """
+                        fname,lname,date,age
+                        john,doe,2020-01-01,26
+                        john,doe,2020-01-02,30""");
+
+        Map<String, List<CSVRecord>> subsets = diffTool.processToMap(
+                beforeAfterFiles.v1().getAbsolutePath(), beforeAfterFiles.v2().getAbsolutePath());
+
+        assertCounts(subsets, 1, 0, 0, 1, 1, 0, 0);
+    }
+
+    /**
+     * Assert every bucket count, and — regardless of the expectations — that the accounting
+     * invariant holds on both sides:
+     *   retained + ignoredUpdated + updated + deleted == beforeCount
+     *   retained + ignoredUpdated + updated + added   == afterCount
+     * Nothing may vanish. This is the assertion that would have caught the original defect,
+     * since its symptom was counts getting smaller rather than wrong-looking.
+     */
+    private void assertCounts(Map<String, List<CSVRecord>> subsets, int expectedRetained,
+                              int expectedIgnored1, int expectedIgnored2, int expectedUpdated1,
+                              int expectedUpdated2, int expectedDeleted, int expectedAdded) {
+        Map<String, String> summary = subsets.get("summary").get(0).toMap();
+        int beforeCount = Integer.parseInt(summary.get("beforeCount"));
+        int afterCount  = Integer.parseInt(summary.get("afterCount"));
+        int retained    = Integer.parseInt(summary.get("retainedCount"));
+        int ignored1    = Integer.parseInt(summary.get("ignoredCount1"));
+        int ignored2    = Integer.parseInt(summary.get("ignoredCount2"));
+        int updated1    = Integer.parseInt(summary.get("updated1Count"));
+        int updated2    = Integer.parseInt(summary.get("updated2Count"));
+        int deleted     = Integer.parseInt(summary.get("deletedCount"));
+        int added       = Integer.parseInt(summary.get("addedCount"));
+
+        assertEquals("retained", expectedRetained, retained);
+        assertEquals("ignoredUpdated1", expectedIgnored1, ignored1);
+        assertEquals("ignoredUpdated2", expectedIgnored2, ignored2);
+        assertEquals("updated1", expectedUpdated1, updated1);
+        assertEquals("updated2", expectedUpdated2, updated2);
+        assertEquals("deleted", expectedDeleted, deleted);
+        assertEquals("added", expectedAdded, added);
+
+        assertEquals("accounting invariant: every before-row classified exactly once",
+                beforeCount, retained + ignored1 + updated1 + deleted);
+        assertEquals("accounting invariant: every after-row classified exactly once",
+                afterCount, retained + ignored2 + updated2 + added);
+    }
 }

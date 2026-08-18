@@ -8,9 +8,13 @@ import java.util.List;
 /**
  * Note: NAS is only for display of existing evidence (case 5664).
  * Note: TAS is only for filtering out imported evidence (case 6447).
+ * Note: EXP (ZFIN-10025/ZFIN-10258) arrives only from the DANRE-mod GPAD load
+ *       (ECO:0000269, assigned_by=UniProt, PMID-attributed). It must exist here because
+ *       DTOConversionService does GoEvidenceCodeEnum.valueOf() on the stored code, but it
+ *       is not curator-assignable -- see getCodeEnumForPub, which filters it out.
  */
 public enum GoEvidenceCodeEnum implements IsSerializable {
-    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS, IBA, IBD, IKR, IMR, IRD,ISO;
+    IDA, IPI, IGI, IMP, IEP, IC, ISS, IEA, ND, NAS, TAS, IBA, IBD, IKR, IMR, IRD,ISO, EXP;
 
     public static final int CARDINALITY_ANY = -1;
     public static final int CARDINALITY_ONE_OR_MORE = -2;
@@ -30,6 +34,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
                 return new InferenceCategory[]{InferenceCategory.SP_KW, InferenceCategory.UNIPROTKB_KW, InferenceCategory.UNIPROTKB_SUBCELL, InferenceCategory.UNIPATHWAY, InferenceCategory.UNIRULE, InferenceCategory.EC,
                         InferenceCategory.INTERPRO};
             case IEP:
+                return new InferenceCategory[]{};
+            case EXP: // all 105 observed EXP rows carry an empty with/from
                 return new InferenceCategory[]{};
             case IGI:
                 return new InferenceCategory[]{InferenceCategory.ZFIN_MRPH_GENO, InferenceCategory.ZFIN_GENE, InferenceCategory.REFSEQ,
@@ -75,6 +81,8 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
                 return CARDINALITY_ONE_OR_MORE;
             case IEP:
                 return 0;
+            case EXP: // no inferences expected
+                return 0;
             case IGI:
                 return CARDINALITY_ANY;
             case IPI:
@@ -118,6 +126,7 @@ public enum GoEvidenceCodeEnum implements IsSerializable {
                     case IKR:
                     case IMR:
                     case IRD:
+                    case EXP: // imported from DANRE-mod only; not curator-assignable
                         break;
                     // add all remaining
                     default:

@@ -23,6 +23,18 @@
           <defaultValue>false</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>LOAD_INTERPRO2GO_EC2GO</name>
+          <description>Keep deriving interpro2go and ec2go GO annotations in this load (default: yes). Uncheck once the unified DANRE-mod GO load supplies them (ZFIN-10344). WARNING: unchecking this alone DUPLICATES rather than replaces -- the DANRE-mod load writes the same content under the GOA organization while these rows are owned by UniProt, so the cutover must also purge gafOrganization='UniProt'. Existing rows are left frozen (neither refreshed nor pruned) while unchecked.</description>
+          <defaultValue>true</defaultValue>
+          <trim>true</trim>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>LOAD_KW2GO</name>
+          <description>Keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load (default: yes). WARNING: unlike interpro2go/ec2go there is NO successor for this stream -- GO retired GO_REF:0000004 and neither DANRE file carries it -- so unchecking this strands ~41k annotations with nothing else supplying them. Unresolved decision; see README-danre-mod-consolidation.md open decision 4.</description>
+          <defaultValue>true</defaultValue>
+          <trim>true</trim>
+        </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -49,7 +61,11 @@ echo "UNIPROT_LOAD_MODE=$UNIPROT_LOAD_MODE"
 rm -f $PWD/uniprot_secondary_load_report.json $PWD/uniprot_secondary_load_report.json.report.html $PWD/uniprot_secondary_load_report*.json.zip $PWD/uniprot_secondary_load_report*.html.zip
 export UNIPROT_OUTPUT_FILE="$PWD/uniprot_secondary_load_report_$TIMESTAMP.json.zip"
 cd $SOURCEROOT
-gradle uniprotSecondaryTermLoadTask
+# -D rather than relying on the environment: a forked JavaExec inherits the gradle daemon's
+# environment, not this shell's. See ZFIN-10344.
+gradle uniprotSecondaryTermLoadTask \
+    -DLOAD_INTERPRO2GO_EC2GO=$LOAD_INTERPRO2GO_EC2GO \
+    -DLOAD_KW2GO=$LOAD_KW2GO
         ]]>
       </command>
     </hudson.tasks.Shell>

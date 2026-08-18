@@ -184,12 +184,32 @@ where mrkrgoev_zdb_id in (
     )
 );
 
--- Export the results to CSV files for record-keeping
-select 'Copying log files to: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv';
+-- Export the results to CSV files for record-keeping.
+--
+-- Optional, because there are two ways this script gets run and they want different things:
+--   * as part of a load job, where the CSVs are evidence of what the cleanup did and get
+--     archived with the build -- keep them;
+--   * as a step inside a larger comparison (e.g. the legacy-vs-unified GO load before/after
+--     diff, or the weekly GAF export, where cleanup is incidental) -- the CSVs are noise, and
+--     because \copy takes relative paths they land in whatever the caller's working directory
+--     happens to be.
+--
+-- Pass -v write_csvs=false to skip them. Default is true, so anything that does not know about
+-- this variable behaves exactly as before.
+\if :{?write_csvs}
+\else
+\set write_csvs true
+\endif
+
+\if :write_csvs
+select 'Copying log files to: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv, tmp_mgte_duplicates.csv';
 \copy (select * from tmp_dbg_clean_marker_go_term_evidence) to 'clean_marker_go_term_evidence.csv' with csv header;
 \copy (select * from tmp_to_delete_marker_go_term_evidence) to 'to_delete_marker_go_term_evidence.csv' with csv header;
 \copy (select * from tmp_inference_group_member_updates) to 'tmp_inference_group_member_updates.csv' with csv header;
 \copy (select * from tmp_mgte_duplicates order by _hash) to 'tmp_mgte_duplicates.csv' with csv header;
+\else
+select 'write_csvs=false: skipping the record-keeping CSVs';
+\endif
 
 -- Clean up temporary tables
 DROP TABLE IF EXISTS tmp_dbg_clean_marker_go_term_evidence;

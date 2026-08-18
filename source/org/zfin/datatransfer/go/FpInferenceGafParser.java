@@ -38,6 +38,20 @@ public class FpInferenceGafParser {
     private final Map<String, Integer> rejectionCounts = new LinkedHashMap<>();
 
 
+    /**
+     * Whether the source file this parser reads is a MERGED superset of several annotation
+     * sources, so that ownership -- and therefore the add/update/<b>remove</b> diff -- must be
+     * partitioned per source rather than applied under one organization.
+     *
+     * <p>False for every single-source load: one file, one owning {@link GafOrganization}.
+     * True only for the unified DANRE-mod GPAD (ZFIN-10025), where a single file carries
+     * UniProt, InterPro, GO_Central, ZFIN, GOC and others, and removal must be scoped so no
+     * source can mass-delete another's annotations. See {@code DanreModSourceOrganization}.</p>
+     */
+    public boolean usesPerSourceOwnership() {
+        return false;
+    }
+
     @Getter
     @Setter
     protected boolean errorEncountered = false;

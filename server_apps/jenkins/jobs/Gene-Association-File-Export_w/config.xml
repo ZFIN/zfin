@@ -21,6 +21,9 @@
         <hudson.tasks.Shell>
             <command><![CDATA[
 cd $SOURCEROOT
+# No -DcleanupCsvDir: this job runs the dedupe only so the export below sees clean data. It has
+# no use for the task's four record-keeping CSVs, and without a directory the task writes none.
+# (Before that flag existed they landed in $SOURCEROOT -- the source tree -- every weekly run.)
 gradle cleanMarkerGoTermEvidenceDuplicatesTask
             ]]>
             </command>

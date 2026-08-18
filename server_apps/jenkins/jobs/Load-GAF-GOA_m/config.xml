@@ -37,7 +37,22 @@ Input File Details:
 
   </description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_MGTE_CLEANUP</name>
+          <description>If checked, run cleanMarkerGoTermEvidenceDuplicatesTask after the load (and before the "after" snapshot is captured).</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>MGTE_CLEANUP_CSVS</name>
+          <description>If checked (the default), the cleanup writes its four record-keeping CSVs to server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff/ under the deployment root -- the same directory this job already puts its before/after mgte_*.csv snapshots and mgte_dbdiff_*.xlsx comparison workbooks in, and which is archived with the build. The CSVs are the record of which duplicate annotations the cleanup deleted. Uncheck when this run is a step in a larger comparison and they are just bulky byproducts. Has no effect unless RUN_MGTE_CLEANUP is also checked.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
@@ -51,14 +66,56 @@ Input File Details:
   <concurrentBuild>false</concurrentBuild>
   <customWorkspace>$TARGETROOT</customWorkspace>
   <builders>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff
+
+bash $SQL/mgte_snapshot.sh before "$OUT" --others GOA
+]]></command>
+    </hudson.tasks.Shell>
     <hudson.tasks.Ant plugin="ant@1.2">
       <targets>load-gaf-goa -DjobName=Load-GAF-GOA_m</targets>
       <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
     </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# Optional: run the marker_go_term_evidence duplicate cleanup after the load.
+# When enabled, the AFTER snapshot below reflects the post-cleanup state.
+if [ "$RUN_MGTE_CLEANUP" = "true" ]; then
+    echo "RUN_MGTE_CLEANUP=true -> running cleanMarkerGoTermEvidenceDuplicatesTask"
+    cd $SOURCEROOT
+    # The task's record-keeping CSVs are written by \copy with relative paths, so without a
+    # directory they would land in $SOURCEROOT. -DcleanupCsvDir names one; omitting it skips them.
+    if [ "$MGTE_CLEANUP_CSVS" = "false" ]; then
+        CLEANUP_CSV_ARG=""
+    else
+        CLEANUP_CSV_ARG="-DcleanupCsvDir=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff"
+    fi
+    echo "MGTE_CLEANUP_CSVS=$MGTE_CLEANUP_CSVS -> ${CLEANUP_CSV_ARG:-(no CSVs)}"
+    gradle cleanMarkerGoTermEvidenceDuplicatesTask $CLEANUP_CSV_ARG
+else
+    echo "RUN_MGTE_CLEANUP not true -> skipping cleanup"
+fi
+]]></command>
+    </hudson.tasks.Shell>
+    <hudson.tasks.Shell>
+      <command><![CDATA[
+set -e
+# AFTER snapshot (post-load, and post-cleanup when RUN_MGTE_CLEANUP=true), then the diff.
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff
+
+bash $SQL/mgte_snapshot.sh after "$OUT" --others GOA
+bash $SQL/mgte_csvdiff.sh        "$OUT" --others GOA
+]]></command>
+    </hudson.tasks.Shell>
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA*</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m/Load-GAF-GOA*,server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff/mgte_*.csv,server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff/mgte_*.xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
