@@ -105,7 +105,7 @@
                 <div class="col-md-5">
                     <form:input path="orcid" cssClass="form-control" required="true"
                                 placeholder="0000-0002-1825-0097"
-                                pattern="\s*(https?://)?(www\.)?(orcid\.org/)?\d{4}-?\d{4}-?\d{4}-?\d{3}[\dXx]\s*"
+                                pattern="\s*(https?://)?(www\.)?(orcid\.org/)?\d{4}[\-\s\u2010-\u2015_]?\d{4}[\-\s\u2010-\u2015_]?\d{4}[\-\s\u2010-\u2015_]?\d{3}[\dXx]\s*"
                                 title="16 digits, for example 0000-0002-1825-0097"/>
                     <small class="form-text text-muted">
                         Required. If you do not have an ORCID iD, you can
