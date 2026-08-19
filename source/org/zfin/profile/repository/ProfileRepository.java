@@ -237,6 +237,14 @@ public interface ProfileRepository {
 
     boolean emailExists(String email);
 
+    /**
+     * Finds the person already holding an ORCID iD, so a second record cannot claim it.
+     *
+     * @param orcidID an ORCID in any of the forms people submit; normalized before comparison
+     * @return the existing person, or null if the ORCID is unused or unreadable
+     */
+    Person getPersonByOrcid(String orcidID);
+
     List<EmailPrivacyPreference> getAllEmailPrivacyPreferences();
 
     EmailPrivacyPreference getEmailPrivacyPreferenceByName(String source);

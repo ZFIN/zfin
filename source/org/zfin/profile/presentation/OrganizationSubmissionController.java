@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.zfin.framework.mail.AbstractZfinMailSender;
 import org.zfin.infrastructure.captcha.CaptchaService;
 import org.zfin.infrastructure.captcha.RequiresCaptcha;
+import org.zfin.infrastructure.spam.SpamAssessment;
+import org.zfin.infrastructure.spam.SpamDetector;
+import org.zfin.infrastructure.submission.SubmissionLog;
+import org.zfin.infrastructure.submission.SubmissionLogService;
+import org.zfin.infrastructure.submission.SubmissionOutcome;
+import org.zfin.infrastructure.submission.SubmissionType;
 import org.zfin.profile.OrganizationSubmission;
-import org.zfin.profile.PersonSubmission;
 import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.properties.ZfinPropertiesEnum;
 import java.nio.charset.StandardCharsets;
@@ -40,36 +45,60 @@ public class OrganizationSubmissionController {
 
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public String newOrganizationFormSubmit(@ModelAttribute OrganizationSubmission submission, Model model, HttpServletRequest request) {
+        SubmissionLog logEntry = SubmissionLogService.build(SubmissionType.ORGANIZATION, request);
+        SubmissionLogService.setSubmitter(logEntry, submission.getContactPerson(),
+                StringUtils.trimToEmpty(submission.getEmail2()), null);
+        SubmissionLogService.setDetails(logEntry, submission.toText());
+
         if (StringUtils.isNotEmpty(submission.getEmail())) {
-            log.error("New Organization Submission Flagged as Spam: " + submission);
-            return "profile/organization-submit-process";
+            return discardSilently(logEntry, SubmissionOutcome.REJECTED_HONEYPOT, "decoy email field filled in");
         }
         Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
         if (captchaRedirectUrl.isPresent()) {
-            log.error("New Organization Submission Flagged as Spam: " + submission);
-            return "profile/organization-submit-process";
+            return discardSilently(logEntry, SubmissionOutcome.REJECTED_CAPTCHA, "no valid captcha");
         }
         logSubmissionRequest(submission, request);
-        if (flagSpam(submission)) {
-            log.error("New Person Submission Flagged as Spam: " + submission);
-            return "profile/person-submit-process";
+
+        SpamAssessment assessment = assessSpam(submission);
+        SubmissionLogService.setAssessment(logEntry, assessment);
+        if (assessment.isSpam()) {
+            return discardSilently(logEntry, SubmissionOutcome.REJECTED_SPAM, assessment.describe());
         }
         submission.setEmail(submission.getEmail2());
 
         //send confirmation email
         boolean error = !sendConfirmationEmails(submission);
         model.addAttribute("error", error);
+        SubmissionLogService.save(logEntry,
+                error ? SubmissionOutcome.ERROR_SENDING : SubmissionOutcome.ACCEPTED);
 
         return "profile/organization-submit-process";
     }
 
+    /**
+     * Renders the same "thank you" page a real submitter sees, so a bot learns nothing, and records
+     * why we dropped it.
+     */
+    private String discardSilently(SubmissionLog logEntry, SubmissionOutcome outcome, String reason) {
+        log.error("New Organization Submission Flagged as Spam (" + outcome + "): " + reason
+                + "\n" + logEntry.getDetails());
+        SubmissionLogService.save(logEntry, outcome);
+        return "profile/organization-submit-process";
+    }
+
+    private SpamAssessment assessSpam(OrganizationSubmission submission) {
+        return SpamDetector.examine()
+                .name("name", submission.getName())
+                .name("contactPerson", submission.getContactPerson())
+                .text("address", submission.getAddress())
+                .url("url", submission.getUrl())
+                .freeText("comments", submission.getComments())
+                .assess();
+    }
+
     private void logSubmissionRequest(OrganizationSubmission submission, HttpServletRequest request) {
         log.error("New Organization Submission: " + submission.toText());
-        String ipAddress = request.getHeader("X-FORWARDED-FOR");
-        if (ipAddress == null) {
-            ipAddress = request.getRemoteAddr();
-        }
-        log.error("Submission IP Address: " + ipAddress);
+        log.error("Submission IP Address: " + SubmissionLogService.getClientIpAddress(request));
 
         //get cookies:
         StringBuilder cookies = new StringBuilder();
@@ -80,32 +109,6 @@ public class OrganizationSubmissionController {
         }
         log.error("Submission Cookies: " + cookies.toString());
     }
-
-    private boolean flagSpam(OrganizationSubmission submission) {
-        //Look for submissions like: New Person Submission: WsEjiJCJYOXBXrWPWNLAwq KyliyDPBwGnfnAiVOoKCl
-        String contactPerson = submission.getContactPerson();
-        int countOfLettersThreshold = 10;
-
-        int upperCaseThreshold = 3;
-        if (numberOfUpperCaseLetters(contactPerson) >= upperCaseThreshold && contactPerson.length() >= countOfLettersThreshold) {
-            //count the number of spaces
-            if (StringUtils.countMatches(contactPerson, " ") == 0) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private int numberOfUpperCaseLetters(String firstName) {
-        int count = 0;
-        for (char c : firstName.toCharArray()) {
-            if (Character.isUpperCase(c)) {
-                count++;
-            }
-        }
-        return count;
-    }
-
 
     private boolean sendConfirmationEmails(OrganizationSubmission submission) {
         String submitterEmail = submission.getEmail();
