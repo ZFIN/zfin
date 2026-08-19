@@ -215,7 +215,6 @@
         <mapping class="org.zfin.infrastructure.ZdbFlag"/>
         <mapping class="org.zfin.infrastructure.AnnualStats"/>
         <mapping class="org.zfin.infrastructure.submission.SubmissionLog"/>
-        <mapping class="org.zfin.marker.fluorescence.FluorescentMarker"/>
         <mapping class="org.zfin.marker.fluorescence.FluorescentProtein"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
         <mapping class="org.zfin.marker.MarkerAlias"/>
@@ -344,6 +343,7 @@
         <mapping class="org.zfin.zirc.entity.Phenotype"/>
         <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
         <mapping class="org.zfin.zirc.entity.AuditEntry"/>
+        <mapping class="org.zfin.zirc.entity.ZircVocabularyTerm"/>
         <mapping class="org.zfin.zirc.entity.LineSubmissionComment"/>
 
  <!--<listener class="org.hibernate.envers.event.AuditEventListener" type="post-insert"/>

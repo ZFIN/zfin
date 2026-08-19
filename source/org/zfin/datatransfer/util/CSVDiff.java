@@ -8,6 +8,7 @@ import org.apache.commons.csv.CSVRecord;
 
 import java.io.*;
 import java.util.*;
+import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 import static org.zfin.util.ZfinSystemUtils.envTrue;
@@ -81,14 +82,18 @@ public class CSVDiff {
         List<CSVRecord> file2Copy = new ArrayList<>(file2Records);
 
         // Find records that are exactly the same (all columns match)
-        List<CSVRecord> retainedRecords = findRetainedRecords(file1Copy, file2Copy);
+        Map<String, List<CSVRecord>> retainedRecordPairs = findRetainedRecords(file1Copy, file2Copy);
+        List<CSVRecord> retainedRecords = retainedRecordPairs.get("file1");
+        List<CSVRecord> retainedRecords2 = retainedRecordPairs.get("file2");
         retainedCount = retainedRecords.size();
         if (keepAllFiles) {
             results.put("retained", retainedRecords);
         }
 
-        // Remove retained records from both sets
-        removeRecordsFromLists(retainedRecords, file1Copy, file2Copy, true);
+        // Remove retained records from both sets -- each side removes only the instances it
+        // actually matched, so duplicate rows are consumed one-for-one rather than wholesale.
+        removeRecordsFromLists(retainedRecords, file1Copy, null);
+        removeRecordsFromLists(retainedRecords2, null, file2Copy);
 
         // Find records with changes only in ignored columns
         Map<String, List<CSVRecord>> ignoredUpdatedRecords = findUpdatedRecordsOnlyInIgnoredColumns(file1Copy, file2Copy);
@@ -103,8 +108,8 @@ public class CSVDiff {
         }
 
         // Remove records with only ignored column changes from both sets
-        removeRecordsFromLists(ignoredUpdated1, file1Copy, null, false);
-        removeRecordsFromLists(ignoredUpdated2, null, file2Copy, false);
+        removeRecordsFromLists(ignoredUpdated1, file1Copy, null);
+        removeRecordsFromLists(ignoredUpdated2, null, file2Copy);
 
         // Find records with matching keys but different values in non-ignored columns
         Map<String, List<CSVRecord>> updatedRecords = findUpdatedRecords(file1Copy, file2Copy);
@@ -116,8 +121,8 @@ public class CSVDiff {
         updated2Count = updated2.size();
 
         // Remove updated records from both sets
-        removeRecordsFromLists(updated1, file1Copy, null, false);
-        removeRecordsFromLists(updated2, null, file2Copy, false);
+        removeRecordsFromLists(updated1, file1Copy, null);
+        removeRecordsFromLists(updated2, null, file2Copy);
 
         // Write deletes (in file1 but not in file2)
         results.put("deleted", file1Copy);
@@ -172,7 +177,9 @@ public class CSVDiff {
         List<CSVRecord> file2Copy = new ArrayList<>(file2Records);
 
         // Find records that are exactly the same (all columns match)
-        List<CSVRecord> retainedRecords = findRetainedRecords(file1Copy, file2Copy);
+        Map<String, List<CSVRecord>> retainedRecordPairs = findRetainedRecords(file1Copy, file2Copy);
+        List<CSVRecord> retainedRecords = retainedRecordPairs.get("file1");
+        List<CSVRecord> retainedRecords2 = retainedRecordPairs.get("file2");
         if (keepAllFiles) {
             writeCSVFile(outputPrefix + "_retained.csv", retainedRecords, headers);
             System.out.println("Wrote " + retainedRecords.size() + " records to " + outputPrefix + "_retained.csv");
@@ -181,8 +188,10 @@ public class CSVDiff {
             System.out.println("Ignoring " + retainedRecords.size() + " records. (use KEEP_ALL_FILES to include these rows in output)");
         }
 
-        // Remove retained records from both sets
-        removeRecordsFromLists(retainedRecords, file1Copy, file2Copy, true);
+        // Remove retained records from both sets -- each side removes only the instances it
+        // actually matched, so duplicate rows are consumed one-for-one rather than wholesale.
+        removeRecordsFromLists(retainedRecords, file1Copy, null);
+        removeRecordsFromLists(retainedRecords2, null, file2Copy);
 
         // Find records with changes only in ignored columns
         Map<String, List<CSVRecord>> ignoredUpdatedRecords = findUpdatedRecordsOnlyInIgnoredColumns(file1Copy, file2Copy);
@@ -202,8 +211,8 @@ public class CSVDiff {
         }
 
         // Remove records with only ignored column changes from both sets
-        removeRecordsFromLists(ignoredUpdated1, file1Copy, null, false);
-        removeRecordsFromLists(ignoredUpdated2, null, file2Copy, false);
+        removeRecordsFromLists(ignoredUpdated1, file1Copy, null);
+        removeRecordsFromLists(ignoredUpdated2, null, file2Copy);
 
         // Find records with matching keys but different values in non-ignored columns
         Map<String, List<CSVRecord>> updatedRecords = findUpdatedRecords(file1Copy, file2Copy);
@@ -218,8 +227,8 @@ public class CSVDiff {
         generatedFiles.add(new File(outputPrefix + "_updated_2.csv"));
 
         // Remove updated records from both sets
-        removeRecordsFromLists(updated1, file1Copy, null, false);
-        removeRecordsFromLists(updated2, null, file2Copy, false);
+        removeRecordsFromLists(updated1, file1Copy, null);
+        removeRecordsFromLists(updated2, null, file2Copy);
 
         // Write deletes (in file1 but not in file2)
         writeCSVFile(outputPrefix + "_deletes.csv", file1Copy, headers);
@@ -327,24 +336,111 @@ public class CSVDiff {
      * @param list2 The second list of records
      * @return A list of records that are identical in both files
      */
-    private List<CSVRecord> findRetainedRecords(List<CSVRecord> list1, List<CSVRecord> list2) {
-        Map<String, CSVRecord> recordsMap = new HashMap<>();
-        List<CSVRecord> retained = new ArrayList<>();
+    private Map<String, List<CSVRecord>> findRetainedRecords(List<CSVRecord> list1, List<CSVRecord> list2) {
+        // Full-key equality already means every column matches, so no extra predicate is needed.
+        return pairMatchingRecords(list1, list2, true, (record1, record2) -> true);
+    }
 
-        // Create a map of full record keys to records for the second list
-        for (CSVRecord record : list2) {
-            recordsMap.put(generateFullRecordKey(record), record);
+    /**
+     * Group records by key, preserving input order and MULTIPLICITY.
+     *
+     * ZFIN-8948: the earlier implementation used Map&lt;String, CSVRecord&gt; throughout, i.e. one
+     * record per key, so when a key occurred more than once every occurrence but the last was
+     * silently discarded. That was invisible while keys happened to be unique, and corrupted
+     * results the moment they were not.
+     *
+     * @param records    The records to group
+     * @param useFullKey Whether to key on every column or only the key columns
+     * @return key -&gt; all records carrying that key, in input order
+     */
+    private Map<String, List<CSVRecord>> groupByKey(List<CSVRecord> records, boolean useFullKey) {
+        Map<String, List<CSVRecord>> grouped = new LinkedHashMap<>();
+        for (CSVRecord record : records) {
+            String key = useFullKey ? generateFullRecordKey(record) : generateCompositeKey(record);
+            grouped.computeIfAbsent(key, k -> new ArrayList<>()).add(record);
         }
+        return grouped;
+    }
 
-        // Find matches from the first list
-        for (CSVRecord record : list1) {
-            String fullKey = generateFullRecordKey(record);
-            if (recordsMap.containsKey(fullKey)) {
-                retained.add(record);
+    /**
+     * Pair up records that share a key and satisfy {@code matches}.
+     *
+     * Multiplicity-aware: a key appearing n times on the left and m times on the right yields at
+     * most min(n, m) pairs, and no record is claimed twice. Records left unclaimed stay in the
+     * caller's working lists and fall through to deletes/adds, which is what preserves the
+     * accounting invariant
+     *   retained + ignoredUpdated + updated + deleted == beforeCount.
+     *
+     * @return "file1" -&gt; claimed left-hand records, "file2" -&gt; their matched right-hand records,
+     *         positionally aligned
+     */
+    private Map<String, List<CSVRecord>> pairMatchingRecords(List<CSVRecord> list1, List<CSVRecord> list2,
+                                                             boolean useFullKey,
+                                                             BiPredicate<CSVRecord, CSVRecord> matches) {
+        Map<String, List<CSVRecord>> leftByKey = groupByKey(list1, useFullKey);
+        Map<String, List<CSVRecord>> rightByKey = groupByKey(list2, useFullKey);
+        List<CSVRecord> matched1 = new ArrayList<>();
+        List<CSVRecord> matched2 = new ArrayList<>();
+
+        for (Map.Entry<String, List<CSVRecord>> entry : leftByKey.entrySet()) {
+            List<CSVRecord> candidates = rightByKey.get(entry.getKey());
+            if (candidates == null) {
+                continue;
+            }
+            // Identity set: CSVRecord does not override equals, and two rows in the same key
+            // group can be value-identical, so only reference identity distinguishes them.
+            Set<CSVRecord> claimed = Collections.newSetFromMap(new IdentityHashMap<>());
+            for (CSVRecord record1 : entry.getValue()) {
+                for (CSVRecord record2 : candidates) {
+                    if (claimed.contains(record2)) {
+                        continue;
+                    }
+                    if (matches.test(record1, record2)) {
+                        claimed.add(record2);
+                        matched1.add(record1);
+                        matched2.add(record2);
+                        break;
+                    }
+                }
             }
         }
 
-        return retained;
+        Map<String, List<CSVRecord>> result = new HashMap<>();
+        result.put("file1", matched1);
+        result.put("file2", matched2);
+        return result;
+    }
+
+    /**
+     * True when at least one non-key, non-ignored column differs — i.e. a genuine update.
+     */
+    private boolean hasNonIgnoredDifferences(CSVRecord record1, CSVRecord record2) {
+        List<String> ignored = Arrays.asList(ignoreColumns);
+        for (String column : headers) {
+            if (Arrays.asList(keyColumns).contains(column) || ignored.contains(column)) {
+                continue;
+            }
+            if (!Objects.equals(record1.get(column), record2.get(column))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True when every non-key, non-ignored column matches AND at least one ignored column
+     * differs — i.e. churn the caller has declared uninteresting.
+     */
+    private boolean differsOnlyInIgnoredColumns(CSVRecord record1, CSVRecord record2) {
+        if (hasNonIgnoredDifferences(record1, record2)) {
+            return false;
+        }
+        for (String column : ignoreColumns) {
+            if (!Objects.equals(record1.get(column), record2.get(column))) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -355,55 +451,7 @@ public class CSVDiff {
      * @return A map containing updated records from both files
      */
     private Map<String, List<CSVRecord>> findUpdatedRecords(List<CSVRecord> list1, List<CSVRecord> list2) {
-        Map<String, CSVRecord> file1KeyMap = new HashMap<>();
-        Map<String, CSVRecord> file2KeyMap = new HashMap<>();
-        List<CSVRecord> updated1 = new ArrayList<>();
-        List<CSVRecord> updated2 = new ArrayList<>();
-
-        // Create maps of composite keys to records
-        for (CSVRecord record : list1) {
-            file1KeyMap.put(generateCompositeKey(record), record);
-        }
-
-        for (CSVRecord record : list2) {
-            file2KeyMap.put(generateCompositeKey(record), record);
-        }
-
-        // Get the set of columns to compare (all headers except key columns)
-        Set<String> comparisonColumns = new HashSet<>(headers);
-        for (String keyColumn : keyColumns) {
-            comparisonColumns.remove(keyColumn);
-        }
-
-        // For each key that exists in both files
-        for (String key : file1KeyMap.keySet()) {
-            if (file2KeyMap.containsKey(key)) {
-                CSVRecord record1 = file1KeyMap.get(key);
-                CSVRecord record2 = file2KeyMap.get(key);
-
-                // Check if there are differences in non-key columns
-                boolean hasDifferences = false;
-                for (String column : comparisonColumns) {
-                    if (!Objects.equals(record1.get(column), record2.get(column))) {
-                        // If the column is not in the ignore list, it's a meaningful difference
-                        if (!Arrays.asList(ignoreColumns).contains(column)) {
-                            hasDifferences = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (hasDifferences) {
-                    updated1.add(record1);
-                    updated2.add(record2);
-                }
-            }
-        }
-
-        Map<String, List<CSVRecord>> result = new HashMap<>();
-        result.put("file1", updated1);
-        result.put("file2", updated2);
-        return result;
+        return pairMatchingRecords(list1, list2, false, this::hasNonIgnoredDifferences);
     }
 
     /**
@@ -414,32 +462,25 @@ public class CSVDiff {
      * @param list2 The second list (can be null)
      * @param useFullKey Whether to use the full record key or just the composite key
      */
-    private void removeRecordsFromLists(List<CSVRecord> recordsToRemove, List<CSVRecord> list1, List<CSVRecord> list2, boolean useFullKey) {
+    private void removeRecordsFromLists(List<CSVRecord> recordsToRemove, List<CSVRecord> list1, List<CSVRecord> list2) {
         if (recordsToRemove.isEmpty()) {
             return;
         }
 
-        Set<String> keys = new HashSet<>();
-        for (CSVRecord record : recordsToRemove) {
-            if (useFullKey) {
-                keys.add(generateFullRecordKey(record));
-            } else {
-                keys.add(generateCompositeKey(record));
-            }
-        }
+        // ZFIN-8948: remove the exact record INSTANCES that were claimed, not every row sharing
+        // their key. The previous key-based removeIf deleted unclaimed members of a duplicate key
+        // group too, so rows that had been reported nowhere still vanished from deletes/adds and
+        // the totals silently stopped adding up. Identity is required because CSVRecord does not
+        // override equals and two rows in a key group can be value-identical.
+        Set<CSVRecord> toRemove = Collections.newSetFromMap(new IdentityHashMap<>());
+        toRemove.addAll(recordsToRemove);
 
         if (list1 != null) {
-            list1.removeIf(record -> {
-                String key = useFullKey ? generateFullRecordKey(record) : generateCompositeKey(record);
-                return keys.contains(key);
-            });
+            list1.removeIf(toRemove::contains);
         }
 
         if (list2 != null) {
-            list2.removeIf(record -> {
-                String key = useFullKey ? generateFullRecordKey(record) : generateCompositeKey(record);
-                return keys.contains(key);
-            });
+            list2.removeIf(toRemove::contains);
         }
     }
 
@@ -501,12 +542,50 @@ public class CSVDiff {
         CSVDiff utility = new CSVDiff(outputPrefix, keyColumns, ignoreColumns);
 
         try {
-            utility.process(file1Path, file2Path);
+            List<File> outputs = utility.process(file1Path, file2Path);
+            // Combine the output CSVs into a single <outputPrefix>.xlsx workbook
+            // (one sheet per output file) for a tidy single-file artifact.
+            //   CSVDIFF_XLSX       -> build workbook, keep the intermediate CSVs
+            //   CSVDIFF_XLSX_ONLY  -> build workbook, delete the intermediate CSVs
+            boolean xlsxOnly = envTrue("CSVDIFF_XLSX_ONLY");
+            if (xlsxOnly || envTrue("CSVDIFF_XLSX")) {
+                writeCombinedWorkbook(outputPrefix, outputs, xlsxOnly);
+            }
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
             e.printStackTrace();
             System.exit(1);
         }
+    }
+
+    /**
+     * Combine the CSV outputs of a diff run into one {@code <outputPrefix>.xlsx}
+     * workbook, one sheet per file (named by the file's suffix, e.g. "deletes",
+     * "adds", "updated_1").
+     *
+     * @param deleteOriginals if true, the intermediate CSVs are removed after the
+     *                        workbook is written (leaving the xlsx as the sole output).
+     */
+    private static void writeCombinedWorkbook(String outputPrefix, List<File> outputs, boolean deleteOriginals) {
+        if (outputs == null || outputs.isEmpty()) {
+            return;
+        }
+        String prefixName = new File(outputPrefix).getName();
+        List<String> sheetNames = new ArrayList<>();
+        for (File f : outputs) {
+            String label = f.getName();
+            if (label.startsWith(prefixName + "_")) {
+                label = label.substring(prefixName.length() + 1);
+            }
+            if (label.endsWith(".csv")) {
+                label = label.substring(0, label.length() - 4);
+            }
+            sheetNames.add(label);
+        }
+        File xlsx = new File(outputPrefix + ".xlsx");
+        new CSVToXLSXConverter().run(xlsx, outputs, sheetNames, deleteOriginals);
+        System.out.println("Wrote combined workbook: " + xlsx.getAbsolutePath()
+            + (deleteOriginals ? " (intermediate CSVs removed)" : ""));
     }
 
     /**
@@ -517,65 +596,7 @@ public class CSVDiff {
      * @return A map containing updated records from both files with only ignored column differences
      */
     private Map<String, List<CSVRecord>> findUpdatedRecordsOnlyInIgnoredColumns(List<CSVRecord> list1, List<CSVRecord> list2) {
-        Map<String, CSVRecord> file1KeyMap = new HashMap<>();
-        Map<String, CSVRecord> file2KeyMap = new HashMap<>();
-        List<CSVRecord> onlyIgnoredUpdates1 = new ArrayList<>();
-        List<CSVRecord> onlyIgnoredUpdates2 = new ArrayList<>();
-
-        // Create maps of composite keys to records
-        for (CSVRecord record : list1) {
-            file1KeyMap.put(generateCompositeKey(record), record);
-        }
-
-        for (CSVRecord record : list2) {
-            file2KeyMap.put(generateCompositeKey(record), record);
-        }
-
-        // Get the set of columns to compare (all headers except key columns and ignore columns)
-        Set<String> comparisonColumns = new HashSet<>(headers);
-        for (String keyColumn : keyColumns) {
-            comparisonColumns.remove(keyColumn);
-        }
-        for (String ignoreColumn : ignoreColumns) {
-            comparisonColumns.remove(ignoreColumn);
-        }
-
-        // For each key that exists in both files
-        for (String key : file1KeyMap.keySet()) {
-            if (file2KeyMap.containsKey(key)) {
-                CSVRecord record1 = file1KeyMap.get(key);
-                CSVRecord record2 = file2KeyMap.get(key);
-
-                // Check if all non-key, non-ignored columns match
-                boolean allComparisonColumnsMatch = true;
-                for (String column : comparisonColumns) {
-                    if (!Objects.equals(record1.get(column), record2.get(column))) {
-                        allComparisonColumnsMatch = false;
-                        break;
-                    }
-                }
-
-                // Check if at least one ignored column is different
-                boolean atLeastOneIgnoredColumnDiffers = false;
-                for (String column : ignoreColumns) {
-                    if (!Objects.equals(record1.get(column), record2.get(column))) {
-                        atLeastOneIgnoredColumnDiffers = true;
-                        break;
-                    }
-                }
-
-                // If only ignored columns differ (and at least one does), add to the result
-                if (allComparisonColumnsMatch && atLeastOneIgnoredColumnDiffers) {
-                    onlyIgnoredUpdates1.add(record1);
-                    onlyIgnoredUpdates2.add(record2);
-                }
-            }
-        }
-
-        Map<String, List<CSVRecord>> result = new HashMap<>();
-        result.put("file1", onlyIgnoredUpdates1);
-        result.put("file2", onlyIgnoredUpdates2);
-        return result;
+        return pairMatchingRecords(list1, list2, false, this::differsOnlyInIgnoredColumns);
     }
 
     public List<File> writeMapToCSVs(File workingDir, String prefix, Map<String, List<CSVRecord>> beforeAfterComparison) {

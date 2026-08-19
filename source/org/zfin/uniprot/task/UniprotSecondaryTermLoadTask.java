@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
@@ -251,39 +252,66 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
 
     private void loadTranslationFiles() {
         try {
-            //If the 2go files are not provided, download them
-            String upToGo = upToGoTranslationFile;
-            if (StringUtils.isEmpty(upToGo)) {
-                File downloadedFile1 = File.createTempFile("upkw2go", ".dat");
-                upToGo = downloadedFile1.getAbsolutePath();
-                String url1 = ZfinPropertiesEnum.UNIPROT_KW2GO_FILE_URL.value();
-                downloadFileViaWget(url1, downloadedFile1.toPath(), 10_000, log);
-            }
-            log.info("Loading " + upToGo);
-            upToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(upToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.UniProtKB);
-            log.info("Loaded " + upToGoRecords.size() + " UP to GO records.");
+            // Each external2go download is gated by the same flag as the handlers that consume it.
+            // Gating only the handlers is not enough: this method runs unconditionally, before the
+            // pipeline is set up, so an ungated download means a retired or moved upstream file
+            // fails the WHOLE secondary load -- including the dblink / InterPro domain / PDB work
+            // that has nothing to do with GO -- even when the stream is switched off. That matters
+            // most for kw2go, whose mapping GO has already retired (GO_REF:0000004) and whose
+            // external2go file is expected to follow. downloadFileViaWget's own failure mode makes
+            // it worse: createTempFile leaves a 0-byte destination, so a missing file with no
+            // Content-Length surfaces as IOException("Server file is smaller than local file"),
+            // which points at nothing useful.
+            //
+            // Records are only read inside the matching flag-gated block in calculatePipelineActions,
+            // so an empty list when skipped is safe.
 
-            String ipToGo = ipToGoTranslationFile;
-            if (StringUtils.isEmpty(ipToGo)) {
-                File downloadedFile2 = File.createTempFile("ip2go", ".dat");
-                ipToGo = downloadedFile2.getAbsolutePath();
-                String url2 = ZfinPropertiesEnum.UNIPROT_IP2GO_FILE_URL.value();
-                downloadFileViaWget(url2, downloadedFile2.toPath(), 10_000, log);
+            if (loadKeyword2Go()) {
+                String upToGo = upToGoTranslationFile;
+                if (StringUtils.isEmpty(upToGo)) {
+                    File downloadedFile1 = File.createTempFile("upkw2go", ".dat");
+                    upToGo = downloadedFile1.getAbsolutePath();
+                    String url1 = ZfinPropertiesEnum.UNIPROT_KW2GO_FILE_URL.value();
+                    downloadFileViaWget(url1, downloadedFile1.toPath(), 10_000, log);
+                }
+                log.info("Loading " + upToGo);
+                upToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(upToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.UniProtKB);
+                log.info("Loaded " + upToGoRecords.size() + " UP to GO records.");
+            } else {
+                upToGoRecords = new ArrayList<>();
+                log.info("LOAD_KW2GO=false -> not downloading uniprotkb_kw2go");
             }
-            log.info("Loading " + ipToGo);
-            ipToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ipToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.InterPro);
-            log.info("Loaded " + ipToGoRecords.size() + " InterPro to GO records.");
 
-            String ecToGo = ecToGoTranslationFile;
-            if (StringUtils.isEmpty(ecToGo)) {
-                File downloadedFile3 = File.createTempFile("ec2go", ".dat");
-                ecToGo = downloadedFile3.getAbsolutePath();
-                String url3 = ZfinPropertiesEnum.UNIPROT_EC2GO_FILE_URL.value();
-                downloadFileViaWget(url3, downloadedFile3.toPath(), 10_000, log);
+            if (loadInterPro2GoAndEc2Go()) {
+                String ipToGo = ipToGoTranslationFile;
+                if (StringUtils.isEmpty(ipToGo)) {
+                    File downloadedFile2 = File.createTempFile("ip2go", ".dat");
+                    ipToGo = downloadedFile2.getAbsolutePath();
+                    String url2 = ZfinPropertiesEnum.UNIPROT_IP2GO_FILE_URL.value();
+                    downloadFileViaWget(url2, downloadedFile2.toPath(), 10_000, log);
+                }
+                log.info("Loading " + ipToGo);
+                ipToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ipToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.InterPro);
+                log.info("Loaded " + ipToGoRecords.size() + " InterPro to GO records.");
+
+                String ecToGo = ecToGoTranslationFile;
+                if (StringUtils.isEmpty(ecToGo)) {
+                    File downloadedFile3 = File.createTempFile("ec2go", ".dat");
+                    ecToGo = downloadedFile3.getAbsolutePath();
+                    String url3 = ZfinPropertiesEnum.UNIPROT_EC2GO_FILE_URL.value();
+                    downloadFileViaWget(url3, downloadedFile3.toPath(), 10_000, log);
+                }
+                log.info("Loading " + ecToGo);
+                ecToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ecToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.EC);
+                log.info("Loaded " + ecToGoRecords.size() + " EC to GO records.");
+            } else {
+                ipToGoRecords = new ArrayList<>();
+                ecToGoRecords = new ArrayList<>();
+                log.info("LOAD_INTERPRO2GO_EC2GO=false -> not downloading interpro2go or ec2go");
             }
-            log.info("Loading " + ecToGo);
-            ecToGoRecords = SecondaryTerm2GoTermTranslator.convertTranslationFileToUnloadFile(ecToGo, SecondaryTerm2GoTermTranslator.SecondaryTermType.EC);
-            log.info("Loaded " + ecToGoRecords.size() + " EC to GO records.");
+
+            // NOT gated: entry.list feeds the InterPro domain/protein tables and the dblink
+            // refresh, which the cutover keeps.
 
             String domainFilename = this.domainFile;
             if (StringUtils.isEmpty(domainFilename)) {
@@ -325,6 +353,42 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.setContext(context);
     }
 
+    /**
+     * Whether to keep deriving interpro2go / ec2go GO annotations in this load.
+     * Env {@code LOAD_INTERPRO2GO_EC2GO}; defaults to true (current behaviour).
+     */
+    private boolean loadInterPro2GoAndEc2Go() {
+        return envFlagDefaultTrue("LOAD_INTERPRO2GO_EC2GO");
+    }
+
+    /**
+     * Whether to keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load.
+     * Env {@code LOAD_KW2GO}; defaults to true (current behaviour).
+     */
+    private boolean loadKeyword2Go() {
+        return envFlagDefaultTrue("LOAD_KW2GO");
+    }
+
+    /**
+     * Read a boolean environment variable that defaults to TRUE when unset or blank, so an
+     * unconfigured run keeps doing what it has always done. Only an explicit "false" turns the
+     * stream off. (Contrast {@code UNIPROT_COMMIT_CHANGES}, which defaults to false because there
+     * the safe default is to do less, not more.)
+     */
+    private boolean envFlagDefaultTrue(String name) {
+        // System property first, then environment. Gradle's JavaExec forks from the DAEMON, whose
+        // environment is not reliably the invoking shell's, so the Jenkins job passes these as -D
+        // and console.gradle forwards them; the getenv fallback keeps direct/manual runs working.
+        String value = System.getProperty(name);
+        if (StringUtils.isEmpty(value)) {
+            value = System.getenv(name);
+        }
+        if (StringUtils.isEmpty(value)) {
+            return true;
+        }
+        return !value.equalsIgnoreCase("false");
+    }
+
     private void calculatePipelineActions() {
         /* The following could be all handled by the same class in a refactoring: */
         // TODO: refactor this area
@@ -343,11 +407,39 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
         /* The above could be refactored to all be handled by the same class */
 
-        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
-        pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+        // ZFIN-10344 / ZFIN-10025: the three *2go GO-mapping streams below are what the unified
+        // DANRE-mod GO load is meant to take over. They are GATED rather than deleted so both
+        // paths can be exercised on the same code, and so cutover is a parameter flip rather than
+        // a deploy. Defaults are ON, i.e. current behaviour.
+        //
+        // Split in two because the streams are not in the same position:
+        //   * interpro2go / ec2go -- DANRE-mod supplies this content (as GO_REF:0000002/0000003),
+        //     so it has a successor. Note it currently lands in the GOA organization while these
+        //     rows are owned by UniProt, so turning this OFF alone leaves the old copies in place
+        //     and DUPLICATES rather than replaces: the cutover must also purge
+        //     gafOrganization='UniProt'. See README-danre-mod-consolidation.md finding 2.
+        //   * kw2go -- GO retired GO_REF:0000004 and neither DANRE file carries it, so there is
+        //     NO successor. Turning this OFF strands ~41k annotations (~68% of which are not
+        //     subsumed by a retained more-specific term). That is open decision 4, unresolved.
+        //
+        // Turning a stream off stops both its Add and Remove handlers, so existing rows are
+        // frozen -- neither refreshed nor pruned -- until an explicit purge removes them.
+        if (loadInterPro2GoAndEc2Go()) {
+            pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+            pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
+        } else {
+            log.info("LOAD_INTERPRO2GO_EC2GO=false -> skipping interpro2go and ec2go GO-mapping "
+                    + "handlers; existing rows are left untouched (not refreshed, not pruned)");
+        }
 
-        pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
-        pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
+        if (loadKeyword2Go()) {
+            pipeline.addHandler(new AddNewSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), AddNewSpKeywordTermToGoActionProcessor.class);
+            pipeline.addHandler(new RemoveSpKeywordTermToGoActionCreator(UNIPROTKB, upToGoRecords), RemoveSpKeywordTermToGoActionProcessor.class);
+        } else {
+            log.info("LOAD_KW2GO=false -> skipping UniProtKB-Keyword (kw2go) GO-mapping handlers; "
+                    + "NOTE no file successor exists for this stream, so nothing else will supply "
+                    + "these annotations; existing rows are left untouched");
+        }
 
         pipeline.addHandler(new InterproDomainActionCreator(downloadedInterproDomainRecords), InterproDomainActionProcessor.class);
         pipeline.addHandler(new InterproProteinActionCreator(), InterproProteinActionProcessor.class);
@@ -411,25 +503,36 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void setInputFileName() {
-        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
-
         //only need an input file if we are generating a report of actions, otherwise, we are loading directly from the actions
-        if (mode.equals(LoadTaskMode.REPORT) || mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
-            if (inputFileName.isEmpty() && releaseOptional.isPresent()) {
-                log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
-                inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
-                release = releaseOptional.get();
-            } else if (inputFileName.isEmpty() && rerunLatestProcessed) {
-                UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
-                if (latestProcessed == null) {
-                    throw new RuntimeException("No input file specified, no release pending secondary load, and no processed UniProt release to re-run against.");
-                }
-                log.info("No release pending secondary load; re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
-                inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
-                release = latestProcessed;
-            } else if (inputFileName.isEmpty()) {
-                throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
+        if (!mode.equals(LoadTaskMode.REPORT) && !mode.equals(LoadTaskMode.REPORT_AND_LOAD)) {
+            return;
+        }
+        if (!inputFileName.isEmpty()) {
+            return;
+        }
+
+        // rerunLatestProcessed is authoritative: a synchronizing re-run (e.g. the scheduled
+        // monthly catch-up load) must run against the most recent ALREADY-PROCESSED release and
+        // ignore any release pending secondary load from a brand-new UniProt release. Pulling in a
+        // new release is a deliberate, manual action (run without UNIPROT_RERUN_LATEST_PROCESSED).
+        if (rerunLatestProcessed) {
+            UniProtRelease latestProcessed = getInfrastructureRepository().getLatestProcessedUniProtRelease();
+            if (latestProcessed == null) {
+                throw new RuntimeException("No input file specified, and no processed UniProt release to re-run against.");
             }
+            log.info("Re-running against latest processed release: " + latestProcessed.getPath() + " (md5:" + latestProcessed.getMd5() + ")");
+            inputFileName = latestProcessed.getLocalFile().getAbsolutePath();
+            release = latestProcessed;
+            return;
+        }
+
+        Optional<UniProtRelease> releaseOptional = getLatestUnprocessedUniProtRelease();
+        if (releaseOptional.isPresent()) {
+            log.info("Loading from latest UniProt release: " + releaseOptional.get().getPath() + "(md5:" + releaseOptional.get().getMd5() + ")" );
+            inputFileName = releaseOptional.get().getLocalFile().getAbsolutePath();
+            release = releaseOptional.get();
+        } else {
+            throw new RuntimeException("No input file specified and no unprocessed UniProt release found.");
         }
     }
 

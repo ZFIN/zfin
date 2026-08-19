@@ -28,14 +28,33 @@
   <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff
+
+bash $SQL/mgte_snapshot.sh before "$OUT" --others Noctua
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
             <!-- Need to use shell task to get unstable return code handling -->
             <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-noctua-gpad -DjobName=Load-GPAD-Noctua_w</command>
             <unstableReturn>2</unstableReturn>
         </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff
+
+bash $SQL/mgte_snapshot.sh after "$OUT" --others Noctua
+bash $SQL/mgte_csvdiff.sh        "$OUT" --others Noctua
+]]></command>
+        </hudson.tasks.Shell>
     </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*</artifacts>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w/Load-GPAD-Noctua*,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff/mgte_*.csv,server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff/mgte_*.xlsx</artifacts>
       <latestOnly>false</latestOnly>
       <allowEmptyArchive>true</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>

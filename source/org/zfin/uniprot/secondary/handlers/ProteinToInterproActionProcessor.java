@@ -3,7 +3,7 @@ package org.zfin.uniprot.secondary.handlers;
 import lombok.extern.log4j.Log4j2;
 import org.jooq.lambda.tuple.Tuple2;
 import org.zfin.uniprot.dto.ProteinToInterproDTO;
-import org.zfin.uniprot.persistence.BatchInserter;
+import org.zfin.uniprot.persistence.BatchOperations;
 import org.zfin.uniprot.secondary.SecondaryTermLoadAction;
 
 import java.util.List;
@@ -72,8 +72,7 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
         ).toList();
 
         log.info("Filtered down to " + tuples.size() + " records");
-        BatchInserter inserter = new BatchInserter("protein_to_interpro", tuplesAsMapEntriesList);
-        inserter.execute();
+        BatchOperations.bulkInsert("protein_to_interpro", tuplesAsMapEntriesList);
     }
 
     private void processInsertIndividually(SecondaryTermLoadAction action) {
@@ -91,22 +90,15 @@ public class ProteinToInterproActionProcessor implements ActionProcessor {
     }
 
     private void processDeletes(List<SecondaryTermLoadAction> actions) {
-        for(SecondaryTermLoadAction action : actions) {
-            processDelete(action);
-        }
-    }
-
-    private void processDelete(SecondaryTermLoadAction action) {
-        ProteinToInterproDTO proteinToInterproDTO = ProteinToInterproDTO.fromMap(action.getRelatedEntityFields());
-        String sql = """
-                delete from protein_to_interpro
-                where pti_uniprot_id = :uniprot
-                and pti_interpro_id = :interpro
-                """;
-        currentSession().createNativeQuery(sql)
-                .setParameter("uniprot", proteinToInterproDTO.uniprot())
-                .setParameter("interpro", proteinToInterproDTO.interpro())
-                .executeUpdate();
+        // Bulk delete via a temp-table join instead of one DELETE per action (~1.4h for 12k
+        // deletes on staging).
+        List<Map<String, Object>> keyRows = actions.stream()
+                .map(action -> ProteinToInterproDTO.fromMap(action.getRelatedEntityFields()))
+                .map(dto -> Map.of(
+                        "pti_uniprot_id", (Object) dto.uniprot(),
+                        "pti_interpro_id", dto.interpro()))
+                .toList();
+        BatchOperations.bulkDelete("protein_to_interpro", List.of("pti_uniprot_id", "pti_interpro_id"), keyRows);
     }
 
 }

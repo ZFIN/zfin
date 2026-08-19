@@ -17,6 +17,11 @@ public class GafOrganization {
         NOCTUA("Noctua"),
         PAINT("PAINT"),
         UNIPROT("UniProt"),
+        // Umbrella org for the unified GO Central DANRE-mod GPAD load (ZFIN-10025, Phase 0).
+        // Phase 1 will partition rows by their source assigned_by into the existing orgs
+        // (Noctua/GOA/...) so removal stays scoped per source; until then this is only used
+        // for report-only runs, which perform no DB writes or removals.
+        DANRE_MOD("DANRE-mod"),
         ;
 
         private String value;

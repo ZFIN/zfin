@@ -86,8 +86,19 @@ export interface LesionDTO {
     fivePrimeFlank: string | null;
     threePrimeFlank: string | null;
     hasLargeVariant: boolean | null;
+    insertionOrigins: string[];
+    insertionOriginOther: string | null;
+    crisprSequence: string | null;
+    talenSequence: string | null;
+    constructName: string | null;
     mutatedAminoAcids: string | null;
     mutatedAminoAcidsHgvs: string | null;
+    aaChangeFrom: string | null;
+    aaChangeTo: string | null;
+    aaPositionStart: number | null;
+    aaPositionEnd: number | null;
+    transcriptConsequences: string[];
+    proteinConsequences: string[];
     additionalInfo: string | null;
 }
 
@@ -173,6 +184,12 @@ export interface PhenotypeDTO {
 export interface AutocompleteItemDTO {
     label: string;
     value: string;
+}
+
+export interface VocabularyTermDTO {
+    id: string;
+    label: string;
+    abbreviation: string | null;
 }
 
 // RFC 7807 problem detail returned by ZircApiExceptionHandler.

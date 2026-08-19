@@ -26,7 +26,7 @@ ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
 
 print "Loading local JSON file ... "
 
-releaseVersionJson = new JsonSlurper().parseText(new URL('https://fms.alliancegenome.org/api/releaseversion/all').text)
+releaseVersionJson = new JsonSlurper().parseText(fetchText('https://fms.alliancegenome.org/api/releaseversion/all'))
 
 releaseIds = new ArrayList<>()
 
@@ -46,11 +46,22 @@ releaseVersionJson.each {
 
 }
 
-allianceReleaseVersion = releaseIds.max()
+// Compare releases NUMERICALLY, per component. A plain max() on these strings is a
+// lexicographic comparison, which agrees with version order only while every major is a
+// single digit: once the Alliance ships 10.x, "9.1.0" would beat "10.0.0" and this would
+// silently pin itself to a stale release with no error anywhere.
+//
+// The sort key is each component zero-padded to a fixed width and rejoined, which makes
+// the STRING comparison numeric. (Returning the [major, minor, patch] list itself does
+// not work: max{}'s comparator refuses to compare two ArrayLists.)
+allianceReleaseVersion = releaseIds.max { version ->
+    version.tokenize(".").collect { String.format("%05d", it as int) }.join(".")
+}
+println "\nUsing Alliance release ${allianceReleaseVersion} (latest of ${releaseIds.size()} released schema versions)"
 
 fmsURL = "https://fms.alliancegenome.org/api/snapshot/release/" + allianceReleaseVersion
 crossReferencePath = ""
-fmsJson = new JsonSlurper().parseText(new URL(fmsURL).text)
+fmsJson = new JsonSlurper().parseText(fetchText(fmsURL))
 
 fmsJson.snapShot.dataFiles.each {
     dataFile ->
@@ -91,6 +102,35 @@ new File("loadableGXALinks.txt").withWriter { output ->
             output.writeLine([it.GeneID.tokenize(":")[-1], it.CrossReferenceCompleteURL.tokenize("/")[-1].toUpperCase()].join(","))
         }
     }
+}
+
+/**
+ * Read a URL as text, retrying on failure with a linear backoff.
+ *
+ * The Alliance FMS API returned a single transient HTTP 500 in 2024 and this job simply
+ * died on it; without a retry one bad response from a remote service fails the whole
+ * load. Retries are safe here because both callers are idempotent GETs of small JSON
+ * documents. Give up after the last attempt and rethrow with the URL, so the console log
+ * says which endpoint was unreachable rather than just "Server returned HTTP response
+ * code: 500".
+ */
+static String fetchText(String url) {
+    final int attempts = 4
+    final long backoffMs = 5000
+    Exception lastFailure = null
+    for (int attempt = 1; attempt <= attempts; attempt++) {
+        try {
+            return new URL(url).text
+        } catch (Exception e) {
+            lastFailure = e
+            if (attempt < attempts) {
+                long wait = backoffMs * attempt
+                println "  attempt ${attempt}/${attempts} failed for ${url}: ${e.message} -- retrying in ${wait}ms"
+                Thread.sleep(wait)
+            }
+        }
+    }
+    throw new RuntimeException("Could not read ${url} after ${attempts} attempts: ${lastFailure?.message}", lastFailure)
 }
 
 //TODO: pull these two methods out into a class for all data_transfer scripts to use
