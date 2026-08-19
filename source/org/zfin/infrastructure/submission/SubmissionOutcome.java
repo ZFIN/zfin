@@ -17,12 +17,12 @@ public enum SubmissionOutcome {
     REJECTED_HONEYPOT,
 
     /**
-     * Silently discarded: no valid captcha.
+     * Discarded: no valid captcha.
      */
     REJECTED_CAPTCHA,
 
     /**
-     * Silently discarded: the spam score reached the threshold.
+     * Discarded: the spam score reached the threshold.
      */
     REJECTED_SPAM,
 
