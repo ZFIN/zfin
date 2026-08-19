@@ -215,6 +215,13 @@
                             </td>
                         </tr>
                         <tr>
+                            <td>
+                            </td>
+                            <td>
+                                <a href="/action/devtool/submissions">Public Form Submissions</a>
+                            </td>
+                        </tr>
+                        <tr>
                             <th>
                                 <b>Database Configuration</b>
                             </th>
