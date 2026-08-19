@@ -51,18 +51,18 @@ public class OrganizationSubmissionController {
         SubmissionLogService.setDetails(logEntry, submission.toText());
 
         if (StringUtils.isNotEmpty(submission.getEmail())) {
-            return discardSilently(logEntry, SubmissionOutcome.REJECTED_HONEYPOT, "decoy email field filled in");
+            return rejectSubmission(logEntry, SubmissionOutcome.REJECTED_HONEYPOT, "decoy email field filled in", model);
         }
         Optional<String> captchaRedirectUrl = CaptchaService.getRedirectUrlIfNeeded(request);
         if (captchaRedirectUrl.isPresent()) {
-            return discardSilently(logEntry, SubmissionOutcome.REJECTED_CAPTCHA, "no valid captcha");
+            return rejectSubmission(logEntry, SubmissionOutcome.REJECTED_CAPTCHA, "no valid captcha", model);
         }
         logSubmissionRequest(submission, request);
 
         SpamAssessment assessment = assessSpam(submission);
         SubmissionLogService.setAssessment(logEntry, assessment);
         if (assessment.isSpam()) {
-            return discardSilently(logEntry, SubmissionOutcome.REJECTED_SPAM, assessment.describe());
+            return rejectSubmission(logEntry, SubmissionOutcome.REJECTED_SPAM, assessment.describe(), model);
         }
         submission.setEmail(submission.getEmail2());
 
@@ -76,13 +76,19 @@ public class OrganizationSubmissionController {
     }
 
     /**
-     * Renders the same "thank you" page a real submitter sees, so a bot learns nothing, and records
-     * why we dropped it.
+     * Drops the submission and records why. Scored and captcha rejections tell the submitter the
+     * request was not submitted: that thank you was indistinguishable from success, so a human
+     * caught by either walked away believing a request had been filed that nobody would ever see.
+     * A filled in honeypot has no such human behind it, so it still gets the thank you page and
+     * the bot learns nothing.
      */
-    private String discardSilently(SubmissionLog logEntry, SubmissionOutcome outcome, String reason) {
+    private String rejectSubmission(SubmissionLog logEntry, SubmissionOutcome outcome, String reason, Model model) {
         log.error("New Organization Submission Flagged as Spam (" + outcome + "): " + reason
                 + "\n" + logEntry.getDetails());
         SubmissionLogService.save(logEntry, outcome);
+        if (outcome != SubmissionOutcome.REJECTED_HONEYPOT) {
+            model.addAttribute("submissionRejected", true);
+        }
         return "profile/organization-submit-process";
     }
 
