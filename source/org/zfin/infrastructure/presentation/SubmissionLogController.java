@@ -11,7 +11,7 @@ import org.zfin.infrastructure.submission.SubmissionOutcome;
 
 /**
  * Read only review of the public form submissions recorded in submission_log, including the ones
- * that were silently discarded. Lives under /devtool so it inherits the root only access rule in
+ * that were discarded. Lives under /devtool so it inherits the root only access rule in
  * security.xml.
  */
 @Controller
