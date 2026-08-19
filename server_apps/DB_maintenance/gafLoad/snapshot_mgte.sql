@@ -9,6 +9,10 @@
 --   * noctua_model                                     <- noctua_model_annotation
 -- protein_acc is only meaningful for GOA (empty '-' otherwise).
 --
+-- The owning organization also rides along as the `org` column. In a per-org snapshot it is a
+-- constant, so it cannot produce a spurious update; it is there to make the file self-describing
+-- and because all-orgs mode (below) depends on it.
+--
 -- csvDiff key = every id/value column except the ignore set. IGNORE =
 --   zdb_id,gene,go_id,go_term,go_aspect,relation_name
 -- i.e. the recycled row id plus the five human-readable columns (gene, go_id,
@@ -32,6 +36,15 @@
 -- point is coverage: callers name the organizations they expect, and this mode captures anything
 -- else, so a row written to an organization nobody thought to list shows up as a non-empty
 -- catch-all file rather than silently missing from the diff. PAINT was exactly that miss.
+--
+-- ALL-ORGS MODE. Pass -v org_all=true to select every row regardless of organization, ignoring
+-- :org / :known_orgs. This exists because a per-organization diff structurally cannot show a row
+-- MOVING between organizations: the owning org is the filename, so the same row reads as a delete
+-- in one workbook and an add in another, and the two files have to be reconciled by hand to see
+-- that nothing was lost. That is not hypothetical -- re-homing phylo GOA -> PAINT produced 39,939
+-- deletes and 39,939 adds of byte-identical rows. One combined snapshot lets the org be a COLUMN
+-- instead, so the move surfaces as an update. See mgte_csvdiff.sh for the coarser key this is
+-- meant to be diffed with.
 
 \set ON_ERROR_STOP on
 
@@ -39,6 +52,10 @@
 \if :{?org_others}
 \else
 \set org_others false
+\endif
+\if :{?org_all}
+\else
+\set org_all false
 \endif
 \if :{?known_orgs}
 \else
@@ -82,6 +99,7 @@ nm AS (
 -- csvDiff IGNORE argument (with zdb_id) so they never affect matching: a matched row's
 -- ids already fix these values, so treating them as key/value columns would be redundant.
 SELECT e.mrkrgoev_zdb_id                              AS zdb_id,
+       o.mrkrgoevas_annotation_organization            AS org,
        e.mrkrgoev_mrkr_zdb_id                         AS marker,
        mk.mrkr_abbrev                                 AS gene,
        e.mrkrgoev_term_zdb_id                         AS term,
@@ -102,9 +120,13 @@ FROM marker_go_term_evidence e
 JOIN marker_go_term_evidence_annotation_organization o
       ON o.mrkrgoevas_pk_id = e.mrkrgoev_annotation_organization
      AND (
-           (:'org_others' <> 'true' AND o.mrkrgoevas_annotation_organization = :'org')
-        OR (:'org_others'  = 'true' AND o.mrkrgoevas_annotation_organization
-                                        <> ALL (string_to_array(:'known_orgs', '|')))
+           -- all-orgs mode wins outright; the other two are mutually exclusive below it
+           (:'org_all' = 'true')
+        OR (:'org_all' <> 'true' AND :'org_others' <> 'true'
+              AND o.mrkrgoevas_annotation_organization = :'org')
+        OR (:'org_all' <> 'true' AND :'org_others'  = 'true'
+              AND o.mrkrgoevas_annotation_organization
+                  <> ALL (string_to_array(:'known_orgs', '|')))
          )
 LEFT JOIN marker mk ON mk.mrkr_zdb_id = e.mrkrgoev_mrkr_zdb_id
 LEFT JOIN term   gt ON gt.term_zdb_id = e.mrkrgoev_term_zdb_id
