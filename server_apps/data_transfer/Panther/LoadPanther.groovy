@@ -6,10 +6,26 @@ import static com.xlson.groovycsv.CsvParser.parseCsv
 
 
 ZfinProperties.init("${System.getenv()['ZFIN_PROPERTIES_PATH']}")
-DOWNLOAD_URL = "ftp://ftp.pantherdb.org/sequence_classifications/12.0/PANTHER_Sequence_Classification_files/PTHR12.0_zebrafish"
+// ZFIN-10433: PANTHER retired ftp.pantherdb.org -- the host stopped answering
+// on port 21 at the turn of the year, so this download hung until the JVM gave
+// up with "Connection timed out" and the job had failed every night since.
+// The same files are served from data.pantherdb.org over HTTPS, under an /ftp
+// prefix that mirrors the old FTP tree. Note the https:// rather than http://:
+// the plain-http URL 301s to https, and URL.openStream() does not follow a
+// redirect that changes protocol -- it would hand back the redirect body.
+DOWNLOAD_URL = "https://data.pantherdb.org/ftp/sequence_classifications/12.0/PANTHER_Sequence_Classification_files/PTHR12.0_zebrafish"
 def file = new FileOutputStream(DOWNLOAD_URL.tokenize("/")[-1])
 def out = new BufferedOutputStream(file)
-out << new URL(DOWNLOAD_URL).openStream()
+// Explicit timeouts so an unreachable host fails in a minute with a clear
+// message instead of hanging on the JVM default (none) as the FTP host did.
+def connection = new URL(DOWNLOAD_URL).openConnection()
+connection.connectTimeout = 30_000
+connection.readTimeout = 120_000
+try {
+    out << connection.inputStream
+} catch (IOException e) {
+    throw new RuntimeException("PANTHER download failed: $DOWNLOAD_URL -- $e.message", e)
+}
 out.close()
 
 static Process dbaccess(String dbname, String sql) {
