@@ -181,8 +181,9 @@ Comparison against the current DANRE-mod file — baseline vs unified, report-on
 
 Two caveats. This is *baseline* vs unified rather than *legacy* vs unified — equivalent for
 Noctua/FP/UniProt (re-running the legacy loads was a no-op for those) and differing by ~1,813
-rows on GOA. And **40,731 of GOA's 110,084 adds are the `*2go` org-mismatch duplication**
-(finding 2), not new GO content; excluding it GOA grows +24,386. The
+rows on GOA. And **45,159 of GOA's 110,084 adds are the `*2go` org-mismatch duplication**
+(40,723 interpro2go + 4,436 ec2go; finding 2), not new GO content; excluding it GOA grows
++19,958. The
 remaining GO_Central/PAINT IBA rise (36,250 → 62,288 distinct) is real and worth confirming
 upstream as intended.
 
@@ -225,7 +226,7 @@ new copies land as "GOA adds":
 
 | `*2go` stream | pub | legacy `UniProt` | GO_REF | in `DANRE-mod` (→GOA) | in `DANRE-uniprot` (raw rows) |
 |---|---|--:|---|--:|--:|
-| InterPro2GO | ZDB-PUB-020724-1 | 65,327 | GO_REF:0000002 | 40,731 | 43,882 |
+| InterPro2GO | ZDB-PUB-020724-1 | 65,327 | GO_REF:0000002 | 40,723 | 43,882 |
 | **UniProtKB-Keyword (kw2go/spkw2go)** | ZDB-PUB-020723-1 | **41,027** | GO_REF:0000004 | **0** | **0** |
 | EC2GO | ZDB-PUB-031118-3 | 4,735 | GO_REF:0000003 | 4,436 | 5,400 |
 
@@ -240,7 +241,7 @@ Three problems at cutover:
   `gafOrganization='UniProt'`, **not** `created_by=ZFIN` (which also tags Noctua).
   The UniProt org is *exactly* these three streams (65,327 + 41,027 + 4,735 = 111,089),
   so the purge is cleanly scoped — verified 2026-08-07.
-- **Under-coverage.** `DANRE-mod` supplies **40,731** InterPro2GO vs the secondary load's
+- **Under-coverage.** `DANRE-mod` supplies **40,723** InterPro2GO vs the secondary load's
   **65,327**. Switching source files does *not* close the gap — `DANRE-uniprot` carries the
   same content (§2a).
 - **kw2go is dropped entirely.** GO Central retired keyword→GO mapping (`GO_REF:0000004`);
