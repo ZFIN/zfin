@@ -20,7 +20,7 @@
 -- Those four unqualified values and the linking one are judgement calls; the six
 -- explicitly labelled Print/Online values are not.
 
---changeset cmpich:0080-ZFIN-10389-journal-issns.sql
+--changeset cmpich:0010-ZFIN-10389-journal-issns.sql
 
 -- AIMS Molecular Science -- unqualified ISSN, electronic-only publisher
 update journal set jrnl_online_issn = '2372-0301' where jrnl_zdb_id = 'ZDB-JRNL-210310-1';
