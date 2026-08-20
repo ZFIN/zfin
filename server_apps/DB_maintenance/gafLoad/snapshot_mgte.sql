@@ -76,12 +76,18 @@ WITH inf AS (
     GROUP BY infgrmem_mrkrgoev_zdb_id
 ),
 ext AS (
+    -- DISTINCT because this aggregates across ALL of an annotation's extension groups, so
+    -- duplicate identical groups contribute nothing but repetition. Without it, a snapshot taken
+    -- against a database that predates migration 0040 (which collapsed 328,727 groups to 1,053)
+    -- builds multi-megabyte values here and the diff dies on Excel's 32,767-char cell limit,
+    -- after CSVToXLSXConverter has already deleted the source CSVs. ORDER BY has to repeat the
+    -- expression rather than name the columns, because DISTINCT requires it to match.
     SELECT g.mgtaeg_mrkrgoev_zdb_id AS zid,
-           string_agg(
+           string_agg(DISTINCT
                x.mgtae_relationship_term_zdb_id || '(' ||
                COALESCE(x.mgtae_identifier_term_zdb_id, x.mgtae_term_text, '') || ')',
-               '|' ORDER BY x.mgtae_relationship_term_zdb_id,
-                           COALESCE(x.mgtae_identifier_term_zdb_id, x.mgtae_term_text, '')
+               '|' ORDER BY x.mgtae_relationship_term_zdb_id || '(' ||
+                           COALESCE(x.mgtae_identifier_term_zdb_id, x.mgtae_term_text, '') || ')'
            ) AS annotation_extensions
     FROM marker_go_term_annotation_extension_group g
     JOIN marker_go_term_annotation_extension x
