@@ -1629,20 +1629,27 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
                   and recattrib_data_zdb_id like 'ZDB-ALT-%'
                 group by recattrib_source_zdb_id
                 """;
+            // Mirrors the solr site_index "antibody" entity, which requires an antibody row, not just
+            // a marker of type ATB.
             case SORT_ANTIBODY_COUNT -> """
-                select recattrib_source_zdb_id, count(distinct recattrib_data_zdb_id)
-                from record_attribution, marker
+                select recattrib_source_zdb_id, count(distinct mrkr_zdb_id)
+                from record_attribution, marker, antibody
                 where recattrib_source_zdb_id in (:pubIds)
                   and recattrib_data_zdb_id = mrkr_zdb_id
+                  and mrkr_zdb_id = atb_zdb_id
                   and mrkr_type = 'ATB'
                 group by recattrib_source_zdb_id
                 """;
+            // Mirrors the solr site_index "str" entity. Read the reagent types out of the
+            // KNOCKDOWN_REAGENT group rather than hard-coding them, so a new type added to the group
+            // is picked up by the sort as well as by the index.
             case SORT_STR_COUNT -> """
-                select recattrib_source_zdb_id, count(distinct recattrib_data_zdb_id)
-                from record_attribution, marker
+                select recattrib_source_zdb_id, count(distinct mrkr_zdb_id)
+                from record_attribution, marker, marker_type_group_member
                 where recattrib_source_zdb_id in (:pubIds)
                   and recattrib_data_zdb_id = mrkr_zdb_id
-                  and mrkr_type in ('MRPHLNO', 'CRISPR', 'TALEN')
+                  and mtgrpmem_mrkr_type = mrkr_type
+                  and mtgrpmem_mrkr_type_group = 'KNOCKDOWN_REAGENT'
                 group by recattrib_source_zdb_id
                 """;
             // Mirrors the "gene" entity of the solr site_index (marker types in the GENEDOM/EFG groups,
