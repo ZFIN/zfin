@@ -11,9 +11,11 @@ cmprun() {
 }
 
 # `gradle loaddb` drops and reloads the database, so it must never run
-# against production. Check both the hostname and the bound address: the
-# box answers as zfin.org on this IP whatever it calls itself, and a
-# rename shouldn't silently disarm the guard.
+# against production. ENVIRONMENT in the instance's zfin.properties is the
+# authoritative marker; the hostname and the bound address are backstops for
+# when that file is missing or hasn't been written yet. Any one of the three
+# is enough to refuse.
+PROD_ENVIRONMENT=production
 PROD_HOSTNAME=franklin.zfin.org
 PROD_IP=184.171.92.30
 
@@ -21,27 +23,61 @@ this_hostname() {
     hostname -f 2>/dev/null || hostname 2>/dev/null || echo unknown
 }
 
-is_production_host() {
+zfin_properties_path() {
+    echo "$DEPLOY_DIR/../home/WEB-INF/zfin.properties"
+}
+
+# Value of ENVIRONMENT, or empty if the file is absent or has no such key.
+# Last assignment wins, as it would when java loads the file.
+zfin_environment() {
+    local props
+    props="$(zfin_properties_path)"
+    [ -r "$props" ] || return 0
+    sed -n 's/^[[:space:]]*ENVIRONMENT[[:space:]]*=[[:space:]]*\([^[:space:]]*\).*/\1/p' \
+        "$props" | tail -n 1
+}
+
+# hostname -I is GNU-only; ip and ifconfig cover the rest. -F with -x/-w so
+# the dots aren't read as regex wildcards and so a longer address that merely
+# starts with these digits can't match.
+host_has_ip() {
+    hostname -I 2>/dev/null | tr ' ' '\n' | grep -qxF "$1" && return 0
+    ip -o addr show 2>/dev/null | grep -qwF "$1" && return 0
+    ifconfig -a 2>/dev/null | grep -qwF "$1" && return 0
+    return 1
+}
+
+# Sets PROD_REASON so the refusal can say which signal tripped.
+PROD_REASON=""
+is_production() {
+    PROD_REASON=""
+
+    if [ "$(zfin_environment)" = "$PROD_ENVIRONMENT" ]; then
+        PROD_REASON="ENVIRONMENT=$PROD_ENVIRONMENT in $(zfin_properties_path)"
+        return 0
+    fi
+
     case "$(this_hostname)" in
-        "$PROD_HOSTNAME"|franklin) return 0 ;;
+        "$PROD_HOSTNAME"|franklin)
+            PROD_REASON="hostname is $(this_hostname)"
+            return 0
+            ;;
     esac
 
-    # hostname -I is GNU-only; ip and ifconfig cover the rest. -F and -w/-x
-    # so the dots aren't read as regex wildcards and so a longer address that
-    # merely starts with these digits can't match.
-    hostname -I 2>/dev/null | tr ' ' '\n' | grep -qxF "$PROD_IP" && return 0
-    ip -o addr show 2>/dev/null | grep -qwF "$PROD_IP" && return 0
-    ifconfig -a 2>/dev/null | grep -qwF "$PROD_IP" && return 0
+    if host_has_ip "$PROD_IP"; then
+        PROD_REASON="$PROD_IP is bound to this host"
+        return 0
+    fi
 
     return 1
 }
 
 loaddb() {
-    if is_production_host; then
+    if is_production; then
         echo
-        echo "  !! REFUSING to run 'gradle loaddb' on $(this_hostname)." >&2
-        echo "  !! It drops and reloads the database, and this host is production" >&2
-        echo "  !! ($PROD_HOSTNAME / $PROD_IP). Nothing was run." >&2
+        echo "  !! REFUSING to run 'gradle loaddb': this looks like production." >&2
+        echo "  !!   $PROD_REASON" >&2
+        echo "  !! It drops and reloads the database. Nothing was run." >&2
         echo
         return 1
     fi
