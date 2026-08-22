@@ -161,7 +161,6 @@ public final class ZircAssayFormSchema {
                                         .withWidget("selectWithOther")
                                         .withStandardValues(ASSAY_TYPES)
                                         .withStandardLabels(ASSAY_TYPE_LABELS)
-                                        .withNoOther(true)
                                         .withRefreshesParent(true),
                                 null)
                 )),

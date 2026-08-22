@@ -77,7 +77,9 @@ public record Options(
         // ["PCR + gel electrophoresis"]). If null, values are used as labels.
         List<String> standardLabels,
         // For selectWithOther — when true, suppress the "Other" option (and
-        // its free-text input). Use for closed enums like assayType.
+        // its free-text input). Use for genuinely closed enums like the
+        // lesion nucleotideChange and phenotype segregation lists —
+        // assayType was one until ZFIN-10406 opened it up.
         Boolean noOther,
         // For the autoSize widget — the sibling field whose sequence length
         // this read-only control displays (e.g. lesionSizeBp derives from
