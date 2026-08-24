@@ -134,13 +134,14 @@ public interface BlastService {
     boolean validateCuratedDatabases() throws BlastDatabaseException;
 
     /**
-     * Validates all physically readable databases (ie, non-generated, non-external) to make sure that
-     * there is at least one sequence available for blasting or reading.
+     * Validates all physical databases (ie, non-generated, non-external): readable,
+     * non-empty, carrying a working identifier index, and rebuilt recently enough.
      *
-     * @return A list of failed databases as String messages.
+     * @param stalenessPolicy How old each database is allowed to get.
+     * @return One finding per problem found, empty when everything looks healthy.
      * @throws BlastDatabaseException
      */
-    List<String> validateAllPhysicalDatabasesReadable() throws BlastDatabaseException;
+    List<BlastDatabaseValidationFinding> validatePhysicalDatabases(BlastDatabaseStalenessPolicy stalenessPolicy) throws BlastDatabaseException;
 
     /**
      * Sets a temporary blast file on an XML BlastBean

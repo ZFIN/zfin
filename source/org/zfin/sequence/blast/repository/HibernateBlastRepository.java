@@ -99,6 +99,20 @@ public class HibernateBlastRepository implements BlastRepository {
         return SetUtils.union(dBLinkAccessionSet, accessionBankSet);
     }
 
+    @Override
+    public Optional<String> getSampleAccessionNumber(Database database) {
+        String hql = """
+                        select dbl.accessionNumber
+                        from DBLink dbl join dbl.referenceDatabase rd join rd.primaryBlastDatabase bd
+                        where bd.zdbID = :databaseZdbID
+                        order by dbl.accessionNumber
+                      """;
+        Query<String> query = HibernateUtil.currentSession().createQuery(hql, String.class);
+        query.setParameter("databaseZdbID", database.getZdbID());
+        query.setMaxResults(1);
+        return query.list().stream().findFirst();
+    }
+
     private Set<String> getAllValidAccessionNumbersFromDBLinks(Database database) {
         String hql = """
                         select dbl.accessionNumber
