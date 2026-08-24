@@ -331,7 +331,7 @@ directly comparable workbooks:
 ```bash
 G=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/mydiff
-$G/mgte_snapshot.sh before $OUT --others GOA Noctua PAINT "FP Inferences" UniProt
+$G/mgte_snapshot.sh before $OUT --others --all GOA Noctua PAINT "FP Inferences" UniProt
 ```
 
 **AFTER** — identical with `after` in place of `before`.
@@ -344,6 +344,15 @@ Include `UniProt` and `FP Inferences` even though the load never touches them: p
 named. It should always be empty. If it is not, some organization is being written that nobody is
 watching — and its rows would otherwise be missing from the diff entirely, which is exactly how
 `PAINT` went unnoticed until it was added by hand.
+
+`--all` adds a pair holding **every** row regardless of organization, with the owning org as an
+`org` column rather than as the filename. This is the only view that can show a row *moving*
+between organizations. In per-org mode the same row reads as a delete in one workbook and an add
+in another, and you have to cancel the two files by hand to see that nothing was lost — re-homing
+phylo `GOA` → `PAINT` produces tens of thousands of delete/add pairs of byte-identical rows.
+Verified: the same 62,196-row move gives `mgte_dbdiff_GOA.xlsx` 62,196 deletes and
+`mgte_dbdiff_PAINT.xlsx` 62,196 adds, but `mgte_dbdiff_ALL.xlsx` 0 deletes, 0 adds, and 62,196
+updates with `org` as the only changed column.
 
 > ⚠️ **Never write snapshots into `.../gafLoad/<jobName>/` — the load deletes that directory.**
 > `GafLoadJob` calls `clearReportDirectory()` as its first action, which is a full
@@ -358,10 +367,20 @@ watching — and its rows would otherwise be missing from the diff entirely, whi
 
 ```bash
 $SOURCEROOT/server_apps/DB_maintenance/gafLoad/mgte_csvdiff.sh \
-  $TARGETROOT/server_apps/DB_maintenance/gafLoad/mydiff --others GOA Noctua PAINT "FP Inferences" UniProt
+  $TARGETROOT/server_apps/DB_maintenance/gafLoad/mydiff --others --all GOA Noctua PAINT "FP Inferences" UniProt
 ```
 
-Yields one `mgte_dbdiff_<org>.xlsx` per org (sheets: deletes / adds / updated_1 / updated_2).
+Yields one `mgte_dbdiff_<org>.xlsx` per org (sheets: deletes / adds / updated_1 / updated_2), plus
+`mgte_dbdiff_ALL.xlsx` under `--all`.
+
+**`ALL` is diffed with a deliberately coarser key** — `marker,term,evidence,relation` — because it
+answers a different question than the per-org workbooks. The per-org key includes `source`,
+`created_by` and `contributed_by`, so it asks "same annotation record, same provenance?". Across a
+cutover that makes most of the diff read as loss when almost none of it is: the phylo re-home
+changes only `org`, and the `*2go` handover changes `org` **and** `created_by`
+(`ZFIN` → `InterPro`/`UniProt`). Keying `ALL` on what makes two rows the same *biological
+statement* turns both into updates, so its `deletes` sheet is the number that actually matters at
+cutover: statements ZFIN no longer asserts from any source.
 
 > **The key and ignore lists live in `mgte_csvdiff.sh`, once** — they used to be duplicated
 > verbatim in all three GO job configs and could drift apart silently. Key = every identity
