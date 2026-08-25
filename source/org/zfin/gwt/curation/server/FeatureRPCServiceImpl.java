@@ -309,16 +309,17 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
             }
-            if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
-                if (feature.getFeatureGenomicMutationDetail() != null) {
-                    if (feature.getFeatureGenomicMutationDetail().getFgmdSeqRef() != null) {
-                        if (fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()) {
-                            if (fgmd.getFgmdSeqRef().length() > 1) {
-                                feature.setType(FeatureTypeEnum.MNV);
-                            }
-                        }
-                    }
-                }
+            // An INDEL whose reference and variant sequences are the same length is
+            // really a multi-nucleotide variant, so promote the type. Both sequences
+            // have to be present to compare them: an INDEL can legitimately be saved
+            // with the variant sequence still uncurated (sq36 / ZDB-ALT-161017-2 is
+            // stored that way), and dereferencing it unchecked failed the whole RPC.
+            if (feature.getType().equals(FeatureTypeEnum.INDEL)
+                    && fgmd.getFgmdSeqRef() != null
+                    && fgmd.getFgmdSeqVar() != null
+                    && fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()
+                    && fgmd.getFgmdSeqRef().length() > 1) {
+                feature.setType(FeatureTypeEnum.MNV);
             }
 
         } else {
