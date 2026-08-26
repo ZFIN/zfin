@@ -429,12 +429,13 @@ public class MergeMarkerController {
     public
     @ResponseBody
     void updateStrSequence(@RequestParam("source") String source, @RequestParam("target") String target) {
+        HibernateUtil.createTransaction();
         MutantRepository mutantRepository = RepositoryFactory.getMutantRepository();
         SequenceTargetingReagent sourceStr = mutantRepository.getSequenceTargetingReagentByID(source);
         SequenceTargetingReagent targetStr = mutantRepository.getSequenceTargetingReagentByID(target);
         MarkerRepository markerRepository = RepositoryFactory.getMarkerRepository();
         markerRepository.copyStrSequence(sourceStr, targetStr);
-        return;
+        HibernateUtil.flushAndCommitCurrentSession();
     }
 
     // looks up anitibody to be merged into
