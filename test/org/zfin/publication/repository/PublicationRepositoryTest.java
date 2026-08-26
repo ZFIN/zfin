@@ -705,6 +705,41 @@ public class PublicationRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
+    public void getPublicationsByStatusShouldSortByGeneCountMatchingRelatedDataLinks() {
+        // The "Gene/Transcript" sort has to agree with the count shown in each row's related-data
+        // links, which comes from the solr site_index "gene" entity: markers whose type is in the
+        // GENEDOM or EFG group, attributed to the pub directly through record_attribution.
+        List<DashboardPublicationBean> pubs = publicationRepository
+            .getPublicationsByStatus(null, null, null, 25, 0, "-markerCount")
+            .getPublications();
+        assertThat(pubs, is(not(empty())));
+
+        long previousCount = Long.MAX_VALUE;
+        for (DashboardPublicationBean pub : pubs) {
+            long geneCount = countIndexedGenesForPublication(pub.getZdbId());
+            assertThat("pubs should be ordered by descending gene count", geneCount, is(lessThanOrEqualTo(previousCount)));
+            previousCount = geneCount;
+        }
+
+        // guard against the assertion above passing vacuously on a bin full of zero-count pubs
+        assertThat(countIndexedGenesForPublication(pubs.get(0).getZdbId()), is(greaterThan(0L)));
+    }
+
+    private long countIndexedGenesForPublication(String pubZdbID) {
+        String sql = """
+            select count(distinct mrkr_zdb_id)
+            from record_attribution, marker, marker_type_group_member
+            where recattrib_source_zdb_id = :pubId
+              and recattrib_data_zdb_id = mrkr_zdb_id
+              and mtgrpmem_mrkr_type = mrkr_type
+              and mtgrpmem_mrkr_type_group in ('GENEDOM', 'EFG')
+            """;
+        return ((Number) HibernateUtil.currentSession().createNativeQuery(sql)
+            .setParameter("pubId", pubZdbID)
+            .uniqueResult()).longValue();
+    }
+
+    @Test
     public void getSTRsByPublication() {
         List<SequenceTargetingReagent> strList = publicationRepository.getSTRsByPublication("ZDB-PUB-090807-11", new Pagination());
         assertThat(strList, is(not(empty())));
