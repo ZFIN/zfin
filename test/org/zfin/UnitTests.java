@@ -50,6 +50,7 @@ import org.zfin.ontology.service.OntologyServiceTest;
 import org.zfin.profile.OrganizationUrlTest;
 import org.zfin.profile.ProfileUnitTests;
 import org.zfin.profile.service.BeanCompareServiceTest;
+import org.zfin.datatransfer.ncbi.NCBIGenomeLocationReconcileTest;
 import org.zfin.report.LegacyReportAdapterTest;
 import org.zfin.sequence.load.LoadActionReportAdapterTest;
 import org.zfin.uniprot.UniProtReportAdapterTest;
@@ -80,6 +81,7 @@ import org.zfin.util.*;
         DatabaseServiceTest.class,
         DbLinkDisplayComparatorTest.class,
         LegacyReportAdapterTest.class,
+        NCBIGenomeLocationReconcileTest.class,
         LoadActionReportAdapterTest.class,
         UniProtReportAdapterTest.class,
         UniProtSecondaryReportAdapterTest.class,
