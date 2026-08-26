@@ -297,21 +297,37 @@ public class LegacyReportAdapter {
         return s;
     }
 
+    /** Rendered in place of a value that is null or blank, so an empty cell never reads as "no data captured". */
+    private static final String EMPTY_VALUE = "(none)";
+
+    /** Prefix on the field label of a row whose value actually changed. */
+    private static final String CHANGED_MARKER = "\u25cf ";
+
     /**
      * If {@code details} is a block of colon-aligned key/value lines like
      * <pre>
      * ZDB ID          : ZDB-GENE-050419-154
      * Length          : 9069 -&gt; 9069
+     * Annotation Stat : Current -&gt;
      * </pre>
-     * convert it to a table. Lines containing {@code " -> "} produce
-     * Before/After columns; otherwise just Field/Value. Returns null if any
-     * non-blank line isn't k:v shaped — the caller should fall back to a
-     * plain body.
+     * convert it to a two-column Field/Value table.
+     *
+     * <p>A line whose value contains {@code " -> "} is a before/after pair. When the
+     * two sides are equal the arrow is dropped and the single unchanged value is shown
+     * — a record can be reported as updated because of one field, and the other fields
+     * repeating themselves across a Before and an After column made those tables read
+     * as if everything had changed. When the sides differ, the row renders as
+     * {@code before → after} and its field label is prefixed with {@value #CHANGED_MARKER}
+     * so the fields that actually moved are scannable at a glance.
+     *
+     * <p>Either side may be blank (the producer had no value, e.g. a gene that lost its
+     * annotation status); blanks render as {@value #EMPTY_VALUE} rather than as an empty
+     * cell. Returns null if any non-blank line isn't k:v shaped — the caller should fall
+     * back to a plain body.
      */
     static ReportTable tryParseKeyValueTable(String details) {
         if (details == null) return null;
         List<String[]> rows = new ArrayList<>();
-        boolean anyArrow = false;
         for (String rawLine : details.split("\\R", -1)) {
             String trimmed = rawLine.trim();
             if (trimmed.isEmpty()) continue;
@@ -320,40 +336,42 @@ public class LegacyReportAdapter {
             String key = rawLine.substring(0, colon).trim();
             String value = rawLine.substring(colon + 1).trim();
             if (key.isEmpty()) return null;
-            String[] arrowSplit = value.split("\\s+->\\s+", 2);
+
+            // \s* on both flanks so an empty side still splits: the producer emits
+            // "Current ->" for a lost value and "-> GRCz11" for a gained one, and the
+            // old \s+ form left both of those sitting in a single cell. The positive
+            // limit keeps a trailing empty string instead of dropping it.
+            String[] arrowSplit = value.split("\\s*->\\s*", 2);
             if (arrowSplit.length == 2) {
-                anyArrow = true;
-                rows.add(new String[]{key, arrowSplit[0], arrowSplit[1]});
+                String before = arrowSplit[0].trim();
+                String after = arrowSplit[1].trim();
+                if (before.equals(after)) {
+                    rows.add(new String[]{key, orEmptyPlaceholder(before)});
+                } else {
+                    rows.add(new String[]{CHANGED_MARKER + key,
+                            orEmptyPlaceholder(before) + " \u2192 " + orEmptyPlaceholder(after)});
+                }
             } else {
-                rows.add(new String[]{key, value, null});
+                rows.add(new String[]{key, orEmptyPlaceholder(value)});
             }
             if (rows.size() > MAX_KV_LINES) return null;
         }
         if (rows.isEmpty()) return null;
 
         ReportTable table = new ReportTable();
-        if (anyArrow) {
-            table.addColumn(ReportTable.Column.of("field",  "Field"));
-            table.addColumn(ReportTable.Column.of("before", "Before"));
-            table.addColumn(ReportTable.Column.of("after",  "After"));
-            for (String[] row : rows) {
-                Map<String, Object> r = new LinkedHashMap<>();
-                r.put("field",  row[0]);
-                r.put("before", row[1]);
-                r.put("after",  row[2] != null ? row[2] : "");
-                table.addRow(r);
-            }
-        } else {
-            table.addColumn(ReportTable.Column.of("field", "Field"));
-            table.addColumn(ReportTable.Column.of("value", "Value"));
-            for (String[] row : rows) {
-                Map<String, Object> r = new LinkedHashMap<>();
-                r.put("field", row[0]);
-                r.put("value", row[1]);
-                table.addRow(r);
-            }
+        table.addColumn(ReportTable.Column.of("field", "Field"));
+        table.addColumn(ReportTable.Column.of("value", "Value"));
+        for (String[] row : rows) {
+            Map<String, Object> r = new LinkedHashMap<>();
+            r.put("field", row[0]);
+            r.put("value", row[1]);
+            table.addRow(r);
         }
         return table;
+    }
+
+    private static String orEmptyPlaceholder(String value) {
+        return (value == null || value.isEmpty()) ? EMPTY_VALUE : value;
     }
 
     private static Map<String, Map<String, List<LoadReportAction>>> groupActions(List<LoadReportAction> actions) {
