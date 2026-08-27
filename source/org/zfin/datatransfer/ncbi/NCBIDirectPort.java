@@ -19,6 +19,7 @@ import org.zfin.datatransfer.report.model.LoadReportSummaryTable;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
@@ -32,7 +33,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -60,6 +65,23 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     "Status", status,
                     "Assemblies", assemblies,
                     "NCBI Gene ID", geneNcbiId
+            );
+        }
+    }
+
+    /**
+     * One reconciled (or unreconcilable) row of
+     * sequence_feature_chromosome_location_generated.
+     */
+    public record GenomeLocationDriftRow(String geneZdbId, String accession, String outcome,
+                                         String nowMapsTo, String location) {
+        public Map<String, Object> toMap() {
+            return Map.of(
+                    "Gene ZDB ID", geneZdbId,
+                    "NCBI Gene ID", accession,
+                    "Outcome", outcome,
+                    "Accession now maps to", nowMapsTo,
+                    "Location", location
             );
         }
     }
@@ -267,6 +289,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
 
     // Store the actions for changes that are made to the DB (really should be cudActions for create, update, delete)
+    private List<LoadReportAction> genomeLocationActions = new ArrayList<>();
     private List<LoadReportAction> crudActions = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -470,6 +493,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         executeMarkerAssemblyUpdate();
         printTimingInformation(490);
+
+        reconcileNcbiGenomeLocations();
+        printTimingInformation(495);
 
         sendLoadLogs(); // This was called if loadNCBIgeneAccs.sql failed, good to call after too.
         printTimingInformation(500);
@@ -3278,6 +3304,249 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(LOG, "\nDone with the update of marker-assembly association!\n\n");
     }
 
+    /**
+     * Re-align the NCBI genome locations with the gene mappings this run just wrote
+     * (ZFIN-10461).
+     *
+     * <p>Rows in sequence_feature_chromosome_location_generated sourced from
+     * {@code NCBILoader} pair an NCBI Gene ID ({@code sfclg_acc_num}) with a ZFIN gene
+     * ({@code sfclg_data_zdb_id}). Load-NCBI-GFF3-File resolves that pairing once, out of
+     * db_link, and caches it. On a later run its upsert keys off the accession alone and
+     * only ever compares start/end/chromosome, so it never revisits the gene — a pairing
+     * that this load invalidates is never corrected, and a gene page keeps showing
+     * coordinates that now belong to a different gene.
+     *
+     * <p>Kinds of drift, handled differently:
+     * <ul>
+     *   <li>the accession no longer has any NCBI Gene db_link — the row asserts a location
+     *       for a gene NCBI no longer associates with it, so it is deleted;</li>
+     *   <li>the accession now maps to exactly one <em>different</em> gene — the coordinates
+     *       belong to the accession, so the row is re-pointed at the new gene;</li>
+     *   <li>re-pointing collides with a row the target gene already holds at the
+     *       <em>same</em> location — the row is a leftover duplicate of a correct row the
+     *       GFF3 load already created, so it is deleted; no coordinates are lost and the
+     *       wrong location stops being shown on the old gene;</li>
+     *   <li>re-pointing collides at a <em>different</em> location, or the accession maps to
+     *       several genes — there is no unambiguous correction, so the row is left exactly
+     *       as it was and reported for a curator rather than guessed at or dropped.</li>
+     * </ul>
+     *
+     * <p>Scoped to {@code NCBILoader}. The sibling {@code NCBIStartEndLoader} rows are
+     * rebuilt from current db_link on every run of that load (loadNCBIStartEnd.sql deletes
+     * the whole source before re-inserting), so they self-correct and need no reconciling.
+     */
+    private void reconcileNcbiGenomeLocations() {
+        String source = GenomeLocation.Source.NCBI_LOADER.getName();
+        List<GenomeLocationDriftRow> repointed = new ArrayList<>();
+        List<GenomeLocationDriftRow> deleted = new ArrayList<>();
+        List<GenomeLocationDriftRow> failed = new ArrayList<>();
+
+        String driftSql = """
+                select l.sfclg_pk_id, l.sfclg_data_zdb_id, l.sfclg_acc_num,
+                       l.sfclg_chromosome, l.sfclg_start, l.sfclg_end,
+                       (select string_agg(distinct d.dblink_linked_recid, ',' order by d.dblink_linked_recid)
+                          from db_link d
+                         where d.dblink_acc_num = l.sfclg_acc_num
+                           and d.dblink_fdbcont_zdb_id = :fdbcont) as current_genes
+                from sequence_feature_chromosome_location_generated l
+                where l.sfclg_location_source = :source
+                  and not exists (select 1 from db_link d
+                                   where d.dblink_acc_num = l.sfclg_acc_num
+                                     and d.dblink_fdbcont_zdb_id = :fdbcont
+                                     and d.dblink_linked_recid = l.sfclg_data_zdb_id)
+                order by l.sfclg_data_zdb_id, l.sfclg_acc_num
+                """;
+        try {
+            createTransaction();
+            List<Tuple> drift = currentSession().createNativeQuery(driftSql, Tuple.class)
+                    .setParameter("fdbcont", FDCONT_NCBI_GENE_ID)
+                    .setParameter("source", source)
+                    .list();
+            print(LOG, "Found " + drift.size() + " " + source + " genome locations out of step with the new gene mappings.\n");
+
+            // Raw JDBC with a savepoint per row: the conflict we have to survive is a
+            // unique-constraint violation, and there are two overlapping unique constraints
+            // on this table with different NULL semantics. Letting Postgres decide, then
+            // rolling back just that row, is more trustworthy than re-deriving both keys
+            // here - and it keeps a violation from poisoning the Hibernate session.
+            currentSession().doWork(connection -> {
+                try (PreparedStatement repoint = connection.prepareStatement(
+                             "update sequence_feature_chromosome_location_generated"
+                             + " set sfclg_data_zdb_id = ? where sfclg_pk_id = ?");
+                     PreparedStatement remove = connection.prepareStatement(
+                             "delete from sequence_feature_chromosome_location_generated"
+                             + " where sfclg_pk_id = ?");
+                     PreparedStatement describeTarget = connection.prepareStatement(
+                             "select sfclg_chromosome, sfclg_start, sfclg_end"
+                             + " from sequence_feature_chromosome_location_generated"
+                             + " where sfclg_location_source = ? and sfclg_acc_num = ?"
+                             + "   and sfclg_data_zdb_id = ?")) {
+                    for (Tuple row : drift) {
+                        long pkId = ((Number) row.get("sfclg_pk_id")).longValue();
+                        String oldGene = row.get("sfclg_data_zdb_id", String.class);
+                        String accession = row.get("sfclg_acc_num", String.class);
+                        String currentGenes = row.get("current_genes", String.class);
+                        String location = row.get("sfclg_chromosome", String.class) + ":"
+                                + row.get("sfclg_start", Integer.class) + "-"
+                                + row.get("sfclg_end", Integer.class);
+
+                        if (StringUtils.isBlank(currentGenes)) {
+                            if (applyGenomeLocationChange(connection, pkId,
+                                    statement -> statement.setLong(1, pkId), remove)) {
+                                deleted.add(new GenomeLocationDriftRow(oldGene, accession,
+                                        "Deleted - accession has no NCBI Gene ID link", "(none)", location));
+                            } else {
+                                failed.add(new GenomeLocationDriftRow(oldGene, accession,
+                                        "Could not delete", "(none)", location));
+                            }
+                        } else if (currentGenes.contains(",")) {
+                            failed.add(new GenomeLocationDriftRow(oldGene, accession,
+                                    "Left unchanged - accession maps to several genes", currentGenes, location));
+                        } else if (applyGenomeLocationChange(connection, pkId,
+                                statement -> {
+                                    statement.setString(1, currentGenes);
+                                    statement.setLong(2, pkId);
+                                }, repoint)) {
+                            repointed.add(new GenomeLocationDriftRow(oldGene, accession,
+                                    "Re-pointed to " + currentGenes, currentGenes, location));
+                        } else {
+                            // Re-pointing collided. If the gene the accession now maps to already
+                            // holds this very location, the row we tried to move is a duplicate of
+                            // it: the GFF3 load created the correct row and left this one behind on
+                            // the old gene. Deleting it loses no coordinates and clears the wrong
+                            // location off that gene's page. Only a target holding *different*
+                            // coordinates is a real conflict for a curator to judge.
+                            List<String> targetLocations =
+                                    fetchTargetLocations(describeTarget, source, accession, currentGenes);
+                            if (targetLocations.contains(location)) {
+                                if (applyGenomeLocationChange(connection, pkId,
+                                        statement -> statement.setLong(1, pkId), remove)) {
+                                    deleted.add(new GenomeLocationDriftRow(oldGene, accession,
+                                            "Deleted - duplicate of the identical location already on "
+                                            + currentGenes, currentGenes, location));
+                                } else {
+                                    failed.add(new GenomeLocationDriftRow(oldGene, accession,
+                                            "Could not delete duplicate of the location on " + currentGenes,
+                                            currentGenes, location));
+                                }
+                            } else {
+                                failed.add(new GenomeLocationDriftRow(oldGene, accession,
+                                        "Left unchanged - " + describeConflict(targetLocations, currentGenes),
+                                        currentGenes, location));
+                            }
+                        }
+                    }
+                }
+            });
+            flushAndCommitCurrentSession();
+        } catch (RuntimeException e) {
+            rollbackTransaction();
+            print(LOG, "ERROR: Could not reconcile NCBI genome locations: " + e.getMessage() + "\n");
+            failed.add(new GenomeLocationDriftRow("N/A", "N/A",
+                    "Reconciliation aborted: " + e.getMessage(), "N/A", "N/A"));
+        }
+
+        print(LOG, "Genome location reconciliation: " + repointed.size() + " re-pointed, "
+                + deleted.size() + " deleted, " + failed.size() + " could not be reconciled.\n");
+
+        genomeLocationActions = new ArrayList<>();
+        addGenomeLocationAction(LoadReportAction.Type.UPDATE,
+                "Re-pointed NCBI Genome Location", repointed,
+                "NCBI genome locations moved to the gene their NCBI Gene ID now maps to.");
+        addGenomeLocationAction(LoadReportAction.Type.DELETE,
+                "Deleted NCBI Genome Location", deleted,
+                "NCBI genome locations removed: either the NCBI Gene ID no longer links to any ZFIN "
+                + "gene, or the row duplicated a location the gene it now maps to already holds.");
+        addGenomeLocationAction(LoadReportAction.Type.ERROR,
+                "Unreconciled NCBI Genome Location", failed,
+                "These NCBI genome locations still point at the wrong gene and need a curator. Either "
+                + "the accession maps to more than one gene, or the gene it now maps to already holds "
+                + "different coordinates for it, so there is no unambiguous correction to make.");
+    }
+
+    /**
+     * Run one genome-location statement inside its own savepoint. Returns false if the
+     * statement failed, having rolled the row back so it is left exactly as it was -
+     * dropping a location the GFF3 load will not rebuild would lose the only coordinates a
+     * gene has.
+     */
+    private boolean applyGenomeLocationChange(Connection connection, long pkId,
+                                              SQLBinder binder, PreparedStatement statement)
+            throws SQLException {
+        Savepoint savepoint = connection.setSavepoint("sfclg_" + pkId);
+        try {
+            binder.bind(statement);
+            statement.executeUpdate();
+            connection.releaseSavepoint(savepoint);
+            return true;
+        } catch (SQLException e) {
+            connection.rollback(savepoint);
+            print(LOG, "Genome location " + pkId + " left unchanged: " + e.getMessage() + "\n");
+            return false;
+        }
+    }
+
+    /** Locations the gene an accession now maps to already holds for that accession. */
+    private List<String> fetchTargetLocations(PreparedStatement describeTarget, String source,
+                                              String accession, String targetGene) throws SQLException {
+        describeTarget.setString(1, source);
+        describeTarget.setString(2, accession);
+        describeTarget.setString(3, targetGene);
+        List<String> targetLocations = new ArrayList<>();
+        try (ResultSet resultSet = describeTarget.executeQuery()) {
+            while (resultSet.next()) {
+                targetLocations.add(resultSet.getString(1) + ":" + resultSet.getInt(2) + "-" + resultSet.getInt(3));
+            }
+        }
+        return targetLocations;
+    }
+
+    /**
+     * Say what the target gene already holds, so an unreconciled row is actionable rather
+     * than just flagged. Exact duplicates never reach here - they are deleted - so this
+     * only ever describes a genuine disagreement about where the accession sits.
+     */
+    private String describeConflict(List<String> targetLocations, String targetGene) {
+        if (targetLocations.isEmpty()) {
+            return "re-pointing conflicted, but " + targetGene + " has no location for this accession";
+        }
+        return targetGene + " already has a different location for this accession ("
+               + String.join("; ", targetLocations) + ")";
+    }
+
+    @FunctionalInterface
+    private interface SQLBinder {
+        void bind(PreparedStatement statement) throws SQLException;
+    }
+
+    private void addGenomeLocationAction(LoadReportAction.Type type, String subType,
+                                         List<GenomeLocationDriftRow> rows, String description) {
+        if (rows.isEmpty()) {
+            return;
+        }
+        LoadReportAction action = new LoadReportAction();
+        action.setType(type);
+        action.setSubType(subType);
+        action.setId(subType);
+        action.setGeneZdbID("N/A");
+        action.setAccession("N/A");
+        action.setDetails(description);
+        action.setRelatedEntityFields(Map.of("Report Title", subType));
+
+        LoadReportSummaryTable table = new LoadReportSummaryTable();
+        table.setDescription(rows.size() + " row(s) in sequence_feature_chromosome_location_generated");
+        Map<String, String> headers = new LinkedHashMap<>();
+        headers.put("Gene ZDB ID", "Gene ZDB ID");
+        headers.put("NCBI Gene ID", "NCBI Gene ID");
+        headers.put("Outcome", "Outcome");
+        headers.put("Accession now maps to", "Accession now maps to");
+        headers.put("Location", "Location");
+        table.setTableHeadersByMap(headers);
+        table.setRows(rows.stream().map(GenomeLocationDriftRow::toMap).toList());
+        action.setTables(List.of(table));
+        genomeLocationActions.add(action);
+    }
+
     private void sendLoadLogs() {
         String subject = "Notify : NCBI gene load :: loadLog1 file";
         // The Perl script attached "loadLog1". We might have "loadLog1.txt" and "loadLog2.txt".
@@ -3764,6 +4033,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addActions(manyToManyWarningActions);
         builder.addActions(oneToManyWarningActions);
         builder.addActions(manyToOneWarningActions);
+        builder.addActions(genomeLocationActions);
 
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
