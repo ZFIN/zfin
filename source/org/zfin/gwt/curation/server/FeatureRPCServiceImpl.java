@@ -133,13 +133,26 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return null;
     }
 
+    /**
+     * A location row is anchored on its chromosome: sequence_feature_chromosome_location.
+     * sfcl_chromosome is NOT NULL and carries a foreign key into the chromosome table
+     * (sfcl_chromosome_fk_odc). A submission without a chromosome therefore cannot be
+     * stored as a location at all, whatever the curator happened to leave behind in the
+     * assembly, evidence or start/end fields. Requiring every one of those to be empty
+     * before deleting the row meant a partial clear (chromosome + positions blanked,
+     * assembly still selected) fell through to an UPDATE with sfcl_chromosome = '',
+     * which the foreign key rejects -- a 500 rather than a saved feature. Treat
+     * "no chromosome" as "no location" consistently instead; this matches how the
+     * add-feature path (below) and the no-existing-location path already decide
+     * whether there is a location to write at all.
+     */
+    private boolean isLocationRemoved(FeatureDTO dto) {
+        return StringUtils.isEmpty(dto.getFeatureChromosome());
+    }
+
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) throws ValidationException {
         // check if no value was submitted. If so then delete it
-        if (StringUtils.isEmpty(dto.getFeatureChromosome()) &&
-            StringUtils.isEmpty(dto.getFeatureAssembly()) &&
-            StringUtils.isEmpty(dto.getEvidence()) &&
-            dto.getFeatureStartLoc() == null &&
-            dto.getFeatureEndLoc() == null) {
+        if (isLocationRemoved(dto)) {
             // Remove ALL attribution rows for this FL — not just the one matching
             // dto.getPublicationZdbID() — because Location.references no longer
             // cascades deletes, and any surviving record_attribution row whose
@@ -173,11 +186,13 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         fl.setEndLocation(dto.getFeatureEndLoc());
         // convert code into TermID and then get GenericTerm
         String evidenceCodeTerm = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence());
-        if (StringUtils.isNotEmpty(evidenceCodeTerm)) {
-            fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
-        } else {
-            fl.setLocationEvidence(null);
+        if (StringUtils.isEmpty(evidenceCodeTerm)) {
+            // sfcl_evidence_code is NOT NULL, so a location that keeps its chromosome but
+            // loses its evidence code cannot be saved either. Report it as a validation
+            // error the curator can act on rather than letting the flush blow up.
+            throw new ValidationException("An evidence code is required when a chromosome is specified");
         }
+        fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
         HibernateUtil.currentSession().save(fl);
         infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
     }
@@ -274,12 +289,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         } else {
             if (featureLocationNeedsUpdate(featureDTO, fgl)) {
-                // check if this is a deletion (all fields empty)
-                locationDeleted = StringUtils.isEmpty(featureDTO.getFeatureChromosome()) &&
-                                  StringUtils.isEmpty(featureDTO.getFeatureAssembly()) &&
-                                  StringUtils.isEmpty(featureDTO.getEvidence()) &&
-                                  featureDTO.getFeatureStartLoc() == null &&
-                                  featureDTO.getFeatureEndLoc() == null;
+                // check if the location was removed; must agree with the branch
+                // updateFeatureLocation() takes, or the flanking-sequence cleanup
+                // below runs against a location that was actually deleted (or vice versa)
+                locationDeleted = isLocationRemoved(featureDTO);
                 updateFeatureLocation(fgl, featureDTO);
                 locationUpdated = !locationDeleted;
             }
