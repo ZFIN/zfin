@@ -3476,12 +3476,19 @@ public class HibernateMarkerRepository implements MarkerRepository {
     @Override
     public List<FluorescentMarkerDTO> getAllFluorescentConstructs() {
         Session session = HibernateUtil.currentSession();
-        // ZFIN-10352: derive from the live construct->protein links (fluorescent_marker table retired).
-        String hql = "select efg, fp from Marker efg join efg.fluorescentProteinConstructs fp " +
-                     "where efg.markerType.name in (:type) order by efg.abbreviation";
+        // ZFIN-10352: a construct has no protein link of its own, so derive it from the
+        // construct's coding-sequence EFGs (fpProtein_construct retired along with
+        // fluorescent_marker -- it was a one-time backfill that no writer maintained).
+        // Same chain as Marker.getCodingSequenceFluorescentProteins() and the search index.
+        String hql = "select distinct construct, fp from MarkerRelationship rel " +
+                     "join rel.firstMarker construct join rel.secondMarker efg " +
+                     "join efg.fluorescentProteinEfgs fp " +
+                     "where rel.type = :relationshipType and construct.markerType.name in (:type) " +
+                     "order by construct.abbreviation";
         Query<Object[]> query = session.createQuery(hql, Object[].class);
         List<String> types = List.of(Marker.Type.ETCONSTRCT.toString(), Marker.Type.GTCONSTRCT.toString(), Marker.Type.TGCONSTRCT.toString());
         query.setParameterList("type", types);
+        query.setParameter("relationshipType", MarkerRelationship.Type.CODING_SEQUENCE_OF);
         return query.getResultList().stream()
             .map(row -> FluorescentMarkerDTO.of((Marker) row[0], (FluorescentProtein) row[1]))
             .collect(Collectors.toList());

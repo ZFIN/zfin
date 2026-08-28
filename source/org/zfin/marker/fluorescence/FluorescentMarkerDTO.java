@@ -14,11 +14,12 @@ import java.util.List;
  * Read-model pairing a marker (EFG or construct) with one of its FPBase fluorescent
  * proteins, plus that protein's emission/excitation lengths and colors.
  *
- * <p>ZFIN-10352 retired the {@code fluorescent_marker} table (a stale, unmaintained
- * denormalized cache). This was formerly a Hibernate {@code @Entity} mapped to that
- * table; it is now a plain transient POJO built from the live link chain
- * ({@code fpProtein_efg}/{@code fpProtein_construct} → {@code fluorescent_protein}) via
- * {@link #of(Marker, FluorescentProtein)}. Colors/lengths come straight off the protein.
+ * <p>ZFIN-10352 retired the {@code fluorescent_marker} and {@code fpProtein_construct}
+ * tables (stale, unmaintained denormalized caches). This was formerly a Hibernate
+ * {@code @Entity} mapped to the former; it is now a plain transient POJO built from the
+ * live link chain via {@link #of(Marker, FluorescentProtein)} -- an EFG's own
+ * {@code fpProtein_efg} links, or a construct's derived from its coding-sequence EFGs.
+ * Colors/lengths come straight off the protein.
  */
 @Setter
 @Getter
@@ -30,9 +31,15 @@ public class FluorescentMarkerDTO extends AbstractFluorescence {
     @JsonView(View.API.class)
     private FluorescentProtein protein;
 
+    /**
+     * All proteins the marker reports, not just this row's. ZFIN-10352: this used to read
+     * {@code fluorescentProteinEfgs} directly, which is empty for a construct -- so the
+     * construct table's "FPbase Protein" column was always blank. Marker derives the
+     * construct case from its coding-sequence EFGs.
+     */
     @JsonView(View.API.class)
     public List<FluorescentProtein> getProteins() {
-        return new ArrayList<>(efg.getFluorescentProteinEfgs());
+        return new ArrayList<>(efg.getReportedFluorescentProteins());
     }
 
     @JsonView(View.API.class)

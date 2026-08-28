@@ -65,11 +65,14 @@ public class FluorescentMarkerSorting implements Sorting<FluorescentMarkerDTO> {
     private static Comparator<FluorescentMarkerDTO> excitationOrder =
             Comparator.comparing(FluorescentMarkerDTO::getExcitationLength, Comparator.nullsLast(Comparator.naturalOrder()));
 
+    // ZFIN-10352: sort on the DTO's own protein list, which derives a construct's proteins
+    // from its coding-sequence EFGs. Reading getFluorescentProteinEfgs() directly is empty
+    // for a construct, so protein sorting was a no-op on the construct table.
     private static Comparator<FluorescentMarkerDTO> proteinOrder =
             Comparator.comparing(efg -> {
-                if (CollectionUtils.isEmpty(efg.getEfg().getFluorescentProteinEfgs()))
+                if (CollectionUtils.isEmpty(efg.getProteins()))
                     return null;
-                return efg.getEfg().getFluorescentProteinEfgs().stream()
+                return efg.getProteins().stream()
                         .map(protein -> protein.getName().toLowerCase())
                         .sorted(Comparator.naturalOrder())
                         .collect(joining());

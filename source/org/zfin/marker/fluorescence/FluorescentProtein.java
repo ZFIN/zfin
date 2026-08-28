@@ -49,12 +49,11 @@ public class FluorescentProtein extends AbstractFluorescence {
     @JsonView(View.API.class)
     private List<Marker> efgs;
 
-    @ManyToMany
-    @JoinTable(name = "fpProtein_construct",
-            joinColumns = {@JoinColumn(name = "fc_fl_protein_id", nullable = false, updatable = false, insertable = false)},
-            inverseJoinColumns = {@JoinColumn(name = "fc_mrkr_zdb_id", nullable = false, updatable = false, insertable = false)})
-    @JsonView(View.API.class)
-    private List<Marker> constructs;
+    // ZFIN-10352: the reverse `constructs` association is gone along with the
+    // fpProtein_construct table it mapped. A construct's proteins are derived from its
+    // coding-sequence EFGs (Marker.getCodingSequenceFluorescentProteins()); nothing read
+    // this side -- the FPbase protein table renders only `efgs` -- and serializing it
+    // added every construct of every protein to the fpbase-proteins payload.
 
     @JsonView(View.API.class)
     @JsonProperty("fpId")
