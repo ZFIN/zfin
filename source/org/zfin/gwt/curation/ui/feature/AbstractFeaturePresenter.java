@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
@@ -11,6 +12,7 @@ import org.zfin.gwt.root.dto.OrganizationDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.List;
@@ -248,16 +250,41 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
                     @Override
                     public void onSuccess(String result) {
+                        lastLocationError = null;
                         view.genomicMutationDetailView.setReferenceSequence(result);
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
                         view.genomicMutationDetailView.setReferenceSequence("");
+                        if (throwable instanceof ValidationException) {
+                            reportLocationError(throwable.getMessage());
+                            return;
+                        }
                         super.onFailure(throwable);
                     }
                 }
         );
+    }
+
+    /**
+     * Last location problem reported, so the several fetches a single edit can trigger (changing the
+     * start position also rewrites the end position for a point mutation) do not stack up identical
+     * alerts. Cleared as soon as a fetch succeeds, so the same problem is reported again if it recurs.
+     */
+    private String lastLocationError;
+
+    /**
+     * Report a location the assembly cannot supply a sequence for. This goes in an alert rather than
+     * the inline error label because the label is cleared by handleChanges() on the next field event,
+     * which happens before the curator has had a chance to read it.
+     */
+    private void reportLocationError(String errorMessage) {
+        if (errorMessage == null || errorMessage.equals(lastLocationError)) {
+            return;
+        }
+        lastLocationError = errorMessage;
+        Window.alert(errorMessage);
     }
 
     public void autoCalcDeletionLength() {
