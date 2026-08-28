@@ -74,10 +74,20 @@ public class GenomicLocationService {
 	 * mean "the window is entirely off the chromosome". Bounding both endpoints on both sides -- as
 	 * Math.clamp(value, 1, chromosomeLength) would -- collapses that case onto the boundary and
 	 * returns the feature's own base as its flanking sequence.
+	 *
+	 * The length comes off the index `ref` already holds, so it cannot disagree with the chromosome
+	 * being queried and costs no further file access.
 	 */
-	private String subsequence(IndexedFastaSequenceFile ref, String chromosome, int from, int to, long chromosomeLength) {
+	private String subsequence(IndexedFastaSequenceFile ref, String chromosome, int from, int to) {
+		FastaSequenceIndex index = ref.getIndex();
+		if (!index.hasIndexEntry(chromosome)) {
+			// Callers reach this only for a location locationWithinChromosome() has already accepted,
+			// so the contig is known to be present; returning "" keeps a broken invariant from
+			// becoming an unhandled SAMException out of getSubsequenceAt().
+			return "";
+		}
 		int start = Math.max(from, 1);
-		int end = (int) Math.min(to, chromosomeLength);
+		int end = (int) Math.min(to, index.getIndexEntry(chromosome).getSize());
 		if (start > end) {
 			return "";
 		}
@@ -127,8 +137,6 @@ public class GenomicLocationService {
 				// number of nucleotides upstream or downstream
 				int offset = 500;
 				IndexedFastaSequenceFile ref = getIndexedFastaSequenceFile(assembly);
-				Long chromLength = getChromosomeLength(assembly, ftrChrom);
-				long rightLimit = chromLength != null ? chromLength : Integer.MAX_VALUE;
 				int leftOffset = locStart - offset;
 				if (leftOffset < 1) {
 					leftOffset = 1;
@@ -138,23 +146,23 @@ public class GenomicLocationService {
 						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
 							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
 						}
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1, rightLimit);
-						seq2 = subsequence(ref, ftrChrom, locStart + 1, locStart + offset, rightLimit);
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locStart + 1, locStart + offset);
 					}
 					case DELETION, MNV -> {
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1, rightLimit);
-						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset, rightLimit);
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
 					}
 					case INSERTION -> {
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart, rightLimit);
-						seq2 = subsequence(ref, ftrChrom, locEnd, locEnd + offset, rightLimit);
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart);
+						seq2 = subsequence(ref, ftrChrom, locEnd, locEnd + offset);
 					}
 					case INDEL -> {
 						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
 							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
 						}
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1, rightLimit);
-						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset, rightLimit);
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
 					}
 				}
 				insertOrUpdateFlankSeq(feature, seq1, seq2, offset);
