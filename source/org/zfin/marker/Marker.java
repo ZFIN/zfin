@@ -85,12 +85,6 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             inverseJoinColumns = @JoinColumn(name = "fe_fl_protein_id"))
     private Set<FluorescentProtein> fluorescentProteinEfgs;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "fpProtein_construct",
-            joinColumns = @JoinColumn(name = "fc_mrkr_zdb_id"),
-            inverseJoinColumns = @JoinColumn(name = "fc_fl_protein_id"))
-    private Set<FluorescentProtein> fluorescentProteinConstructs;
-
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "ortho_zdb_id")
@@ -814,18 +808,57 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         this.secondaryMarkerSet = secondaryMarkerSet;
     }
 
-    // ZFIN-10352: the fluorescent_marker table was retired. Derive the marker's
-    // fluorescence rows on the fly from the live protein links (fpProtein_efg for EFGs,
-    // fpProtein_construct for constructs) instead of a stale cached table.
-    public Set<FluorescentMarkerDTO> getFluorescentMarkers() {
-        Set<FluorescentMarkerDTO> result = new LinkedHashSet<>();
+    /**
+     * The FPBase fluorescent proteins reported by this construct, derived from its
+     * coding-sequence EFGs: construct -('coding sequence of')-> EFG -> fpProtein_efg.
+     *
+     * <p>ZFIN-10352: a construct has no fluorescent-protein link of its own. The
+     * fpProtein_construct table used to cache one, but like the retired
+     * fluorescent_marker table it was filled once by a migration (changeset 1124) and
+     * never maintained afterwards -- adding an EFG<->protein link writes only
+     * fpProtein_efg -- so every construct created since silently lost its color.
+     * Walking the live relationship chain is the same derivation the search index
+     * already uses (construct_reporter_color et al. in db-data-config.xml).
+     *
+     * <p>Deduplicated by protein: two coding-sequence EFGs may report the same protein.
+     */
+    public Collection<FluorescentProtein> getCodingSequenceFluorescentProteins() {
+        if (CollectionUtils.isEmpty(firstMarkerRelationships))
+            return Collections.emptyList();
+        Map<Long, FluorescentProtein> proteinsById = new LinkedHashMap<>();
+        for (MarkerRelationship relationship : firstMarkerRelationships) {
+            if (relationship.getType() != MarkerRelationship.Type.CODING_SEQUENCE_OF)
+                continue;
+            Marker efg = relationship.getSecondMarker();
+            if (efg == null || efg.getFluorescentProteinEfgs() == null)
+                continue;
+            for (FluorescentProtein protein : efg.getFluorescentProteinEfgs())
+                proteinsById.putIfAbsent(protein.getIdentifier(), protein);
+        }
+        return proteinsById.values();
+    }
+
+    /**
+     * Every FPBase fluorescent protein this marker reports: an EFG's own fpProtein_efg
+     * links, plus a construct's proteins derived from its coding-sequence EFGs. A marker
+     * is one or the other, so the union needs no type check.
+     */
+    public Collection<FluorescentProtein> getReportedFluorescentProteins() {
+        Map<Long, FluorescentProtein> proteinsById = new LinkedHashMap<>();
         if (fluorescentProteinEfgs != null)
-            for (FluorescentProtein p : fluorescentProteinEfgs)
-                result.add(FluorescentMarkerDTO.of(this, p));
-        if (fluorescentProteinConstructs != null)
-            for (FluorescentProtein p : fluorescentProteinConstructs)
-                result.add(FluorescentMarkerDTO.of(this, p));
-        return result;
+            for (FluorescentProtein protein : fluorescentProteinEfgs)
+                proteinsById.putIfAbsent(protein.getIdentifier(), protein);
+        for (FluorescentProtein protein : getCodingSequenceFluorescentProteins())
+            proteinsById.putIfAbsent(protein.getIdentifier(), protein);
+        return proteinsById.values();
+    }
+
+    // ZFIN-10352: the fluorescent_marker and fpProtein_construct tables were retired.
+    // Derive the marker's fluorescence rows on the fly from the live protein links.
+    public Set<FluorescentMarkerDTO> getFluorescentMarkers() {
+        return getReportedFluorescentProteins().stream()
+            .map(protein -> FluorescentMarkerDTO.of(this, protein))
+            .collect(Collectors.toCollection(LinkedHashSet::new));
     }
 
     @JsonView(View.SequenceAPI.class)
