@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description>
+        Weekly read-only report. Lists features whose
+        feature_genomic_mutation_detail row is missing a sequence that the
+        feature's type requires: POINT_MUTATION / INDEL / MNV need both a
+        reference and a variant sequence, DELETION needs a reference,
+        INSERTION needs a variant. Null and empty string both count as
+        missing.
+
+        Such rows reach the Alliance variant submission as null sequences,
+        and a POINT_MUTATION with a reference base but no variant base
+        (ZDB-ALT-220927-6) crashed Generate-Alliance-Files_m outright. The
+        Submitted To Alliance column flags the rows that are actually
+        exported, i.e. those with GRCz12tu coordinates and a reference
+        accession.
+
+        Query: server_apps/DB_maintenance/validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w.sql
+        No DB writes.
+    </description>
+    <keepDependencies>false</keepDependencies>
+    <properties/>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Ant plugin="ant@1.2">
+            <targets>validate-data-report-simple -DJobName=Check-Feature-Mutation-Detail-Missing-Sequences_w</targets>
+            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
+        </hudson.tasks.Ant>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>server_apps/DB_maintenance/validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w/*</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
+            <unstableOnWarning>true</unstableOnWarning>
+            <failBuildOnError>false</failBuildOnError>
+            <parsingRulesPath></parsingRulesPath>
+        </hudson.plugins.logparser.LogParserPublisher>
+        <htmlpublisher.HtmlPublisher plugin="htmlpublisher@1.3">
+            <reportTargets>
+                <htmlpublisher.HtmlPublisherTarget>
+                    <reportName>Error Report</reportName>
+                    <reportDir>server_apps/DB_maintenance/validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w</reportDir>
+                    <reportFiles>Check-Feature-Mutation-Detail-Missing-Sequences_w.html</reportFiles>
+                    <keepAll>false</keepAll>
+                    <allowMissing>false</allowMissing>
+                </htmlpublisher.HtmlPublisherTarget>
+            </reportTargets>
+        </htmlpublisher.HtmlPublisher>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList></recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w/Check-Feature-Mutation-Detail-Missing-Sequences_w.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+                        </body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>
+                            ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w/Check-Feature-Mutation-Detail-Missing-Sequences_w.html&quot;}
+
+                            See report on Jenkins dashboard: &lt;a href=&quot;${BUILD_URL}&quot;&gt;${BUILD_URL}&lt;/a&gt;
+                        </body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/html</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers>
+    </buildWrappers>
+</project>

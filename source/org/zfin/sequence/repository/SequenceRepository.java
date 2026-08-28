@@ -165,6 +165,8 @@ public interface SequenceRepository {
 
     void saveOrUpdateGenomeLocation(GenomeLocation genomeLocation);
 
+    void deleteGenomeLocation(GenomeLocation genomeLocation);
+
     /**
      * Returns one projection row per (FeatureDnaMutationDetail, FeatureLocation)
      * pair for features in the given types whose stored

@@ -2,10 +2,10 @@ package org.zfin.sequence.gff;
 
 import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.hibernate.SessionFactory;
+import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.VocabularyTerm;
@@ -27,7 +27,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
 import static org.zfin.framework.services.VocabularyEnum.NCBI_ANNOTATION_STATUS;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
@@ -38,6 +37,12 @@ public class NCBIGff3Processor {
 
     public static final String GCF_049306965_1_GRCZ_12_TU_GENOMIC_GFF = "GCF_049306965.1_GRCz12tu_genomic.gff";
 
+    // assembly.a_pk_id of GRCz12tu. Typed Long so it binds through BaseSQLDAO.find(Long): the
+    // find(String) overload handed Hibernate a String for this entity's long @Id, which keyed the
+    // loaded Assembly differently from the Long-keyed instances Hibernate materializes when it
+    // initializes Marker.assemblies -- so an assembly the gene already had went unrecognized.
+    private static final Long GRCZ12TU_ASSEMBLY_ID = 1L;
+
     static {
         Configurator.setLevel("htsjdk.tribble.gff.Gff3Codec", org.apache.logging.log4j.Level.ERROR);
     }
@@ -45,6 +50,7 @@ public class NCBIGff3Processor {
     private ReportBuilder.SummaryTable summaryTableLoad;
     private ReportBuilder.SummaryTable summaryTableFeatureHisto;
     private ReportBuilder.SummaryTable summaryTableGeneLocation;
+    private ReportBuilder.SummaryTable summaryTableRemovedLocations;
     private final Gff3NcbiDAO dao = new Gff3NcbiDAO();
     private final AssemblyDAO assemblyDAO = new AssemblyDAO();
 
@@ -63,17 +69,46 @@ public class NCBIGff3Processor {
         } else {
             downloadNcbiGff3File();
         }
+        // after the download, so a failed fetch leaves the previous load's records in place
+        clearStagingTables();
         processNcbiGff3(fileName);
         addGeneIDToAttributes();
         createFeatureTypeHistogram();
-        upsertSequenceFeatureChromosomeRecords();
+        int failedBatches = upsertSequenceFeatureChromosomeRecords();
+        reconcileOrphanedGenomeLocations();
         createReport(builder);
+        // Write the report first so the failure is diagnosable, then fail: a batch that could not
+        // commit means genome locations are missing, and swallowing that let the job report
+        // success over a partial load.
+        if (failedBatches > 0) {
+            throw new IllegalStateException("Genome location load failed for " + failedBatches
+                + " batch(es); see the errors above and gff3_ncbi_report.html.");
+        }
+    }
+
+    // The load is insert-only, so it has to replace the previous run's records rather than add to
+    // them. Failing hard here is deliberate: carrying on would load this release's records on top
+    // of the last one, which is the state this is meant to prevent.
+    private void clearStagingTables() {
+        HibernateUtil.createTransaction();
+        try {
+            dao.truncateStagingTables();
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            HibernateUtil.currentSession().clear();
+            throw new IllegalStateException("Could not clear the GFF3 staging tables; "
+                + "aborting rather than appending to the previous load.", e);
+        }
     }
 
     private final VocabularyService vocabularyService = new VocabularyService();
 
-    private void upsertSequenceFeatureChromosomeRecords() {
-        Assembly grcz12tu = assemblyDAO.find("1");
+    /**
+     * @return the number of batches that failed to commit
+     */
+    private int upsertSequenceFeatureChromosomeRecords() {
+        Assembly grcz12tu = assemblyDAO.find(GRCZ12TU_ASSEMBLY_ID);
         List<Gff3Ncbi> filteredResultSet = getZfinGeneRecords();
         System.out.println("1-1 ZFIN-NCBI-Gene Records in ZFIN found: " + filteredResultSet.size());
 
@@ -86,6 +121,7 @@ public class NCBIGff3Processor {
 
         AtomicInteger newRecords = new AtomicInteger();
         AtomicInteger updatedRecords = new AtomicInteger();
+        AtomicInteger failedBatches = new AtomicInteger();
         batchedFilteredResults.forEach(filteredResults -> {
             HibernateUtil.createTransaction();
             try {
@@ -101,7 +137,7 @@ public class NCBIGff3Processor {
                             changesIncurred = true;
                         }
                         if (!genomeLocation.getEnd().equals(gff3Ncbi.getEnd())) {
-                            genomeLocation.setEnd(gff3Ncbi.getStart());
+                            genomeLocation.setEnd(gff3Ncbi.getEnd());
                             changesIncurred = true;
                         }
                         if (!genomeLocation.getChromosome().equals(gff3Ncbi.getChromosome())) {
@@ -117,7 +153,13 @@ public class NCBIGff3Processor {
                         genomeLocation = new MarkerGenomeLocation();
                         genomeLocation.setAccessionNumber(geneID);
                         Marker gene = getMarkerRepository().getMarker(gff3Ncbi.getGeneZdbID());
-                        gene.getAssemblies().add(grcz12tu);
+                        // a gene can already be associated with GRCz12tu while having no
+                        // NCBI_LOADER genome location (the association also comes from other
+                        // loaders), so "not in geneIDMap" does not imply "not in marker_assembly".
+                        // Adding unconditionally duplicated the join row for those genes.
+                        if (gene.getAssemblies() != null && !gene.getAssemblies().contains(grcz12tu)) {
+                            gene.getAssemblies().add(grcz12tu);
+                        }
                         gene.setAnnotationStatusTerms(Set.of(annotationStatusTerm));
                         genomeLocation.setMarker(gene);
                         genomeLocation.setAssembly(grcz12tu.getName());
@@ -133,14 +175,94 @@ public class NCBIGff3Processor {
                 });
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
+                failedBatches.incrementAndGet();
                 log.log(Level.ERROR, "Error saving genome location: ", e);
+                // Roll back before the next batch. Leaving the failed transaction open made the
+                // next createTransaction() throw "Transaction already active", which escaped this
+                // forEach and aborted the load with 22 of 23 batches unprocessed and no report
+                // written at all.
+                HibernateUtil.rollbackTransaction();
+                // A failed flush leaves the queued changes in the session, so without clearing it
+                // the next commit re-flushes the same offending insert and every remaining batch
+                // fails for a reason that has nothing to do with its own records.
+                HibernateUtil.currentSession().clear();
             }
         });
 
         summaryTableGeneLocation.addSummaryRow(List.of(
             String.valueOf(newRecords.get()),
-            String.valueOf(updatedRecords.get())
+            String.valueOf(updatedRecords.get()),
+            String.valueOf(failedBatches.get())
         ));
+        return failedBatches.get();
+    }
+
+    /**
+     * Delete the NCBI_LOADER locations for this assembly whose (gene, NCBI GeneID) pair is no longer
+     * a current NCBI Gene link, and list what was removed in the report.
+     * <p/>
+     * The load owns the NCBI_LOADER slice of GRCz12tu outright, but only ever inserted and updated
+     * it, so a location outlived the link that produced it: when NCBI withdraws or re-assigns a
+     * GeneID the db_link moves and the location row stays behind on the old gene. 57 such rows had
+     * accumulated, 14 of them for accessions that now belong to a *different* ZFIN gene (a gene
+     * split -- qdprb.2/qdprb.3, pimr93/pimr94, marchf4b/marchf4bl), so the old gene was showing the
+     * new gene's coordinates as a second GRCz12tu location.
+     * <p/>
+     * Membership is decided against the same getAllGenbankGenes() links the insert path maps
+     * through, so the two halves cannot disagree and a row deleted by one run is not re-created by
+     * the next. Exact (gene, accession) pairs rather than an accession -> gene map: an accession
+     * ZFIN links to two genes must not make either gene's location look orphaned.
+     */
+    private void reconcileOrphanedGenomeLocations() {
+        HibernateUtil.createTransaction();
+        try {
+            List<MarkerDBLink> currentLinks = getSequenceRepository().getAllGenbankGenes();
+            Set<String> currentPairs = currentLinks.stream()
+                .map(link -> genePair(link.getMarker().getZdbID(), link.getAccessionNumber()))
+                .collect(Collectors.toSet());
+            // Where a retired accession ended up. These are curation events worth a curator's
+            // attention, so the report names the new owner rather than dropping the row silently.
+            Map<String, String> accessionOwner = currentLinks.stream()
+                .collect(Collectors.toMap(DBLink::getAccessionNumber,
+                    link -> link.getMarker().getAbbreviation(),
+                    (a, b) -> a + ", " + b));
+
+            String assemblyName = assemblyDAO.find(GRCZ12TU_ASSEMBLY_ID).getName();
+            List<MarkerGenomeLocation> orphans = getSequenceRepository()
+                .getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER).stream()
+                .filter(location -> assemblyName.equals(location.getAssembly()))
+                // sfclg_data_zdb_id is nullable; a location with no gene is not ours to match on
+                .filter(location -> location.getMarker() != null)
+                .filter(location -> !currentPairs.contains(
+                    genePair(location.getMarker().getZdbID(), location.getAccessionNumber())))
+                .toList();
+
+            orphans.forEach(location -> {
+                summaryTableRemovedLocations.addSummaryRow(List.of(
+                    location.getMarker().getZdbID(),
+                    Objects.toString(location.getMarker().getAbbreviation(), ""),
+                    Objects.toString(location.getAccessionNumber(), ""),
+                    Objects.toString(location.getChromosome(), ""),
+                    Objects.toString(location.getStart(), ""),
+                    Objects.toString(location.getEnd(), ""),
+                    accessionOwner.getOrDefault(location.getAccessionNumber(), "(none)")
+                ));
+                getSequenceRepository().deleteGenomeLocation(location);
+            });
+
+            HibernateUtil.flushAndCommitCurrentSession();
+            log.info("Removed " + orphans.size() + " orphaned NCBI genome location(s)");
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            HibernateUtil.currentSession().clear();
+            throw new IllegalStateException(
+                "Could not reconcile orphaned NCBI genome locations; the loaded records are "
+                + "committed but stale locations remain.", e);
+        }
+    }
+
+    private static String genePair(String geneZdbID, String accessionNumber) {
+        return geneZdbID + "|" + accessionNumber;
     }
 
     private void createFeatureTypeHistogram() {
@@ -264,23 +386,31 @@ public class NCBIGff3Processor {
 
     private void downloadNcbiGff3File() {
         String zippedFileName = "GCF_049306965.1_GRCz12tu_genomic.gff.gz";
-        File file = new File(zippedFileName);
-        if (file.exists()) {
-            return;
-        }
+        File zippedFile = new File(zippedFileName);
 
         String fileURL = "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_049306965.1_GRCz12tu/" + zippedFileName;
 
         try {
-            FileUtils.copyURLToFile(
-                new URL(fileURL),
-                new File(zippedFileName),
-                60000,
-                READ_TIMEOUT);
+            // reuse the local archive only while it still matches the server's copy; skipping the
+            // download whenever the file merely existed meant a re-released assembly was never
+            // picked up, since the name stays the same
+            new DownloadService().downloadFileIfChanged(zippedFile, new URL(fileURL));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FileUtil.gunzipFile(zippedFileName);
+
+        // the archive carries the server's Last-Modified and we copy it onto the decompressed
+        // file, so equal timestamps mean the gff3 on disk came out of this archive
+        //
+        // TODO: htsjdk reads a gzipped gff3 through the same
+        // AbstractFeatureReader.getFeatureReader call Gff3Reader already makes (verified against
+        // htsjdk 4.3.0), so this block can go away entirely -- hand Gff3Reader the .gz path and
+        // skip decompressing ~170 MB. See workbench/stream-compressed-downloads-ticket.md
+        File decompressedFile = new File(zippedFileName.substring(0, zippedFileName.indexOf(".gz")));
+        if (!decompressedFile.exists() || decompressedFile.lastModified() != zippedFile.lastModified()) {
+            FileUtil.gunzipFile(zippedFileName);
+            decompressedFile.setLastModified(zippedFile.lastModified());
+        }
     }
 
     private void addGeneIDToAttributes() {
@@ -343,7 +473,12 @@ public class NCBIGff3Processor {
         summaryTableFeatureHisto = builder.addSummaryTable("Feature Histogram");
         summaryTableFeatureHisto.setHeaders(List.of("Feature Type", "Count"));
         summaryTableGeneLocation = builder.addSummaryTable("Genome Location Load (sequence_feature_chromosome_location_generated table)");
-        summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records"));
+        summaryTableGeneLocation.setHeaders(List.of("New Records", "Updated Records", "Failed Batches"));
+        summaryTableRemovedLocations = builder.addSummaryTable(
+            "Removed Genome Locations (no current NCBI Gene link). Accession Now On names the gene "
+            + "the retired accession moved to, which is usually a gene split worth reviewing.");
+        summaryTableRemovedLocations.setHeaders(List.of(
+            "Gene ID", "Gene", "NCBI Gene ID", "Chromosome", "Start", "End", "Accession Now On"));
         return builder;
     }
 

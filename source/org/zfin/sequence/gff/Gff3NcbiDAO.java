@@ -22,6 +22,21 @@ public class Gff3NcbiDAO extends BaseSQLDAO<Gff3Ncbi> {
         super(Gff3Ncbi.class);
     }
 
+    /**
+     * Clear the GFF3 staging tables. The load only ever inserts, so without this each run left
+     * another full copy of the file behind (~3.2M gff3_ncbi and ~25M gff3_ncbi_attribute rows per
+     * run) and every consumer -- the feature histogram, the genome-location upsert, Gff3Writer --
+     * silently read duplicated records.
+     * <p>
+     * Truncate rather than delete: at these row counts a DML delete and its foreign-key checks are
+     * far slower, and both tables are pure staging for the file that is about to be re-read. Both
+     * are named in one statement because gff3_ncbi_attribute has an FK to gff3_ncbi.
+     */
+    public void truncateStagingTables() {
+        entityManager.createNativeQuery("truncate table gff3_ncbi, gff3_ncbi_attribute")
+            .executeUpdate();
+    }
+
     public List<Gff3Ncbi> findRecordsBySource(String chromosome, List<String> sourceName) {
         TypedQuery<Gff3Ncbi> query = entityManager.createQuery("""
             from Gff3Ncbi gff3

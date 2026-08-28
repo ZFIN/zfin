@@ -24,9 +24,9 @@
   </builders>
   <publishers>
     <hudson.tasks.ArtifactArchiver>
-      <artifacts>server_apps/DB_maintenance/Load-Reference-Proteome/*</artifacts>
+      <artifacts>server_apps/DB_maintenance/Load-Reference-Proteome/*.txt</artifacts>
       <latestOnly>false</latestOnly>
-      <allowEmptyArchive>true</allowEmptyArchive>
+      <allowEmptyArchive>false</allowEmptyArchive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
       <recipientList></recipientList>

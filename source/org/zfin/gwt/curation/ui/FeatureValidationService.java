@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.util.StringUtils;
 
@@ -55,6 +56,11 @@ public class FeatureValidationService {
             }
         }
 
+        String missingMutationDetailSequence = getMissingMutationDetailSequence(featureDTO);
+        if (missingMutationDetailSequence != null) {
+            return missingMutationDetailSequence;
+        }
+
         if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
             if (featureDTO.getAssemblyInfoDate().length() != 8 || !(featureDTO.getAssemblyInfoDate().contains("/"))) {
                 return "Please enter date in mm/dd/yy format";
@@ -79,6 +85,58 @@ public class FeatureValidationService {
         }
 
         return null;
+    }
+
+    /**
+     * Which genomic sequences a mutation detail must carry depends on the feature type: point
+     * mutations, indels and MNVs need both a reference and a variant sequence, deletions need a
+     * reference, insertions need a variant. Rows missing one of these have reached production --
+     * ZDB-ALT-220927-6 was a POINT_MUTATION with a reference base and no variant base, which took
+     * down the whole Alliance variant submission -- so require the counterpart as soon as the
+     * curator supplies either one.
+     * <p/>
+     * Deliberately quiet until one of the two sequences is filled in: a feature that carries no
+     * genomic mutation detail at all stays saveable, so this only blocks the half-entered case.
+     * The existing rows this cannot reach are reported weekly by
+     * validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w.sql.
+     *
+     * @return an error message, or null when nothing required is missing
+     */
+    private static String getMissingMutationDetailSequence(FeatureDTO featureDTO) {
+        FeatureGenomeMutationDetailChangeDTO fgmd = featureDTO.getFgmdChangeDTO();
+        FeatureTypeEnum featureType = featureDTO.getFeatureType();
+        if (fgmd == null || featureType == null) {
+            return null;
+        }
+
+        boolean hasReference = StringUtils.isNotEmptyTrim(fgmd.getFgmdSeqRef());
+        boolean hasVariant = StringUtils.isNotEmptyTrim(fgmd.getFgmdSeqVar());
+        if (!hasReference && !hasVariant) {
+            return null;
+        }
+
+        switch (featureType) {
+            case POINT_MUTATION:
+            case INDEL:
+            case MNV:
+                if (!hasReference) {
+                    return "Sequence of Reference is required for a " + featureType.getDisplay()
+                            + " when Sequence of Variant is specified";
+                }
+                if (!hasVariant) {
+                    return "Sequence of Variant is required for a " + featureType.getDisplay()
+                            + " when Sequence of Reference is specified";
+                }
+                return null;
+            case DELETION:
+                return hasReference ? null
+                        : "Sequence of Reference is required for a " + featureType.getDisplay();
+            case INSERTION:
+                return hasVariant ? null
+                        : "Sequence of Variant is required for a " + featureType.getDisplay();
+            default:
+                return null;
+        }
     }
 
     public static boolean isFeatureSaveable(FeatureDTO dtoFromGUI) {
