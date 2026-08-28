@@ -237,6 +237,32 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
     }
 
 
+    /**
+     * Removing a location deletes only the row the form is showing -- the single assembly returned by
+     * getLocationByFeature(). Locations recorded against the other assemblies survive, and the form
+     * will show one of them next time it loads, which looks like the removal silently failed. Say so
+     * before the save so the curator knows what to expect.
+     */
+    private boolean confirmLocationRemoval(FeatureDTO featureFromGUI) {
+        List<String> otherAssemblies = dto.getOtherLocationAssemblies();
+        boolean hadLocation = dto.getFeatureChromosome() != null && !dto.getFeatureChromosome().trim().isEmpty();
+        boolean removingLocation = featureFromGUI.getFeatureChromosome() == null
+            || featureFromGUI.getFeatureChromosome().trim().isEmpty();
+        if (!hadLocation || !removingLocation || otherAssemblies == null || otherAssemblies.isEmpty()) {
+            return true;
+        }
+        StringBuilder assemblies = new StringBuilder();
+        for (String assembly : otherAssemblies) {
+            if (assemblies.length() > 0) {
+                assemblies.append(", ");
+            }
+            assemblies.append(assembly);
+        }
+        return Window.confirm("This feature also has location data for " + assemblies
+            + ". Removing the " + dto.getFeatureAssembly() + " location leaves those unchanged,"
+            + " and one of them will be shown here instead. Continue?");
+    }
+
     public void updateFeature() {
         FeatureDTO featureDTO = createDTOFromGUI();
 
@@ -252,6 +278,10 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         errorMessage = mutationDetailPresenter.isValid(featureDTO);
         if (errorMessage != null) {
             setError(errorMessage);
+            return;
+        }
+
+        if (!confirmLocationRemoval(featureDTO)) {
             return;
         }
 

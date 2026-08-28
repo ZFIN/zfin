@@ -38,7 +38,7 @@ public class FeatureValidationService {
                     return "You must specify an assembly if you specify a chromosome. "
                         + "To remove the location, clear the chromosome and positions as well.";
                 }
-                if (!Window.confirm("Delete all location information for this feature?")) {
+                if (!Window.confirm("Remove the location information for this feature?")) {
                     return "Save cancelled. Choose an assembly, or clear the chromosome and positions.";
                 }
                 featureDTO.setFeatureChromosome("");

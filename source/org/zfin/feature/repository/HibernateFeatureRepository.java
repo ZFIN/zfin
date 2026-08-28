@@ -508,6 +508,19 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     }
 
+    /**
+     * Every assembly this feature has a location on. getLocationByFeature() deliberately returns
+     * only one of them; this reports the full set so callers can say what else exists.
+     */
+    public List<String> getLocationAssembliesForFeature(Feature ftr) {
+        return HibernateUtil.currentSession().createQuery(
+                "select distinct fl.assembly from FeatureLocation fl " +
+                "  where fl.feature = :feature and fl.assembly is not null " +
+                "  order by fl.assembly desc", String.class)
+            .setParameter("feature", ftr)
+            .list();
+    }
+
     public FeatureLocation getLocationByFeature(Feature ftr) {
         Session session = HibernateUtil.currentSession();
         String hql = "select fs  from  FeatureLocation fs " +
