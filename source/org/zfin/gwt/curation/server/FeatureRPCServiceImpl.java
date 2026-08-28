@@ -134,27 +134,19 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     /**
-     * A location row is anchored on its chromosome: sequence_feature_chromosome_location.
-     * sfcl_chromosome is NOT NULL and carries a foreign key into the chromosome table
-     * (sfcl_chromosome_fk_odc). A submission without a chromosome therefore cannot be
-     * stored as a location at all, whatever the curator happened to leave behind in the
-     * assembly, evidence or start/end fields. Requiring every one of those to be empty
-     * before deleting the row meant a partial clear (chromosome + positions blanked,
-     * assembly still selected) fell through to an UPDATE with sfcl_chromosome = '',
-     * which the foreign key rejects -- a 500 rather than a saved feature. Treat
-     * "no chromosome" as "no location" consistently instead; this matches how the
-     * add-feature path (below) and the no-existing-location path already decide
-     * whether there is a location to write at all.
+     * sfcl_chromosome is NOT NULL with a foreign key into chromosome, so a submission without one
+     * cannot be stored as a location at all. Requiring the assembly, evidence and positions to be
+     * empty too let a partial clear fall through to an UPDATE writing sfcl_chromosome = '', which
+     * the foreign key rejects -- a 500 rather than a save.
      */
     private boolean isLocationRemoved(FeatureDTO dto) {
         return StringUtils.isEmpty(dto.getFeatureChromosome());
     }
 
     /**
-     * Reject coordinates that fall outside the chosen chromosome before anything is written.
-     * The flanking-sequence step reads the assembly FASTA for exactly this span, so a start or
-     * end past the end of the contig made htsjdk throw "Query asks for data past end of contig"
-     * from deep inside the save, which reached the curator as a bare 500 with nothing to act on.
+     * Reject coordinates outside the chosen chromosome before anything is written. The
+     * flanking-sequence step reads the assembly FASTA for this exact span, so an out-of-range
+     * position made htsjdk throw "Query asks for data past end of contig" as a bare 500.
      */
     private void validateLocationWithinChromosome(String assemblyName, String chromosome,
                                                   Integer start, Integer end) throws ValidationException {

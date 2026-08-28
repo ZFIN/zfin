@@ -64,19 +64,14 @@ public class GenomicLocationService {
 	}
 
 	/**
-	 * Subsequence trimmed to the ends of the chromosome, returning "" when the requested window
-	 * lies entirely outside it. The flanking windows below run `offset` bases either side of a
-	 * feature, so a feature within `offset` bases of a contig boundary used to make htsjdk throw
-	 * "Query asks for data past end of contig", which reached the curator as a bare 500.
+	 * The part of [from, to] that exists on the chromosome, or "" if none of it does. The flanking
+	 * windows below run `offset` bases either side of a feature, so one near a contig boundary used
+	 * to make htsjdk throw "Query asks for data past end of contig" as a bare 500.
 	 *
-	 * Note the two bounds are deliberately one-sided: `from` is only raised to 1 and `to` is only
-	 * lowered to the chromosome length, never the reverse. That asymmetry is what makes start > end
-	 * mean "the window is entirely off the chromosome". Bounding both endpoints on both sides -- as
-	 * Math.clamp(value, 1, chromosomeLength) would -- collapses that case onto the boundary and
-	 * returns the feature's own base as its flanking sequence.
-	 *
-	 * The length comes off the index `ref` already holds, so it cannot disagree with the chromosome
-	 * being queried and costs no further file access.
+	 * The bounds are deliberately one-sided -- `from` only raised, `to` only lowered -- which is what
+	 * makes start > end mean "entirely off the chromosome". Math.clamp(value, 1, length) would bound
+	 * both ends both ways, collapsing that case onto the boundary and returning the feature's own
+	 * base as its flanking sequence.
 	 */
 	private String subsequence(IndexedFastaSequenceFile ref, String chromosome, int from, int to) {
 		FastaSequenceIndex index = ref.getIndex();

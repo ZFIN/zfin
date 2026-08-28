@@ -91,11 +91,11 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     protected List<String> featureSequences;
     /**
-     * Assemblies other than the one shown that also hold a location for this feature. The form only
-     * ever displays one assembly's location, and removing it deletes only that row, so the curator
-     * needs to be told what removing it will leave behind.
+     * Whether an assembly other than the one shown also holds a location for this feature. The form
+     * displays one assembly's location and removing it deletes only that row, so the curator needs
+     * telling that something will survive.
      */
-    protected List<String> otherLocationAssemblies;
+    protected boolean hasOtherLocationAssemblies;
     protected String displayNameForGenotypeBase;
     protected String displayNameForGenotypeSuperior;
     protected MutationDetailDnaChangeDTO dnaChangeDTO;
@@ -111,12 +111,12 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
         this.featureSequence = featureSequence;
     }
 
-    public List<String> getOtherLocationAssemblies() {
-        return otherLocationAssemblies;
+    public boolean getHasOtherLocationAssemblies() {
+        return hasOtherLocationAssemblies;
     }
 
-    public void setOtherLocationAssemblies(List<String> otherLocationAssemblies) {
-        this.otherLocationAssemblies = otherLocationAssemblies;
+    public void setHasOtherLocationAssemblies(boolean hasOtherLocationAssemblies) {
+        this.hasOtherLocationAssemblies = hasOtherLocationAssemblies;
     }
 
     public List<String> getFeatureSequences() {
