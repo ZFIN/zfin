@@ -65,8 +65,21 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
     }
 
     private void bulkProcessLoadActions(List<SecondaryTermLoadAction> secondaryTermLoadActions) {
+        if (secondaryTermLoadActions.isEmpty()) {
+            return;
+        }
+        // Hoist constant lookups out of the per-action loop. Previously each of the (thousands of)
+        // actions re-queried the GAF organization, the IEA evidence code, and the source publication
+        // - each query also forcing a Hibernate autoflush of the growing session (O(n^2)). Fetch
+        // them once here.
+        GafOrganization uniprotGafOrganization = getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.UNIPROT);
+        GoEvidenceCode goEvidenceCode = getMarkerGoTermEvidenceRepository().getGoEvidenceCode(GoEvidenceCodeEnum.IEA.name());
+        Publication interproPub = getPublicationRepository().getPublication(IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID);
+        Publication ecPub = getPublicationRepository().getPublication(EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID);
+        Publication spkwPub = getPublicationRepository().getPublication(SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID);
+
         for(SecondaryTermLoadAction action : secondaryTermLoadActions) {
-            loadSingleMarkerGoTermEvidence(action);
+            loadSingleMarkerGoTermEvidence(action, uniprotGafOrganization, goEvidenceCode, interproPub, ecPub, spkwPub);
         }
     }
 
@@ -76,12 +89,16 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
         }
     }
 
-    private static void loadSingleMarkerGoTermEvidence(SecondaryTermLoadAction action)  {
+    private static void loadSingleMarkerGoTermEvidence(SecondaryTermLoadAction action,
+                                                       GafOrganization uniprotGafOrganization,
+                                                       GoEvidenceCode goEvidenceCode,
+                                                       Publication interproPub,
+                                                       Publication ecPub,
+                                                       Publication spkwPub)  {
         MarkerGoTermEvidenceSlimDTO dto = MarkerGoTermEvidenceSlimDTO.fromMap(action.getRelatedEntityFields());
         MarkerGoTermEvidence markerGoTermEvidence = new MarkerGoTermEvidence();
         markerGoTermEvidence.setExternalLoadDate(null);
 
-        GafOrganization uniprotGafOrganization = getMarkerGoTermEvidenceRepository().getGafOrganization(GafOrganization.OrganizationEnum.UNIPROT);
         markerGoTermEvidence.setGafOrganization(uniprotGafOrganization);
 
         markerGoTermEvidence.setOrganizationCreatedBy(GafOrganization.OrganizationEnum.ZFIN.name());
@@ -92,27 +109,25 @@ public class MarkerGoTermEvidenceActionProcessor implements ActionProcessor {
         GenericTerm goTerm = HibernateUtil.currentSession().get(GenericTerm.class, action.getGoTermZdbID());
         markerGoTermEvidence.setGoTerm(goTerm);
 
-        GoEvidenceCode goEvidenceCode = getMarkerGoTermEvidenceRepository().getGoEvidenceCode(GoEvidenceCodeEnum.IEA.name());
         markerGoTermEvidence.setEvidenceCode(goEvidenceCode);
-        String pubID = null;
+        Publication publication = null;
         switch(action.getDbName()) {
             case INTERPRO -> {
                 markerGoTermEvidence.setNote("ZFIN InterPro 2 GO");
-                pubID = IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+                publication = interproPub;
             }
             case EC -> {
                 markerGoTermEvidence.setNote("ZFIN EC acc 2 GO");
-                pubID = EC_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+                publication = ecPub;
             }
             case UNIPROTKB -> {
                 markerGoTermEvidence.setNote("ZFIN SP keyword 2 GO");
-                pubID = SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID;
+                publication = spkwPub;
             }
             default -> log.error("Unknown marker_go_term_evidence dbname to load " + action.getDbName());
         }
 
         // set source
-        Publication publication = RepositoryFactory.getPublicationRepository().getPublication(pubID);
         markerGoTermEvidence.setSource(publication);
 
         Date rightNow = new Date();

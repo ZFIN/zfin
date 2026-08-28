@@ -140,6 +140,11 @@
         <security:intercept-url pattern="/action/profile/company/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/profile/lab/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/profile/person/edit/**" access="hasAuthority('root') or hasAuthority('submit') or ${DISABLE_SECURITY}"/>
+        <!-- Creating a person is a coordinator action, and the form can be prefilled from a logged
+             account request, so it exposes the submitter's contact details. Without these rules it
+             falls through to the /action/** permitAll catch-all. -->
+        <security:intercept-url pattern="/action/profile/person/create" access="hasAuthority('root') or ${DISABLE_SECURITY}" requires-channel="https"/>
+        <security:intercept-url pattern="/action/profile/person/create/**" access="hasAuthority('root') or ${DISABLE_SECURITY}" requires-channel="https"/>
 
         <security:intercept-url pattern="/action/figure/*" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/figure/*/images" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>

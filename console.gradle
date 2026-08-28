@@ -45,6 +45,7 @@ task BatchNCBIFastaFetchTask(type: JavaExec) {
 task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.mutant.MarkerGoTermEvidenceCleanupTask'
+    
     // clean_marker_go_term_evidence.sql \copy's four debug csvs relative to psql's working
     // directory, which is this task's; the .sql path itself is absolute (built from the
     // SOURCEROOT property) so it keeps resolving. Nothing reads the csvs, but they are not
@@ -52,6 +53,15 @@ task cleanMarkerGoTermEvidenceDuplicatesTask(type: JavaExec) {
     workingDir = file(System.getProperty('job.output.basedir')
             ?: System.getenv('TARGETROOT') ?: projectDir)
     doFirst { workingDir.mkdirs() }
+    
+    // JavaExec forks a fresh JVM, which does NOT inherit the build's system properties -- each
+    // one a -D is meant to reach has to be forwarded explicitly, here.
+    //
+    // Where the task's four record-keeping CSVs land -- and, by its absence, whether they are
+    // written at all. Set it and they go there; omit it and they are skipped. There is no
+    // "write them to the current directory" setting: that was the old default and it is what
+    // dropped four CSVs into SOURCEROOT on every run.
+    systemProperty "cleanupCsvDir", System.getProperty("cleanupCsvDir", "")
 }
 
 task thisseLegacyImportAnalysisTask(type: JavaExec) {
@@ -92,6 +102,10 @@ task uniprotSecondaryTermLoadTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.uniprot.task.UniprotSecondaryTermLoadTask'
     systemProperty "log4j2.configurationFile", System.getProperty("log4j2.configurationFile", "./conf/gradle-log4j2.xml")
+    // ZFIN-10344: *2go stream toggles. Forwarded as -D because a forked JavaExec inherits the
+    // gradle daemon's environment, not the invoking shell's. Unset = "" = the task's default (on).
+    systemProperty "LOAD_INTERPRO2GO_EC2GO", System.getProperty("LOAD_INTERPRO2GO_EC2GO", "")
+    systemProperty "LOAD_KW2GO", System.getProperty("LOAD_KW2GO", "")
 }
 
 task ncbiMatchThroughEnsemblTask(type: JavaExec) {

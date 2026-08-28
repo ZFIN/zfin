@@ -337,29 +337,10 @@
             </analyzer>
         </fieldType>
 
-        <fieldType name="reporter_color" class="solr.TextField" omitNorms="true">
-            <analyzer type="index">
-                <tokenizer class="solr.KeywordTokenizerFactory" />
-                <filter class="solr.TrimFilterFactory" />
-                <filter class="solr.NGramFilterFactory" minGramSize="3" maxGramSize="20" />
-                <filter class="solr.KeepWordFilterFactory" words="reporter-names.txt" ignoreCase="true"/>
-                <filter class="solr.SynonymGraphFilterFactory"
-                        synonyms="reporter-color-synonyms.txt"
-                        tokenizerFactory="solr.KeywordTokenizerFactory"
-                />
-                <filter class="solr.FlattenGraphFilterFactory"/>
-                <filter class="solr.KeepWordFilterFactory" words="colors.txt" ignoreCase="true"/>
-            </analyzer>
-            <analyzer type="query">
-                <tokenizer class="solr.KeywordTokenizerFactory" />
-                <filter class="solr.TrimFilterFactory" />
-                <filter class="solr.SynonymGraphFilterFactory"
-                        synonyms="reporter-color-synonyms.txt"
-                        tokenizerFactory="solr.KeywordTokenizerFactory"
-                />
-                <filter class="solr.FlattenGraphFilterFactory"/>
-            </analyzer>
-        </fieldType>
+        <!-- ZFIN-10352: the reporter_color field type (which parsed the construct
+             name through reporter-names.txt / reporter-color-synonyms.txt / colors.txt)
+             was retired. reporter_color is now a plain keyword facet populated from the
+             DB (see the construct_reporter_color entity in db-data-config.xml). -->
 
         <fieldType name="superstage" class="solr.TextField" omitNorms="true">
             <analyzer type="index">
@@ -585,9 +566,9 @@
         <field name="fish" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
         <field name="lab" type="keyword" indexed="true" stored="true" multiValued="true"   />
-        <field name="reporter_color" type="reporter_color" indexed="true" stored="true" multiValued="true"   />
-        <field name="emission_color" type="keyword" indexed="true" stored="true" multiValued="false"   />
-        <field name="excitation_color" type="keyword" indexed="true" stored="true" multiValued="false"   />
+        <field name="reporter_color" type="keyword" indexed="true" stored="true" multiValued="true" omitNorms="true"  />
+        <field name="emission_color" type="keyword" indexed="true" stored="true" multiValued="true"   />
+        <field name="excitation_color" type="keyword" indexed="true" stored="true" multiValued="true"   />
         <field name="any_color" type="keyword" indexed="true" stored="true" multiValued="true"   />
 
         <field name="promoter_full_name" type="text" indexed="true" stored="true" multiValued="true"  />

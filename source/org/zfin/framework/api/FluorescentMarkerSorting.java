@@ -1,7 +1,7 @@
 package org.zfin.framework.api;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.zfin.marker.fluorescence.FluorescentMarker;
+import org.zfin.marker.fluorescence.FluorescentMarkerDTO;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,15 +10,15 @@ import java.util.List;
 
 import static java.util.stream.Collectors.joining;
 
-public class FluorescentMarkerSorting implements Sorting<FluorescentMarker> {
+public class FluorescentMarkerSorting implements Sorting<FluorescentMarkerDTO> {
 
-    private List<Comparator<FluorescentMarker>> defaultList;
-    private List<Comparator<FluorescentMarker>> efgListUp;
-    private List<Comparator<FluorescentMarker>> efgListDown;
-    private List<Comparator<FluorescentMarker>> emissionListUp;
-    private List<Comparator<FluorescentMarker>> emissionListDown;
-    private List<Comparator<FluorescentMarker>> excitationListUp;
-    private List<Comparator<FluorescentMarker>> excitationListDown;
+    private List<Comparator<FluorescentMarkerDTO>> defaultList;
+    private List<Comparator<FluorescentMarkerDTO>> efgListUp;
+    private List<Comparator<FluorescentMarkerDTO>> efgListDown;
+    private List<Comparator<FluorescentMarkerDTO>> emissionListUp;
+    private List<Comparator<FluorescentMarkerDTO>> emissionListDown;
+    private List<Comparator<FluorescentMarkerDTO>> excitationListUp;
+    private List<Comparator<FluorescentMarkerDTO>> excitationListDown;
 
     public FluorescentMarkerSorting() {
         super();
@@ -50,22 +50,22 @@ public class FluorescentMarkerSorting implements Sorting<FluorescentMarker> {
 
     }
 
-    private static Comparator<FluorescentMarker> efgOrder =
+    private static Comparator<FluorescentMarkerDTO> efgOrder =
             Comparator.comparing(efg -> efg.getEfg().getAbbreviation().toLowerCase());
 
-    private static Comparator<FluorescentMarker> emissionExistsOrder =
+    private static Comparator<FluorescentMarkerDTO> emissionExistsOrder =
             Comparator.comparing(protein -> protein.getEmissionLength() == null);
 
-    private static Comparator<FluorescentMarker> excitationExistsOrder =
+    private static Comparator<FluorescentMarkerDTO> excitationExistsOrder =
             Comparator.comparing(protein -> protein.getExcitationLength() == null);
 
-    private static Comparator<FluorescentMarker> emissionOrder =
-            Comparator.comparing(FluorescentMarker::getEmissionLength, Comparator.nullsLast(Comparator.naturalOrder()));
+    private static Comparator<FluorescentMarkerDTO> emissionOrder =
+            Comparator.comparing(FluorescentMarkerDTO::getEmissionLength, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static Comparator<FluorescentMarker> excitationOrder =
-            Comparator.comparing(FluorescentMarker::getExcitationLength, Comparator.nullsLast(Comparator.naturalOrder()));
+    private static Comparator<FluorescentMarkerDTO> excitationOrder =
+            Comparator.comparing(FluorescentMarkerDTO::getExcitationLength, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    private static Comparator<FluorescentMarker> proteinOrder =
+    private static Comparator<FluorescentMarkerDTO> proteinOrder =
             Comparator.comparing(efg -> {
                 if (CollectionUtils.isEmpty(efg.getEfg().getFluorescentProteinEfgs()))
                     return null;
@@ -75,7 +75,7 @@ public class FluorescentMarkerSorting implements Sorting<FluorescentMarker> {
                         .collect(joining());
             }, Comparator.nullsLast(Comparator.naturalOrder()));
 
-    public Comparator<FluorescentMarker> getComparator(String value) {
+    public Comparator<FluorescentMarkerDTO> getComparator(String value) {
         Field field = Field.getField(value);
         if (field == null)
             return getJoinedComparator(defaultList);

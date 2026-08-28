@@ -1392,7 +1392,12 @@
                                  join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
                                  join feature on genofeat_feature_zdb_id = feature_zdb_id
                                  join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
-                                 join fluorescent_marker as fm on fmrel_mrkr_zdb_id = fm.fm_mrkr_zdb_id
+                                 join (select fe_mrkr_zdb_id as fm_mrkr_zdb_id, fp.fp_emission_color as fm_emission_color, fp.fp_excitation_color as fm_excitation_color
+                                       from fpprotein_efg fe join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                                       union
+                                       select fc_mrkr_zdb_id, fp.fp_emission_color, fp.fp_excitation_color
+                                       from fpprotein_construct fc join fluorescent_protein fp on fp.fp_pk_id = fc.fc_fl_protein_id) as fm
+                                       on fmrel_mrkr_zdb_id = fm.fm_mrkr_zdb_id
                                  join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
                                  join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
 "
@@ -2015,20 +2020,73 @@
                         construct_name as full_name,
                         mrkr_abbrev_order as name_sort,
                         construct_name as organism,
-                        construct_name as reporter_color,
-                        fm_emission_color ||' ' || fcm.fc_wave_length_display as emission_color,
-                        fm_excitation_color ||' ' || fcx.fc_wave_length_display as excitation_color,
                         '/' || construct_zdb_id as url,
                         to_date(get_date_from_id(construct_zdb_id,'YYYY-MM-DD'),'%Y-%m-%d') as date
                     from construct as c
                      inner join marker as m on m.mrkr_zdb_id = c.construct_zdb_id
                      inner join marker_types mt on mt.marker_type = mrkr_type
-                     full outer join fluorescent_marker as fm on fm.fm_mrkr_zdb_id = construct_zdb_id
-                     full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
-                     full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
                      where construct_zdb_id is not null
                     "
         >
+
+            <!-- ZFIN-10352: reporter_color, emission_color and excitation_color are
+                 derived from the construct's coding-sequence EFGs and their FPBase
+                 fluorescent-protein data, instead of parsing the construct name
+                 through the (stale, hand-maintained) reporter-color synonym files.
+                 A new EFG with FPBase emission data is now picked up automatically. -->
+            <entity name="construct_reporter_color"
+                    query="
+                        select mr.mrel_mrkr_1_zdb_id as construct_id,
+                            case
+                                when fp.fp_emission_color in ('violet','blue','cyan') then 'Blue'
+                                when fp.fp_emission_color = 'green'                    then 'Green'
+                                when fp.fp_emission_color = 'yellow'                   then 'Yellow'
+                                when fp.fp_emission_color = 'orange'                   then 'Orange'
+                                when fp.fp_emission_color in ('red','far red')         then 'Red'
+                            end as reporter_color
+                        from marker_relationship mr
+                        join fpprotein_efg fe on fe.fe_mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                        join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                        where mr.mrel_type = 'coding sequence of'
+                          and fp.fp_emission_color is not null
+                        union
+                        select distinct mr.mrel_mrkr_1_zdb_id as construct_id, 'Any' as reporter_color
+                        from marker_relationship mr
+                        join fpprotein_efg fe on fe.fe_mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                        join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                        where mr.mrel_type = 'coding sequence of'
+                          and fp.fp_emission_color is not null"
+                    where="construct_id=construct.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
+            <entity name="construct_emission_color"
+                    query="
+                        select distinct mr.mrel_mrkr_1_zdb_id as construct_id,
+                            fc.fc_color || ' ' || fc.fc_wave_length_display as emission_color
+                        from marker_relationship mr
+                        join fpprotein_efg fe on fe.fe_mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                        join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                        join fluorescent_color fc on fp.fp_emission_length between fc.fc_lower_bound and fc.fc_upper_bound
+                        where mr.mrel_type = 'coding sequence of'
+                          and fp.fp_emission_length is not null"
+                    where="construct_id=construct.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
+
+            <entity name="construct_excitation_color"
+                    query="
+                        select distinct mr.mrel_mrkr_1_zdb_id as construct_id,
+                            fc.fc_color || ' ' || fc.fc_wave_length_display as excitation_color
+                        from marker_relationship mr
+                        join fpprotein_efg fe on fe.fe_mrkr_zdb_id = mr.mrel_mrkr_2_zdb_id
+                        join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                        join fluorescent_color fc on fp.fp_excitation_length between fc.fc_lower_bound and fc.fc_upper_bound
+                        where mr.mrel_type = 'coding sequence of'
+                          and fp.fp_excitation_length is not null"
+                    where="construct_id=construct.id"
+                    cacheImpl="SortedMapBackedCache"
+            />
 
             <entity name="construct_typegroup"
                     query="select mtgrp_display_name as typegroup, mtgrp_name,
@@ -3648,7 +3706,12 @@
                             join genotype_feature on fish_genotype_zdb_id = genofeat_geno_zdb_id
                             join feature on genofeat_feature_zdb_id = feature_zdb_id
                             join feature_marker_relationship on fmrel_ftr_zdb_id = feature_zdb_id
-                            join fluorescent_marker on fmrel_mrkr_zdb_id = fm_mrkr_zdb_id;"
+                            join (select fe_mrkr_zdb_id as fm_mrkr_zdb_id, fp.fp_emission_color as fm_emission_color, fp.fp_excitation_color as fm_excitation_color
+                                  from fpprotein_efg fe join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                                  union
+                                  select fc_mrkr_zdb_id, fp.fp_emission_color, fp.fp_excitation_color
+                                  from fpprotein_construct fc join fluorescent_protein fp on fp.fp_pk_id = fc.fc_fl_protein_id) as fm
+                                  on fmrel_mrkr_zdb_id = fm.fm_mrkr_zdb_id;"
                     cacheImpl="SortedMapBackedCache"
                     where="efs_pk_id=expression.id"
             />
@@ -4029,7 +4092,12 @@
                      inner join feature_type as type on type.ftrtype_name = feature_type
                      inner join feature_type_ordering as ordering on ordering.fto_name = ftrtype_type_display
                      full outer join feature_marker_relationship as fmr on fmrel_ftr_zdb_id = feat.feature_zdb_id
-                     full outer join fluorescent_marker as fm on fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
+                     full outer join (select fe_mrkr_zdb_id as fm_mrkr_zdb_id, fp.fp_emission_color as fm_emission_color, fp.fp_excitation_color as fm_excitation_color
+                                      from fpprotein_efg fe join fluorescent_protein fp on fp.fp_pk_id = fe.fe_fl_protein_id
+                                      union
+                                      select fc_mrkr_zdb_id, fp.fp_emission_color, fp.fp_excitation_color
+                                      from fpprotein_construct fc join fluorescent_protein fp on fp.fp_pk_id = fc.fc_fl_protein_id) as fm
+                                      on fm.fm_mrkr_zdb_id = fmr.fmrel_mrkr_zdb_id
                      full outer join fluorescent_color as fcm on fcm.fc_color = fm.fm_emission_color
                      full outer join fluorescent_color as fcx on fcx.fc_color = fm.fm_excitation_color
                      where feature_zdb_id is not null

@@ -13,6 +13,8 @@ import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
 
@@ -75,11 +77,72 @@ public class Lesion implements Serializable {
     @Column(name = "l_has_large_variant")
     private Boolean hasLargeVariant;
 
+    /**
+     * ZFIN-10400 — where an insertion came from, as a check-all-that-apply
+     * list of stable tokens (crispr / talen / construct / other / unknown).
+     * Origins combine: a CRISPR knock-in of a construct is both. Empty means
+     * unanswered, which is distinct from the "unknown" token.
+     */
+    @Column(name = "l_insertion_origins", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] insertionOrigins = new String[0];
+
+    @Column(name = "l_insertion_origin_other")
+    private String insertionOriginOther;
+
+    @Column(name = "l_crispr_sequence")
+    private String crisprSequence;
+
+    @Column(name = "l_talen_sequence")
+    private String talenSequence;
+
+    @Column(name = "l_construct_name")
+    private String constructName;
+
+    /**
+     * Legacy free-text amino-acid box, replaced by the from/to/position
+     * columns below in ZFIN-10379. Retained but no longer read by the form,
+     * the same treatment locationInline has.
+     */
     @Column(name = "l_mutated_amino_acids")
     private String mutatedAminoAcids;
 
+    // ZFIN-10379 — structured amino-acid change. from/to are amino_acid_term
+    // ZDB IDs; end is null for a single-residue change.
+    @Column(name = "l_aa_change_from")
+    private String aaChangeFrom;
+
+    @Column(name = "l_aa_change_to")
+    private String aaChangeTo;
+
+    @Column(name = "l_aa_position_start")
+    private Integer aaPositionStart;
+
+    @Column(name = "l_aa_position_end")
+    private Integer aaPositionEnd;
+
     @Column(name = "l_mutated_amino_acids_hgvs")
     private String mutatedAminoAcidsHgvs;
+
+    /**
+     * Controlled-vocabulary term ZDB IDs from
+     * {@code transcript_consequence_term} (ZFIN-10399). Ids rather than
+     * display names so a term rename cannot orphan stored data; see
+     * {@code ZircVocabularyService}. Empty array, never null, matching
+     * {@code LineSubmission.previousNames}.
+     */
+    @Column(name = "l_transcript_consequences", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] transcriptConsequences = new String[0];
+
+    /**
+     * Controlled-vocabulary term ZDB IDs from
+     * {@code protein_consequence_term} (ZFIN-10380). Same storage contract as
+     * {@link #transcriptConsequences}.
+     */
+    @Column(name = "l_protein_consequences", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] proteinConsequences = new String[0];
 
     @Column(name = "l_additional_info")
     private String additionalInfo;

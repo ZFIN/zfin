@@ -1,6 +1,8 @@
 package org.zfin.uniprot;
 
 import lombok.extern.log4j.Log4j2;
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
 import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.DBLink;
@@ -27,15 +29,28 @@ public class UniProtLoadService {
     public static final String PUBLICATION_ATTRIBUTION_ID = AUTOMATED_CURATION_OF_UNIPROT_DATABASE_LINKS;
 
     public static void processActions(Set<UniProtLoadAction> actions, UniProtRelease release) {
-        currentSession().beginTransaction();
+        Session session = currentSession();
+        session.beginTransaction();
 
-        bulkProcessActions(actions);
+        // Apply all actions with per-query autoflush disabled. Under the default AUTO flush mode,
+        // every per-action getDBLink() query flushes and dirty-checks the entire, ever-growing
+        // persistence context — O(n^2) across the tens of thousands of actions in a load, which
+        // made a committing load thrash CPU for >1.5h. COMMIT mode skips the pre-query flushes and
+        // still flushes once at transaction commit; addDBLinks()/removeDBLinks() flush explicitly,
+        // so deferring autoflush is safe here.
+        FlushMode previousFlushMode = session.getHibernateFlushMode();
+        session.setHibernateFlushMode(FlushMode.COMMIT);
+        try {
+            bulkProcessActions(actions);
 
-        if (release != null) {
-            release.setProcessedDate(new Date());
-            currentSession().saveOrUpdate(release);
+            if (release != null) {
+                release.setProcessedDate(new Date());
+                session.saveOrUpdate(release);
+            }
+            session.getTransaction().commit();
+        } finally {
+            session.setHibernateFlushMode(previousFlushMode);
         }
-        currentSession().getTransaction().commit();
     }
 
     private static void bulkProcessActions(Set<UniProtLoadAction> actions) {

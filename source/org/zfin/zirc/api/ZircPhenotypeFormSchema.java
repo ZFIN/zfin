@@ -102,19 +102,19 @@ public final class ZircPhenotypeFormSchema {
                         // The parent phenotype card shows the description snippet —
                         // refresh it on change.
                         new Control("#/properties/description",
-                                Options.of().multi(true).refreshesParent(true), null)
+                                Options.of().withMulti(true).withRefreshesParent(true), null)
                 )),
                 // Custom timing widget — hpf/dpf unit toggle + read-only
                 // stage echo.
                 Group.of(null, List.of(
                         new Control("#/properties/hpfStart",
-                                Options.of().widget("phenotypeTiming"), null)
+                                Options.of().withWidget("phenotypeTiming"), null)
                 )),
                 Group.of(null, List.of(
                         new Control("#/properties/zfinImagePermission",
-                                Options.of().widget("yesNoRadio"), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/zircImagePermission",
-                                Options.of().widget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null)
                 )),
                 // Segregation sits directly below image permissions
                 // (ZFIN-10348). The %/comment fields follow it and only
@@ -122,20 +122,20 @@ public final class ZircPhenotypeFormSchema {
                 Group.of(null, List.of(
                         new Control("#/properties/segregation",
                                 Options.of()
-                                        .widget("selectWithOther")
-                                        .standardValues(SEGREGATION_OPTIONS)
-                                        .noOther(true),
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(SEGREGATION_OPTIONS)
+                                        .withNoOther(true),
                                 null),
                         new Control("#/properties/nonMendelianPercentage",
-                                Options.of().suffix("%"), showWhenNonMendelian),
+                                Options.of().withSuffix("%"), showWhenNonMendelian),
                         new Control("#/properties/nonMendelianComment",
-                                Options.of().multi(true), showWhenNonMendelian)
+                                Options.of().withMulti(true), showWhenNonMendelian)
                 )),
                 Group.of(null, List.of(
                         new Control("#/properties/type",
                                 Options.of()
-                                        .widget("selectWithOther")
-                                        .standardValues(PHENOTYPE_TYPE_OPTIONS),
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(PHENOTYPE_TYPE_OPTIONS),
                                 null)
                 ))
         ));

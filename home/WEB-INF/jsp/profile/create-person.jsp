@@ -6,6 +6,28 @@
 
     <script src="${zfn:getAssetPath("profiles.js")}"></script>
 
+    <c:if test="${prefillFailed}">
+        <div style="border: 2px solid #a00; padding: 0.5em; margin-bottom: 0.5em;">
+            That account request could not be loaded, so this form has not been prefilled. Please
+            enter the details from the request email by hand.
+        </div>
+    </c:if>
+
+    <c:if test="${!empty submission}">
+        <div style="border: 2px solid gray; padding: 0.5em; margin-bottom: 0.5em; background-color: #EFEFEF;">
+            <strong>Prefilled from the account request of
+                <fmt:formatDate value="${submission.date}" pattern="dd MMM yyyy"/></strong>
+            <p>The form below is filled in from the request. These were also submitted, and this
+                form does not set them &mdash; add lab membership and position after the account
+                exists:</p>
+            <table>
+                <tr><td>Lab:</td><td><c:out value="${submission.lab}"/></td></tr>
+                <tr><td>Role/Position:</td><td><c:out value="${submission.role}"/></td></tr>
+                <tr><td>Comments:</td><td><c:out value="${submission.comments}"/></td></tr>
+            </table>
+        </div>
+    </c:if>
+
     <form:form method="post" modelAttribute="${LookupStrings.FORM_BEAN}"
                action="/action/profile/person/create" enctype="multipart/form-data"
                style="border: 2px solid gray;   background-color: #FEF7D6; "
@@ -46,6 +68,29 @@
                         <%--<form:input size="50" path="middleNameOrInitial"/>--%>
                         <%--<zfin2:errors errorResult="${errors}" path="middleNameOrInitial"/>--%>
                         <%--<br>--%>
+                        <form:label path="orcidID">ORCID iD:</form:label>
+                        <form:input size="50" path="orcidID"/>
+                        <zfin2:errors errorResult="${errors}" path="orcidID"/>
+                        <br>
+                        <form:label path="phone">Phone:</form:label>
+                        <form:input size="50" path="phone"/>
+                        <zfin2:errors errorResult="${errors}" path="phone"/>
+                        <br>
+                        <form:label path="address">Address:</form:label>
+                        <form:input size="50" path="address"/>
+                        <zfin2:errors errorResult="${errors}" path="address"/>
+                        <br>
+                        <form:label path="country">Country:</form:label>
+                        <form:select path="country">
+                            <form:option value=""/>
+                            <form:options items="${countryList}"/>
+                        </form:select>
+                        <zfin2:errors errorResult="${errors}" path="country"/>
+                        <br>
+                        <form:label path="url">Website:</form:label>
+                        <form:input size="50" path="url"/>
+                        <zfin2:errors errorResult="${errors}" path="url"/>
+                        <br>
                         <form:label path="emailList">On Email List:</form:label>
                         <form:checkbox size="50" path="emailList"/>
                         <br>

@@ -19,6 +19,7 @@ import org.zfin.profile.presentation.*;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.publication.repository.PublicationRepository;
+import org.zfin.util.OrcidUtil;
 
 import org.zfin.repository.RepositoryFactory;
 
@@ -1090,6 +1091,23 @@ public class HibernateProfileRepository implements ProfileRepository {
         query.setParameter("email", email);
         List<Person> persons = query.list();
         return persons.size() >= 1;
+    }
+
+    @Override
+    public Person getPersonByOrcid(String orcidID) {
+        String canonical = OrcidUtil.normalize(orcidID);
+        if (canonical.isEmpty()) {
+            // Not a readable ORCID, so it cannot collide with one.
+            return null;
+        }
+        // Almost every stored value is canonical, but a handful of older records kept the digits
+        // without the dashes, and those are the same identifier.
+        Query<Person> query = currentSession().createQuery(
+                "from Person where orcidID = :canonical or orcidID = :bare", Person.class);
+        query.setParameter("canonical", canonical);
+        query.setParameter("bare", canonical.replace("-", ""));
+        List<Person> persons = query.list();
+        return persons.isEmpty() ? null : persons.get(0);
     }
 
     @Override

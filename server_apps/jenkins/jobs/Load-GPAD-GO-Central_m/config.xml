@@ -1,0 +1,233 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>ZFIN-10025: unified GO load. Imports GO Central's single MOD-ID-keyed DANRE-mod GPAD file, which is intended to replace the separate Load-GAF-GOA_m, Load-GPAD-Noctua_w, and Load-GAF-FP-Inference_m loads.
+
+    *** THIS JOB WRITES TO THE DATABASE BY DEFAULT *** (GAF_LOAD_REPORT_ONLY defaults to false.) Left as-is it will add/update/remove marker_go_term_evidence rows for the GOA and Noctua organizations. Tick GAF_LOAD_REPORT_ONLY for a dry run that only produces the QC report.
+
+    Captures before/after marker_go_term_evidence snapshots and a DB-level csvDiff for FIVE organizations: the three the load owns (GOA, Noctua, PAINT) plus the two it must NOT touch (FP Inferences, UniProt). The latter two are expected to diff 0/0; capturing them turns that assumption into a check, and documents the two known cutover gaps -- FP-Inference rows are orphaned rather than migrated, and the UniProt-org *2go rows (111,089 across all three streams) sit outside the removal scope, so the 70,062 interpro2go/ec2go ones would duplicate at cutover unless purged (see server_apps/DB_maintenance/gafLoad/README-danre-mod-consolidation.md).
+
+    Exit code 2 from the load means "completed with errors" and is mapped to UNSTABLE, not FAILURE — a run with errors is normal, not an abort.
+
+    *** THIS JOB IS DISABLED UNTIL CUTOVER. *** Enabling it is HALF of a two-part switch and must not be done on its own. The other half is turning the UniProt-Secondary load's *2go GO streams OFF (LOAD_INTERPRO2GO_EC2GO=false, LOAD_KW2GO=false on UniProt-Secondary-Term-Load) and purging the pre-existing UniProt-org interpro2go + ec2go rows (70,062). Note the purge deliberately does NOT include kw2go (41,027), which has no successor -- that is a separate decision. Enable this job while those streams are still on and the same InterPro2GO/EC2GO content exists twice, under two different organizations — the secondary load owns its copies as gafOrganization='UniProt' and this load writes its own as 'GOA', so neither prunes the other. Enable it, flip those flags and run the purge together. See server_apps/DB_maintenance/gafLoad/README-danre-mod-consolidation.md, open decisions 3 and 4.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>DANRE_MOD_GPAD_URL</name>
+          <description>GPAD 2.0 source file. Default is GO Central's published prod file. Override to QC a candidate release before it is promoted, e.g. a file under https://ftp.ebi.ac.uk/pub/contrib/goa/goex/current/gpad/. file:// is not supported; the loader queries Last-Modified over HTTP.</description>
+          <defaultValue>https://current.geneontology.org/annotations/gpad/DANRE-mod.gpad.gz</defaultValue>
+          <trim>true</trim>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>GAF_LOAD_REPORT_ONLY</name>
+          <description>If checked, compute the add/update/remove diff and write the QC reports but perform NO database writes. Leave unchecked for a real load. Note: with this checked the before/after snapshots are identical, so the per-org csvDiff workbooks come out empty by design.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_MGTE_CLEANUP</name>
+          <description>If checked, run cleanMarkerGoTermEvidenceDuplicatesTask after the load and before the "after" snapshot is captured, so the diff reflects the post-cleanup state. Matches Load-GAF-GOA_m. No-op when GAF_LOAD_REPORT_ONLY is checked, since nothing was written.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>MGTE_CLEANUP_CSVS</name>
+          <description>If checked (the default), the cleanup writes its four record-keeping CSVs to server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff/ under the deployment root -- the same directory this job already puts its before/after mgte_*.csv snapshots and mgte_dbdiff_*.xlsx comparison workbooks in, and which is archived with the build. The CSVs are the record of which duplicate annotations the cleanup deleted. Uncheck when this run is a step in a larger comparison and they are just bulky byproducts. Has no effect unless RUN_MGTE_CLEANUP is also checked.</description>
+          <defaultValue>true</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_CUTOVER_SCRIPTS</name>
+          <description>REHEARSAL / CUTOVER ONLY -- leave unchecked for a normal run.
+
+If checked, the cutover SQL runs after the load and before the AFTER snapshot, so this build's before/after diff covers the load AND the cutover data changes together. That combined number is the one to sign off before cutover, but it is NOT comparable to the reference run in RUNBOOK-danre-mod-load.md section 10, which brackets the load alone.
+
+Runs two scripts from server_apps/DB_maintenance/gafLoad:
+  cutover-rehome-phylo-to-paint.sql -- moves pre-existing GO_REF:0000033 rows from GOA to PAINT. The loader only routes newly loaded rows there, so without this phylo annotations end up split across both organizations.
+  cutover-purge-uniprot-2go.sql -- drops the ~70k UniProt-org interpro2go/ec2go rows the load has just superseded.
+
+The purge has to run after the load, not before: it refuses to start until the GOA-org replacement rows exist. It will therefore fail if GAF_LOAD_REPORT_ONLY is checked, since a report-only run writes nothing for it to find.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>RUN_KW2GO_PURGE</name>
+          <description>Additionally delete the 41,027 UniProt-org kw2go rows (cutover-purge-uniprot-kw2go.sql). Ignored unless RUN_CUTOVER_SCRIPTS is also checked.
+
+Kept separate from RUN_CUTOVER_SCRIPTS because it is a separate and still-open decision (ZFIN-10344). Unlike interpro2go and ec2go, kw2go has no successor in either GPAD file, so this is not a swap: of its 40,408 distinct (gene, GO) pairs, 10,907 are a true loss -- no other source supplies them and no more specific term the gene retains implies them.
+
+Only check this if that decision was "delete", and set LOAD_KW2GO=false on UniProt-Secondary-Term-Load first, or its next run re-derives every row this deletes.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>true</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers>
+    <hudson.triggers.TimerTrigger>
+      <spec></spec>
+    </hudson.triggers.TimerTrigger>
+  </triggers>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# BEFORE snapshot. GOA + Noctua are the orgs this load owns and mutates; FP Inferences +
+# UniProt are captured because it must NOT touch them -- their 0/0 diffs are the standing
+# check on the two known cutover gaps (see the job description).
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff
+
+echo "DANRE_MOD_GPAD_URL   = $DANRE_MOD_GPAD_URL"
+echo "GAF_LOAD_REPORT_ONLY = $GAF_LOAD_REPORT_ONLY"
+echo "RUN_MGTE_CLEANUP     = $RUN_MGTE_CLEANUP"
+
+bash $SQL/mgte_snapshot.sh before "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <!-- Shell task (not Ant task) so we can map exit code 2 to UNSTABLE.
+                 DANRE_MOD_GPAD_URL and GAF_LOAD_REPORT_ONLY reach the Ant target as
+                 environment variables (Jenkins exports build parameters), which is how
+                 load-gpad-danre-mod resolves both. -->
+            <command>ant -f $SOURCEROOT/server_apps/DB_maintenance/build.xml load-gpad-danre-mod -DjobName=Load-GPAD-GO-Central_m</command>
+            <unstableReturn>2</unstableReturn>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Cutover data changes -- off by default, so a normal QC run never reaches the scripts.
+#
+# This sits after the load on purpose: cutover-purge-uniprot-2go.sql refuses to run until the
+# GOA-org interpro2go/ec2go rows exist, and only the load creates them. The re-homing does not
+# care which side of the load it runs on, so both live in this one step.
+#
+# It also sits before the AFTER snapshot on purpose: the point of a rehearsal is a single diff
+# spanning load + cutover.
+if [ "$RUN_CUTOVER_SCRIPTS" != "true" ]; then
+    echo "RUN_CUTOVER_SCRIPTS not true -> skipping the cutover scripts"
+    exit 0
+fi
+
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+PSQL="psql -v ON_ERROR_STOP=1 -h $PGHOST -d $DBNAME"
+
+echo "=== cutover: re-homing GO_REF:0000033 phylo annotations from GOA to PAINT ==="
+$PSQL -f $SQL/cutover-rehome-phylo-to-paint.sql
+
+echo "=== cutover: purging superseded UniProt-org interpro2go/ec2go ==="
+$PSQL -f $SQL/cutover-purge-uniprot-2go.sql
+
+# kw2go is gated separately: ZFIN-10344 is still open, and unlike the 2go purge this one has no
+# replacement to guard against, so nothing but this flag stops it deleting the wrong thing.
+if [ "$RUN_KW2GO_PURGE" = "true" ]; then
+    echo "=== cutover: RUN_KW2GO_PURGE=true -> deleting UniProt-org kw2go ==="
+    $PSQL -f $SQL/cutover-purge-uniprot-kw2go.sql
+else
+    echo "RUN_KW2GO_PURGE not true -> leaving kw2go rows in place (ZFIN-10344 undecided)"
+fi
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Optional: run the marker_go_term_evidence duplicate cleanup after the load, before
+# the AFTER snapshot, so the diff reflects the post-cleanup state. Mirrors Load-GAF-GOA_m.
+# The task's record-keeping CSVs are written by \copy with relative paths, i.e. into the CWD,
+# which would be $SOURCEROOT. MGTE_CLEANUP_CSVS decides: checked -> -DcleanupCsvDir sends them
+# to the -dbdiff dir to be archived with the build; unchecked -> the flag is omitted and the
+# task writes none.
+if [ "$RUN_MGTE_CLEANUP" = "true" ]; then
+    if [ "$GAF_LOAD_REPORT_ONLY" = "true" ]; then
+        echo "GAF_LOAD_REPORT_ONLY=true -> nothing was written; skipping cleanup"
+    else
+        echo "RUN_MGTE_CLEANUP=true -> running cleanMarkerGoTermEvidenceDuplicatesTask"
+        cd $SOURCEROOT
+        # -DcleanupCsvDir names where the record-keeping CSVs go; omitting it skips them.
+        if [ "$MGTE_CLEANUP_CSVS" = "false" ]; then
+            CLEANUP_CSV_ARG=""
+        else
+            CLEANUP_CSV_ARG="-DcleanupCsvDir=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff"
+        fi
+        echo "MGTE_CLEANUP_CSVS=$MGTE_CLEANUP_CSVS -> ${CLEANUP_CSV_ARG:-(no CSVs)}"
+        gradle cleanMarkerGoTermEvidenceDuplicatesTask $CLEANUP_CSV_ARG
+    fi
+else
+    echo "RUN_MGTE_CLEANUP not true -> skipping cleanup"
+fi
+]]></command>
+        </hudson.tasks.Shell>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# AFTER snapshot + per-org row-level diff.
+SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
+OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff
+
+bash $SQL/mgte_snapshot.sh after "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
+bash $SQL/mgte_csvdiff.sh        "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
+]]></command>
+        </hudson.tasks.Shell>
+    </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m/Load-GPAD-GO-Central_m*,server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff/mgte_*.csv,server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff/mgte_*.xlsx</artifacts>
+      <latestOnly>false</latestOnly>
+      <allowEmptyArchive>true</allowEmptyArchive>
+    </hudson.tasks.ArtifactArchiver>
+    <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+      <recipientList></recipientList>
+      <configuredTriggers>
+        <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+          <email>
+            <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m/Load-GPAD-GO-Central_m_summary.txt&quot;}
+
+See full details at ${BUILD_URL}artifact/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m/Load-GPAD-GO-Central_m_details.txt</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+        <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+          <email>
+            <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+            <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+            <body>${FILE,path=&quot;server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m/Load-GPAD-GO-Central_m_errors.txt&quot;}</body>
+            <sendToDevelopers>false</sendToDevelopers>
+            <sendToRequester>false</sendToRequester>
+            <includeCulprits>false</includeCulprits>
+            <sendToRecipientList>true</sendToRecipientList>
+            <attachmentsPattern></attachmentsPattern>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo></replyTo>
+            <contentType>project</contentType>
+          </email>
+        </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+      </configuredTriggers>
+      <contentType>text/plain</contentType>
+      <defaultSubject>[Jenkins] ${PROJECT_NAME}: ${BUILD_STATUS}: [${INSTANCE}]</defaultSubject>
+      <defaultContent>$DEFAULT_CONTENT</defaultContent>
+      <attachmentsPattern></attachmentsPattern>
+      <presendScript></presendScript>
+      <attachBuildLog>false</attachBuildLog>
+      <compressBuildLog>false</compressBuildLog>
+      <replyTo>${DB_OWNER}@zfin.org</replyTo>
+      <saveOutput>false</saveOutput>
+    </hudson.plugins.emailext.ExtendedEmailPublisher>
+  </publishers>
+  <buildWrappers>
+  </buildWrappers>
+</project>
