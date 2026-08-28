@@ -1295,7 +1295,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
+    public String getReferenceSequence(String assembly, String chromosome, int start, int end) throws ValidationException {
         AssemblyEnum assemblyEnum = null;
         for (AssemblyEnum ae : AssemblyEnum.values()) {
             if (ae.getName().equals(assembly)) {
@@ -1306,6 +1306,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (assemblyEnum == null) {
             return null;
         }
+        // The curation form calls this as soon as the location fields lose focus, so it is usually
+        // where an impossible coordinate is met first -- before any attempt to save. Without this
+        // the FASTA read throws and the curator gets "Failed to fetch reference sequence: 500".
+        validateLocationWithinChromosome(assembly, chromosome, start, end);
         GenomicLocationService genomicLocationService = new GenomicLocationService();
         return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
     }
