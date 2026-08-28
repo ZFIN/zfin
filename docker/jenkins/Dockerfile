@@ -45,7 +45,6 @@ CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang=ALL-UNNAMED \
 	--add-opens java.base/java.lang.reflect=ALL-UNNAMED \
 	--add-opens java.desktop/java.awt=ALL-UNNAMED \
-	-Dinstance=docker \
 	-Dhudson.model.DirectoryBrowserSupport.CSP= \
 	-jar /opt/jenkins/jenkins.war \
 	 --httpPort=9499 \
