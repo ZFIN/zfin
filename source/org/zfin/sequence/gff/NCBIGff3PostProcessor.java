@@ -3,9 +3,9 @@ package org.zfin.sequence.gff;
 import htsjdk.tribble.gff.Gff3Feature;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.hibernate.SessionFactory;
+import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.api.Pagination;
@@ -29,7 +29,6 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.gff.Gff3NcbiService.createBatch;
@@ -273,23 +272,31 @@ public class NCBIGff3PostProcessor extends AbstractScriptWrapper {
 
     private void downloadNcbiGff3File() {
         String zippedFileName = "GCF_049306965.1_GRCz12tu_genomic.gff.gz";
-        File file = new File(zippedFileName);
-        if (file.exists()) {
-            return;
-        }
+        File zippedFile = new File(zippedFileName);
 
         String fileURL = "https://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_049306965.1_GRCz12tu/" + zippedFileName;
 
         try {
-            FileUtils.copyURLToFile(
-                new URL(fileURL),
-                new File(zippedFileName),
-                60000,
-                READ_TIMEOUT);
+            // reuse the local archive only while it still matches the server's copy; skipping the
+            // download whenever the file merely existed meant a re-released assembly was never
+            // picked up, since the name stays the same
+            new DownloadService().downloadFileIfChanged(zippedFile, new URL(fileURL));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FileUtil.gunzipFile(zippedFileName);
+
+        // the archive carries the server's Last-Modified and we copy it onto the decompressed
+        // file, so equal timestamps mean the gff3 on disk came out of this archive
+        //
+        // TODO: htsjdk reads a gzipped gff3 through the same
+        // AbstractFeatureReader.getFeatureReader call Gff3Reader already makes (verified against
+        // htsjdk 4.3.0), so this block can go away entirely -- hand Gff3Reader the .gz path and
+        // skip decompressing ~170 MB. See workbench/stream-compressed-downloads-ticket.md
+        File decompressedFile = new File(zippedFileName.substring(0, zippedFileName.indexOf(".gz")));
+        if (!decompressedFile.exists() || decompressedFile.lastModified() != zippedFile.lastModified()) {
+            FileUtil.gunzipFile(zippedFileName);
+            decompressedFile.setLastModified(zippedFile.lastModified());
+        }
     }
 
     private List<Gff3Ncbi> markZfinGeneRecords() {

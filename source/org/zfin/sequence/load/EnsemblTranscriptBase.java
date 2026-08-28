@@ -1,12 +1,12 @@
 package org.zfin.sequence.load;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.commons.io.FileUtils;
 import org.biojava.bio.BioException;
 import org.biojava.bio.seq.io.SymbolTokenization;
 import org.biojavax.SimpleNamespace;
 import org.biojavax.bio.seq.RichSequence;
 import org.biojavax.bio.seq.RichSequenceIterator;
+import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.marker.Marker;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.MarkerDBLink;
@@ -19,7 +19,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static htsjdk.samtools.util.ftp.FTPClient.READ_TIMEOUT;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 
 @Log4j2
@@ -67,25 +66,41 @@ abstract public class EnsemblTranscriptBase {
     }
 
 
+    /**
+     * Fetch one of the Ensembl fasta dumps, reusing the local copy only while it still matches
+     * what the server would send.
+     * <p>
+     * The url goes through current_fasta, a moving pointer to the newest release, and the file
+     * name stays the same from release to release for as long as the assembly stays GRCz11. The
+     * old "skip if the file exists" check therefore pinned the load to whichever release happened
+     * to be downloaded first, with nothing in the name to show it had gone stale.
+     */
     protected static void downloadFile(String fileName, String directory) {
         String zippedFileName = fileName + ".gz";
-        File file = new File(zippedFileName);
-        if (file.exists()) {
-            return;
-        }
+        File zippedFile = new File(zippedFileName);
 
         String fileURL = "https://ftp.ensembl.org/pub/current_fasta/danio_rerio/" + directory + "/" + zippedFileName;
 
         try {
-            FileUtils.copyURLToFile(
-                new URL(fileURL),
-                new File(zippedFileName),
-                60000,
-                READ_TIMEOUT);
+            new DownloadService().downloadFileIfChanged(zippedFile, new URL(fileURL));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        FileUtil.gunzipFile(zippedFileName);
+
+        // Gunzip only when the decompressed copy is not the one inside this archive. The archive
+        // carries the server's Last-Modified, and we copy that onto the decompressed file, so
+        // equal timestamps mean the two are in sync. Comparing "older than" instead would break:
+        // a refreshed archive is back-dated to the server's timestamp and can easily be older
+        // than a fasta left over from the previous release.
+        //
+        // TODO: this whole block goes away once getFastaIterator reads the .gz directly -- the
+        // decompressed file is what has to be kept in sync, so not creating it removes the need.
+        // See workbench/stream-compressed-downloads-ticket.md
+        File decompressedFile = new File(fileName);
+        if (!decompressedFile.exists() || decompressedFile.lastModified() != zippedFile.lastModified()) {
+            FileUtil.gunzipFile(zippedFileName);
+            decompressedFile.setLastModified(zippedFile.lastModified());
+        }
     }
 
     protected static Map<String, List<RichSequence>> getGeneTranscriptMap(String fileName) {
@@ -129,6 +144,9 @@ abstract public class EnsemblTranscriptBase {
 
     private static List<RichSequence> getFastaIterator(String fileName) throws FileNotFoundException {
         System.out.println(fileName);
+        // TODO: read the .gz directly -- new InputStreamReader(new GZIPInputStream(...)) in place of
+        // the FileReader -- so the decompressed fasta never has to exist on disk. Everything below
+        // only needs a BufferedReader. See workbench/stream-compressed-downloads-ticket.md
         FileReader fileReader = new FileReader(fileName);
         BufferedReader br = new BufferedReader(fileReader);
         RichSequenceIterator iterator;
@@ -187,13 +205,23 @@ abstract public class EnsemblTranscriptBase {
         }
     }
 
+    // TODO: .all.fa is ~150 MB of pure duplication -- it concatenates the two fasta downloads that
+    // are already on disk as archives. Only EnsemblTranscriptFastaReader
+    // (gradle createEnsemblTranscriptFastaFile) calls this, and no Jenkins job runs that task, so
+    // this may be droppable outright rather than ported to streaming.
+    // See workbench/stream-compressed-downloads-ticket.md
     protected static File getCombinedFastaFile() {
-        File allFile = new File(ALL_FILE_NAME);
-        if (allFile.exists()) {
-            return allFile;
-        }
+        // validate the two inputs before deciding whether the combined file is still good: it is
+        // derived from them, so "it exists" said nothing about whether it was built from the
+        // release we are about to load against
         downloadFile(CDNA_FILE_NAME, "cdna");
         downloadFile(NCRNA_FILE_NAME, "ncrna");
+
+        File allFile = new File(ALL_FILE_NAME);
+        long newestInput = Math.max(new File(CDNA_FILE_NAME).lastModified(), new File(NCRNA_FILE_NAME).lastModified());
+        if (allFile.exists() && allFile.lastModified() == newestInput) {
+            return allFile;
+        }
         try {
             PrintWriter pw = new PrintWriter(ALL_FILE_NAME);
             BufferedReader br = new BufferedReader(new FileReader(CDNA_FILE_NAME));
@@ -215,6 +243,8 @@ abstract public class EnsemblTranscriptBase {
             throw new RuntimeException(e);
         }
         allFile = new File(ALL_FILE_NAME);
+        // mark the combined file as built from these inputs, so the check above can tell next time
+        allFile.setLastModified(newestInput);
         return allFile;
     }
 

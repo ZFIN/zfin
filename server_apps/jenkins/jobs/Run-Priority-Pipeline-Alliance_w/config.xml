@@ -27,7 +27,11 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $SOURCEROOT &amp;&amp; gradle runPriorityPipeline &amp;&amp; cp priority-pipeline-report.html $TARGETROOT/</command>
+            <!-- mv, not cp: the report is written into $SOURCEROOT (runPriorityPipeline is a
+                 JavaExec task and the job runs "cd $SOURCEROOT"), and the archiver and both
+                 email triggers read it from the $TARGETROOT workspace. Copying left an
+                 untracked duplicate in the git checkout after every run. -->
+            <command>cd $SOURCEROOT &amp;&amp; gradle runPriorityPipeline &amp;&amp; mv priority-pipeline-report.html $TARGETROOT/</command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>

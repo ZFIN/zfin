@@ -67,14 +67,23 @@
     </target>
 
     <target name="load-reference-proteome" description="">
+        <!-- the load writes the proteome fasta and accessions-not-found.txt relative to its
+             working directory, which is ant's basedir (SOURCEROOT) unless the fork is given a
+             dir. Point it at the job directory under TARGETROOT that the Jenkins archiver and
+             the email's ${FILE,path=...} read from. -->
+        <property name="job.output.basedir" value="${validateData}/Load-Reference-Proteome"/>
+        <mkdir dir="${job.output.basedir}"/>
         <java classname="org.zfin.datatransfer.LoadReferenceProteome"
               fork="yes"
+              dir="${job.output.basedir}"
               classpathref="combined.classpath"
               failonerror="true">
             <arg value="-webrootDirectory"/>
             <arg value="${web.dir}"/>
             <arg value="-loadDir"/>
-            <arg value="server_apps/DB_maintenance/validatedata"/>
+            <!-- absolute: report.properties is read out of this directory and can no longer
+                 resolve against the working directory now that the fork has moved -->
+            <arg value="${basedir}/server_apps/DB_maintenance/validatedata"/>
             <arg value="-jobName"/>
             <arg value="Load-Reference-Proteome"/>
             <jvmarg value="${jvm.arg.log4j}"/>

@@ -2,6 +2,7 @@ package org.zfin.gwt.curation.ui;
 
 import org.junit.*;
 import org.zfin.gwt.root.dto.FeatureDTO;
+import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
 
 
@@ -109,5 +110,88 @@ public class FeatureValidationTest {
 //              end if;
 //         end if;
 
+    /**
+     * Half-entered genomic mutation detail. Each case below is the shape of a row that actually
+     * reached production and is listed by
+     * validatedata/Check-Feature-Mutation-Detail-Missing-Sequences_w.sql.
+     */
+    private FeatureGenomeMutationDetailChangeDTO mutationDetail(String reference, String variant) {
+        FeatureGenomeMutationDetailChangeDTO fgmd = new FeatureGenomeMutationDetailChangeDTO();
+        fgmd.setFgmdSeqRef(reference);
+        fgmd.setFgmdSeqVar(variant);
+        return fgmd;
+    }
+
+    /**
+     * Supplying a variant sequence already requires a full location, and that check runs first, so
+     * the cases below with a variant present have to satisfy it before the sequence-pair check is
+     * reached. The affected features all do carry GRCz12tu coordinates in practice.
+     */
+    private void givenFullLocation() {
+        featureDTO.setFeatureChromosome("20");
+        featureDTO.setFeatureAssembly("GRCz12tu");
+        featureDTO.setFeatureStartLoc(1000);
+        featureDTO.setFeatureEndLoc(1010);
+        featureDTO.setEvidence("ZDB-TERM-170419-250");
+    }
+
+    @Test
+    public void pointMutationWithReferenceButNoVariantIsRejected() {
+        // ZDB-ALT-220927-6 (zf3482): reference 'G', no variant. This crashed the Alliance export.
+        featureDTO.setFeatureType(FeatureTypeEnum.POINT_MUTATION);
+        featureDTO.setFgmdChangeDTO(mutationDetail("G", null));
+        Assert.assertEquals("Sequence of Variant is required for a "
+                        + FeatureTypeEnum.POINT_MUTATION.getDisplay()
+                        + " when Sequence of Reference is specified",
+                FeatureValidationService.isValidToSave(featureDTO));
+    }
+
+    @Test
+    public void insertionWithReferenceButNoVariantIsRejected() {
+        // ZDB-ALT-260309-2 (el1050): reference 'TC', no variant.
+        featureDTO.setFeatureType(FeatureTypeEnum.INSERTION);
+        featureDTO.setFgmdChangeDTO(mutationDetail("TC", null));
+        Assert.assertEquals("Sequence of Variant is required for a "
+                        + FeatureTypeEnum.INSERTION.getDisplay(),
+                FeatureValidationService.isValidToSave(featureDTO));
+    }
+
+    @Test
+    public void indelWithVariantButNoReferenceIsRejected() {
+        // ZDB-ALT-250904-2 (cdz5) and six others: variant present, no reference.
+        featureDTO.setFeatureType(FeatureTypeEnum.INDEL);
+        givenFullLocation();
+        featureDTO.setFgmdChangeDTO(mutationDetail("   ", "AGTA"));
+        Assert.assertEquals("Sequence of Reference is required for a "
+                        + FeatureTypeEnum.INDEL.getDisplay()
+                        + " when Sequence of Variant is specified",
+                FeatureValidationService.isValidToSave(featureDTO));
+    }
+
+    @Test
+    public void deletionWithVariantButNoReferenceIsRejected() {
+        // ZDB-ALT-220720-3 (w242): variant present, no reference.
+        featureDTO.setFeatureType(FeatureTypeEnum.DELETION);
+        givenFullLocation();
+        featureDTO.setFgmdChangeDTO(mutationDetail(null, "GCAAGCCTATCCCA"));
+        Assert.assertEquals("Sequence of Reference is required for a "
+                        + FeatureTypeEnum.DELETION.getDisplay(),
+                FeatureValidationService.isValidToSave(featureDTO));
+    }
+
+    /**
+     * A feature that carries no genomic sequences at all is still saveable -- the check only fires
+     * once the curator has supplied one of the pair, so it cannot force mutation detail onto
+     * features that were never meant to have any.
+     */
+    @Test
+    public void featureWithoutMutationDetailSequencesIsStillSaveable() {
+        featureDTO.setFeatureType(FeatureTypeEnum.POINT_MUTATION);
+        featureDTO.setFgmdChangeDTO(mutationDetail(null, null));
+        Assert.assertNull(FeatureValidationService.isValidToSave(featureDTO));
+
+        featureDTO.setFgmdChangeDTO(null);
+        Assert.assertNull(FeatureValidationService.isValidToSave(featureDTO));
+    }
 
 }

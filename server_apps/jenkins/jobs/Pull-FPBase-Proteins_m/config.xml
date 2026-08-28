@@ -43,7 +43,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern></attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo></replyTo>
@@ -59,7 +59,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern></attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>

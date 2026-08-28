@@ -27,14 +27,17 @@
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
         <hudson.tasks.Shell>
-            <command>cd $SOURCEROOT &amp;&amp; gradle runEnsemblTranscriptLengthUpdater &amp;&amp; cp ensembl-transcript-load-report.html $TARGETROOT/.</command>
+            <command>cd $SOURCEROOT &amp;&amp; gradle runEnsemblTranscriptLengthUpdater</command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>ensembl-transcript-load-report.html</artifacts>
+            <!-- the load now writes straight into the workspace, so archive the five report
+                 files it produces alongside the html summary; the Danio_rerio.GRCz11.* fasta
+                 downloads share the directory but are inputs, not results -->
+            <artifacts>ensembl-transcript-load-report.html,ensembl-error-report.txt,duplicated-ensembl-transcript-name-report.txt,report-transcript-*</artifacts>
             <latestOnly>false</latestOnly>
-            <allowEmptyArchive>true</allowEmptyArchive>
+            <allowEmptyArchive>false</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
         <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
             <recipientList></recipientList>
@@ -48,7 +51,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern>ensembl-error-report.txt</attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo></replyTo>
@@ -64,7 +67,7 @@
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>
                         <sendToRecipientList>true</sendToRecipientList>
-                        <attachmentsPattern>ensembl-transcript-report.txt</attachmentsPattern>
+                        <attachmentsPattern>ensembl-transcript-load-report.html</attachmentsPattern>
                         <attachBuildLog>false</attachBuildLog>
                         <compressBuildLog>false</compressBuildLog>
                         <replyTo>$PROJECT_DEFAULT_REPLYTO</replyTo>

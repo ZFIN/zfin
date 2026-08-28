@@ -7,7 +7,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.feature.FeatureNote;
-import org.zfin.gwt.root.util.StringUtils;
+// commons-lang3 rather than org.zfin.gwt.root.util.StringUtils: identical isEmpty/isNotEmpty
+// semantics (the ZFIN copy is a fork of this javadoc), and it adds the null-safe length() the
+// point-mutation check below needs.
+import org.apache.commons.lang3.StringUtils;
 import org.zfin.mapping.FeatureLocation;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 import org.zfin.publication.Publication;
@@ -76,8 +79,13 @@ public class BasicVariantInfo extends AbstractScriptWrapper {
                                 dto.setType("SO:1000008");
                                 dto.setGenomicReferenceSequence(variant.getFgmdSeqRef());
                                 dto.setGenomicVariantSequence(variant.getFgmdSeqVar());
+                                // StringUtils.length is null-safe (0 for null). A point mutation
+                                // with a reference base but no variant base -- ZDB-ALT-220927-6 --
+                                // reached the raw getFgmdSeqVar().length() here and killed the
+                                // whole Alliance file generation from a diagnostic println.
                                 if (StringUtils.isEmpty(variant.getFgmdSeqRef())
-                                        || variant.getFgmdSeqRef().length() > 1) {
+                                        || StringUtils.length(variant.getFgmdSeqVar()) > 1
+                                        || StringUtils.length(variant.getFgmdSeqRef()) > 1) {
                                     System.out.println(feature.getZdbID());
                                 }
                                 if (StringUtils.isEmpty(variant.getFgmdSeqVar())

@@ -41,6 +41,8 @@ public class DownloadService {
     protected final String ANONYMOUS_PASSWORD = "zfinadmn@zfin.org";
     private int FTP_TIMEOUT = 3000; // ftp timeout in milliseconds
     private final int BUFFER_SIZE = 1024;
+    private final int HTTP_CONNECT_TIMEOUT = 60000;
+    private final int HTTP_READ_TIMEOUT = 60000;
 
 
     public File downloadFile(File localFile, URL remoteFile, boolean useExistingFile) {
@@ -55,9 +57,93 @@ public class DownloadService {
             return downloadFileFtp(localFile, remoteFile, useExistingFile, isGzip);
         }
         else{
-            return downloadFileHttp(localFile, remoteFile, isGzip);
+            return downloadFileHttp(localFile, remoteFile, isGzip, false);
         }
 
+    }
+
+    /**
+     * Download remoteFile to localFile over http, but skip the transfer when the copy already on
+     * disk still matches the remote one -- see {@link #localFileMatchesRemote}.
+     * <p>
+     * The bytes are stored verbatim: unlike {@link #downloadFile} this does not decompress a .gz
+     * url on the fly, so the local file stays directly comparable to the remote Content-Length and
+     * callers keep the archive they can gunzip themselves. Callers that want the decompressed
+     * content should gunzip afterwards, keyed off the archive's timestamp rather than re-running
+     * unconditionally.
+     *
+     * @return the local file, whether it was downloaded or reused
+     */
+    public File downloadFileIfChanged(File localFile, URL remoteFile) {
+        return downloadFileHttp(localFile, remoteFile, false, true);
+    }
+
+    /**
+     * Does the file already on disk still match what the server would send?
+     * <p>
+     * Compares Content-Length and Last-Modified from a HEAD request. Both are compared when
+     * available and both have to agree: either alone is too weak. Size alone misses a same-size
+     * revision, and timestamp alone misses the case where the local copy was written recently but
+     * from an older release -- which is exactly what happens behind a moving pointer like
+     * Ensembl's current_fasta, where the filename never changes between releases.
+     * <p>
+     * Anything unexpected -- no headers to compare, a non-200, an IO failure -- returns false so
+     * the caller downloads. Reusing a stale file is the failure mode worth avoiding here; a
+     * needless download only costs time.
+     */
+    private boolean localFileMatchesRemote(File localFile, URL remoteFile, boolean isGzip) {
+        if (!localFile.exists() || localFile.length() == 0) {
+            return false;
+        }
+        HttpURLConnection connection = null;
+        try {
+            URLConnection urlConnection = remoteFile.openConnection();
+            if (!(urlConnection instanceof HttpURLConnection)) {
+                return false;
+            }
+            connection = (HttpURLConnection) urlConnection;
+            connection.setRequestMethod("HEAD");
+            connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+            connection.setReadTimeout(HTTP_READ_TIMEOUT);
+            if (connection.getResponseCode() != HttpURLConnection.HTTP_OK) {
+                logger.info("HEAD returned " + connection.getResponseCode() + " for " + remoteFile
+                        + ", downloading rather than reusing " + localFile.getName());
+                return false;
+            }
+
+            long remoteLastModified = connection.getLastModified(); // 0 when absent
+            long remoteLength = connection.getContentLengthLong();  // -1 when absent
+
+            // when the caller asked us to gunzip on the fly the local file holds the decompressed
+            // bytes, so its length cannot be compared against the compressed Content-Length
+            boolean lengthComparable = !isGzip && remoteLength >= 0;
+            boolean timestampComparable = remoteLastModified > 0;
+            if (!lengthComparable && !timestampComparable) {
+                logger.info("No Content-Length or Last-Modified from " + remoteFile
+                        + ", cannot tell whether " + localFile.getName() + " is current -- downloading");
+                return false;
+            }
+            if (lengthComparable && localFile.length() != remoteLength) {
+                logger.info("Remote " + remoteFile + " is " + remoteLength + " bytes but local "
+                        + localFile.getName() + " is " + localFile.length() + " -- downloading");
+                return false;
+            }
+            if (timestampComparable && localFile.lastModified() < remoteLastModified) {
+                logger.info("Remote " + remoteFile + " modified " + new Date(remoteLastModified)
+                        + ", local " + localFile.getName() + " is older (" + new Date(localFile.lastModified())
+                        + ") -- downloading");
+                return false;
+            }
+            logger.info("Remote " + remoteFile + " unchanged, reusing " + localFile.getAbsolutePath());
+            return true;
+        } catch (Exception e) {
+            logger.warn("Could not check whether " + remoteFile + " changed, downloading instead", e);
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
     }
 
     /**
@@ -151,8 +237,11 @@ public class DownloadService {
         }
     }
 
-    protected File downloadFileHttp(File localFile, URL remoteFile, boolean isGzip) {
+    protected File downloadFileHttp(File localFile, URL remoteFile, boolean isGzip, boolean reuseIfUnchanged) {
         try {
+            if (reuseIfUnchanged && localFileMatchesRemote(localFile, remoteFile, isGzip)) {
+                return localFile;
+            }
             logger.info(remoteFile.getUserInfo()) ;
             long remoteFileSize = 100 ; // this file is gzipped
             //long localFileSize = localFile.length(); // ths file is not
@@ -173,12 +262,15 @@ public class DownloadService {
 
 
             long startTime = System.currentTimeMillis();
+            URLConnection connection = remoteFile.openConnection();
+            connection.setConnectTimeout(HTTP_CONNECT_TIMEOUT);
+            connection.setReadTimeout(HTTP_READ_TIMEOUT);
             InputStream inputStream ;
             if(isGzip){
-                inputStream = new GZIPInputStream(remoteFile.openStream());
+                inputStream = new GZIPInputStream(connection.getInputStream());
             }
             else{
-                inputStream = remoteFile.openStream();
+                inputStream = connection.getInputStream();
             }
 
             FileOutputStream fileOutputStream = new FileOutputStream(localFile);
@@ -197,6 +289,14 @@ public class DownloadService {
 
             inputStream.close();
             fileOutputStream.close();
+
+            // stamp the local copy with the server's Last-Modified so the next run can compare the
+            // two directly. Without this the local timestamp is the download time, which is always
+            // newer than the remote one and would make a stale file look current.
+            long remoteLastModified = connection.getLastModified();
+            if (remoteLastModified > 0) {
+                localFile.setLastModified(remoteLastModified);
+            }
 
             return localFile;
         } catch (SocketException socketException) {

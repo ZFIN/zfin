@@ -99,9 +99,11 @@ public class MarkerGoTermEvidenceCleanupTask extends AbstractScriptWrapper {
         }
 
         if (writeCsvs) {
-            System.out.println("Check the csv files for more information: clean_marker_go_term_evidence.csv, "
-                    + "to_delete_marker_go_term_evidence.csv, tmp_inference_group_member_updates.csv, "
-                    + "tmp_mgte_duplicates.csv");
+          // psql wrote the \copy output into its working directory, which is no longer the
+          // checkout, so say where the files actually are rather than just naming them
+          System.out.println("Check the csv files in " + new File(".").getAbsoluteFile().getParent()
+              + " for more information: clean_marker_go_term_evidence.csv, to_delete_marker_go_term_evidence.csv, "
+              + "tmp_inference_group_member_updates.csv, tmp_mgte_duplicates.csv");
         }
     }
 

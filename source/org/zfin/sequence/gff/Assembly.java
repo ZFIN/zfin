@@ -35,5 +35,25 @@ public class Assembly extends BaseEntity {
 
     @ManyToMany(mappedBy = "assemblies", fetch = FetchType.LAZY)
     private List<Marker> marker;
+
+    // Assembly lives in a Set<Assembly> (Marker.assemblies, the owning side of marker_assembly),
+    // so it needs value equality on the primary key. With inherited identity equality, the same
+    // assembly row reached through two different paths is two unequal instances, the Set holds it
+    // twice, and Hibernate emits a second marker_assembly insert that trips
+    // marker_assembly_ma_a_pk_id_ma_mrkr_zdb_id_key. Compare on a_pk_id instead.
+    //
+    // instanceof rather than getClass() so a lazy Hibernate proxy compares equal to its target,
+    // and the getter rather than the field so reading a proxy's id initializes it first.
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Assembly assembly))
+            return false;
+        return id == assembly.getId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
 }
 
