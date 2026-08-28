@@ -221,8 +221,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!needsRefSeq) return;
 
-        // Assembly location not known: the reference sequence is entered manually - leave it be.
-        if (isAssemblyInfoNotKnown()) return;
+        // Assembly location not known: the reference sequence is entered by hand, so a fetched value
+        // must not be written into the field. The call still goes out, because it is also what checks
+        // the coordinates against the chromosome -- returning here outright left a curator typing an
+        // impossible position with no feedback at all until they tried to save.
+        final boolean refSeqEnteredByHand = isAssemblyInfoNotKnown();
 
         String chromosome = view.featureChromosome.getText();
         String assembly = view.featureAssembly.getSelectedItemText();
@@ -240,23 +243,31 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 && startLoc != null && endLoc != null
                 && (assembly.equals("GRCz11") || assembly.equals("GRCz12tu"));
         if (!locationComplete) {
-            view.genomicMutationDetailView.setReferenceSequence("");
+            if (!refSeqEnteredByHand) {
+                view.genomicMutationDetailView.setReferenceSequence("");
+            }
             return;
         }
 
-        view.genomicMutationDetailView.setReferenceSequenceLoading();
+        if (!refSeqEnteredByHand) {
+            view.genomicMutationDetailView.setReferenceSequenceLoading();
+        }
 
         FeatureRPCService.App.getInstance().getReferenceSequence(assembly, chromosome, startLoc, endLoc,
                 new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
                     @Override
                     public void onSuccess(String result) {
                         lastLocationError = null;
-                        view.genomicMutationDetailView.setReferenceSequence(result);
+                        if (!refSeqEnteredByHand) {
+                            view.genomicMutationDetailView.setReferenceSequence(result);
+                        }
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        view.genomicMutationDetailView.setReferenceSequence("");
+                        if (!refSeqEnteredByHand) {
+                            view.genomicMutationDetailView.setReferenceSequence("");
+                        }
                         if (throwable instanceof ValidationException) {
                             reportLocationError(throwable.getMessage());
                             return;
