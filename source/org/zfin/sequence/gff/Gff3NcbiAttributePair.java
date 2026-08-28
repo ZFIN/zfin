@@ -16,9 +16,9 @@ import java.util.List;
 public class Gff3NcbiAttributePair extends BaseEntity implements Comparable<Gff3NcbiAttributePair> {
 
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "gff3-ncbi-attribute-generator")
     @GenericGenerator(
-        name = "sequence-generator",
+        name = "gff3-ncbi-attribute-generator",
         strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {
             @org.hibernate.annotations.Parameter(name = "sequence_name", value = "gff3_ncbi_attribute_seq"),
