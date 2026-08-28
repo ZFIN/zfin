@@ -160,9 +160,20 @@ task loadDatabase() {
         }
 
         println "Loading $unloadPath into $dbname"
+        // Free the database so dropdb can proceed. Reports a count instead of a t/f row per
+        // pid plus a warning for each non-backend; same pids targeted either way. FILTER
+        // references `terminated` so the volatile call isn't optimized away.
+        String terminateConnections = """
+            set client_min_messages = error;
+            select 'Ended ' || count(*) filter (where terminated) || ' connection(s)'
+            from (select pg_terminate_backend(pg_stat_activity.pid) as terminated
+                  from pg_stat_activity
+                  where pid <> pg_backend_pid()) as backends
+        """
         exec {
             ignoreExitValue = true
-            commandLine "bash", "-c", "echo 'select pg_terminate_backend(pg_stat_activity.pid) from pg_stat_activity where pid <> pg_backend_pid();' | psql -v ON_ERROR_STOP=1 $dbname"
+            // -tAq: no header, no alignment, no chatter -- just the one summary line.
+            commandLine "psql", "-tAq", "-v", "ON_ERROR_STOP=1", "-c", terminateConnections, dbname
         }
         exec {
             ignoreExitValue = true
