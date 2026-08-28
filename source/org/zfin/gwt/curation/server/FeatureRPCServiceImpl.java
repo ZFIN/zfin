@@ -150,6 +150,29 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return StringUtils.isEmpty(dto.getFeatureChromosome());
     }
 
+    /**
+     * Reject coordinates that fall outside the chosen chromosome before anything is written.
+     * The flanking-sequence step reads the assembly FASTA for exactly this span, so a start or
+     * end past the end of the contig made htsjdk throw "Query asks for data past end of contig"
+     * from deep inside the save, which reached the curator as a bare 500 with nothing to act on.
+     */
+    private void validateLocationWithinChromosome(String assemblyName, String chromosome,
+                                                  Integer start, Integer end) throws ValidationException {
+        AssemblyEnum assembly = currentAssemblyEnum(assemblyName);
+        if (assembly == null || StringUtils.isEmpty(chromosome) || start == null || end == null) {
+            // nothing to check against: non-current assemblies have no FASTA on disk
+            return;
+        }
+        Long chromosomeLength = new GenomicLocationService().getChromosomeLength(assembly, chromosome);
+        if (chromosomeLength == null) {
+            throw new ValidationException("Chromosome " + chromosome + " is not part of assembly " + assemblyName);
+        }
+        if (start < 1 || end > chromosomeLength) {
+            throw new ValidationException("Location " + start + "-" + end + " is outside chromosome "
+                + chromosome + " on " + assemblyName + ", which is " + chromosomeLength + " bp long");
+        }
+    }
+
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) throws ValidationException {
         // check if no value was submitted. If so then delete it
         if (isLocationRemoved(dto)) {
@@ -180,6 +203,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             throw new ValidationException("Assembly can only be changed to "
                     + AssemblyEnum.GRCZ12TU.getName() + " or " + AssemblyEnum.GRCZ11.getName());
         }
+        validateLocationWithinChromosome(dto.getFeatureAssembly(), dto.getFeatureChromosome(),
+            dto.getFeatureStartLoc(), dto.getFeatureEndLoc());
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
         fl.setStartLocation(dto.getFeatureStartLoc());
@@ -743,6 +768,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
+                validateLocationWithinChromosome(featureDTO.getFeatureAssembly(), featureDTO.getFeatureChromosome(),
+                    featureDTO.getFeatureStartLoc(), featureDTO.getFeatureEndLoc());
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setChromosome(featureDTO.getFeatureChromosome());
@@ -1308,6 +1335,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
             return;
         }
+        // Backstop for locations already stored out of range: the save may not have touched the
+        // location at all, so updateFeatureLocation()'s check never ran for it.
+        validateLocationWithinChromosome(fgl.getAssembly(), fgl.getChromosome(),
+            fgl.getStartLocation(), fgl.getEndLocation());
         GenomicLocationService glService = new GenomicLocationService();
         for (AssemblyEnum ae : AssemblyEnum.values()) {
             if (ae.getName().equals(fgl.getAssembly())) {

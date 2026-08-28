@@ -28,10 +28,26 @@ public class FeatureValidationService {
                 }
             }
 
-            if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
-                if (StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())) {
-                    return "You must specify an assembly if you specify a location";
+            // A location is stored as chromosome + assembly. A row saved without an assembly is
+            // invisible to this form afterwards -- getLocationByFeature() only matches assemblies
+            // like GRCz1x or Zv9 -- so blanking the assembly can only mean "remove the location".
+            // Ask before discarding the rest of it, but only once the curator has recorded that
+            // the assembly location is not known; otherwise a blank assembly is just a mistake.
+            if (StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())) {
+                if (StringUtils.isEmptyTrim(featureDTO.getAssemblyInfoDate())) {
+                    return "You must specify an assembly if you specify a chromosome. "
+                        + "To remove the location, clear the chromosome and positions as well.";
                 }
+                if (!Window.confirm("Delete all location information for this feature?")) {
+                    return "Save cancelled. Choose an assembly, or clear the chromosome and positions.";
+                }
+                featureDTO.setFeatureChromosome("");
+                featureDTO.setFeatureStartLoc(null);
+                featureDTO.setFeatureEndLoc(null);
+                featureDTO.setEvidence("");
+            }
+
+            if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
                 if (!featureDTO.getKnownInsertionSite() && (featureDTO.getFeatureType() == FeatureTypeEnum.TRANSGENIC_INSERTION)) {
                     return "You must mark \"Known Insertion Site\" if you specify a location";
                 }
@@ -42,7 +58,13 @@ public class FeatureValidationService {
         }
 
         if (featureDTO.getFgmdChangeDTO() != null && StringUtils.isNotEmpty(featureDTO.getFgmdChangeDTO().getFgmdSeqVar())) {
-            if (StringUtils.isEmptyTrim(featureDTO.getFeatureChromosome())
+            // Once "Assembly information not known as of" is filled in, the sequence fields are
+            // entered by hand rather than derived from a location (ZFIN-10371), so a full location
+            // is no longer a precondition for having a Sequence of Variant. Without this the
+            // curator cannot remove the location from a feature that already has one.
+            if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+                // no location required
+            } else if (StringUtils.isEmptyTrim(featureDTO.getFeatureChromosome())
                     || StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())
                     || featureDTO.getFeatureStartLoc() == null
                     || featureDTO.getFeatureEndLoc() == null
