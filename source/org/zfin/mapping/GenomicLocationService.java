@@ -67,11 +67,6 @@ public class GenomicLocationService {
 	 * The part of [from, to] that exists on the chromosome, or "" if none of it does. The flanking
 	 * windows below run `offset` bases either side of a feature, so one near a contig boundary used
 	 * to make htsjdk throw "Query asks for data past end of contig" as a bare 500.
-	 *
-	 * The bounds are deliberately one-sided -- `from` only raised, `to` only lowered -- which is what
-	 * makes start > end mean "entirely off the chromosome". Math.clamp(value, 1, length) would bound
-	 * both ends both ways, collapsing that case onto the boundary and returning the feature's own
-	 * base as its flanking sequence.
 	 */
 	private String subsequence(IndexedFastaSequenceFile ref, String chromosome, int from, int to) {
 		FastaSequenceIndex index = ref.getIndex();
