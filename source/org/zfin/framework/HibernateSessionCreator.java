@@ -157,7 +157,8 @@ public class HibernateSessionCreator {
         Configuration config = new Configuration();
         config.setInterceptor(new StringCleanInterceptor());
         config.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
-        config.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        // No hibernate.dialect: Hibernate 6 resolves it from the JDBC connection, and
+        // setting it explicitly earns HHH90000025 on every startup.
         config.setProperty("hibernate.connection.autocommit", String.valueOf(autocommit));
         config.setProperty("hibernate.connection.url", getJdbcUrl(db));
 

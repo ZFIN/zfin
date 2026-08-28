@@ -16,9 +16,9 @@ import java.util.Set;
 public class Gff3Ncbi extends BaseEntity {
 
     @Id
-    @GeneratedValue(generator = "sequence-generator")
+    @GeneratedValue(generator = "gff3-ncbi-generator")
     @GenericGenerator(
-        name = "sequence-generator",
+        name = "gff3-ncbi-generator",
         strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator",
         parameters = {
             @org.hibernate.annotations.Parameter(name = "sequence_name", value = "gff3_ncbi_seq"),
