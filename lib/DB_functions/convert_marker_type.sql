@@ -113,7 +113,8 @@ BEGIN
                  ('external_reference', 'exref_data_zdb_id'),
                  ('feature_marker_relationship', 'fmrel_mrkr_zdb_id'),
                  ('fish_str', 'fishstr_str_zdb_id'),
-                 ('fpprotein_construct', 'fc_mrkr_zdb_id'),
+                 -- ZFIN-10352: fpprotein_construct retired; construct fluorescence is
+                 -- derived from the construct's coding-sequence EFGs.
                  ('fpprotein_efg', 'fe_mrkr_zdb_id'),
                  ('gene_description', 'gd_gene_zdb_id'),
                  ('genedom_family_member', 'gfammem_mrkr_zdb_id'),
