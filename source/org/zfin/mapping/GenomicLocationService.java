@@ -1,5 +1,6 @@
 package org.zfin.mapping;
 
+import htsjdk.samtools.reference.FastaSequenceIndex;
 import htsjdk.samtools.reference.IndexedFastaSequenceFile;
 import htsjdk.samtools.reference.ReferenceSequence;
 import org.apache.commons.lang.StringUtils;
@@ -36,13 +37,51 @@ public class GenomicLocationService {
 	public GenomicLocationService() {
 	}
 
-	private IndexedFastaSequenceFile getIndexedFastaSequenceFile(AssemblyEnum assembly) {
+	private String getFastaPath(AssemblyEnum assembly) {
 		String pathname = null;
 		switch (assembly) {
 			case GRCZ12TU -> pathname = pathToBlast + FASTA_GENOMIC_Z12_FILE;
 			case GRCZ11 -> pathname = pathToBlast + FASTA_GENOMIC_Z11_URL;
 		}
-		return getIndexedFastaSequenceFile(pathname);
+		return pathname;
+	}
+
+	private IndexedFastaSequenceFile getIndexedFastaSequenceFile(AssemblyEnum assembly) {
+		return getIndexedFastaSequenceFile(getFastaPath(assembly));
+	}
+
+	/**
+	 * Length of a chromosome in the given assembly, or null when the assembly has no such
+	 * chromosome. Read from the FASTA .fai index, so the sequence itself is never loaded.
+	 */
+	public Long getChromosomeLength(AssemblyEnum assembly, String chromosome) {
+		String pathname = getFastaPath(assembly);
+		if (pathname == null || chromosome == null) {
+			return null;
+		}
+		FastaSequenceIndex index = new FastaSequenceIndex(new File(pathname + ".fai"));
+		return index.hasIndexEntry(chromosome) ? index.getIndexEntry(chromosome).getSize() : null;
+	}
+
+	/**
+	 * The part of [from, to] that exists on the chromosome, or "" if none of it does. The flanking
+	 * windows below run `offset` bases either side of a feature, so one near a contig boundary used
+	 * to make htsjdk throw "Query asks for data past end of contig" as a bare 500.
+	 */
+	private String subsequence(IndexedFastaSequenceFile ref, String chromosome, int from, int to) {
+		FastaSequenceIndex index = ref.getIndex();
+		if (!index.hasIndexEntry(chromosome)) {
+			// Callers reach this only for a location locationWithinChromosome() has already accepted,
+			// so the contig is known to be present; returning "" keeps a broken invariant from
+			// becoming an unhandled SAMException out of getSubsequenceAt().
+			return "";
+		}
+		int start = Math.max(from, 1);
+		int end = (int) Math.min(to, index.getIndexEntry(chromosome).getSize());
+		if (start > end) {
+			return "";
+		}
+		return new String(ref.getSubsequenceAt(chromosome, start, end).getBases());
 	}
 
 	private IndexedFastaSequenceFile getIndexedFastaSequenceFile(String fullPath) {
@@ -62,6 +101,13 @@ public class GenomicLocationService {
 	// remove variant sequence if FeatureGenomicMutationDetail is null or empty (cleanup)
 	public void upsertFlankingSequence(Feature feature, AssemblyEnum assembly) {
 		FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsForAssembly(assembly, feature);
+
+		// A stored location running past the end of its chromosome (bad legacy data) cannot be read
+		// from the FASTA at all. Leave whatever sequences exist alone rather than throwing out of
+		// the middle of a save -- the caller reports the out-of-range location as a validation error.
+		if (featureLocationIsNotEmpty(ftrLoc) && !locationWithinChromosome(assembly, ftrLoc)) {
+			return;
+		}
 
 		// there is a sequence_feature_chromosome_location record / landmark
 		// then
@@ -90,23 +136,23 @@ public class GenomicLocationService {
 						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
 							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
 						}
-						seq1 = new String(ref.getSubsequenceAt(ftrChrom, leftOffset, locStart - 1).getBases());
-						seq2 = new String(ref.getSubsequenceAt(ftrChrom, locStart + 1, locStart + offset).getBases());
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locStart + 1, locStart + offset);
 					}
 					case DELETION, MNV -> {
-						seq1 = new String(ref.getSubsequenceAt(ftrChrom, leftOffset, locStart - 1).getBases());
-						seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
 					}
 					case INSERTION -> {
-						seq1 = new String(ref.getSubsequenceAt(ftrChrom, leftOffset, locStart).getBases());
-						seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd, locEnd + offset).getBases());
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart);
+						seq2 = subsequence(ref, ftrChrom, locEnd, locEnd + offset);
 					}
 					case INDEL -> {
 						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
 							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
 						}
-						seq1 = new String(ref.getSubsequenceAt(ftrChrom, leftOffset, locStart - 1).getBases());
-						seq2 = new String(ref.getSubsequenceAt(ftrChrom, locEnd + 1, locEnd + offset).getBases());
+						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
+						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
 					}
 				}
 				insertOrUpdateFlankSeq(feature, seq1, seq2, offset);
@@ -272,6 +318,13 @@ public class GenomicLocationService {
 
 	private boolean featureLocationIsNotEmpty(FeatureLocation ftrLoc) {
 		return ftrLoc != null && ftrLoc.containsLocationData();
+	}
+
+	private boolean locationWithinChromosome(AssemblyEnum assembly, FeatureLocation ftrLoc) {
+		Long chromosomeLength = getChromosomeLength(assembly, ftrLoc.getChromosome());
+		return chromosomeLength != null
+			&& ftrLoc.getStartLocation() != null && ftrLoc.getStartLocation() >= 1
+			&& ftrLoc.getEndLocation() != null && ftrLoc.getEndLocation() <= chromosomeLength;
 	}
 }
 
