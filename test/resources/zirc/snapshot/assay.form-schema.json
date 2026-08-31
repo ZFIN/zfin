@@ -89,6 +89,31 @@
         "title" : "Mutant-specific primer",
         "type" : [ "string", "null" ]
       },
+      "protocolDocuments" : {
+        "items" : {
+          "properties" : {
+            "contentType" : {
+              "type" : [ "string", "null" ]
+            },
+            "fileSize" : {
+              "type" : [ "number", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "originalFilename" : {
+              "type" : "string"
+            },
+            "uploadedAt" : {
+              "type" : [ "string", "null" ]
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Protocol Documentation",
+        "type" : "array"
+      },
       "restrictionEnzymeCatalog" : {
         "maxLength" : 255,
         "title" : "Restriction enzyme catalog #",
@@ -443,6 +468,7 @@
       "elements" : [ {
         "options" : {
           "acceptedExtensions" : [ "tif", "tiff", "jpg", "jpeg", "png", "gif", "pdf" ],
+          "attachmentKind" : "assay_result",
           "label" : "Annotated gel images",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -467,6 +493,7 @@
       "elements" : [ {
         "options" : {
           "acceptedExtensions" : [ "abi", "ab1", "scf", "fa", "txt", "docx" ],
+          "attachmentKind" : "assay_result",
           "label" : "Chromatograms",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -491,6 +518,7 @@
       "elements" : [ {
         "options" : {
           "acceptedExtensions" : [ "tif", "tiff", "jpg", "jpeg", "png", "gif", "pdf" ],
+          "attachmentKind" : "assay_result",
           "label" : "Annotated result images",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -514,6 +542,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "attachmentKind" : "assay_result",
           "label" : "Annotated melt curve files",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -532,6 +561,22 @@
           "scope" : "#/properties/assayType"
         },
         "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "acceptedExtensions" : [ "pdf", "docx", "doc", "txt", "rtf", "odt" ],
+          "attachmentKind" : "protocol_doc",
+          "label" : "Protocol Documentation",
+          "managesOwnPersistence" : true,
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/protocolDocuments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
       },
       "type" : "Group"
     }, {

@@ -1,21 +1,27 @@
 package org.zfin.zirc.api;
 
+import org.zfin.zirc.entity.GenotypingAssayFile;
+
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
 /**
- * The four per-workflow attachment buckets on the assay form, and the file
- * extensions each one accepts (ZFIN-10413, ZFIN-10417).
+ * The attachment buckets on the assay form, and the file extensions each one
+ * accepts (ZFIN-10413, ZFIN-10417, ZFIN-10415).
  *
- * <p>All four buckets write to the same {@code attachments} array on
- * {@link org.zfin.zirc.entity.GenotypingAssay}; what distinguishes them is
- * the {@code assayType} that reveals them, the heading they carry, and the
- * file types they take. Keeping those three facts together here means the
- * uiSchema ({@link ZircAssayFormSchema#uiSchema()}, which publishes the
- * {@code accept} attribute and the helper text) and the upload endpoint
+ * <p>A bucket is five facts: the heading it carries, the {@code assayType}s
+ * that reveal it, the file types it takes, the schema property it binds, and
+ * the {@code af_kind} its uploads are filed under. Keeping them together here
+ * means the uiSchema ({@link ZircAssayFormSchema#uiSchema()}, which publishes
+ * the accepted extensions and the label) and the upload endpoint
  * ({@link org.zfin.zirc.service.ZircSubmissionService#storeAttachment}, which
  * enforces them) cannot drift apart.
+ *
+ * <p>The four results buckets share the {@code attachments} array and differ
+ * only by which assay type reveals them. {@link #PROTOCOL_DOC} is the
+ * exception on both counts: it binds its own {@code protocolDocuments} array
+ * and is offered for every assay type, so it carries no assay-type list.
  *
  * <p>Validation is by <b>extension</b>, not Content-Type. Browsers report
  * {@code application/octet-stream} for the instrument formats
@@ -55,7 +61,25 @@ public enum ZircAttachmentKind {
      */
     MELT_CURVE("Annotated melt curve files",
             List.of("hrma"),
-            List.of());
+            List.of()),
+
+    /**
+     * Protocol documentation (ZFIN-10415) — the written protocol behind the
+     * assay, offered for every assay type rather than revealed by one.
+     *
+     * <p>The empty assay-type list is what makes it ungated: it carries no
+     * reveal rule in the uiSchema, and {@link #forAssayType} can never return
+     * it, since no type is listed. That is the intended reading — a protocol
+     * document is not the result of any particular workflow.
+     *
+     * <p>Its own array, so a full results bucket cannot block a protocol
+     * document and neither bucket's files show up in the other.
+     */
+    PROTOCOL_DOC("Protocol Documentation",
+            List.of(),
+            List.of("pdf", "docx", "doc", "txt", "rtf", "odt"),
+            "protocolDocuments",
+            GenotypingAssayFile.KIND_PROTOCOL_DOC);
 
     /**
      * Extension sets shared by more than one bucket. These live in a nested
@@ -86,7 +110,13 @@ public enum ZircAttachmentKind {
                 Map.entry("fa",   "text/plain"),
                 Map.entry("docx",
                         "application/vnd.openxmlformats-officedocument"
-                                + ".wordprocessingml.document"));
+                                + ".wordprocessingml.document"),
+                // ZFIN-10415's protocol-document formats. Served as their
+                // real types so a curator clicking a protocol gets the
+                // document rather than a download of unknown bytes.
+                Map.entry("doc",  "application/msword"),
+                Map.entry("rtf",  "application/rtf"),
+                Map.entry("odt",  "application/vnd.oasis.opendocument.text"));
 
         private Ext() {}
     }
@@ -122,12 +152,24 @@ public enum ZircAttachmentKind {
     private final String label;
     private final List<String> assayTypes;
     private final List<String> acceptedExtensions;
+    private final String property;
+    private final String afKind;
 
+    /** A results bucket: the shared array, filed as assay_result. */
     ZircAttachmentKind(String label, List<String> assayTypes,
                        List<String> acceptedExtensions) {
+        this(label, assayTypes, acceptedExtensions,
+                "attachments", GenotypingAssayFile.KIND_ASSAY_RESULT);
+    }
+
+    ZircAttachmentKind(String label, List<String> assayTypes,
+                       List<String> acceptedExtensions,
+                       String property, String afKind) {
         this.label = label;
         this.assayTypes = assayTypes;
         this.acceptedExtensions = acceptedExtensions;
+        this.property = property;
+        this.afKind = afKind;
     }
 
     /** Bucket heading, e.g. "Chromatograms". */
@@ -151,6 +193,40 @@ public enum ZircAttachmentKind {
     /** True when this bucket enforces no extension allow-list. */
     public boolean acceptsAnyExtension() {
         return acceptedExtensions.isEmpty();
+    }
+
+    /** The assay-schema property this bucket's files are listed under. */
+    public String getProperty() {
+        return property;
+    }
+
+    /** The {@code af_kind} uploads to this bucket are stored as. */
+    public String getAfKind() {
+        return afKind;
+    }
+
+    /**
+     * True when no assay type reveals this bucket, i.e. every assay form
+     * shows it. Only {@link #PROTOCOL_DOC} is ungated today.
+     */
+    public boolean isUngated() {
+        return assayTypes.isEmpty();
+    }
+
+    /**
+     * The bucket an upload of {@code afKind} belongs to, for an assay of
+     * {@code assayType}. Returns null when the pair names no bucket -- an
+     * unknown kind, or a results upload against a type with no results
+     * bucket -- which the caller must treat as "reject", not "unrestricted".
+     */
+    public static ZircAttachmentKind forUpload(String afKind, String assayType) {
+        if (GenotypingAssayFile.KIND_PROTOCOL_DOC.equals(afKind)) {
+            return PROTOCOL_DOC;
+        }
+        if (GenotypingAssayFile.KIND_ASSAY_RESULT.equals(afKind)) {
+            return forAssayType(assayType);
+        }
+        return null;
     }
 
     /**

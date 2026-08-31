@@ -12,23 +12,34 @@ import { AssayFileDTO } from '../../api/types';
 import { useUploadAttachment, useDeleteAttachment } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 
-/**
- * Per-assay attachments. The bucket heading and the accepted file types both
- * arrive from the uischema (options.label / options.acceptedExtensions), so
- * the same widget serves all four per-assayType buckets — gel images,
- * chromatograms, result images, melt curves. Server-side source of truth is
- * ZircAttachmentKind, which the upload endpoint validates against.
- *
- * Uploads go through a dedicated multipart endpoint, not the field-path
- * PATCH; AssayEdit's diff filter skips /attachments.
- *
- * assayId arrives via JsonForms' config prop.
- */
 interface AttachmentsOptions {
     label?: string;
     /** Lowercase, dot-less; empty or absent means any extension. */
     acceptedExtensions?: string[];
+    /** af_kind to file the upload under; see GenotypingAssayFile.KINDS. */
+    attachmentKind?: string;
 }
+
+/**
+ * Per-assay attachments. One widget serves every bucket on the form: the
+ * four per-assayType results buckets bound to `attachments` (gel images,
+ * chromatograms, result images, melt curves) and Protocol Documentation
+ * bound to `protocolDocuments` (ZFIN-10415).
+ *
+ * Everything that distinguishes a bucket arrives from the uischema:
+ * `options.label` is the heading, `options.attachmentKind` is the af_kind
+ * sent with the upload so the server files it in the right bucket, and
+ * `options.acceptedExtensions` drives both the picker's accept filter and
+ * the "Accepted file types" line under it. Deriving the filter and the text
+ * from one list is what keeps them from disagreeing. Server-side source of
+ * truth for all of it is ZircAttachmentKind, which the upload endpoint
+ * validates against.
+ *
+ * Uploads go through a dedicated multipart endpoint, not the field-path
+ * PATCH; the editor's diff filter skips both managesOwnPersistence paths.
+ *
+ * assayId arrives via JsonForms' config prop.
+ */
 
 /**
  * Lowercase extension without the dot, or null when the name has none.
@@ -54,15 +65,14 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const view = viewConfigFrom(config);
-    // Per-assay-type bucket label (e.g. "Annotated gel images", "Chromatograms")
-    // — set via uischema options.label so the same Attachments widget can
-    // appear under different headings depending on the assay type.
-    const opts = (uischema as { options?: AttachmentsOptions } | undefined)?.options;
-    const bucketLabel = opts?.label;
+    // Bucket heading, af_kind, picker filter and helper text all ride on the
+    // uischema options so one widget can serve every bucket.
+    const opts = ((uischema as { options?: AttachmentsOptions } | undefined)?.options) ?? {};
+    const bucketLabel = opts.label;
     // Extensions this bucket accepts, lowercase and dot-less. Absent means
     // the bucket takes any extension (the melt-curve case), so the accept
     // attribute and the helper text are both omitted rather than empty.
-    const acceptedExtensions = opts?.acceptedExtensions;
+    const acceptedExtensions = opts.acceptedExtensions;
     // ".abi,.ab1,.scf" for the file picker's filter, and the same list
     // spelled out for the helper text below it. Tested through the optional
     // chain rather than a precomputed boolean so the array narrows.
@@ -114,7 +124,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
             return;
         }
         upload.mutate(
-            { assayId, file },
+            { assayId, file, kind: opts.attachmentKind },
             {
                 onError: (err) => {
                     setErrorMsg(err instanceof Error ? err.message : 'Upload failed');

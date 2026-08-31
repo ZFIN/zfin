@@ -356,12 +356,14 @@ public class ZircSubmissionService {
     /** Hard upper bound on a single uploaded attachment. */
     public static final long MAX_ATTACHMENT_BYTES = 20L * 1024 * 1024;
 
-    // Accepted file types are per attachment bucket, keyed off the assay's
-    // assayType — see ZircAttachmentKind, which the form schema reads too.
-    // This replaced a single global Content-Type allow-list: browsers report
-    // application/octet-stream for the instrument formats (.abi/.ab1, .scf),
-    // so a MIME allow-list rejected the very chromatograms ZFIN-10417 asks
-    // us to accept. Extension is the only signal available for those.
+    // Accepted file types are per attachment bucket — see ZircAttachmentKind,
+    // which the form schema reads too. This replaced a global Content-Type
+    // allow-list, for the reason ZFIN-10415 gives for the protocol bucket and
+    // ZFIN-10417 gives for chromatograms: browsers report
+    // application/octet-stream for both the instrument formats (.abi/.ab1,
+    // .scf) and for Office formats, so a MIME allow-list rejected the very
+    // files both tickets ask us to accept. Extension is the only signal that
+    // holds for either, so both buckets now use it.
 
     public GenotypingAssayFile getRequiredAssayFile(Long fileId) {
         GenotypingAssayFile file = repository.getAssayFile(fileId);
@@ -380,7 +382,8 @@ public class ZircSubmissionService {
      * <p>Returns the parent assay so callers can return a refreshed
      * AssayDTO in one round trip.
      */
-    public GenotypingAssay storeAttachment(Long assayId, MultipartFile upload) throws IOException {
+    public GenotypingAssay storeAttachment(Long assayId, String kind, MultipartFile upload)
+            throws IOException {
         if (upload == null || upload.isEmpty()) {
             throw new IllegalArgumentException("No file uploaded");
         }
@@ -388,26 +391,27 @@ public class ZircSubmissionService {
             throw new IllegalArgumentException(
                     "Attachment exceeds size limit (" + MAX_ATTACHMENT_BYTES + " bytes)");
         }
-        GenotypingAssay assay = getRequiredAssayById(assayId);
-        // Which bucket this upload lands in follows from the assay type, so
-        // the assay has to be resolved before the file type can be judged.
-        // A null kind means the type is unset or unrecognized — no rule to
-        // apply, so the upload proceeds rather than being rejected.
-        ZircAttachmentKind kind =
-                ZircAttachmentKind.forAssayType(assay.getAssayType());
-        if (kind != null && !kind.accepts(upload.getOriginalFilename())) {
-            throw new IllegalArgumentException(
-                    upload.getOriginalFilename()
-                            + " is not an accepted file type for "
-                            + kind.getLabel() + ". Accepted file types: "
-                            + kind.getAcceptedExtensionsDisplay());
+        if (!GenotypingAssayFile.KINDS.contains(kind)) {
+            throw new IllegalArgumentException("Unknown attachment kind: " + kind);
         }
+        GenotypingAssay assay = getRequiredAssayById(assayId);
+        // Which bucket this upload lands in follows from the af_kind and, for
+        // a results upload, the assay type -- so the assay has to be resolved
+        // before the file type can be judged.
+        validateUploadType(
+                ZircAttachmentKind.forUpload(kind, assay.getAssayType()),
+                upload.getOriginalFilename());
         // Derived from the extension, never taken from the upload — the
         // download endpoint serves this back inline. See contentTypeFor.
         String contentType =
                 ZircAttachmentKind.contentTypeFor(upload.getOriginalFilename());
 
-        int existing = assay.getFiles() == null ? 0 : assay.getFiles().size();
+        // Counted per bucket: a results bucket at capacity must not block a
+        // protocol document, and vice versa.
+        long existing = assay.getFiles() == null ? 0 : assay.getFiles().stream()
+                .filter(f -> kind.equals(f.getKind() == null
+                        ? GenotypingAssayFile.KIND_ASSAY_RESULT : f.getKind()))
+                .count();
         if (existing >= ZircAssayFormSchema.MAX_ATTACHMENTS_PER_ASSAY) {
             throw new IllegalArgumentException(
                     "Maximum " + ZircAssayFormSchema.MAX_ATTACHMENTS_PER_ASSAY
@@ -423,6 +427,7 @@ public class ZircSubmissionService {
         // the file is actually written; we update it below.
         GenotypingAssayFile file = new GenotypingAssayFile();
         file.setAssay(assay);
+        file.setKind(kind);
         file.setOriginalFilename(upload.getOriginalFilename());
         file.setContentType(contentType);
         file.setFileSize(upload.getSize());
@@ -443,6 +448,7 @@ public class ZircSubmissionService {
         // Audit the upload — old=null, new={file id + original name + size}
         JsonNode meta = AUDIT_MAPPER.valueToTree(java.util.Map.of(
                 "fileId", file.getId(),
+                "kind", kind,
                 "originalFilename", upload.getOriginalFilename(),
                 "bytes", upload.getSize()));
         writeAudit("assay", String.valueOf(assayId), "upload", null, null, meta);
@@ -478,6 +484,38 @@ public class ZircSubmissionService {
                 log.warn("ZIRC attachment delete: failed to remove file on disk: {}", storedPath, e);
             }
         }
+    }
+
+    /**
+     * Per-bucket upload validation, by filename extension.
+     *
+     * <p>Every bucket keys off the extension rather than the browser-reported
+     * content type, because for the formats these buckets collect the content
+     * type is not dependable: a .docx commonly arrives as
+     * application/octet-stream depending on platform and whether Office is
+     * installed (ZFIN-10415), and the instrument formats .abi / .ab1 / .scf
+     * have no registered type at all (ZFIN-10417). A MIME allow-list would
+     * reject exactly the files both tickets ask us to accept, and on some
+     * machines only.
+     *
+     * <p>The extension is also what the curator sees and what the picker's
+     * accept attribute filters on, so it is what the error message can talk
+     * about meaningfully.
+     *
+     * <p>Package-private for direct unit testing, like {@link #sanitizeFilename}.
+     */
+    static void validateUploadType(ZircAttachmentKind bucket, String originalFilename) {
+        // A null bucket is "no rule to apply" — a results upload against an
+        // assay whose type is unset or unrecognized. It must not be read as
+        // "reject": the type is a separate field the curator may not have
+        // filled in yet, and the size cap still applies either way.
+        if (bucket == null || bucket.accepts(originalFilename)) {
+            return;
+        }
+        throw new IllegalArgumentException(
+                originalFilename + " is not an accepted file type for "
+                        + bucket.getLabel() + ". Accepted file types: "
+                        + bucket.getAcceptedExtensionsDisplay());
     }
 
     /**
