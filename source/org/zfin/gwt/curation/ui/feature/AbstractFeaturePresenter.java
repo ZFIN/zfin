@@ -1,6 +1,7 @@
 package org.zfin.gwt.curation.ui.feature;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.user.client.Window;
 import org.zfin.feature.FeaturePrefix;
 import org.zfin.gwt.curation.ui.FeatureRPCService;
 import org.zfin.gwt.curation.ui.FeatureValidationService;
@@ -11,6 +12,7 @@ import org.zfin.gwt.root.dto.OrganizationDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
 import org.zfin.gwt.root.ui.HandlesError;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.util.AppUtils;
 
 import java.util.List;
@@ -219,8 +221,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!needsRefSeq) return;
 
-        // Assembly location not known: the reference sequence is entered manually - leave it be.
-        if (isAssemblyInfoNotKnown()) return;
+        // Assembly location not known: the reference sequence is entered by hand, so a fetched value
+        // must not be written into the field. The call still goes out, because it is also what checks
+        // the coordinates against the chromosome -- returning here outright left a curator typing an
+        // impossible position with no feedback at all until they tried to save.
+        final boolean refSeqEnteredByHand = isAssemblyInfoNotKnown();
 
         String chromosome = view.featureChromosome.getText();
         String assembly = view.featureAssembly.getSelectedItemText();
@@ -238,26 +243,59 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 && startLoc != null && endLoc != null
                 && (assembly.equals("GRCz11") || assembly.equals("GRCz12tu"));
         if (!locationComplete) {
-            view.genomicMutationDetailView.setReferenceSequence("");
+            if (!refSeqEnteredByHand) {
+                view.genomicMutationDetailView.setReferenceSequence("");
+            }
             return;
         }
 
-        view.genomicMutationDetailView.setReferenceSequenceLoading();
+        if (!refSeqEnteredByHand) {
+            view.genomicMutationDetailView.setReferenceSequenceLoading();
+        }
 
         FeatureRPCService.App.getInstance().getReferenceSequence(assembly, chromosome, startLoc, endLoc,
                 new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
                     @Override
                     public void onSuccess(String result) {
-                        view.genomicMutationDetailView.setReferenceSequence(result);
+                        lastLocationError = null;
+                        if (!refSeqEnteredByHand) {
+                            view.genomicMutationDetailView.setReferenceSequence(result);
+                        }
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        view.genomicMutationDetailView.setReferenceSequence("");
+                        if (!refSeqEnteredByHand) {
+                            view.genomicMutationDetailView.setReferenceSequence("");
+                        }
+                        if (throwable instanceof ValidationException) {
+                            reportLocationError(throwable.getMessage());
+                            return;
+                        }
                         super.onFailure(throwable);
                     }
                 }
         );
+    }
+
+    /**
+     * Last location problem reported, so the several fetches a single edit can trigger (changing the
+     * start position also rewrites the end position for a point mutation) do not stack up identical
+     * alerts. Cleared as soon as a fetch succeeds, so the same problem is reported again if it recurs.
+     */
+    private String lastLocationError;
+
+    /**
+     * Report a location the assembly cannot supply a sequence for. This goes in an alert rather than
+     * the inline error label because the label is cleared by handleChanges() on the next field event,
+     * which happens before the curator has had a chance to read it.
+     */
+    private void reportLocationError(String errorMessage) {
+        if (errorMessage == null || errorMessage.equals(lastLocationError)) {
+            return;
+        }
+        lastLocationError = errorMessage;
+        Window.alert(errorMessage);
     }
 
     public void autoCalcDeletionLength() {
