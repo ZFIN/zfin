@@ -115,7 +115,15 @@ public record Options(
         String positionField,
         // For the aminoAcidChange widget — the end of the position range.
         // Optional: omit it and the widget renders a single position box.
-        String positionEndField
+        String positionEndField,
+        // For the attachmentsList widget — the af_kind this bucket uploads
+        // as. Two Controls bind to two different arrays on the same assay,
+        // and the upload endpoint needs to know which one it is writing to.
+        String attachmentKind,
+        // For the attachmentsList widget — the file input's accept
+        // attribute (e.g. ".pdf,.docx,application/pdf"). A client-side
+        // filter on the picker only; the server re-validates on upload.
+        String accept
 ) {
 
     /**

@@ -338,3 +338,142 @@ describe('aminoAcidChange widget', () => {
         h.cleanupFetch();
     });
 });
+
+describe('attachmentsList widget', () => {
+    // The two buckets differ only by uischema options, so these assert that
+    // each option actually reaches the DOM / the request — a dropped option
+    // would look identical to the untouched bucket on screen.
+    const schema = {
+        type: 'object',
+        properties: {
+            protocolDocuments: {
+                type: 'array',
+                title: 'Protocol Documentation',
+                maxItems: 10,
+                items: { type: 'object', properties: { id: { type: 'number' } } },
+            },
+        },
+    };
+    const uischema = control('attachmentsList', 'protocolDocuments', {
+        label: 'Protocol Documentation',
+        attachmentKind: 'protocol_doc',
+        accept: '.pdf,.docx,.doc,.txt,.rtf,.odt',
+        helpText: 'Accepted file types: .pdf, .docx, .doc, .txt, .rtf, .odt.',
+    });
+
+    it('shows the bucket heading, the accepted types and a matching picker filter', () => {
+        const h = renderForm({
+            schema,
+            uischema,
+            data: { protocolDocuments: [] },
+            config: { assayId: 7 },
+        });
+
+        assert.ok(screen.getByText('Protocol Documentation'), 'expected the bucket heading');
+        assert.ok(
+            screen.getByText('Accepted file types: .pdf, .docx, .doc, .txt, .rtf, .odt.'),
+            'expected the helper text listing accepted types',
+        );
+        const input = h.container.querySelector('input[type=file]') as HTMLInputElement;
+        assert.equal(input.getAttribute('accept'), '.pdf,.docx,.doc,.txt,.rtf,.odt');
+        h.cleanupFetch();
+    });
+
+    it('posts the bucket kind alongside the file so the server files it correctly', async () => {
+        const h = renderForm({
+            schema,
+            uischema,
+            data: { protocolDocuments: [] },
+            config: { assayId: 7 },
+        });
+        // renderForm's stub only understands the vocabulary endpoint; swap in
+        // one that records the upload. Restored by cleanupFetch below.
+        let seen: { url: string; body: FormData } | null = null;
+        globalThis.fetch = (async (url: RequestInfo | URL, init?: RequestInit) => {
+            seen = { url: String(url), body: init?.body as FormData };
+            return new Response(JSON.stringify({ id: 7, protocolDocuments: [] }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }) as typeof globalThis.fetch;
+
+        const input = h.container.querySelector('input[type=file]') as HTMLInputElement;
+        const file = new File(['protocol'], 'protocol.docx', { type: 'application/octet-stream' });
+        fireEvent.change(input, { target: { files: [file] } });
+
+        await waitFor(() => {
+            assert.ok(seen, 'expected an upload request');
+        });
+        assert.match(seen!.url, /\/assays\/7\/attachments$/);
+        assert.equal(seen!.body.get('kind'), 'protocol_doc');
+        assert.equal((seen!.body.get('file') as File).name, 'protocol.docx');
+        h.cleanupFetch();
+    });
+
+    it('surfaces the server\'s reason for a rejected file, not just the status', async () => {
+        // The point of validating the bucket is telling the curator which
+        // types are accepted; RFC 7807 puts that in `detail` and the generic
+        // status label in `title`, so a client that shows `title` reduces
+        // every rejection to an unactionable "Bad Request".
+        const h = renderForm({
+            schema,
+            uischema,
+            data: { protocolDocuments: [] },
+            config: { assayId: 7 },
+        });
+        globalThis.fetch = (async () => new Response(JSON.stringify({
+            type: 'https://zfin.org/problems/bad-request',
+            title: 'Bad Request',
+            status: 400,
+            detail: 'Protocol documentation must be one of: .pdf, .docx, .doc, .txt, .rtf, .odt',
+        }), {
+            status: 400,
+            headers: { 'Content-Type': 'application/problem+json' },
+        })) as typeof globalThis.fetch;
+
+        const input = h.container.querySelector('input[type=file]') as HTMLInputElement;
+        fireEvent.change(input, {
+            target: { files: [new File(['x'], 'gel.png', { type: 'image/png' })] },
+        });
+
+        await waitFor(() => {
+            assert.ok(
+                screen.getByText(/must be one of: \.pdf, \.docx/),
+                'expected the accepted-types list in the error',
+            );
+        });
+        assert.equal(screen.queryByText('Bad Request'), null);
+        h.cleanupFetch();
+    });
+
+    it('omits kind when the bucket declares none, letting the server default', async () => {
+        const h = renderForm({
+            schema: {
+                type: 'object',
+                properties: { attachments: { type: 'array', items: { type: 'object' } } },
+            },
+            uischema: control('attachmentsList', 'attachments', { label: 'Annotated gel images' }),
+            data: { attachments: [] },
+            config: { assayId: 7 },
+        });
+        let seen: FormData | null = null;
+        globalThis.fetch = (async (_url: RequestInfo | URL, init?: RequestInit) => {
+            seen = init?.body as FormData;
+            return new Response(JSON.stringify({ id: 7, attachments: [] }), {
+                status: 200,
+                headers: { 'Content-Type': 'application/json' },
+            });
+        }) as typeof globalThis.fetch;
+
+        const input = h.container.querySelector('input[type=file]') as HTMLInputElement;
+        fireEvent.change(input, {
+            target: { files: [new File(['x'], 'gel.png', { type: 'image/png' })] },
+        });
+
+        await waitFor(() => {
+            assert.ok(seen, 'expected an upload request');
+        });
+        assert.equal(seen!.get('kind'), null);
+        h.cleanupFetch();
+    });
+});

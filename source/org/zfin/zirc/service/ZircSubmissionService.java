@@ -38,6 +38,7 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 @Service
@@ -357,8 +358,10 @@ public class ZircSubmissionService {
     public static final long MAX_ATTACHMENT_BYTES = 20L * 1024 * 1024;
 
     /**
-     * Content-types we'll accept. Starter list — internal-curator workflow.
-     * For richer formats (e.g. CSV chromatograms) extend this list.
+     * Content-types we'll accept in the per-assay-type results bucket (gel
+     * images, chromatograms, annotated result images, melt curves). Starter
+     * list — internal-curator workflow. For richer formats (e.g. CSV
+     * chromatograms) extend this list.
      */
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
             "image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/tiff",
@@ -382,7 +385,8 @@ public class ZircSubmissionService {
      * <p>Returns the parent assay so callers can return a refreshed
      * AssayDTO in one round trip.
      */
-    public GenotypingAssay storeAttachment(Long assayId, MultipartFile upload) throws IOException {
+    public GenotypingAssay storeAttachment(Long assayId, String kind, MultipartFile upload)
+            throws IOException {
         if (upload == null || upload.isEmpty()) {
             throw new IllegalArgumentException("No file uploaded");
         }
@@ -390,14 +394,19 @@ public class ZircSubmissionService {
             throw new IllegalArgumentException(
                     "Attachment exceeds size limit (" + MAX_ATTACHMENT_BYTES + " bytes)");
         }
-        String contentType = upload.getContentType();
-        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
-            throw new IllegalArgumentException(
-                    "Content type not allowed: " + contentType);
+        if (!GenotypingAssayFile.KINDS.contains(kind)) {
+            throw new IllegalArgumentException("Unknown attachment kind: " + kind);
         }
+        String contentType = upload.getContentType();
+        validateUploadType(kind, upload.getOriginalFilename(), contentType);
 
         GenotypingAssay assay = getRequiredAssayById(assayId);
-        int existing = assay.getFiles() == null ? 0 : assay.getFiles().size();
+        // Counted per bucket: a results bucket at capacity must not block a
+        // protocol document, and vice versa.
+        long existing = assay.getFiles() == null ? 0 : assay.getFiles().stream()
+                .filter(f -> kind.equals(f.getKind() == null
+                        ? GenotypingAssayFile.KIND_ASSAY_RESULT : f.getKind()))
+                .count();
         if (existing >= ZircAssayFormSchema.MAX_ATTACHMENTS_PER_ASSAY) {
             throw new IllegalArgumentException(
                     "Maximum " + ZircAssayFormSchema.MAX_ATTACHMENTS_PER_ASSAY
@@ -413,6 +422,7 @@ public class ZircSubmissionService {
         // the file is actually written; we update it below.
         GenotypingAssayFile file = new GenotypingAssayFile();
         file.setAssay(assay);
+        file.setKind(kind);
         file.setOriginalFilename(upload.getOriginalFilename());
         file.setContentType(contentType);
         file.setFileSize(upload.getSize());
@@ -433,6 +443,7 @@ public class ZircSubmissionService {
         // Audit the upload — old=null, new={file id + original name + size}
         JsonNode meta = AUDIT_MAPPER.valueToTree(java.util.Map.of(
                 "fileId", file.getId(),
+                "kind", kind,
                 "originalFilename", upload.getOriginalFilename(),
                 "bytes", upload.getSize()));
         writeAudit("assay", String.valueOf(assayId), "upload", null, null, meta);
@@ -467,6 +478,38 @@ public class ZircSubmissionService {
             } catch (IOException e) {
                 log.warn("ZIRC attachment delete: failed to remove file on disk: {}", storedPath, e);
             }
+        }
+    }
+
+    /**
+     * Per-bucket upload validation.
+     *
+     * <p>The results bucket keys off the browser-reported content type, which
+     * is reliable enough for the image formats it collects. The protocol
+     * bucket keys off the filename extension instead: browsers report Office
+     * formats inconsistently (a .docx commonly arrives as
+     * application/octet-stream, or as the Word MIME type, depending on
+     * platform and whether Office is installed), so a content-type allow-list
+     * would reject files the ticket explicitly asks us to accept. The
+     * extension is what the curator sees and what the picker's accept
+     * attribute already filters on, so it is also what the error message can
+     * meaningfully talk about.
+     *
+     * <p>Package-private for direct unit testing, like {@link #sanitizeFilename}.
+     */
+    static void validateUploadType(String kind, String originalFilename, String contentType) {
+        if (GenotypingAssayFile.KIND_PROTOCOL_DOC.equals(kind)) {
+            String name = originalFilename == null ? "" : originalFilename.toLowerCase(Locale.ROOT);
+            boolean ok = ZircAssayFormSchema.PROTOCOL_DOC_EXTENSIONS.stream().anyMatch(name::endsWith);
+            if (!ok) {
+                throw new IllegalArgumentException(
+                        "Protocol documentation must be one of: "
+                                + String.join(", ", ZircAssayFormSchema.PROTOCOL_DOC_EXTENSIONS));
+            }
+            return;
+        }
+        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
+            throw new IllegalArgumentException("Content type not allowed: " + contentType);
         }
     }
 

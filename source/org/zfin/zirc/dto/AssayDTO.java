@@ -51,17 +51,13 @@ public record AssayDTO(
         // Catch-all
         String additionalInfo,
         // Attachments (M4.3) — summary rows; full content is fetched via
-        // GET /api/zirc/assays/attachments/{id}/content
-        List<AssayFileDTO> attachments) {
+        // GET /api/zirc/assays/attachments/{id}/content. The two lists are
+        // the form's two upload buckets, split here by af_kind so each
+        // Control binds to its own array (ZFIN-10415).
+        List<AssayFileDTO> attachments,
+        List<AssayFileDTO> protocolDocuments) {
 
     public static AssayDTO of(GenotypingAssay a) {
-        List<AssayFileDTO> files = a.getFiles() == null ? List.of() :
-                a.getFiles().stream()
-                        .sorted(Comparator.comparing(
-                                GenotypingAssayFile::getUploadedAt,
-                                Comparator.nullsLast(Comparator.naturalOrder())))
-                        .map(AssayFileDTO::of)
-                        .toList();
         return new AssayDTO(
                 a.getId(),
                 a.getMutation() == null ? null : a.getMutation().getId(),
@@ -91,6 +87,27 @@ public record AssayDTO(
                 a.getSslpInducedPcr(),
                 a.getSslpOutcrossedPcr(),
                 a.getAdditionalInfo(),
-                files);
+                filesOfKind(a, GenotypingAssayFile.KIND_ASSAY_RESULT),
+                filesOfKind(a, GenotypingAssayFile.KIND_PROTOCOL_DOC));
+    }
+
+    /**
+     * One bucket's files, oldest first. Rows written before ZFIN-10415 are
+     * backfilled to {@code assay_result} by migration, so a null kind here
+     * would mean a row inserted outside the service — treat it as the
+     * results bucket rather than dropping it from the form entirely.
+     */
+    private static List<AssayFileDTO> filesOfKind(GenotypingAssay a, String kind) {
+        if (a.getFiles() == null) {
+            return List.of();
+        }
+        return a.getFiles().stream()
+                .filter(f -> kind.equals(
+                        f.getKind() == null ? GenotypingAssayFile.KIND_ASSAY_RESULT : f.getKind()))
+                .sorted(Comparator.comparing(
+                        GenotypingAssayFile::getUploadedAt,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(AssayFileDTO::of)
+                .toList();
     }
 }
