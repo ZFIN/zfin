@@ -133,13 +133,41 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         return null;
     }
 
+    /**
+     * sfcl_chromosome is NOT NULL with a foreign key into chromosome, so a submission without one
+     * cannot be stored as a location at all. Requiring the assembly, evidence and positions to be
+     * empty too let a partial clear fall through to an UPDATE writing sfcl_chromosome = '', which
+     * the foreign key rejects -- a 500 rather than a save.
+     */
+    private boolean isLocationRemoved(FeatureDTO dto) {
+        return StringUtils.isEmpty(dto.getFeatureChromosome());
+    }
+
+    /**
+     * Reject coordinates outside the chosen chromosome before anything is written. The
+     * flanking-sequence step reads the assembly FASTA for this exact span, so an out-of-range
+     * position made htsjdk throw "Query asks for data past end of contig" as a bare 500.
+     */
+    private void validateLocationWithinChromosome(String assemblyName, String chromosome,
+                                                  Integer start, Integer end) throws ValidationException {
+        AssemblyEnum assembly = currentAssemblyEnum(assemblyName);
+        if (assembly == null || StringUtils.isEmpty(chromosome) || start == null || end == null) {
+            // nothing to check against: non-current assemblies have no FASTA on disk
+            return;
+        }
+        Long chromosomeLength = new GenomicLocationService().getChromosomeLength(assembly, chromosome);
+        if (chromosomeLength == null) {
+            throw new ValidationException("Chromosome " + chromosome + " is not part of assembly " + assemblyName);
+        }
+        if (start < 1 || end > chromosomeLength) {
+            throw new ValidationException("Location " + start + "-" + end + " is outside chromosome "
+                + chromosome + " on " + assemblyName + ", which is " + chromosomeLength + " bp long");
+        }
+    }
+
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) throws ValidationException {
         // check if no value was submitted. If so then delete it
-        if (StringUtils.isEmpty(dto.getFeatureChromosome()) &&
-            StringUtils.isEmpty(dto.getFeatureAssembly()) &&
-            StringUtils.isEmpty(dto.getEvidence()) &&
-            dto.getFeatureStartLoc() == null &&
-            dto.getFeatureEndLoc() == null) {
+        if (isLocationRemoved(dto)) {
             // Remove ALL attribution rows for this FL — not just the one matching
             // dto.getPublicationZdbID() — because Location.references no longer
             // cascades deletes, and any surviving record_attribution row whose
@@ -167,17 +195,21 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             throw new ValidationException("Assembly can only be changed to "
                     + AssemblyEnum.GRCZ12TU.getName() + " or " + AssemblyEnum.GRCZ11.getName());
         }
+        validateLocationWithinChromosome(dto.getFeatureAssembly(), dto.getFeatureChromosome(),
+            dto.getFeatureStartLoc(), dto.getFeatureEndLoc());
         fl.setChromosome(dto.getFeatureChromosome());
         fl.setAssembly(dto.getFeatureAssembly());
         fl.setStartLocation(dto.getFeatureStartLoc());
         fl.setEndLocation(dto.getFeatureEndLoc());
         // convert code into TermID and then get GenericTerm
         String evidenceCodeTerm = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence());
-        if (StringUtils.isNotEmpty(evidenceCodeTerm)) {
-            fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
-        } else {
-            fl.setLocationEvidence(null);
+        if (StringUtils.isEmpty(evidenceCodeTerm)) {
+            // sfcl_evidence_code is NOT NULL, so a location that keeps its chromosome but
+            // loses its evidence code cannot be saved either. Report it as a validation
+            // error the curator can act on rather than letting the flush blow up.
+            throw new ValidationException("An evidence code is required when a chromosome is specified");
         }
+        fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
         HibernateUtil.currentSession().save(fl);
         infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
     }
@@ -274,12 +306,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
         } else {
             if (featureLocationNeedsUpdate(featureDTO, fgl)) {
-                // check if this is a deletion (all fields empty)
-                locationDeleted = StringUtils.isEmpty(featureDTO.getFeatureChromosome()) &&
-                                  StringUtils.isEmpty(featureDTO.getFeatureAssembly()) &&
-                                  StringUtils.isEmpty(featureDTO.getEvidence()) &&
-                                  featureDTO.getFeatureStartLoc() == null &&
-                                  featureDTO.getFeatureEndLoc() == null;
+                // check if the location was removed; must agree with the branch
+                // updateFeatureLocation() takes, or the flanking-sequence cleanup
+                // below runs against a location that was actually deleted (or vice versa)
+                locationDeleted = isLocationRemoved(featureDTO);
                 updateFeatureLocation(fgl, featureDTO);
                 locationUpdated = !locationDeleted;
             }
@@ -731,6 +761,8 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
+                validateLocationWithinChromosome(featureDTO.getFeatureAssembly(), featureDTO.getFeatureChromosome(),
+                    featureDTO.getFeatureStartLoc(), featureDTO.getFeatureEndLoc());
                 FeatureLocation fgl = new FeatureLocation();
                 fgl.setFeature(feature);
                 fgl.setChromosome(featureDTO.getFeatureChromosome());
@@ -1256,7 +1288,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     @Override
-    public String getReferenceSequence(String assembly, String chromosome, int start, int end) {
+    public String getReferenceSequence(String assembly, String chromosome, int start, int end) throws ValidationException {
         AssemblyEnum assemblyEnum = null;
         for (AssemblyEnum ae : AssemblyEnum.values()) {
             if (ae.getName().equals(assembly)) {
@@ -1267,6 +1299,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         if (assemblyEnum == null) {
             return null;
         }
+        // The curation form calls this as soon as the location fields lose focus, so it is usually
+        // where an impossible coordinate is met first -- before any attempt to save. Without this
+        // the FASTA read throws and the curator gets "Failed to fetch reference sequence: 500".
+        validateLocationWithinChromosome(assembly, chromosome, start, end);
         GenomicLocationService genomicLocationService = new GenomicLocationService();
         return new String(genomicLocationService.getReferenceSequence(assemblyEnum, chromosome, start, end).getBases()).toUpperCase();
     }
@@ -1296,6 +1332,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 || fgl.getStartLocation() == null || fgl.getEndLocation() == null) {
             return;
         }
+        // Backstop for locations already stored out of range: the save may not have touched the
+        // location at all, so updateFeatureLocation()'s check never ran for it.
+        validateLocationWithinChromosome(fgl.getAssembly(), fgl.getChromosome(),
+            fgl.getStartLocation(), fgl.getEndLocation());
         GenomicLocationService glService = new GenomicLocationService();
         for (AssemblyEnum ae : AssemblyEnum.values()) {
             if (ae.getName().equals(fgl.getAssembly())) {

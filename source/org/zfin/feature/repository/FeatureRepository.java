@@ -58,6 +58,8 @@ public interface FeatureRepository {
 
     FeatureLocation getLocationByFeature(Feature ftr);
 
+    boolean hasLocationOnOtherAssembly(Feature ftr, String assembly);
+
     String getPrefixById(int labPrefixID);
 
     List<FeaturePrefix> getLabPrefixes(String labName);
