@@ -93,6 +93,6 @@ public interface FeatureRPCService extends RemoteService {
     String isValidAccession(String accessionNumber, String type);
     String getWarningForDeleteRelationship(FeatureMarkerRelationshipDTO featureMarkerRelationshipDTO);
 
-    String getReferenceSequence(String assembly, String chromosome, int start, int end);
+    String getReferenceSequence(String assembly, String chromosome, int start, int end) throws ValidationException;
 
 }

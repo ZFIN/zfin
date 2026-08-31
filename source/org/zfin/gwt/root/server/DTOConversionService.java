@@ -867,6 +867,11 @@ public class DTOConversionService {
                 featureDTO.setFeatureStartLoc(ftrLocation.getStartLocation());
                 featureDTO.setFeatureEndLoc(ftrLocation.getEndLocation());
                 featureDTO.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(ftrLocation.getLocationEvidence().getZdbID()));
+
+                // Only this one assembly's location is shown, and only its row is removed if the
+                // curator clears the fields, so the form has to say that something will survive.
+                featureDTO.setHasOtherLocationAssemblies(RepositoryFactory.getFeatureRepository()
+                    .hasLocationOnOtherAssembly(feature, ftrLocation.getAssembly()));
             }
 
 
