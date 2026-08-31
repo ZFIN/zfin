@@ -602,8 +602,7 @@ public class FishServiceTest extends AbstractDatabaseTest {
 
     @Test
     public void geneStartsWithTest() {
-        Assume.assumeTrue("Skipped until 2026-06-01 -- depends on ZFIN-10262 Solr schema fix being deployed and reindexed", !LocalDate.now().isBefore(LocalDate.of(2026, 6, 1)));
-        genericGeneAlleleBoxTest("adssl hi3081Tg");
+        genericGeneAlleleBoxTest("adss2l hi3081Tg");
     }
 
     public void genericGeneAlleleBoxTest(String value) {
