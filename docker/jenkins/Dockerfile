@@ -38,11 +38,13 @@ RUN curl -fsSL "https://updates.jenkins.io/download/war/${JENKINS_VERSION}/jenki
 
 ADD --chown=gradle:zfin ./jenkins-cli-shim-wrapper.sh /usr/local/bin/jenkins-cli
 
+# If we switch to buildkit, this could be combined with the above "ADD" line
+RUN chmod 755 /usr/local/bin/jenkins-cli
+
 CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang=ALL-UNNAMED \
 	--add-opens java.base/java.lang.reflect=ALL-UNNAMED \
 	--add-opens java.desktop/java.awt=ALL-UNNAMED \
-	-Dinstance=docker \
 	-Dhudson.model.DirectoryBrowserSupport.CSP= \
 	-jar /opt/jenkins/jenkins.war \
 	 --httpPort=9499 \
