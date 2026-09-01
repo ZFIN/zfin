@@ -16,21 +16,6 @@ tasks.withType(JavaExec) {
     systemProperty "com.mchange.v2.log.MLog", "log4j2"
 }
 
-task createBasicGeneInfoFile(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.BasicGeneInfo'
-}
-task createBasicGeneInfoFileTest(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.BasicGeneInfo'
-    args '5'
-}
-
-task createConstructFile(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.BasicConstructInfo'
-}
-
 task createHtpdatasetFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicRNASeqMetaDatasetInfo'
@@ -39,11 +24,6 @@ task createHtpdatasetFile(type: JavaExec) {
 task createHtpdatasampleFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicRNASeqMetaDatasampleInfo'
-}
-
-task createBasicFishInfoFile(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.BasicFishInfo'
 }
 
 task createBasicSTRInfoFile(type: JavaExec) {
@@ -61,10 +41,6 @@ task createZfinExpressionInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.ZFINExpressionInfo'
 }
 
-task createBasicAlleleInfoFile(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.BasicAlleleInfo'
-}
 task createBasicResourceInfoFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.BasicResourceInfo'
@@ -82,17 +58,6 @@ task createDiseaseInfoLinkMLFile(type: JavaExec) {
     doFirst {
         args linkMLVersion
     }
-}
-
-task createDiseaseInfoFile(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.DiseaseInfo'
-}
-
-task createDiseaseInfoFileTest(type: JavaExec) {
-    classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.marker.agr.DiseaseInfo'
-    args '100'
 }
 
 task createBasicPhenotypeInfoFile(type: JavaExec) {
@@ -216,15 +181,10 @@ task createAllianceLinkMLFiles {
 }
 
 task createAllianceFiles {
-    dependsOn createDiseaseInfoFile
     dependsOn createBasicPhenotypeInfoFile
     dependsOn createBasicWTExpressionInfoFile
-    dependsOn createBasicAlleleInfoFile
-    dependsOn createBasicGeneInfoFile
-    dependsOn createBasicFishInfoFile
     dependsOn createBasicSTRInfoFile
     dependsOn createZfinExpressionInfoFile
-    dependsOn createConstructFile
     dependsOn createHtpdatasetFile
     dependsOn createHtpdatasampleFile
     dependsOn createBasicVariantInfoFile

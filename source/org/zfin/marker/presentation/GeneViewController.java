@@ -414,35 +414,9 @@ public class GeneViewController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/genes")
-    public AllGeneDTO getAllGenes() throws Exception {
-        return getFirstGenes(0);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/diseases")
-    public AllDiseaseDTO getAllDiseases() throws Exception {
-        return getFirstDiseases(0);
-    }
-
-    @ResponseBody
     @RequestMapping(value = "/expression")
     public AllExpressionDTO getAllExpression() throws Exception {
         return getFirstExpression(0);
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/all-genes/{number}")
-    public AllGeneDTO getFirstGenes(@PathVariable("number") int number) throws Exception {
-        BasicGeneInfo info = new BasicGeneInfo(number);
-        return info.getAllGeneInfo();
-    }
-
-    @ResponseBody
-    @RequestMapping(value = "/diseases/{number}")
-    public AllDiseaseDTO getFirstDiseases(@PathVariable("number") int number) throws Exception {
-        DiseaseInfo info = new DiseaseInfo(number);
-        return info.getDiseaseInfo(number);
     }
 
     @ResponseBody
