@@ -86,6 +86,44 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    /**
+     * What the accession's current gene mapping says should happen to a drifted
+     * sequence_feature_chromosome_location_generated row.
+     */
+    enum DriftCategory {
+        /** The accession has no NCBI Gene db_link at all; the location belongs to nothing. */
+        ORPHANED,
+        /** The accession maps to exactly one gene, and it is not the one on the row. */
+        REMAPPED,
+        /** The accession maps to several genes; there is no single correct answer. */
+        AMBIGUOUS
+    }
+
+    /**
+     * Decide from the accession's current mapping alone, before touching the database.
+     *
+     * @param currentGenes comma-separated ZFIN gene IDs the accession now maps to,
+     *                     blank or null when it maps to none
+     */
+    static DriftCategory categorizeDrift(String currentGenes) {
+        if (StringUtils.isBlank(currentGenes)) {
+            return DriftCategory.ORPHANED;
+        }
+        return currentGenes.contains(",") ? DriftCategory.AMBIGUOUS : DriftCategory.REMAPPED;
+    }
+
+    /**
+     * Whether a failed re-point is a harmless duplicate rather than a real disagreement.
+     *
+     * <p>True when the gene the accession now maps to already holds this very location: the
+     * GFF3 load created the correct row and left the one we tried to move behind on the old
+     * gene. Deleting it loses no coordinates. False when the target holds different
+     * coordinates - that is a conflict only a curator can settle.
+     */
+    static boolean isDuplicateOfTargetRow(String staleLocation, List<String> targetLocations) {
+        return targetLocations != null && targetLocations.contains(staleLocation);
+    }
+
     private static final long MAX_REPORT_FILE_SIZE = 50_000_000; // 50 MB
     public File workingDir;
 
@@ -3390,7 +3428,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                                 + row.get("sfclg_start", Integer.class) + "-"
                                 + row.get("sfclg_end", Integer.class);
 
-                        if (StringUtils.isBlank(currentGenes)) {
+                        DriftCategory category = categorizeDrift(currentGenes);
+                        if (category == DriftCategory.ORPHANED) {
                             if (applyGenomeLocationChange(connection, pkId,
                                     statement -> statement.setLong(1, pkId), remove)) {
                                 deleted.add(new GenomeLocationDriftRow(oldGene, accession,
@@ -3399,7 +3438,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                                 failed.add(new GenomeLocationDriftRow(oldGene, accession,
                                         "Could not delete", "(none)", location));
                             }
-                        } else if (currentGenes.contains(",")) {
+                        } else if (category == DriftCategory.AMBIGUOUS) {
                             failed.add(new GenomeLocationDriftRow(oldGene, accession,
                                     "Left unchanged - accession maps to several genes", currentGenes, location));
                         } else if (applyGenomeLocationChange(connection, pkId,
@@ -3418,7 +3457,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                             // coordinates is a real conflict for a curator to judge.
                             List<String> targetLocations =
                                     fetchTargetLocations(describeTarget, source, accession, currentGenes);
-                            if (targetLocations.contains(location)) {
+                            if (isDuplicateOfTargetRow(location, targetLocations)) {
                                 if (applyGenomeLocationChange(connection, pkId,
                                         statement -> statement.setLong(1, pkId), remove)) {
                                     deleted.add(new GenomeLocationDriftRow(oldGene, accession,
@@ -3506,7 +3545,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      * than just flagged. Exact duplicates never reach here - they are deleted - so this
      * only ever describes a genuine disagreement about where the accession sits.
      */
-    private String describeConflict(List<String> targetLocations, String targetGene) {
+    static String describeConflict(List<String> targetLocations, String targetGene) {
         if (targetLocations.isEmpty()) {
             return "re-pointing conflicted, but " + targetGene + " has no location for this accession";
         }
