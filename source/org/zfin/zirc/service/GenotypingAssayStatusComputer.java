@@ -78,7 +78,7 @@ public final class GenotypingAssayStatusComputer {
      * bases.
      *
      * <p>Scope is the forward / reverse pair the ticket names. The other five
-     * primer fields have the same ACTGN normalization applied on the form but
+     * primer fields have the same ACGT normalization applied on the form but
      * are deliberately not length-checked yet -- whether the minimum should
      * extend to them is an open question with the curators.
      */

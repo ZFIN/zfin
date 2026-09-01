@@ -169,8 +169,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "minBases" : 10,
           "widget" : "nucleotideSequence"
         },
@@ -178,8 +178,8 @@
         "type" : "Control"
       }, {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "minBases" : 10,
           "widget" : "nucleotideSequence"
         },
@@ -217,8 +217,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/sequencingPrimer",
@@ -237,8 +237,8 @@
     }, {
       "elements" : [ {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/dcapsMismatchPrimer",
@@ -257,24 +257,24 @@
     }, {
       "elements" : [ {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/wtSpecificPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/mutSpecificPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "alphabet" : "ACGTN",
-          "helpText" : "ACTGN only.",
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/commonPrimer",

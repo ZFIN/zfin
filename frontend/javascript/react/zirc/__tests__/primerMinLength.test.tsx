@@ -45,12 +45,22 @@ describe('primer minimum length (ZFIN-10407)', () => {
     });
 
     it('shows the hint for a primer below the minimum', () => {
-        assayForm({ assayType: 'pcr_gel', forwardPrimer: 'NATT' });
+        assayForm({ assayType: 'pcr_gel', forwardPrimer: 'ACGTA' });
 
-        // "At least 10 bases expected — 4 entered."
+        // "At least 10 bases expected — 5 entered."
         const hint = screen.queryByText(/At least 10 bases expected/);
-        assert.ok(hint, 'expected the minimum-length hint for a 4-base primer');
-        assert.match(hint!.textContent ?? '', /4 entered/);
+        assert.ok(hint, 'expected the minimum-length hint for a 5-base primer');
+        assert.match(hint!.textContent ?? '', /5 entered/);
+    });
+
+    it('counts only real bases, so N does not pad a primer to the minimum', () => {
+        // ZFIN-10416 dropped N from the alphabet: the widget strips it, so this
+        // 10-character value is really 9 bases and must still be flagged.
+        assayForm({ assayType: 'pcr_gel', forwardPrimer: 'ACGTACGTAN' });
+
+        const hint = screen.queryByText(/At least 10 bases expected/);
+        assert.ok(hint, 'N must not count toward the minimum');
+        assert.match(hint!.textContent ?? '', /9 entered/);
     });
 
     it('shows no hint once the primer reaches the minimum', () => {

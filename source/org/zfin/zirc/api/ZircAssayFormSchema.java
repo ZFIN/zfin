@@ -77,11 +77,13 @@ public final class ZircAssayFormSchema {
      * primer Control and applied again in FIELDS, so the widget and the
      * server-side normalization are driven by one value.
      *
-     * <p>N is kept, unlike ZircLesionFormSchema's ACGT: degenerate positions
-     * are legitimate in a primer, and "ACTGN only." is what these fields have
-     * always told submitters.
+     * <p>Strict bases, no N: ZFIN-10416 asks for exactly that ("Helper text
+     * should not have 'N' in DNA string"). The fields advertised "ACTGN only."
+     * for years and nothing enforced it, so the N was never meaningful. This
+     * also matches ZircLesionFormSchema, where N was dropped after the same
+     * curator feedback.
      */
-    private static final String PRIMER_ALPHABET = "ACGTN";
+    private static final String PRIMER_ALPHABET = "ACGT";
 
     // Per-cluster reveal sets — each lists the assay types that should
     // show this Group's fields. Matches the old per-type field layouts.
@@ -177,12 +179,12 @@ public final class ZircAssayFormSchema {
         // SSLP-specific fields).
         // The nucleotideSequence widget uppercases and drops anything outside
         // the alphabet as the submitter types or pastes, and shows a live bp
-        // count. Before ZFIN-10407 these Controls carried the "ACTGN only."
-        // help text and nothing enforced it.
+        // count. Before ZFIN-10407 these Controls carried an "ACTGN only."
+        // help text and nothing enforced it; ZFIN-10416 dropped the N.
         Options primerSequence = Options.of()
                 .withWidget("nucleotideSequence")
                 .withAlphabet(PRIMER_ALPHABET)
-                .withHelpText("ACTGN only.");
+                .withHelpText("ACGT only.");
         // Only the forward / reverse pair carries the minimum: that is the scope
         // ZFIN-10407 names, and it matches what GenotypingAssayStatusComputer
         // flags. Whether the other five primers should also have a minimum is
