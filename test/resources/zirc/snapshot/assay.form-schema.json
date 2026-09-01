@@ -169,13 +169,17 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/forwardPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/reversePrimer",
         "type" : "Control"
@@ -211,7 +215,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/sequencingPrimer",
         "type" : "Control"
@@ -229,7 +235,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/dcapsMismatchPrimer",
         "type" : "Control"
@@ -247,19 +255,25 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/wtSpecificPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/mutSpecificPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGTN",
+          "helpText" : "ACTGN only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/commonPrimer",
         "type" : "Control"
