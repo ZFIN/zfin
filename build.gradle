@@ -1440,6 +1440,7 @@ test {
             includeTestsMatching "org.zfin.figure.repository.FigureRepositorySpec"
             includeTestsMatching "org.zfin.gbrowse.presentation.GBrowseImageSpec"
             includeTestsMatching "org.zfin.figure.service.ImageServiceSpec"
+            includeTestsMatching "org.zfin.expression.ImageInlineVideoTest"
 
             // ZIRC drift checks (no DB, pure reflection)
             includeTestsMatching "org.zfin.zirc.api.ZircOpenApiDriftTest"
