@@ -129,6 +129,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     private Boolean debug = true;
 
+    /** Prefix of a ZFIN cross-reference in the dbXrefs column of NCBI's gene_info. */
+    private static final String ZFIN_XREF_PREFIX = "ZFIN:";
+
     public static final String PUB_MAPPED_BASED_ON_RNA = "ZDB-PUB-020723-3";
     public static final String PUB_MAPPED_BASED_ON_VEGA = "ZDB-PUB-130725-2";
     public static final String PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT = "ZDB-PUB-230516-87";
@@ -210,6 +213,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numUnlinkedGenesAfter;
 
     private Map<String, String> NCBIidsGeneSymbols = new HashMap<>(); // Value is String, not List<String> based on Perl
+
+    /**
+     * NCBI Gene ID -> the ZFIN gene IDs NCBI itself cross-references, from the dbXrefs
+     * column of gene_info. This is NCBI's own claim about which ZFIN gene an accession
+     * belongs to, so it can be used to check a mapping this load did not derive itself.
+     */
+    private Map<String, Set<String>> ncbiAssertedZfinGenes = new HashMap<>();
 
     /** fdbcont_zdb_id -> foreign DB display name, read from foreign_db on first use. */
     private Map<String, String> foreignDbDisplayNames;
@@ -328,6 +338,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
     // Store the actions for changes that are made to the DB (really should be cudActions for create, update, delete)
     private List<LoadReportAction> genomeLocationActions = new ArrayList<>();
+    private List<LoadReportAction> legacyVegaActions = new ArrayList<>();
     private List<LoadReportAction> crudActions = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -374,9 +385,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         // otherwise SQL may delete them first causing StaleStateException
         removeLegacyVegaMatchesFromDB();
         printTimingInformation(60);
-
-        runTemporaryVegaRemoveSQL();
-        printTimingInformation(70);
 
         prepareNCBIgeneLoadDatabaseQuery();
         printTimingInformation(80);
@@ -1153,10 +1161,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(LOG, "Captured " + legacyVegaMatches.size() + " legacy Vega matches for potential reintroduction.\n");
     }
 
-    private void runTemporaryVegaRemoveSQL() {
-        runSqlFile("temporaryVegaRemove.sql", "vega-remove-output.txt", "vega-remove-err.txt");
-    }
-
     private void removeLegacyVegaMatchesFromDB() {
         if (legacyVegaDblinkIds.isEmpty()) {
             print(LOG, "No legacy Vega matches to remove.\n");
@@ -1367,6 +1371,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         int ctLines = 0;
         // Value is String, not List<String>
         NCBIidsGeneSymbols = new HashMap<>();
+        ncbiAssertedZfinGenes = new HashMap<>();
 
         File zfGeneInfoFile = new File(workingDir, "zf_gene_info.gz");
         try (
@@ -1396,6 +1401,15 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String symbol = fields[2];
 
                 NCBIidsGeneSymbols.put(ncbiGeneId, symbol);
+
+                // dbXrefs is pipe separated, e.g. "ZFIN:ZDB-GENE-030131-5654|Ensembl:ENSDARG00160027920"
+                for (String xref : fields[5].split("\\|")) {
+                    if (xref.startsWith(ZFIN_XREF_PREFIX)) {
+                        ncbiAssertedZfinGenes
+                                .computeIfAbsent(ncbiGeneId, key -> new HashSet<>())
+                                .add(xref.substring(ZFIN_XREF_PREFIX.length()));
+                    }
+                }
             }
         } catch (IOException e) {
             reportErrAndExit("Cannot open or read zf_gene_info.gz: " + e.getMessage());
@@ -2382,11 +2396,79 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    /**
+     * Re-assert the legacy Vega matches, but only those NCBI still stands behind.
+     *
+     * <p>Vega matching itself is retired - {@code buildVegaIDMappings()} is commented out -
+     * so these links survive only because they are captured before the load deletes them and
+     * put back afterwards. That loop had no validation in it: every captured link was
+     * re-asserted unconditionally, so a mapping could never age out no matter what NCBI did
+     * with the accession. Checked against a recent gene_info, 22 of 149 had drifted - 4 where
+     * NCBI now names a different ZFIN gene, 18 where the accession is gone from NCBI
+     * altogether - and every run was re-publishing them.
+     *
+     * <p>NCBI's own ZFIN cross-reference is the right test here. It is independent of this
+     * load's matching, it is the same claim the supplemental strategy is built on, and it is
+     * already in memory from readZfinGeneInfoFile(). A link NCBI no longer asserts is dropped
+     * and reported rather than silently carried forward.
+     */
     private void reintroduceLegacyVegaLinks() {
-        legacyVegaMatches.forEach(dblink -> {
-            // Add back the legacy Vega links to NCBI Gene IDs (won't overwrite existing links if they have higher priority)
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(dblink.getDataZdbID(), dblink.getAccession(), null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
-        });
+        List<GenomeLocationDriftRow> droppedVegaLinks = new ArrayList<>();
+        int reasserted = 0;
+
+        for (DBLinkSlimDTO dblink : legacyVegaMatches) {
+            String geneZdbId = dblink.getDataZdbID();
+            String accession = dblink.getAccession();
+            Set<String> assertedGenes = ncbiAssertedZfinGenes.getOrDefault(accession, Collections.emptySet());
+
+            if (assertedGenes.contains(geneZdbId)) {
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(
+                        geneZdbId, accession, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+                reasserted++;
+            } else if (assertedGenes.isEmpty()) {
+                droppedVegaLinks.add(new GenomeLocationDriftRow(geneZdbId, accession,
+                        "Dropped - NCBI no longer cross-references any ZFIN gene for this accession",
+                        "(none)", "n/a"));
+            } else {
+                droppedVegaLinks.add(new GenomeLocationDriftRow(geneZdbId, accession,
+                        "Dropped - NCBI now cross-references a different ZFIN gene",
+                        String.join(", ", new TreeSet<>(assertedGenes)), "n/a"));
+            }
+        }
+
+        print(LOG, "Legacy Vega links: " + reasserted + " re-asserted, "
+                + droppedVegaLinks.size() + " dropped as no longer supported by NCBI.\n");
+
+        if (!droppedVegaLinks.isEmpty()) {
+            LoadReportAction action = new LoadReportAction();
+            action.setType(LoadReportAction.Type.DELETE);
+            action.setSubType("Dropped Legacy Vega NCBI GeneID");
+            action.setId("dropped-legacy-vega");
+            action.setGeneZdbID("N/A");
+            action.setAccession("N/A");
+            action.setDetails("Legacy Vega matches are re-asserted each run because Vega matching "
+                    + "itself is retired. These were not re-asserted: NCBI's gene_info no longer "
+                    + "cross-references the ZFIN gene they claim, so there is nothing left "
+                    + "supporting them.");
+            action.setRelatedEntityFields(Map.of("Report Title", "Dropped Legacy Vega NCBI GeneID"));
+            LoadReportSummaryTable table = new LoadReportSummaryTable();
+            table.setDescription(droppedVegaLinks.size() + " legacy Vega link(s) dropped");
+            Map<String, String> headers = new LinkedHashMap<>();
+            headers.put("Gene ZDB ID", "Gene ZDB ID");
+            headers.put("NCBI Gene ID", "NCBI Gene ID");
+            headers.put("Outcome", "Outcome");
+            headers.put("Accession now maps to", "NCBI now cross-references");
+            table.setTableHeadersByMap(headers);
+            table.setRows(droppedVegaLinks.stream()
+                    .map(row -> Map.<String, Object>of(
+                            "Gene ZDB ID", row.geneZdbId(),
+                            "NCBI Gene ID", row.accession(),
+                            "Outcome", row.outcome(),
+                            "Accession now maps to", row.nowMapsTo()))
+                    .toList());
+            action.setTables(List.of(table));
+            legacyVegaActions.add(action);
+        }
     }
 
     private List<LoadReportAction> getOneToNNCBItoZFINgeneIds() {
@@ -4073,6 +4155,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addActions(oneToManyWarningActions);
         builder.addActions(manyToOneWarningActions);
         builder.addActions(genomeLocationActions);
+        builder.addActions(legacyVegaActions);
 
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
