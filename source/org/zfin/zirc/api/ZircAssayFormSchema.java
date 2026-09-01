@@ -85,7 +85,18 @@ public final class ZircAssayFormSchema {
 
     // Per-cluster reveal sets — each lists the assay types that should
     // show this Group's fields. Matches the old per-type field layouts.
-    private static final List<String> FWD_REV_PRIMER_TYPES =
+    /**
+     * Minimum primer length curators expect (ZFIN-10407). Enforced as a status
+     * flag rather than a save-time rejection: this form autosaves as the
+     * submitter types, so a primer is legitimately under the minimum for its
+     * first nine characters.
+     */
+    public static final int PRIMER_MIN_LENGTH = 10;
+
+    // Public so GenotypingAssayStatusComputer can tell whether the forward /
+    // reverse primer pair is even applicable to an assay's type before
+    // flagging it as missing or short.
+    public static final List<String> FWD_REV_PRIMER_TYPES =
             List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp");
     private static final List<String> EXPECTED_PCR_TYPES =
             List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma");
@@ -172,6 +183,11 @@ public final class ZircAssayFormSchema {
                 .withWidget("nucleotideSequence")
                 .withAlphabet(PRIMER_ALPHABET)
                 .withHelpText("ACTGN only.");
+        // Only the forward / reverse pair carries the minimum: that is the scope
+        // ZFIN-10407 names, and it matches what GenotypingAssayStatusComputer
+        // flags. Whether the other five primers should also have a minimum is
+        // still an open question with the curators.
+        Options primerSequenceWithMin = primerSequence.withMinBases(PRIMER_MIN_LENGTH);
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/assayType",
@@ -186,8 +202,8 @@ public final class ZircAssayFormSchema {
                 // use a plain PCR-style primer pair. ASA and KASP use the
                 // WT/mut/common trio instead and are excluded here.
                 groupRevealedFor(FWD_REV_PRIMER_TYPES, List.of(
-                        new Control("#/properties/forwardPrimer", primerSequence, null),
-                        new Control("#/properties/reversePrimer", primerSequence, null)
+                        new Control("#/properties/forwardPrimer", primerSequenceWithMin, null),
+                        new Control("#/properties/reversePrimer", primerSequenceWithMin, null)
                 )),
                 // Expected WT/MUT PCR product — shown for every type that
                 // produces a PCR amplicon (everything except sslp).

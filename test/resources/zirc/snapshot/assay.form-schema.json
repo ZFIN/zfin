@@ -171,6 +171,7 @@
         "options" : {
           "alphabet" : "ACGTN",
           "helpText" : "ACTGN only.",
+          "minBases" : 10,
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/forwardPrimer",
@@ -179,6 +180,7 @@
         "options" : {
           "alphabet" : "ACGTN",
           "helpText" : "ACTGN only.",
+          "minBases" : 10,
           "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/reversePrimer",
