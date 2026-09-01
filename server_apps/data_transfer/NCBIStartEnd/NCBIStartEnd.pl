@@ -1,7 +1,7 @@
 #!/opt/zfin/bin/perl
 
 # NCBIStartEnd.pl
-# parses ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt
+# parses ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/suppressed/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt
 # prepare the list to update related sequence_feature_chromosome_location_generated records 
 
 use DBI;
@@ -27,7 +27,13 @@ if (-e "addList") {
   &doSystemCommand("/bin/rm -f addList");
 }
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt.gz");
+# GRCz11 was retired to all_assembly_versions/suppressed/ when GRCz12 became the
+# reference, which is why this job failed every week from 2025-05-23: wget got
+# "No such directory" on the old path. The file itself is unchanged and frozen
+# (mtime 2024-09-12) - a suppressed assembly is not re-annotated - so this restores
+# the load but will keep re-loading the same 2024 coordinates. If GRCz11 start/end
+# positions are being retired at ZFIN, retire this job instead of pointing it here.
+&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/suppressed/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt.gz");
 &doSystemCommand("/local/bin/gunzip GCF_000002035.6_GRCz11_feature_table.txt.gz");
 
 open (INFO, "GCF_000002035.6_GRCz11_feature_table.txt") ||  die "Cannot open GCF_000002035.6_GRCz11_feature_table.txt : $!\n";
