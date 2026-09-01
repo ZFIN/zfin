@@ -7,8 +7,8 @@ import { StatusOverviewBar } from '../components/StatusOverviewBar';
 import { LineSubmissionHeader } from '../components/LineSubmissionHeader';
 import { ChangeHistoryPanel } from '../components/ChangeHistoryPanel';
 import { StatusRefetchContext } from '../statusRefetchContext';
+import { fetchStatusPayload, type StatusPayload } from '../statusPayload';
 import { HistoryFocusContext, type HistoryFocus } from '../historyFocusContext';
-import type { FieldStatus } from '../components/StatusBadge';
 
 export type LineSubmissionDetailProps = {
     submissionId: string;
@@ -19,26 +19,6 @@ export type LineSubmissionDetailProps = {
     statusPayloadElementId?: string;
 };
 
-type PerEntityStatus = Record<string, Record<string, FieldStatus>>;
-
-type StatusPayload = {
-    fieldStatus: Record<string, FieldStatus>;
-    sectionStatus: Record<string, FieldStatus>;
-    // Top-level submission field name → its containing section label. Used
-    // by ChangeHistoryPanel to label/scope audit entries.
-    fieldSectionMap: Record<string, string>;
-    mutationFieldStatus: PerEntityStatus;
-    mutationSectionStatus: PerEntityStatus;
-    mutationOverallStatus: Record<string, FieldStatus>;
-    geneFieldStatus: PerEntityStatus;
-    geneSectionStatus: PerEntityStatus;
-    lesionFieldStatus: PerEntityStatus;
-    lesionSectionStatus: PerEntityStatus;
-    assayFieldStatus: PerEntityStatus;
-    assaySectionStatus: PerEntityStatus;
-    phenotypeFieldStatus: PerEntityStatus;
-    phenotypeSectionStatus: PerEntityStatus;
-};
 
 export default function LineSubmissionDetail(props: LineSubmissionDetailProps) {
     return (
@@ -96,10 +76,7 @@ function LineSubmissionDetailInner({
     // client base), so we fetch it directly.
     const refetchStatus = React.useCallback(() => {
         if (!submissionId) {return;}
-        fetch(`/action/zirc/line-submission/${encodeURIComponent(submissionId)}/status`, {
-            headers: { Accept: 'application/json' },
-        })
-            .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
+        fetchStatusPayload(submissionId)
             .then((p: StatusPayload) => setPayload(p))
             .catch((e) => console.error('Status refetch failed', e));
     }, [submissionId]);
