@@ -83,3 +83,12 @@ CLAUDE.md
 # Ontology serialization caches written during test runs.
 # Tests prime them lazily via AbstractOntologyTest.deserializeOrPrime(...).
 test/ontologies/data-transfer/*.ser
+
+# Credentials must never live in the repo. server_apps/tokens/ is the sanctioned
+# store (already ignored, and written by `gradle tokenStorage --args='write
+# <NAME> <token>'`); these patterns are a safety net for the ad-hoc files that
+# keep appearing next to the scripts that use them.
+*apiToken*
+*api-token*
+*.token
+**/tokens/*.txt
