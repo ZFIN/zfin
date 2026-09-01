@@ -6,6 +6,9 @@
 
 use DBI;
 use Try::Tiny;
+use FindBin;
+use lib "$FindBin::Bin/../../perl_lib/";
+use ZFINPerlModules;
 
 $dbname = "<!--|DB_NAME|-->";
 $instance = "<!--|INSTANCE|-->";
