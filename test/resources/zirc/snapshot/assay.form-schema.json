@@ -157,7 +157,6 @@
     "elements" : [ {
       "elements" : [ {
         "options" : {
-          "noOther" : true,
           "refreshesParent" : true,
           "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
           "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],

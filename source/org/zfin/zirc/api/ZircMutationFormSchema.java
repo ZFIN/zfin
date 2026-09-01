@@ -2,6 +2,7 @@ package org.zfin.zirc.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.zirc.api.jsonschema.ArraySchema;
 import org.zfin.zirc.api.jsonschema.BooleanSchema;
 import org.zfin.zirc.api.jsonschema.JsonSchema;
@@ -32,7 +33,7 @@ import java.util.function.Function;
  * later milestones; the assay-type field matrix in M4 is where the deferred
  * path-resolver question finally surfaces.
  *
- * <p>Canonical enum values for mutagenesis stage/protocol and lethality
+ * <p>Canonical enum values for mutagenesis stage and lethality
  * stage are starter lists; curators should review before production.
  */
 public final class ZircMutationFormSchema {
@@ -63,8 +64,34 @@ public final class ZircMutationFormSchema {
     private static final List<String> MUTAGENESIS_STAGES = List.of(
             "oocyte", "sperm", "embryo", "larva", "adult", "unknown");
 
-    private static final List<String> MUTAGENESIS_PROTOCOLS = List.of(
-            "ENU", "CRISPR/Cas9", "TALEN", "ZFN", "ionizing radiation", "spontaneous");
+    /**
+     * Submitter-facing mutagenesis-protocol picklist (ZFIN-10402): the whole
+     * {@link Mutagen} vocabulary, in the order curators asked for, minus
+     * {@link Mutagen#NOT_SPECIFIED} — a submitter always knows which protocol
+     * they used, so leaving it out keeps that non-answer out of the data.
+     *
+     * <p>Ordered here rather than by reordering the enum, because the curation
+     * interface builds its own mutagen list per feature type and must keep the
+     * ordering it has. Drawing the values from the enum is what makes "the full
+     * list" true, and keeps submissions on the same strings curation stores.
+     * {@code FormSchemaInvariantsTest} fails if a new enum value is ever added
+     * without being placed here.
+     */
+    static final List<Mutagen> MUTAGENESIS_PROTOCOL_ORDER = List.of(
+            Mutagen.CRISPR,
+            Mutagen.DNA_AND_CRISPR,
+            Mutagen.TALEN,
+            Mutagen.DNA_AND_TALEN,
+            Mutagen.DNA,
+            Mutagen.ENU,
+            Mutagen.ZINC_FINGER_NUCLEASE,
+            Mutagen.TMP,
+            Mutagen.G_RAYS,
+            Mutagen.SPONTANEOUS,
+            Mutagen.EMS);
+
+    private static final List<String> MUTAGENESIS_PROTOCOLS =
+            MUTAGENESIS_PROTOCOL_ORDER.stream().map(Mutagen::toString).toList();
 
     private static final List<String> LETHALITY_STAGES = List.of(
             "embryonic", "larval", "juvenile", "adult", "unknown");

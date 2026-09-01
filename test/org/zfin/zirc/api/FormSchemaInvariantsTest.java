@@ -1,6 +1,7 @@
 package org.zfin.zirc.api;
 
 import org.junit.Test;
+import org.zfin.gwt.root.dto.Mutagen;
 import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
@@ -13,6 +14,7 @@ import org.zfin.zirc.dto.MutationDTO;
 import org.zfin.zirc.dto.PhenotypeDTO;
 
 import java.lang.reflect.RecordComponent;
+import java.util.EnumSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -166,6 +168,23 @@ public class FormSchemaInvariantsTest {
                 // The composite PK is in the URL, not patched as fields.
                 Set.of("mutationAId", "mutationBId"),
                 Set.of()));
+    }
+
+    /**
+     * ZFIN-10402: the submission form's mutagenesis-protocol picklist must
+     * offer the whole ZFIN mutagen vocabulary except {@code not specified}.
+     * A {@link Mutagen} value added later has to be placed deliberately in
+     * the picklist order rather than silently dropped from the form.
+     */
+    @Test
+    public void mutagenesisProtocolPicklistCoversTheVocabulary() {
+        Set<Mutagen> expected = EnumSet.complementOf(EnumSet.of(Mutagen.NOT_SPECIFIED));
+        assertEquals("mutagenesis-protocol picklist must cover every mutagen but 'not specified'",
+                expected,
+                EnumSet.copyOf(ZircMutationFormSchema.MUTAGENESIS_PROTOCOL_ORDER));
+        assertEquals("picklist must not repeat a mutagen",
+                ZircMutationFormSchema.MUTAGENESIS_PROTOCOL_ORDER.size(),
+                expected.size());
     }
 
     // ─── plumbing ──────────────────────────────────────────────────────

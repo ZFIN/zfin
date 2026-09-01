@@ -233,7 +233,7 @@
         "type" : "Control"
       }, {
         "options" : {
-          "standardValues" : [ "ENU", "CRISPR/Cas9", "TALEN", "ZFN", "ionizing radiation", "spontaneous" ],
+          "standardValues" : [ "CRISPR", "DNA and CRISPR", "TALEN", "DNA and TALEN", "DNA", "ENU", "zinc finger nuclease", "TMP", "g-rays", "spontaneous", "EMS" ],
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/mutagenesisProtocol",
