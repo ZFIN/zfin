@@ -109,6 +109,11 @@ public record Options(
         // a pasted FASTA record or numbered sequence normalizes to bases.
         // Defaults client-side to "ACGTN".
         String alphabet,
+        // For the nucleotideSequence widget — the shortest acceptable base
+        // count. Purely advisory: the widget shows an inline message under a
+        // shorter value, it does not block the edit, because the form
+        // autosaves as the submitter types (ZFIN-10407).
+        Integer minBases,
         // For the aminoAcidChange widget — the sibling fields it writes
         // alongside the one it is bound to (which holds the "from" residue).
         // Named rather than derived so the schema stays the single place

@@ -17,6 +17,11 @@ import { ValueDisplay } from '../../components/ValueDisplay';
 
 type NucleotideOptions = {
     alphabet?: string;
+    /**
+     * Shortest acceptable base count. Advisory only: a shorter value still
+     * saves (the form autosaves as you type), but an inline message says so.
+     */
+    minBases?: number;
     /** Names the count, e.g. "Lesion size: 13 bp". Bare "13 bp" when unset. */
     sizeLabel?: string;
     multi?: boolean;
@@ -73,6 +78,10 @@ function NucleotideSequenceRenderer({
         `${opts.sizeLabel ? `${opts.sizeLabel}: ` : ''}${baseCount(v, alphabet)} bp`;
     const view = viewConfigFrom(config);
     const value = (data as string | undefined) ?? '';
+    // Non-empty but short. An empty field is not "too short" — it is simply
+    // not filled in yet, and the status badge on the detail page covers that.
+    const bases = baseCount(value, alphabet);
+    const tooShort = opts.minBases != null && bases > 0 && bases < opts.minBases;
 
     if (view.readonly) {
         return (
@@ -159,6 +168,11 @@ function NucleotideSequenceRenderer({
                             : sizeText(value)}
                         {opts.helpText && <> — {opts.helpText}</>}
                     </small>
+                    {tooShort && (
+                        <small className='form-text text-danger'>
+                            At least {opts.minBases} bases expected — {bases} entered.
+                        </small>
+                    )}
                     {errors && <small className='text-danger'>{errors}</small>}
                 </div>
             </td>

@@ -72,10 +72,42 @@ public final class GenotypingAssayStatusComputer {
         return out;
     }
 
+    /**
+     * Primer fields carrying the ZFIN-10407 rule: a DNA sequence must be
+     * entered, and it must be at least {@link ZircAssayFormSchema#PRIMER_MIN_LENGTH}
+     * bases.
+     *
+     * <p>Scope is the forward / reverse pair the ticket names. The other five
+     * primer fields have the same ACTGN normalization applied on the form but
+     * are deliberately not length-checked yet -- whether the minimum should
+     * extend to them is an open question with the curators.
+     */
+    private static final Set<String> LENGTH_CHECKED_PRIMERS =
+            Set.of(Field.FORWARD_PRIMER.getPath(), Field.REVERSE_PRIMER.getPath());
+
     private static FieldStatus statusFor(GenotypingAssay ga, String path) {
         Object value = readProperty(ga, path);
+
+        // The primer rule only applies when the form would actually show the
+        // field: ASA and KASP use the WT/mut/common trio instead, so a blank
+        // forward primer there is correct, not missing.
+        if (LENGTH_CHECKED_PRIMERS.contains(path) && primerPairApplies(ga)) {
+            if (isEmpty(value)) return FieldStatus.MISSING;
+            if (value instanceof String s
+                    && s.trim().length() < ZircAssayFormSchema.PRIMER_MIN_LENGTH) {
+                return FieldStatus.IN_PROGRESS;
+            }
+            return FieldStatus.COMPLETE;
+        }
+
         if (isEmpty(value) && REQUIRED_PATHS.contains(path)) return FieldStatus.MISSING;
         return FieldStatus.COMPLETE;
+    }
+
+    /** True when this assay's type is one that shows the forward / reverse pair. */
+    private static boolean primerPairApplies(GenotypingAssay ga) {
+        String type = ga.getAssayType();
+        return type != null && ZircAssayFormSchema.FWD_REV_PRIMER_TYPES.contains(type);
     }
 
     private GenotypingAssayStatusComputer() {}
