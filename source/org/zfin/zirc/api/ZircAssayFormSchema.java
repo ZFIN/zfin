@@ -72,9 +72,33 @@ public final class ZircAssayFormSchema {
             "HRMA",
             "SSLP");
 
+    /**
+     * Bases accepted in the primer fields (ZFIN-10407). Emitted onto every
+     * primer Control and applied again in FIELDS, so the widget and the
+     * server-side normalization are driven by one value.
+     *
+     * <p>Strict bases, no N: ZFIN-10416 asks for exactly that ("Helper text
+     * should not have 'N' in DNA string"). The fields advertised "ACTGN only."
+     * for years and nothing enforced it, so the N was never meaningful. This
+     * also matches ZircLesionFormSchema, where N was dropped after the same
+     * curator feedback.
+     */
+    private static final String PRIMER_ALPHABET = "ACGT";
+
     // Per-cluster reveal sets — each lists the assay types that should
     // show this Group's fields. Matches the old per-type field layouts.
-    private static final List<String> FWD_REV_PRIMER_TYPES =
+    /**
+     * Minimum primer length curators expect (ZFIN-10407). Enforced as a status
+     * flag rather than a save-time rejection: this form autosaves as the
+     * submitter types, so a primer is legitimately under the minimum for its
+     * first nine characters.
+     */
+    public static final int PRIMER_MIN_LENGTH = 10;
+
+    // Public so GenotypingAssayStatusComputer can tell whether the forward /
+    // reverse primer pair is even applicable to an assay's type before
+    // flagging it as missing or short.
+    public static final List<String> FWD_REV_PRIMER_TYPES =
             List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp");
     private static final List<String> EXPECTED_PCR_TYPES =
             List.of("pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma");
@@ -153,7 +177,19 @@ public final class ZircAssayFormSchema {
         // including the placement of the attachment buckets (e.g. SSLP
         // shows the gel-image upload right after the primers, before the
         // SSLP-specific fields).
-        Options actgnHelp = Options.of().withHelpText("ACTGN only.");
+        // The nucleotideSequence widget uppercases and drops anything outside
+        // the alphabet as the submitter types or pastes, and shows a live bp
+        // count. Before ZFIN-10407 these Controls carried an "ACTGN only."
+        // help text and nothing enforced it; ZFIN-10416 dropped the N.
+        Options primerSequence = Options.of()
+                .withWidget("nucleotideSequence")
+                .withAlphabet(PRIMER_ALPHABET)
+                .withHelpText("ACGT only.");
+        // Only the forward / reverse pair carries the minimum: that is the scope
+        // ZFIN-10407 names, and it matches what GenotypingAssayStatusComputer
+        // flags. Whether the other five primers should also have a minimum is
+        // still an open question with the curators.
+        Options primerSequenceWithMin = primerSequence.withMinBases(PRIMER_MIN_LENGTH);
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/assayType",
@@ -168,8 +204,8 @@ public final class ZircAssayFormSchema {
                 // use a plain PCR-style primer pair. ASA and KASP use the
                 // WT/mut/common trio instead and are excluded here.
                 groupRevealedFor(FWD_REV_PRIMER_TYPES, List.of(
-                        new Control("#/properties/forwardPrimer", actgnHelp, null),
-                        new Control("#/properties/reversePrimer", actgnHelp, null)
+                        new Control("#/properties/forwardPrimer", primerSequenceWithMin, null),
+                        new Control("#/properties/reversePrimer", primerSequenceWithMin, null)
                 )),
                 // Expected WT/MUT PCR product — shown for every type that
                 // produces a PCR amplicon (everything except sslp).
@@ -180,18 +216,18 @@ public final class ZircAssayFormSchema {
                 // PCR + sequencing — sits between the PCR products and the
                 // chromatogram-attachments block.
                 groupRevealedFor(SEQUENCING_TYPES, List.of(
-                        new Control("#/properties/sequencingPrimer", actgnHelp, null)
+                        new Control("#/properties/sequencingPrimer", primerSequence, null)
                 )),
                 // dCAPS — one extra primer field, before the digest block.
                 groupRevealedFor(DCAPS_TYPES, List.of(
-                        new Control("#/properties/dcapsMismatchPrimer", actgnHelp, null)
+                        new Control("#/properties/dcapsMismatchPrimer", primerSequence, null)
                 )),
                 // ASA + KASP — WT/mut/common primer trio. KASP adds the
                 // genomic-sequence textarea in its own group below.
                 groupRevealedFor(ALLELE_SPECIFIC_TYPES, List.of(
-                        new Control("#/properties/wtSpecificPrimer",  actgnHelp, null),
-                        new Control("#/properties/mutSpecificPrimer", actgnHelp, null),
-                        new Control("#/properties/commonPrimer",      actgnHelp, null)
+                        new Control("#/properties/wtSpecificPrimer",  primerSequence, null),
+                        new Control("#/properties/mutSpecificPrimer", primerSequence, null),
+                        new Control("#/properties/commonPrimer",      primerSequence, null)
                 )),
                 groupRevealedFor(KASP_TYPES, List.of(
                         new Control("#/properties/kaspGenomicSequence",
@@ -278,15 +314,15 @@ public final class ZircAssayFormSchema {
     public static final Map<String, FieldDescriptor> FIELDS = Map.ofEntries(
             field("/assayType",                GenotypingAssay::getAssayType,                (a, v) -> a.setAssayType(text(v))),
             field("/additionalInfo",           GenotypingAssay::getAdditionalInfo,           (a, v) -> a.setAdditionalInfo(text(v))),
-            field("/forwardPrimer",            GenotypingAssay::getForwardPrimer,            (a, v) -> a.setForwardPrimer(text(v))),
-            field("/reversePrimer",            GenotypingAssay::getReversePrimer,            (a, v) -> a.setReversePrimer(text(v))),
+            field("/forwardPrimer",            GenotypingAssay::getForwardPrimer,            (a, v) -> a.setForwardPrimer(nucleotides(v))),
+            field("/reversePrimer",            GenotypingAssay::getReversePrimer,            (a, v) -> a.setReversePrimer(nucleotides(v))),
             field("/expectedWtPcr",            GenotypingAssay::getExpectedWtPcr,            (a, v) -> a.setExpectedWtPcr(text(v))),
             field("/expectedMutPcr",           GenotypingAssay::getExpectedMutPcr,           (a, v) -> a.setExpectedMutPcr(text(v))),
-            field("/sequencingPrimer",         GenotypingAssay::getSequencingPrimer,         (a, v) -> a.setSequencingPrimer(text(v))),
-            field("/dcapsMismatchPrimer",      GenotypingAssay::getDcapsMismatchPrimer,      (a, v) -> a.setDcapsMismatchPrimer(text(v))),
-            field("/wtSpecificPrimer",         GenotypingAssay::getWtSpecificPrimer,         (a, v) -> a.setWtSpecificPrimer(text(v))),
-            field("/mutSpecificPrimer",        GenotypingAssay::getMutSpecificPrimer,        (a, v) -> a.setMutSpecificPrimer(text(v))),
-            field("/commonPrimer",             GenotypingAssay::getCommonPrimer,             (a, v) -> a.setCommonPrimer(text(v))),
+            field("/sequencingPrimer",         GenotypingAssay::getSequencingPrimer,         (a, v) -> a.setSequencingPrimer(nucleotides(v))),
+            field("/dcapsMismatchPrimer",      GenotypingAssay::getDcapsMismatchPrimer,      (a, v) -> a.setDcapsMismatchPrimer(nucleotides(v))),
+            field("/wtSpecificPrimer",         GenotypingAssay::getWtSpecificPrimer,         (a, v) -> a.setWtSpecificPrimer(nucleotides(v))),
+            field("/mutSpecificPrimer",        GenotypingAssay::getMutSpecificPrimer,        (a, v) -> a.setMutSpecificPrimer(nucleotides(v))),
+            field("/commonPrimer",             GenotypingAssay::getCommonPrimer,             (a, v) -> a.setCommonPrimer(nucleotides(v))),
             field("/kaspGenomicSequence",      GenotypingAssay::getKaspGenomicSequence,      (a, v) -> a.setKaspGenomicSequence(text(v))),
             field("/restrictionEnzymeName",    GenotypingAssay::getRestrictionEnzymeName,    (a, v) -> a.setRestrictionEnzymeName(text(v))),
             field("/restrictionEnzymeCatalog", GenotypingAssay::getRestrictionEnzymeCatalog, (a, v) -> a.setRestrictionEnzymeCatalog(text(v))),
@@ -343,6 +379,25 @@ public final class ZircAssayFormSchema {
     }
 
     // ─── value coercers ────────────────────────────────────────────────────
+
+    /**
+     * Primer fields: uppercase and drop anything that is not an accepted base.
+     *
+     * The nucleotideSequence widget applies the same rule as the submitter
+     * types, but a PATCH can be made directly against the field path, so the
+     * constraint has to live here too or it is decorative. Mirrors
+     * normalizeSequence in nucleotides.ts, minus the FASTA-header handling,
+     * which is a paste affordance rather than part of what the column may hold.
+     */
+    private static String nucleotides(JsonNode v) {
+        String s = text(v);
+        if (s == null) {return null;}
+        StringBuilder out = new StringBuilder(s.length());
+        for (char c : s.toUpperCase().toCharArray()) {
+            if (PRIMER_ALPHABET.indexOf(c) >= 0) {out.append(c);}
+        }
+        return out.isEmpty() ? null : out.toString();
+    }
 
     private static String text(JsonNode v) {
         if (v == null || v.isNull()) {return null;}

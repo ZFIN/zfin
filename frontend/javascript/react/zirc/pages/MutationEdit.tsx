@@ -19,6 +19,8 @@ import { genesListRendererEntry } from '../schemaForm/renderers/GenesListRendere
 import { lesionsListRendererEntry } from '../schemaForm/renderers/LesionsListRenderer';
 import { phenotypesListRendererEntry } from '../schemaForm/renderers/PhenotypesListRenderer';
 import { autocompleteRendererEntry } from '../schemaForm/renderers/AutocompleteRenderer';
+import { StatusRefetchContext } from '../statusRefetchContext';
+import { fetchStatusPayload, perEntityStatusConfig, type StatusPayload } from '../statusPayload';
 
 export type MutationEditProps = {
     // From data-mutation-id on the JSP mount.
@@ -65,6 +67,19 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
     // uiSchema's managesOwnPersistence flags (assays/genes/lesions/
     // phenotypes are flagged server-side). No parent to refresh — the
     // mutation edit page is its own route, not an inline card.
+    // Server-computed status for the parent submission. The assay / gene /
+    // lesion / phenotype list renderers read their per-entity slices out of the
+    // JsonForms config; without this the page supplied none and every badge
+    // rendered blank, so e.g. a too-short primer (ZFIN-10407) was invisible
+    // here and only showed on the submission detail page.
+    const [statusPayload, setStatusPayload] = React.useState<StatusPayload | null>(null);
+    const refetchStatus = React.useCallback(() => {
+        if (!submissionId) {return;}
+        fetchStatusPayload(submissionId)
+            .then(setStatusPayload)
+            .catch((e) => console.error('Status fetch failed', e));
+    }, [submissionId]);
+
     const { formData, setFormData, status, errorMessage, schemaQuery } =
         useAutosavedSchemaForm<MutationDTO>({
             entity: mutationQuery.data,
@@ -73,6 +88,14 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
             schemaEndpoint: '/mutations/form-schema',
             patchEndpointFor: (id) => `/mutations/${id}`,
         });
+
+    React.useEffect(() => { refetchStatus(); }, [refetchStatus]);
+
+    // A saved edit can move a badge (e.g. the primer reaching 10bp), so pull
+    // the recomputed status once the autosave settles.
+    React.useEffect(() => {
+        if (status === 'saved') {refetchStatus();}
+    }, [status, refetchStatus]);
 
     if (!idNum) {
         return <div className='alert alert-danger'>Missing mutation id.</div>;
@@ -85,19 +108,25 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
     }
 
     return (
-        <div>
-            <div className='d-flex justify-content-end mb-1'>
-                <SaveStatusBadge status={status} message={errorMessage} />
+        <StatusRefetchContext.Provider value={refetchStatus}>
+            <div>
+                <div className='d-flex justify-content-end mb-1'>
+                    <SaveStatusBadge status={status} message={errorMessage} />
+                </div>
+                <JsonForms
+                    schema={schemaQuery.data.schema}
+                    uischema={schemaQuery.data.uiSchema}
+                    data={formData}
+                    renderers={mutationRenderers}
+                    cells={[]}
+                    config={{
+                        mutationId: idNum,
+                        submissionId,
+                        ...perEntityStatusConfig(statusPayload),
+                    }}
+                    onChange={({ data }) => setFormData(data as FormDataShape)}
+                />
             </div>
-            <JsonForms
-                schema={schemaQuery.data.schema}
-                uischema={schemaQuery.data.uiSchema}
-                data={formData}
-                renderers={mutationRenderers}
-                cells={[]}
-                config={{ mutationId: idNum, submissionId }}
-                onChange={({ data }) => setFormData(data as FormDataShape)}
-            />
-        </div>
+        </StatusRefetchContext.Provider>
     );
 }
