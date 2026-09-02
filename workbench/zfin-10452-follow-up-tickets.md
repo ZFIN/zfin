@@ -362,16 +362,31 @@ code mentions. If that job is ever disabled — and four BLAST
 regeneration jobs in this same area already have no cron at all, see #2 —
 the directory grows until the volume fills, with nothing to point at.
 
-**One thing that does not add up.** That `find` is recursive and matches
-`*.fa`, so it should have deleted
-`Current/gbk_zf_mrna.fa` — 1.08 GiB, dated 2024-06-23. It is still there.
-Either the job is failing partway or it is not deleting what it appears
-to; worth reading its recent build logs before trusting it. Note also
-that the pattern misses `.fasta`, `.out` and `.ctx`, which is why the
-rest of the cruft in `Current/` survives: 26 non-database files totalling
-1.18 GiB, including `protein.fasta` and `sebu1_033116.{ctx,out}` from
-2016, an empty extensionless `vega_transcript`, and `.txt` files from
-2009–2015.
+**A loose end in the cleanup job.** The dump files sit directly in
+`/opt/zfin/blastdb/`, which is what `WEBHOST_BLAST_DATABASE_PATH` points
+at, and that is where the `find` cleans them — the two-day steady state
+above is that job working. But the `find` is recursive and matches
+`*.fa`, so it should also reach `Current/gbk_zf_mrna.fa` (1.08 GiB,
+2024-06-23), and that file is still there.
+
+The most recent build log rules out the obvious causes: the job runs from
+`/opt/zfin/www_homes/zfin.org`, both `find`s execute, `-name "*.fa"`
+reaches `find` unexpanded, and it exits 0 under `/bin/sh -xe`, so there
+were no permission errors during traversal either. Something stops it at
+the top level instead — a `Current` that is a symlink would do it, since
+`find` without `-L` will not descend into one. One command in the same
+context the job runs, without the `-exec`, settles it:
+
+```sh
+find /opt/zfin/blastdb/ -name "*.fa" -mtime +1
+ls -ld /opt/zfin/blastdb /opt/zfin/blastdb/Current
+```
+
+Note also that the pattern misses `.fasta`, `.out` and `.ctx`, which is
+why the rest of the cruft in `Current/` would survive regardless: 26
+non-database files totalling 1.18 GiB, including `protein.fasta` and
+`sebu1_033116.{ctx,out}` from 2016, an empty extensionless
+`vega_transcript`, and `.txt` files from 2009–2015.
 
 **Scope**
 
@@ -381,8 +396,8 @@ rest of the cruft in `Current/` survives: 26 non-database files totalling
   reference to every path until then.
 - Write query temp files somewhere that is not the blast database
   directory.
-- Find out why `Delete-Old-Blast-Results_d` left a 1.08 GiB `.fa` in
-  `Current/`, and sweep the rest of the stray files while in there.
+- Find out why `Delete-Old-Blast-Results_d` does not descend into
+  `Current/`, and sweep the stray files there while in the area.
 - If the cron job is kept as a backstop, say so in a comment where the
   temp file is created.
 
