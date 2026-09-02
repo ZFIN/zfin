@@ -129,7 +129,7 @@ export interface AssayDTO {
     expectedWtPcr: string | null;
     expectedMutPcr: string | null;
     sequencingPrimer: string | null;
-    dcapsMismatchPrimer: string | null;
+    dcapsMismatchPrimerChoice: string | null;
     wtSpecificPrimer: string | null;
     mutSpecificPrimer: string | null;
     commonPrimer: string | null;

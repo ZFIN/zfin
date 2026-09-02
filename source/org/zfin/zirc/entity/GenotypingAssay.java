@@ -86,8 +86,13 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_sequencing_primer")
     private String sequencingPrimer;
 
+    // Retired from the form by ZFIN-10438 but still mapped so existing values
+    // are not orphaned. Nothing reads it; the replacement is below.
     @Column(name = "ga_dcaps_mismatch_primer")
     private String dcapsMismatchPrimer;
+
+    @Column(name = "ga_dcaps_mismatch_primer_choice")
+    private String dcapsMismatchPrimerChoice;
 
     @Column(name = "ga_wt_specific_primer")
     private String wtSpecificPrimer;
