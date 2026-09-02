@@ -17,7 +17,7 @@ Priority is my read, not a decision:
 | 5 | Task | Track BLAST database sequence counts run-to-run | medium |
 | 6 | Task | `Run-ZFIN-Ensembl-Transcripts-Blast-Data-Dump_d` doesn't rebuild its database | low |
 | 7 | Task | Decide what `CuratedNtrRegions` should contain | low |
-| 8 | Task | RefSeq load writes ~1.5 GB of build artifacts into the deployed tree | low |
+| 8 | Task | The blast loads write ~15 GB of build artifacts into the deployed tree | medium |
 | 9 | Task | BLAST query temp files are cleaned only by an external cron job | low |
 | 10 | Task | Decide the authoritative source for a blast database fetch | medium |
 
@@ -308,9 +308,9 @@ in the picker or the validation report.
 
 ---
 
-## 8. RefSeq load writes ~1.5 GB of build artifacts into the deployed tree
+## 8. The blast loads write ~15 GB of build artifacts into the deployed tree
 
-**Type** Task · **Priority** low
+**Type** Task · **Priority** medium
 
 `Regenerate-RefSeq-BlastDBs_w` runs with `customWorkspace $TARGETROOT`
 and does `cd server_apps/data_transfer/BLAST/RefSeq/ && ./processRefSeq.sh`.
@@ -321,6 +321,37 @@ three chunks are fetched. `pushRefSeq.sh` then copies out of that
 directory and leaves everything behind, plus a `refseq.ftp` marker and a
 `refseq_process.log`.
 
+`Regenerate-ZFIN-BlastDBs_d` does the same thing at a much larger scale,
+and it is not theoretical: a run on cell on 2026-09-02 filled the disk
+partway through `zfin_genomicDNA` —
+
+```
+/bin/cat: zfin_genomic_dna_all_dna.fa: No space left on device
+...
+  Failed write at sequence #7
+FATAL:  xdf_rec_write failed, xdf_errno 10
+```
+
+The blast databases are 2-bit packed (`NCBI2na.1`), so the fasta each
+load dumps out of them is roughly four times the database size:
+
+| intermediate | derived from | approx |
+| --- | --- | --- |
+| `zfin_cdna/zfin_gb_seq.fa` | `.xns` 1.58 GB packed → 6.3 Gbp | ~6.4 GB |
+| `zfin_genomicDNA/zfin_genomic_dna_all*.fa` | 465 MB packed, written once per source then concatenated | ~3.8 GB |
+| `zfin_cdna/zfin_cdna_seq.fa`, `vega_zfin.fa` | | ~0.2 GB |
+| `RefSeq/*.{fna,faa}.gz` and `.fa` | | ~1.5 GB |
+
+So a full `dailyZfinSeq.sh` wants 13–15 GB of scratch inside
+`$TARGETROOT`, and leaves it there. Production carries the same files
+permanently in its deployed tree.
+
+`xdformat` did clean up after itself here — "XDF database removed" — so a
+disk-full run does not leave a corrupt database. But it fails late, after
+the expensive `xdget` work, and the ~1 GB `Current/gbk_zf_mrna.fa` found
+on crick (#9) looks like exactly this kind of artifact left somewhere it
+does not belong.
+
 Two smaller things in the same script set:
 
 - `pushRefSeq.sh` opens with
@@ -330,13 +361,16 @@ Two smaller things in the same script set:
 - `convertRefSeq.sh` titles the protein database `"ReqSeq Zebrafish
   protein"` — a typo carried into the database header.
 
-**Scope** Give the RefSeq load a scratch directory outside the deployed
+**Scope** Give the blast loads a scratch directory outside the deployed
 tree, along the lines of the `BLASTSERVER_FASTA_FILE_PATH` the GenBank
 scripts use; clean up intermediates on success; make the `Backup` move
-tolerant of a first run.
+tolerant of a first run. Consider a free-space check before the first
+`xdget`, so a short disk fails in a second with a number rather than
+twenty minutes in with `xdf_errno 10`.
 
-**Acceptance** A RefSeq regeneration leaves no build artifacts in the
-source tree, and succeeds on a host with an empty `Current`.
+**Acceptance** A blast regeneration leaves no build artifacts in the
+source tree, succeeds on a host with an empty `Current`, and says up
+front if there is not enough room.
 
 ---
 
