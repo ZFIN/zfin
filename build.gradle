@@ -862,6 +862,73 @@ task getBlastSmallDatabases() {
     }
 }
 
+// An AB-BLAST database is a set of four files -- .xnd .xni .xns .xnt for
+// nucleotide, .xpd .xpi .xps .xpt for protein. rsync's --max-size filters per
+// *file*, so capping the fetch above does not skip a large database, it leaves a
+// fragment: gbk_zf_mrna arrives as a lone 12MB .xnt while its .xnd/.xni/.xns
+// (171/157/240MB) are dropped. The directory then looks populated to anything
+// that merely checks whether a file exists, and xdget's only complaint is
+// "xdf_db_fopen failed code 8". That is how ZFIN-10452 presented on a dev
+// instance. Delete the fragments so absent reads as absent.
+//
+// A database whose .xni is present but holds no identifier index survives this
+// on purpose -- that is Validate-Blast-Databases_d's job to report, not rsync's.
+task pruneIncompleteBlastDatabases() {
+    doLast {
+        def current = file("/opt/zfin/blastdb/Current")
+        if (!current.isDirectory()) {
+            logger.lifecycle("pruneIncompleteBlastDatabases: no ${current}, nothing to do")
+            return
+        }
+
+        def present = [:]   // "<database>|<n or p>" -> set of suffix letters found
+        current.listFiles().each { f ->
+            def m = f.name =~ /^(.+)\.x([np])([dist])$/
+            if (m.matches()) {
+                present.get(m.group(1) + "|" + m.group(2), [] as Set) << m.group(3)
+            }
+        }
+
+        def pruned = 0
+        present.each { key, found ->
+            if (found.size() == 4) {
+                return
+            }
+            def (database, alphabet) = key.tokenize("|")
+            def missing = (["d", "i", "s", "t"] - found).collect { ".x${alphabet}${it}" }
+            logger.lifecycle("incomplete blast database ${database}: missing ${missing.join(' ')} -- deleting the ${found.size()} file(s) that did arrive")
+            found.each { new File(current, "${database}.x${alphabet}${it}").delete() }
+            pruned++
+        }
+        logger.lifecycle("pruneIncompleteBlastDatabases: pruned ${pruned} incomplete database(s)")
+    }
+}
+
+// The databases Regenerate-ZFIN-BlastDBs_d reads as *input*:
+// ZFIN/zfin_cdna/assemblezfin_cdna.sh and
+// ZFIN/zfin_genomicDNA/assemblezfin_genomicDNA.sh xdget accessions out of the
+// gbk_* sets and refseq_zf_rna, and ZFIN/zfin_cdna/convertzfin_cdna.sh dumps
+// vega_zfin whole. Fetched with no size cap, because a partial one is useless --
+// about 3.6GB, against 34GB for the whole of Current. Run this on a dev or stage
+// instance that needs to exercise the nightly ZFIN blast load end to end;
+// getBlast alone cannot, since every gbk_* database exceeds the cap.
+def zfinLoadBlastDatabases = ["gbk_zf_mrna", "gbk_zf_dna", "gbk_zf_rna", "refseq_zf_rna", "vega_zfin"]
+
+task getBlastZfinLoadDatabases() {
+    doLast {
+        def current = file("/opt/zfin/blastdb/Current")
+        current.mkdirs()
+        exec {
+            ignoreExitValue = true
+            commandLine(["rsync", "-av"] +
+                    zfinLoadBlastDatabases.collect { "--include=${it}.x??".toString() } +
+                    ["--exclude=*",
+                     env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current/",
+                     current.path + "/"])
+        }
+    }
+}
+
 task getBlastBinaries() {
     doLast {
         exec {
@@ -873,6 +940,16 @@ task getBlastBinaries() {
 
 task getBlast(type: GradleBuild) {
     tasks = ['getBlastSmallDatabases',
+             'pruneIncompleteBlastDatabases',
+             'getBlastBinaries'
+    ]
+}
+
+// getBlast plus the un-capped input databases the nightly ZFIN blast load needs.
+task getBlastForZfinLoad(type: GradleBuild) {
+    tasks = ['getBlastSmallDatabases',
+             'getBlastZfinLoadDatabases',
+             'pruneIncompleteBlastDatabases',
              'getBlastBinaries'
     ]
 }
