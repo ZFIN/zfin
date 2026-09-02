@@ -844,21 +844,45 @@ task getsolr(dependsOn: getLatestSolrUnload)
 // loadsolr as alias for getLatestSolrIndex
 task loadsolr(dependsOn: getLatestSolrIndex)
 
+// Where a blast database fetch comes from. These tasks used to hardcode
+// $SSH_HOST:/research/zfin.org/blastdb/Current, which exists on no host any
+// more -- checked on crick (the SSH_HOST in docker/.env) and on the production
+// hosts, 2026-09-02. Production's blast directory is /mnt/netapp/zfin/blastdb,
+// mounted into its containers at /opt/zfin/blastdb, so that is the default;
+// override either half when a fetch should come from somewhere else, e.g. the
+// complete gbk_* set in /research/zblastfiles/zmore/dev_blastdb/Current:
+//
+//   BLAST_SOURCE_HOST=... BLAST_SOURCE_PATH=... gradle getBlast
+//
+// The old tasks also set ignoreExitValue = true, which is how a source path
+// that resolved nowhere went unnoticed: rsync failed, nothing transferred, and
+// the build reported success. Fetches now fail loudly instead. See ZFIN-10452
+// follow-up #10.
+def blastSourceHost = env['BLAST_SOURCE_HOST'] ?: env['SSH_HOST']
+def blastSourcePath = env['BLAST_SOURCE_PATH'] ?: "/mnt/netapp/zfin/blastdb/Current"
+
+def rsyncBlast = { List<String> options, String source, String destination ->
+    def spec = env['SSH_USER'] + "@" + blastSourceHost + ":" + source
+    def result = exec {
+        ignoreExitValue = true
+        commandLine(["rsync", "-av"] + options + [spec, destination])
+    }
+    if (result.exitValue != 0) {
+        throw new GradleException(
+                "rsync exited ${result.exitValue} fetching ${spec}. Set BLAST_SOURCE_HOST " +
+                "and BLAST_SOURCE_PATH if the blast databases have moved.")
+    }
+}
+
 task getBlastAllDatabases() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast([], blastSourcePath, "/opt/zfin/blastdb/")
     }
 }
 
 task getBlastSmallDatabases() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast(["--max-size=100m"], blastSourcePath, "/opt/zfin/blastdb/")
     }
 }
 
@@ -923,14 +947,8 @@ task getBlastZfinLoadDatabases() {
     doLast {
         def current = file("/opt/zfin/blastdb/Current")
         current.mkdirs()
-        exec {
-            ignoreExitValue = true
-            commandLine(["rsync", "-av"] +
-                    zfinLoadBlastDatabases.collect { "--include=${it}.x??".toString() } +
-                    ["--exclude=*",
-                     env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current/",
-                     current.path + "/"])
-        }
+        rsyncBlast(zfinLoadBlastDatabases.collect { "--include=${it}.x??".toString() } + ["--exclude=*"],
+                blastSourcePath + "/", current.path + "/")
     }
 }
 

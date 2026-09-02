@@ -19,7 +19,7 @@ Priority is my read, not a decision:
 | 7 | Task | Decide what `CuratedNtrRegions` should contain | low |
 | 8 | Task | RefSeq load writes ~1.5 GB of build artifacts into the deployed tree | low |
 | 9 | Task | BLAST query temp files are cleaned only by an external cron job | low |
-| 10 | Bug | The `getBlast*` gradle tasks rsync from a path that no longer exists | medium |
+| 10 | Task | Decide the authoritative source for a blast database fetch | medium |
 
 **#1, #2 and #3 are the ones that matter.** #2 and #3 need a decision
 before anyone writes code; the rest are self-contained.
@@ -406,36 +406,57 @@ running, and `Current/` holds only blast databases.
 
 ---
 
-## 10. The `getBlast*` gradle tasks rsync from a path that no longer exists
+## 10. Decide the authoritative source for a blast database fetch
 
-**Type** Bug · **Priority** medium · **Needs investigation**
+**Type** Task · **Priority** medium
 
-`getBlastAllDatabases`, `getBlastSmallDatabases` and the new
-`getBlastZfinLoadDatabases` all fetch from
-`$SSH_HOST:/research/zfin.org/blastdb/Current`, with
-`SSH_HOST=crick.zfin.org` (`docker/.env:3`). Production's blast directory
-is `/mnt/netapp/zfin/blastdb`, and on the production host
-`/research/zfin.org/blastdb/Current` does not exist. A third path is in
-play too: `docker/setup_blast.sh` rsyncs from
-`watson.zfin.org:/opt/zfin/blastdb/Current`.
+`getBlastAllDatabases` and `getBlastSmallDatabases` fetched from
+`$SSH_HOST:/research/zfin.org/blastdb/Current`. That directory exists on
+no host any more — checked 2026-09-02 on `crick.zfin.org`, which is the
+`SSH_HOST` in `docker/.env`, and on the production hosts. Both tasks also
+set `ignoreExitValue = true`, so rsync failed, nothing transferred, and
+the build reported success. That is why nobody noticed: a dev checkout
+with no blast databases at all is indistinguishable from one that fetched
+cleanly.
 
-Every one of those tasks sets `ignoreExitValue = true`, so a source path
-that does not resolve produces no error and no files — indistinguishable
-from a successful no-op.
+ZFIN-10452 fixed the mechanics. The source is now
+`BLAST_SOURCE_HOST`/`BLAST_SOURCE_PATH`, defaulting to
+`/mnt/netapp/zfin/blastdb/Current` — the only blast directory confirmed
+to exist — and a non-zero rsync throws with the exit code and the source
+it tried, so a wrong path fails in four seconds instead of silently.
 
-Whether the gradle tasks are actually broken depends on what
-`crick.zfin.org` exposes, which has not been checked. `/research/...` and
-`/mnt/netapp/...` may be two mounts of the same NetApp volume.
+What is left is the decision the mechanics cannot make: **which host and
+path a developer should actually fetch from.** Three are named in the
+tree and no two agree.
+
+| named in | host | path |
+| --- | --- | --- |
+| `build.gradle` (before this ticket) | `$SSH_HOST` = crick | `/research/zfin.org/blastdb/Current` — gone |
+| `docker/setup_blast.sh` | `watson.zfin.org` | `/opt/zfin/blastdb/Current` |
+| production containers | is-zfin-dkr-p0*x* | `/mnt/netapp/zfin/blastdb/Current` |
+
+There is also `/research/zblastfiles/zmore/dev_blastdb/Current`, which is
+where the complete 2023-06-24 `gbk_*` set was found when cell needed it,
+and per-instance directories beside it (`/research/zblastfiles/zmore/cell`
+is what cell mounts at `/opt/zfin/blastdb`). Whether crick can see any of
+these has not been established.
+
+This overlaps #3 — "which host is authoritative for
+`/opt/zfin/blastdb/Current`" is the same question asked from the
+production side.
 
 **Scope**
 
-- Establish the one path that is authoritative for a blast database fetch
-  and use it in all three gradle tasks and `docker/setup_blast.sh`.
-- Drop `ignoreExitValue = true`, or at least fail when nothing transfers,
-  so a bad path is visible.
+- Name one host and path as the fetch source, and make it the default in
+  `build.gradle`.
+- Point `docker/setup_blast.sh` at the same place, or delete it if the
+  gradle tasks supersede it.
+- Decide whether `getBlastBinaries` (`$SSH_HOST:/opt/ab-blast`) is
+  fetching from a live path too; it still carries `ignoreExitValue = true`.
 
-**Acceptance** `gradle getBlast` on a clean checkout either populates
-`/opt/zfin/blastdb/Current` or fails loudly.
+**Acceptance** `gradle getBlast` on a clean checkout populates
+`/opt/zfin/blastdb/Current` with working databases, on a documented
+source, or names what is wrong.
 
 ---
 
