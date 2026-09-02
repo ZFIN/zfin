@@ -864,16 +864,24 @@ task loadsolr(dependsOn: getLatestSolrIndex)
 def blastSourceHost = env['BLAST_SOURCE_HOST'] ?: env['SSH_HOST']
 def blastSourcePath = env['BLAST_SOURCE_PATH'] ?: "/mnt/netapp/zfin/blastdb/Current"
 
+// BatchMode=yes because there is nobody to answer a prompt in a gradle run. The
+// gradle user in the compile container has no key and no writable known_hosts,
+// so ssh otherwise falls through to asking for a password and the build hangs
+// or dies at host-key verification -- the second reason, alongside the dead
+// source path, that these fetches have been doing nothing. Failing in a second
+// with "Permission denied" or "Host key verification failed" beats hanging.
 def rsyncBlast = { List<String> options, String source, String destination ->
     def spec = env['SSH_USER'] + "@" + blastSourceHost + ":" + source
     def result = exec {
         ignoreExitValue = true
-        commandLine(["rsync", "-av"] + options + [spec, destination])
+        commandLine(["rsync", "-av", "-e", "ssh -o BatchMode=yes"] + options + [spec, destination])
     }
     if (result.exitValue != 0) {
         throw new GradleException(
-                "rsync exited ${result.exitValue} fetching ${spec}. Set BLAST_SOURCE_HOST " +
-                "and BLAST_SOURCE_PATH if the blast databases have moved.")
+                "rsync exited ${result.exitValue} fetching ${spec}.\n" +
+                "  - if the source moved, set BLAST_SOURCE_HOST / BLAST_SOURCE_PATH\n" +
+                "  - if ssh was refused, check SSH_USER (docker/.env) and that a key for it\n" +
+                "    reaches ${blastSourceHost} from here without a password")
     }
 }
 
@@ -955,12 +963,13 @@ task getBlastZfinLoadDatabases() {
     }
 }
 
+// /opt/ab-blast on the source host: confirmed live on crick, x86-64 ELF, so
+// these will not exec in an aarch64 compile container on Apple Silicon -- only
+// the blast container runs them. Note this lands at /opt/zfin/blastdb/ab-blast,
+// which matches neither DOCKER_ABBLAST_PATH in the tree; see follow-up #10.
 task getBlastBinaries() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/opt/ab-blast", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast([], "/opt/ab-blast", "/opt/zfin/blastdb/")
     }
 }
 

@@ -463,8 +463,55 @@ production side.
   `build.gradle`.
 - Point `docker/setup_blast.sh` at the same place, or delete it if the
   gradle tasks supersede it.
-- Decide whether `getBlastBinaries` (`$SSH_HOST:/opt/ab-blast`) is
-  fetching from a live path too; it still carries `ignoreExitValue = true`.
+- Provision ssh for the fetch, or document that it is a manual step.
+- Settle `DOCKER_ABBLAST_PATH`, which has three values in the tree.
+
+### The transport, not just the path
+
+`getBlastBinaries` fetches `$SSH_HOST:/opt/ab-blast`, and that source is
+live: crick has it, populated, x86-64 ELF binaries dated 2025-02-21. (They
+will not exec in an aarch64 `compile` container on Apple Silicon — only
+the `blast` container runs them.) It now goes through the same helper as
+the other three, so it fails loudly.
+
+But no fetch can authenticate as things stand. From cell's compile
+container:
+
+```
+$ echo $SSH_USER
+ryanm
+$ rsync -avn $SSH_USER@$SSH_HOST:/opt/ab-blast /tmp/abblast-test/
+The authenticity of host 'crick.zfin.org (184.171.92.17)' can't be established.
+Failed to add the host to the list of known hosts (/home/gradle/.ssh/known_hosts).
+ryanm@crick.zfin.org's password:
+```
+
+Two problems. The `gradle` user has no key and no writable
+`known_hosts`, so ssh falls through to a password prompt — which in a
+gradle run means the build hangs or dies at host-key verification. And
+`SSH_USER` is `ryanm`, from the committed `docker/environment_linux:2`
+template, not the `rtaylor4` in `docker/.env:2`; cell's container was
+built from the template.
+
+So these tasks had *two* independent reasons to do nothing, and
+`ignoreExitValue = true` concealed both. ZFIN-10452 added
+`-e "ssh -o BatchMode=yes"` so the failure is immediate and legible
+rather than a hang, but provisioning the key is a decision for whoever
+owns the dev images.
+
+### `DOCKER_ABBLAST_PATH` has three values
+
+Even a working fetch may leave the containers reading elsewhere. The
+compose files mount `${DOCKER_ABBLAST_PATH}:/opt/ab-blast`, and:
+
+| | value |
+| --- | --- |
+| `docker/.env:7` | `~/development/blast/ab-blast` |
+| `docker/environment_linux:7` | `/opt/ab-blast` |
+| where `getBlastBinaries` writes | `/opt/zfin/blastdb/ab-blast` |
+
+Only `docker/setup_blast.sh` uses the third, which it prints as setup
+instructions. Same silent-mismatch shape as the blastdb path.
 
 **Acceptance** `gradle getBlast` on a clean checkout populates
 `/opt/zfin/blastdb/Current` with working databases, on a documented
