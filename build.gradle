@@ -871,6 +871,16 @@ def blastSourcePath = env['BLAST_SOURCE_PATH'] ?: "/mnt/netapp/zfin/blastdb/Curr
 // source path, that these fetches have been doing nothing. Failing in a second
 // with "Permission denied" or "Host key verification failed" beats hanging.
 def rsyncBlast = { List<String> options, String source, String destination ->
+    // Without this an unset variable becomes a literal "null" in the spec and
+    // the failure reads as a rejected login rather than a missing setting.
+    def unset = []
+    if (!env['SSH_USER']) unset << "SSH_USER"
+    if (!blastSourceHost) unset << "SSH_HOST (or BLAST_SOURCE_HOST)"
+    if (unset) {
+        throw new GradleException("cannot fetch blast files: ${unset.join(' and ')} not set " +
+                "in this environment. They come from DOCKER_SSH_USER / DOCKER_SSH_HOST in docker/.env.")
+    }
+
     def spec = env['SSH_USER'] + "@" + blastSourceHost + ":" + source
     def result = exec {
         ignoreExitValue = true
