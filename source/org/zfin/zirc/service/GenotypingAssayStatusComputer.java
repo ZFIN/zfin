@@ -31,6 +31,7 @@ public final class GenotypingAssayStatusComputer {
         EXPECTED_MUT_PCR              ("expectedMutPcr"),
         RESTRICTION_ENZYME_NAME       ("restrictionEnzymeName"),
         RESTRICTION_ENZYME_CATALOG    ("restrictionEnzymeCatalog"),
+        RESTRICTION_ENZYME_VENDOR     ("restrictionEnzymeVendor"),
         ENZYME_CLEAVES_WT             ("enzymeCleavesWt"),
         ENZYME_CLEAVES_MUT            ("enzymeCleavesMut"),
         EXPECTED_WT_DIGEST            ("expectedWtDigest"),

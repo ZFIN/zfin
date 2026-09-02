@@ -123,6 +123,7 @@ public final class ZircAssayFormSchema {
         // RFLP / dCAPS
         properties.put("restrictionEnzymeName",      StringSchema.of("Restriction enzyme name", 255));
         properties.put("restrictionEnzymeCatalog",   StringSchema.of("Restriction enzyme catalog #", 255));
+        properties.put("restrictionEnzymeVendor",    StringSchema.of("Restriction enzyme vendor", 255));
         properties.put("enzymeCleavesWt",            BooleanSchema.nullable("Enzyme cleaves WT template"));
         properties.put("enzymeCleavesMut",           BooleanSchema.nullable("Enzyme cleaves MUT template"));
         properties.put("expectedWtDigest",           StringSchema.of("Expected WT product after digest", 2000));
@@ -201,10 +202,15 @@ public final class ZircAssayFormSchema {
                 groupRevealedFor(DIGEST_TYPES, List.of(
                         new Control("#/properties/restrictionEnzymeName",
                                 Options.of().withPlaceholder("e.g. BsmBI"), null),
+                        // One row, two labelled boxes (ZFIN-10419): the bound field is
+                        // the catalog number, the vendor goes in the sibling named
+                        // here. The hardcoded New England Biolabs "(info)" link is
+                        // gone -- pointing every submitter at one vendor made no
+                        // sense once they name the vendor themselves.
                         new Control("#/properties/restrictionEnzymeCatalog",
                                 Options.of()
-                                        .withPlaceholder("vendor + cat #")
-                                        .withInfoHref("https://international.neb.com/"),
+                                        .withWidget("vendorCatalog")
+                                        .withVendorField("restrictionEnzymeVendor"),
                                 null),
                         new Control("#/properties/enzymeCleavesWt",
                                 Options.of().withWidget("checkbox"), null),
@@ -290,6 +296,7 @@ public final class ZircAssayFormSchema {
             field("/kaspGenomicSequence",      GenotypingAssay::getKaspGenomicSequence,      (a, v) -> a.setKaspGenomicSequence(text(v))),
             field("/restrictionEnzymeName",    GenotypingAssay::getRestrictionEnzymeName,    (a, v) -> a.setRestrictionEnzymeName(text(v))),
             field("/restrictionEnzymeCatalog", GenotypingAssay::getRestrictionEnzymeCatalog, (a, v) -> a.setRestrictionEnzymeCatalog(text(v))),
+            field("/restrictionEnzymeVendor",  GenotypingAssay::getRestrictionEnzymeVendor,  (a, v) -> a.setRestrictionEnzymeVendor(text(v))),
             field("/enzymeCleavesWt",          GenotypingAssay::getEnzymeCleavesWt,          (a, v) -> a.setEnzymeCleavesWt(boolNullable(v))),
             field("/enzymeCleavesMut",         GenotypingAssay::getEnzymeCleavesMut,         (a, v) -> a.setEnzymeCleavesMut(boolNullable(v))),
             field("/expectedWtDigest",         GenotypingAssay::getExpectedWtDigest,         (a, v) -> a.setExpectedWtDigest(text(v))),

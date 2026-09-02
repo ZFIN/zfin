@@ -10,6 +10,7 @@ import { publicationsListRendererEntry } from './renderers/PublicationsListRende
 import { autocompleteRendererEntry } from './renderers/AutocompleteRenderer';
 import { autoSizeRendererEntry } from './renderers/AutoSizeRenderer';
 import { nucleotideSequenceRendererEntry } from './renderers/NucleotideSequenceRenderer';
+import { vendorCatalogRendererEntry } from './renderers/VendorCatalogRenderer';
 import { vocabularySelectRendererEntry } from './renderers/VocabularySelectRenderer';
 import { vocabularyMultiSelectRendererEntry } from './renderers/VocabularyMultiSelectRenderer';
 import { aminoAcidChangeRendererEntry } from './renderers/AminoAcidChangeRenderer';
@@ -47,6 +48,7 @@ export const fieldRenderers = [
     autocompleteRendererEntry,
     autoSizeRendererEntry,
     nucleotideSequenceRendererEntry,
+    vendorCatalogRendererEntry,
     vocabularySelectRendererEntry,
     vocabularyMultiSelectRendererEntry,
     aminoAcidChangeRendererEntry,
