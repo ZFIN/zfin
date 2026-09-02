@@ -41,8 +41,8 @@
         "title" : "Common primer",
         "type" : [ "string", "null" ]
       },
-      "dcapsMismatchPrimer" : {
-        "maxLength" : 2000,
+      "dcapsMismatchPrimerChoice" : {
+        "maxLength" : 255,
         "title" : "Primer with introduced mismatch",
         "type" : [ "string", "null" ]
       },
@@ -163,7 +163,7 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
+          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
           "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],
           "widget" : "selectWithOther"
         },
@@ -242,11 +242,11 @@
     }, {
       "elements" : [ {
         "options" : {
-          "alphabet" : "ACGT",
-          "helpText" : "ACGT only.",
-          "widget" : "nucleotideSequence"
+          "noOther" : true,
+          "standardValues" : [ "Forward", "Reverse" ],
+          "widget" : "selectWithOther"
         },
-        "scope" : "#/properties/dcapsMismatchPrimer",
+        "scope" : "#/properties/dcapsMismatchPrimerChoice",
         "type" : "Control"
       } ],
       "rule" : {
