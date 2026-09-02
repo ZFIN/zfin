@@ -62,11 +62,19 @@ public final class ZircAssayFormSchema {
     // labels for the dropdown live in ASSAY_TYPE_LABELS, parallel by index.
     private static final List<String> ASSAY_TYPES = List.of(
             "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp");
+    /**
+     * Answers "which primer carries the introduced mismatch?" (ZFIN-10438).
+     * A closed list: the mockup offers exactly Forward and Reverse, so the
+     * selectWithOther widget runs with noOther.
+     */
+    private static final List<String> DCAPS_MISMATCH_PRIMER_CHOICES =
+            List.of("Forward", "Reverse");
+
     private static final List<String> ASSAY_TYPE_LABELS = List.of(
             "PCR + gel electrophoresis",
             "PCR + sequencing",
             "RFLP",
-            "dCAPS",
+            "derived Cleaved Amplified Polymorphic Sequences dCAPS",
             "ASA",
             "KASP",
             "HRMA",
@@ -113,7 +121,7 @@ public final class ZircAssayFormSchema {
         // Sequencing
         properties.put("sequencingPrimer",           StringSchema.of("Sequencing primer", 2000));
         // dCAPS
-        properties.put("dcapsMismatchPrimer",        StringSchema.of("Primer with introduced mismatch", 2000));
+        properties.put("dcapsMismatchPrimerChoice",  StringSchema.of("Primer with introduced mismatch", 255));
         // Allele-specific (ASA + KASP)
         properties.put("wtSpecificPrimer",           StringSchema.of("WT-specific primer", 2000));
         properties.put("mutSpecificPrimer",          StringSchema.of("Mutant-specific primer", 2000));
@@ -184,7 +192,15 @@ public final class ZircAssayFormSchema {
                 )),
                 // dCAPS — one extra primer field, before the digest block.
                 groupRevealedFor(DCAPS_TYPES, List.of(
-                        new Control("#/properties/dcapsMismatchPrimer", actgnHelp, null)
+                        // ZFIN-10438: was a free-text box for the mismatch primer's
+                        // sequence; now asks which primer carries the mismatch. Same
+                        // label and same position, after the reverse primer.
+                        new Control("#/properties/dcapsMismatchPrimerChoice",
+                                Options.of()
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(DCAPS_MISMATCH_PRIMER_CHOICES)
+                                        .withNoOther(true),
+                                null)
                 )),
                 // ASA + KASP — WT/mut/common primer trio. KASP adds the
                 // genomic-sequence textarea in its own group below.
@@ -283,7 +299,7 @@ public final class ZircAssayFormSchema {
             field("/expectedWtPcr",            GenotypingAssay::getExpectedWtPcr,            (a, v) -> a.setExpectedWtPcr(text(v))),
             field("/expectedMutPcr",           GenotypingAssay::getExpectedMutPcr,           (a, v) -> a.setExpectedMutPcr(text(v))),
             field("/sequencingPrimer",         GenotypingAssay::getSequencingPrimer,         (a, v) -> a.setSequencingPrimer(text(v))),
-            field("/dcapsMismatchPrimer",      GenotypingAssay::getDcapsMismatchPrimer,      (a, v) -> a.setDcapsMismatchPrimer(text(v))),
+            field("/dcapsMismatchPrimerChoice", GenotypingAssay::getDcapsMismatchPrimerChoice, (a, v) -> a.setDcapsMismatchPrimerChoice(text(v))),
             field("/wtSpecificPrimer",         GenotypingAssay::getWtSpecificPrimer,         (a, v) -> a.setWtSpecificPrimer(text(v))),
             field("/mutSpecificPrimer",        GenotypingAssay::getMutSpecificPrimer,        (a, v) -> a.setMutSpecificPrimer(text(v))),
             field("/commonPrimer",             GenotypingAssay::getCommonPrimer,             (a, v) -> a.setCommonPrimer(text(v))),

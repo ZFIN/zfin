@@ -37,7 +37,7 @@ public final class GenotypingAssayStatusComputer {
         EXPECTED_MUT_DIGEST           ("expectedMutDigest"),
         ADDITIONAL_INFO               ("additionalInfo"),
         SEQUENCING_PRIMER             ("sequencingPrimer"),
-        DCAPS_MISMATCH_PRIMER         ("dcapsMismatchPrimer"),
+        DCAPS_MISMATCH_PRIMER_CHOICE  ("dcapsMismatchPrimerChoice"),
         WT_SPECIFIC_PRIMER            ("wtSpecificPrimer"),
         MUT_SPECIFIC_PRIMER           ("mutSpecificPrimer"),
         COMMON_PRIMER                 ("commonPrimer"),
