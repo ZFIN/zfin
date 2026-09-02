@@ -322,6 +322,39 @@ CURATED databases (`publishedRNA`, `publishedProtein`, `unreleasedRNA`,
 origination rather than listed — they change only when a curator edits
 them, so age says nothing.
 
+### On-disk measurement, 2026-09-02
+
+Production mounts `/mnt/netapp/zfin/blastdb` at `/opt/zfin/blastdb`, not
+the `/research/zfin.org/blastdb` the gradle fetch tasks name (follow-up
+#10). A full listing of `Current/` there:
+
+| | |
+| --- | --- |
+| database file sets on disk | 49 |
+| total size | 33.5 GiB |
+| non-database files in `Current/` | 26, 1.18 GiB |
+
+Six of the 49 are not in the 42-database inventory above: `zfin_gb_seq`
+(a nightly intermediate, never searched), `tigr_zf` (2012-11-28),
+`wgs_zf` (2009-09-21), `ensembl_zfin_zf` (2025-02-21),
+`refseq_zf_rna_mod` (2025-06-27) and `ensemblProt_zf` — the last with a
+76-byte `.xpd` and `.xps`, so empty, like `CuratedNtrRegions`.
+
+This is also what settled the `getBlastSmallDatabases` cap. `--max-size`
+filters per file, but a database is four files, so of the 49 the cap
+leaves 33 intact and **16 as fragments** — every `gbk_*`, plus
+`refseq_zf_rna`, `zfin_gb_seq`, `GenomicDNA`, `sptr_hs`, `sptr_ms`,
+`wgs_zf` — and skips none cleanly. 1.3 GiB of 33.5 GiB arrives. A dev
+instance seeded that way has a third of its blast directory present as
+unusable stubs, which is how ZFIN-10452 first appeared on cell:
+`gbk_zf_mrna` as a lone 12 MB `.xnt`, reported only as
+`xdf_db_fopen failed code 8`.
+
+The five databases the nightly ZFIN load reads as input total 3.2 GiB:
+`gbk_zf_dna` 2604 MB, `gbk_zf_mrna` 555 MB, `refseq_zf_rna` 112 MB,
+`vega_zfin` 29 MB, `gbk_zf_rna` 36 KB. That is the
+`getBlastZfinLoadDatabases` set.
+
 ### What the rewritten validation job will report
 
 Simulated against the state above: **20 findings, 22 databases clean.**

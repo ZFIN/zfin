@@ -18,6 +18,8 @@ Priority is my read, not a decision:
 | 6 | Task | `Run-ZFIN-Ensembl-Transcripts-Blast-Data-Dump_d` doesn't rebuild its database | low |
 | 7 | Task | Decide what `CuratedNtrRegions` should contain | low |
 | 8 | Task | RefSeq load writes ~1.5 GB of build artifacts into the deployed tree | low |
+| 9 | Bug | Every BLAST query leaks a `dump*.fa` into the blast database directory | medium |
+| 10 | Bug | The `getBlast*` gradle tasks rsync from a path that no longer exists | medium |
 
 **#1, #2 and #3 are the ones that matter.** #2 and #3 need a decision
 before anyone writes code; the rest are self-contained.
@@ -321,6 +323,84 @@ tolerant of a first run.
 
 **Acceptance** A RefSeq regeneration leaves no build artifacts in the
 source tree, and succeeds on a host with an empty `Current`.
+
+---
+
+## 9. Every BLAST query leaks a `dump*.fa` into the blast database directory
+
+**Type** Bug · **Priority** medium
+
+`/mnt/netapp/zfin/blastdb` on production held **720** `dump*.fa` files
+when listed on 2026-09-02, the oldest from 2026-08-31 09:10 — roughly 290
+a day, accumulating with no upper bound.
+
+`AbstractWublastBlastService.dumpFastaSequence()` writes each query
+sequence to a temp file in the blast directory and returns it:
+
+```java
+File tempFile = File.createTempFile("dump", ".fa",
+        new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()));
+```
+
+All three callers — `SMPWublastService:88`, `MountedWublastBlastService:88`,
+`SMPNCBIBlastService:100` — pass the path to the blast binary and never
+delete it. Nothing else cleans the directory, so every BLAST search with a
+query sequence leaves one file behind for good.
+
+The files are small (mostly 35–50 KB, one 50 KB in the sample), so this is
+not a space emergency. It is a slow leak in the same directory the blast
+databases live in, and it makes that directory hard to reason about — the
+listing that turned this up was being read for something else entirely.
+
+`deleteOnExit()` is the wrong fix under a long-running Tomcat: it only
+fires at JVM shutdown and holds a reference to every path until then.
+
+**Scope**
+
+- Delete the file in a `finally` at the three call sites, or have
+  `dumpFastaSequence` hand back something the caller closes.
+- Sweep the existing `dump*.fa` files off production.
+- While in there: `Current/` itself holds 26 non-database files totalling
+  1.18 GiB, including a 1.08 GiB `gbk_zf_mrna.fa` from 2024-06-23, a
+  `protein.fasta` and `sebu1_033116.{ctx,out}` from 2016, an empty
+  extensionless `vega_transcript`, and a scatter of `.txt`/`.out` files
+  from 2009–2015. None of it is read by anything in the tree.
+
+**Acceptance** A BLAST search leaves no file behind, and
+`ls /mnt/netapp/zfin/blastdb | wc -l` stays flat under load.
+
+---
+
+## 10. The `getBlast*` gradle tasks rsync from a path that no longer exists
+
+**Type** Bug · **Priority** medium · **Needs investigation**
+
+`getBlastAllDatabases`, `getBlastSmallDatabases` and the new
+`getBlastZfinLoadDatabases` all fetch from
+`$SSH_HOST:/research/zfin.org/blastdb/Current`, with
+`SSH_HOST=crick.zfin.org` (`docker/.env:3`). Production's blast directory
+is `/mnt/netapp/zfin/blastdb`, and on the production host
+`/research/zfin.org/blastdb/Current` does not exist. A third path is in
+play too: `docker/setup_blast.sh` rsyncs from
+`watson.zfin.org:/opt/zfin/blastdb/Current`.
+
+Every one of those tasks sets `ignoreExitValue = true`, so a source path
+that does not resolve produces no error and no files — indistinguishable
+from a successful no-op.
+
+Whether the gradle tasks are actually broken depends on what
+`crick.zfin.org` exposes, which has not been checked. `/research/...` and
+`/mnt/netapp/...` may be two mounts of the same NetApp volume.
+
+**Scope**
+
+- Establish the one path that is authoritative for a blast database fetch
+  and use it in all three gradle tasks and `docker/setup_blast.sh`.
+- Drop `ignoreExitValue = true`, or at least fail when nothing transfers,
+  so a bad path is visible.
+
+**Acceptance** `gradle getBlast` on a clean checkout either populates
+`/opt/zfin/blastdb/Current` or fails loudly.
 
 ---
 

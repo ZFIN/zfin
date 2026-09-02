@@ -871,6 +871,11 @@ task getBlastSmallDatabases() {
 // "xdf_db_fopen failed code 8". That is how ZFIN-10452 presented on a dev
 // instance. Delete the fragments so absent reads as absent.
 //
+// Against production's Current on 2026-09-02 this is not a corner case: of 49
+// databases the cap leaves 33 intact, 16 as fragments (every gbk_*, plus
+// refseq_zf_rna, zfin_gb_seq, GenomicDNA, sptr_hs, sptr_ms, wgs_zf), and skips
+// none cleanly -- 1.3GiB of 33.5GiB arrives.
+//
 // A database whose .xni is present but holds no identifier index survives this
 // on purpose -- that is Validate-Blast-Databases_d's job to report, not rsync's.
 task pruneIncompleteBlastDatabases() {
@@ -909,7 +914,7 @@ task pruneIncompleteBlastDatabases() {
 // ZFIN/zfin_genomicDNA/assemblezfin_genomicDNA.sh xdget accessions out of the
 // gbk_* sets and refseq_zf_rna, and ZFIN/zfin_cdna/convertzfin_cdna.sh dumps
 // vega_zfin whole. Fetched with no size cap, because a partial one is useless --
-// about 3.6GB, against 34GB for the whole of Current. Run this on a dev or stage
+// 3.2GiB, against 33.5GiB for all 49 databases. Run this on a dev or stage
 // instance that needs to exercise the nightly ZFIN blast load end to end;
 // getBlast alone cannot, since every gbk_* database exceeds the cap.
 def zfinLoadBlastDatabases = ["gbk_zf_mrna", "gbk_zf_dna", "gbk_zf_rna", "refseq_zf_rna", "vega_zfin"]
