@@ -99,6 +99,11 @@
         "title" : "Restriction enzyme name",
         "type" : [ "string", "null" ]
       },
+      "restrictionEnzymeVendor" : {
+        "maxLength" : 255,
+        "title" : "Restriction enzyme vendor",
+        "type" : [ "string", "null" ]
+      },
       "reversePrimer" : {
         "maxLength" : 2000,
         "title" : "Reverse primer",
@@ -317,8 +322,8 @@
         "type" : "Control"
       }, {
         "options" : {
-          "infoHref" : "https://international.neb.com/",
-          "placeholder" : "vendor + cat #"
+          "vendorField" : "restrictionEnzymeVendor",
+          "widget" : "vendorCatalog"
         },
         "scope" : "#/properties/restrictionEnzymeCatalog",
         "type" : "Control"

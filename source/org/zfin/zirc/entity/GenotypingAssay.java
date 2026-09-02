@@ -68,6 +68,9 @@ public class GenotypingAssay implements Serializable {
     @Column(name = "ga_restriction_enzyme_catalog")
     private String restrictionEnzymeCatalog;
 
+    @Column(name = "ga_restriction_enzyme_vendor")
+    private String restrictionEnzymeVendor;
+
     @Column(name = "ga_enzyme_cleaves_wt")
     private Boolean enzymeCleavesWt;
 
