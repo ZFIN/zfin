@@ -20,7 +20,7 @@ Priority is my read, not a decision:
 | 8 | Task | The blast loads write ~15 GB of build artifacts into the deployed tree | medium |
 | 9 | Task | BLAST query temp files are cleaned only by an external cron job | low |
 | 10 | Task | Decide the authoritative source for a blast database fetch | medium |
-| 11 | Task | 207 of 231 Jenkins jobs keep every build forever | medium |
+| 11 | Task | 222 of 231 Jenkins jobs keep every build forever | medium |
 
 **#1, #2 and #3 are the ones that matter.** #2 and #3 need a decision
 before anyone writes code; the rest are self-contained.
@@ -568,7 +568,7 @@ source, or names what is wrong.
 
 ---
 
-## 11. 207 of 231 Jenkins jobs keep every build forever
+## 11. 222 of 231 Jenkins jobs keep every build forever
 
 **Type** Task · **Priority** medium
 
@@ -584,18 +584,34 @@ is 23.0 GiB, and 22.7 GiB of that is `jobs/`:
 | `Load-GPAD-GO-Central_m` | 1.1 GiB |
 | `Check-Expressed-Marker-Gene-Or-EFG_w` | 1.0 GiB |
 
-Only **24 of the 231** job configs in `server_apps/jenkins/jobs/` carry a
-`logRotator` or `BuildDiscarderProperty`. None of the six above do. So
-console logs and archived artifacts accumulate for the life of the
-instance, on every instance.
+Twenty-four of the 231 job configs in `server_apps/jenkins/jobs/` contain a
+`BuildDiscarderProperty` — but counting the element flatters the situation.
+The values matter:
+
+| `daysToKeep,numToKeep,artifactDaysToKeep,artifactNumToKeep` | jobs | effect |
+| --- | --- | --- |
+| `-1,-1,-1,-1` | 16 | none — present in the file, inert |
+| `365,-1,-1,-1` | 7 | age cap only, unlimited count, artifacts uncapped |
+| `-1,30,-1,-1` | 1 | last 30 builds (`Delete-Old-Blast-Results_d`) |
+| `30,10,30,10` | 1 | 30 days / 10 builds, artifacts too (`Run-Priority-Pipeline-Alliance_w`) |
+
+So **9 of 231 have any effect, 2 bound the build count, and exactly 1 caps
+archived artifacts** — and `artifactNumToKeep`/`artifactDaysToKeep` are the
+only fields that bound disk rather than log volume. None of the six largest
+consumers above carries the property at all.
+
+The sixteen inert copies are the part to watch when fixing this: they look
+like a policy in a diff and in the Jenkins UI, so a reviewer can reasonably
+believe a job is covered when nothing is being discarded.
 
 Alongside the 18.3 GiB of blast build artifacts in `cell_www_data` (#8),
 this is most of what a dev instance's Docker filesystem holds — and it is
 why `Regenerate-ZFIN-BlastDBs_d` could not finish: the job needs about
 15 GiB of scratch and there was no room for it.
 
-`Regenerate-ZFIN-BlastDBs_d` does have a discard policy, so the pattern
-to copy already exists in the tree.
+`Run-Priority-Pipeline-Alliance_w` is the only job with a policy that
+bounds disk, so that is the pattern to copy — not the `365,-1,-1,-1` used by
+the seven blast jobs, which never discards an artifact.
 
 **Scope**
 
