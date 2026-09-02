@@ -20,6 +20,7 @@ Priority is my read, not a decision:
 | 8 | Task | The blast loads write ~15 GB of build artifacts into the deployed tree | medium |
 | 9 | Task | BLAST query temp files are cleaned only by an external cron job | low |
 | 10 | Task | Decide the authoritative source for a blast database fetch | medium |
+| 11 | Task | 207 of 231 Jenkins jobs keep every build forever | medium |
 
 **#1, #2 and #3 are the ones that matter.** #2 and #3 need a decision
 before anyone writes code; the rest are self-contained.
@@ -342,9 +343,23 @@ load dumps out of them is roughly four times the database size:
 | `zfin_cdna/zfin_cdna_seq.fa`, `vega_zfin.fa` | | ~0.2 GB |
 | `RefSeq/*.{fna,faa}.gz` and `.fa` | | ~1.5 GB |
 
-So a full `dailyZfinSeq.sh` wants 13–15 GB of scratch inside
-`$TARGETROOT`, and leaves it there. Production carries the same files
-permanently in its deployed tree.
+Measured on cell after the failed run, `$TARGETROOT/server_apps/data_transfer`:
+
+| | |
+| --- | --- |
+| `BLAST/ZFIN` | 16.2 GiB |
+| `BLAST/SPTrEMBL` | 1.1 GiB |
+| `BLAST/RefSeq` | 648 MiB |
+| `BLAST/Ensembl` | 357 MiB |
+| **`BLAST/` total** | **18.3 GiB** |
+
+Note *where* that is. `$TARGETROOT` is the www home — Jenkins builds in
+`/opt/zfin/www_homes/zfin.org` — which on a containerised instance is a
+Docker named volume, `cell_www_data`, so the artifacts sit under
+`/var/lib/docker/volumes/` and not in the source tree at all. Looking for
+them in `/opt/zfin/source_roots/` finds nothing. They are the single
+largest thing in that volume (24.3 GiB of 31 GiB) and they count against
+the Docker filesystem, which is what actually ran out.
 
 `xdformat` did clean up after itself here — "XDF database removed" — so a
 disk-full run does not leave a corrupt database. But it fails late, after
@@ -362,7 +377,7 @@ Two smaller things in the same script set:
   protein"` — a typo carried into the database header.
 
 **Scope** Give the blast loads a scratch directory outside the deployed
-tree, along the lines of the `BLASTSERVER_FASTA_FILE_PATH` the GenBank
+www home, along the lines of the `BLASTSERVER_FASTA_FILE_PATH` the GenBank
 scripts use; clean up intermediates on success; make the `Backup` move
 tolerant of a first run. Consider a free-space check before the first
 `xdget`, so a short disk fails in a second with a number rather than
@@ -550,6 +565,46 @@ instructions. Same silent-mismatch shape as the blastdb path.
 **Acceptance** `gradle getBlast` on a clean checkout populates
 `/opt/zfin/blastdb/Current` with working databases, on a documented
 source, or names what is wrong.
+
+---
+
+## 11. 207 of 231 Jenkins jobs keep every build forever
+
+**Type** Task · **Priority** medium
+
+Found while working out what had filled cell's disk. `cell_jenkins_data`
+is 23.0 GiB, and 22.7 GiB of that is `jobs/`:
+
+| job | build data |
+| --- | --- |
+| `NCBI-Gene-Load-Java` | 7.4 GiB |
+| `Load-GAF-GOA_m` | 5.3 GiB |
+| `Check-Foreign-Species-In-Constructs_w` | 2.5 GiB |
+| `Check-Get_Object_Type-Function_d` | 2.5 GiB |
+| `Load-GPAD-GO-Central_m` | 1.1 GiB |
+| `Check-Expressed-Marker-Gene-Or-EFG_w` | 1.0 GiB |
+
+Only **24 of the 231** job configs in `server_apps/jenkins/jobs/` carry a
+`logRotator` or `BuildDiscarderProperty`. None of the six above do. So
+console logs and archived artifacts accumulate for the life of the
+instance, on every instance.
+
+Alongside the 18.3 GiB of blast build artifacts in `cell_www_data` (#8),
+this is most of what a dev instance's Docker filesystem holds — and it is
+why `Regenerate-ZFIN-BlastDBs_d` could not finish: the job needs about
+15 GiB of scratch and there was no room for it.
+
+`Regenerate-ZFIN-BlastDBs_d` does have a discard policy, so the pattern
+to copy already exists in the tree.
+
+**Scope**
+
+- Set a default discard policy across the job configs — the loads that
+  archive large artifacts matter most.
+- Reclaim what has accumulated on the dev instances.
+
+**Acceptance** A long-lived instance's `jenkins_data` volume stops growing
+without bound.
 
 ---
 
