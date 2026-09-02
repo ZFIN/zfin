@@ -18,7 +18,7 @@ Priority is my read, not a decision:
 | 6 | Task | `Run-ZFIN-Ensembl-Transcripts-Blast-Data-Dump_d` doesn't rebuild its database | low |
 | 7 | Task | Decide what `CuratedNtrRegions` should contain | low |
 | 8 | Task | RefSeq load writes ~1.5 GB of build artifacts into the deployed tree | low |
-| 9 | Bug | Every BLAST query leaks a `dump*.fa` into the blast database directory | medium |
+| 9 | Task | BLAST query temp files are cleaned only by an external cron job | low |
 | 10 | Bug | The `getBlast*` gradle tasks rsync from a path that no longer exists | medium |
 
 **#1, #2 and #3 are the ones that matter.** #2 and #3 need a decision
@@ -326,48 +326,68 @@ source tree, and succeeds on a host with an empty `Current`.
 
 ---
 
-## 9. Every BLAST query leaks a `dump*.fa` into the blast database directory
+## 9. BLAST query temp files are cleaned only by an external cron job
 
-**Type** Bug · **Priority** medium
-
-`/mnt/netapp/zfin/blastdb` on production held **720** `dump*.fa` files
-when listed on 2026-09-02, the oldest from 2026-08-31 09:10 — roughly 290
-a day, accumulating with no upper bound.
+**Type** Task · **Priority** low
 
 `AbstractWublastBlastService.dumpFastaSequence()` writes each query
-sequence to a temp file in the blast directory and returns it:
+sequence to a temp file in the blast database directory and returns it:
 
 ```java
 File tempFile = File.createTempFile("dump", ".fa",
         new File(ZfinPropertiesEnum.WEBHOST_BLAST_DATABASE_PATH.value()));
 ```
 
-All three callers — `SMPWublastService:88`, `MountedWublastBlastService:88`,
-`SMPNCBIBlastService:100` — pass the path to the blast binary and never
-delete it. Nothing else cleans the directory, so every BLAST search with a
-query sequence leaves one file behind for good.
+None of the three callers — `SMPWublastService:88`,
+`MountedWublastBlastService:88`, `SMPNCBIBlastService:100` — delete it.
+Nothing in the application ever does.
 
-The files are small (mostly 35–50 KB, one 50 KB in the sample), so this is
-not a space emergency. It is a slow leak in the same directory the blast
-databases live in, and it makes that directory hard to reason about — the
-listing that turned this up was being read for something else entirely.
+What actually cleans up is a separate Jenkins job,
+`Delete-Old-Blast-Results_d` (`H 23 * * *`):
 
-`deleteOnExit()` is the wrong fix under a long-running Tomcat: it only
-fires at JVM shutdown and holds a reference to every path until then.
+```sh
+find /opt/zfin/blastdb/ -name "*.fa" -mtime +1 -exec rm -f {} \;
+```
+
+So this is **not** an unbounded leak. Production held 720 `dump*.fa` on
+2026-09-02, and that is the steady state: `-mtime +1` truncates to whole
+days, so the Sep 1 23:00 run removed everything older than Aug 30 23:00,
+which is why the oldest survivor was Aug 31 07:43 with only a quiet
+Sunday night before it. Roughly 350 a weekday, two days retained.
+
+The problem is the coupling, not the volume. A servlet writes files it
+never cleans up, into the directory the blast databases live in, and
+correctness depends on an unrelated cron job that nothing in the Java
+code mentions. If that job is ever disabled — and four BLAST
+regeneration jobs in this same area already have no cron at all, see #2 —
+the directory grows until the volume fills, with nothing to point at.
+
+**One thing that does not add up.** That `find` is recursive and matches
+`*.fa`, so it should have deleted
+`Current/gbk_zf_mrna.fa` — 1.08 GiB, dated 2024-06-23. It is still there.
+Either the job is failing partway or it is not deleting what it appears
+to; worth reading its recent build logs before trusting it. Note also
+that the pattern misses `.fasta`, `.out` and `.ctx`, which is why the
+rest of the cruft in `Current/` survives: 26 non-database files totalling
+1.18 GiB, including `protein.fasta` and `sebu1_033116.{ctx,out}` from
+2016, an empty extensionless `vega_transcript`, and `.txt` files from
+2009–2015.
 
 **Scope**
 
-- Delete the file in a `finally` at the three call sites, or have
-  `dumpFastaSequence` hand back something the caller closes.
-- Sweep the existing `dump*.fa` files off production.
-- While in there: `Current/` itself holds 26 non-database files totalling
-  1.18 GiB, including a 1.08 GiB `gbk_zf_mrna.fa` from 2024-06-23, a
-  `protein.fasta` and `sebu1_033116.{ctx,out}` from 2016, an empty
-  extensionless `vega_transcript`, and a scatter of `.txt`/`.out` files
-  from 2009–2015. None of it is read by anything in the tree.
+- Delete the temp file in a `finally` at the three call sites, so the
+  application cleans up after itself. `deleteOnExit()` is the wrong tool
+  under a long-running Tomcat — it fires only at JVM shutdown and holds a
+  reference to every path until then.
+- Write query temp files somewhere that is not the blast database
+  directory.
+- Find out why `Delete-Old-Blast-Results_d` left a 1.08 GiB `.fa` in
+  `Current/`, and sweep the rest of the stray files while in there.
+- If the cron job is kept as a backstop, say so in a comment where the
+  temp file is created.
 
-**Acceptance** A BLAST search leaves no file behind, and
-`ls /mnt/netapp/zfin/blastdb | wc -l` stays flat under load.
+**Acceptance** A BLAST search leaves no file behind without the cron job
+running, and `Current/` holds only blast databases.
 
 ---
 
