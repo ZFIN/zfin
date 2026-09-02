@@ -136,6 +136,7 @@ export interface AssayDTO {
     kaspGenomicSequence: string | null;
     restrictionEnzymeName: string | null;
     restrictionEnzymeCatalog: string | null;
+    restrictionEnzymeVendor: string | null;
     enzymeCleavesWt: boolean | null;
     enzymeCleavesMut: boolean | null;
     expectedWtDigest: string | null;

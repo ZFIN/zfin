@@ -36,6 +36,7 @@ public record AssayDTO(
         // RFLP / dCAPS
         String restrictionEnzymeName,
         String restrictionEnzymeCatalog,
+        String restrictionEnzymeVendor,
         Boolean enzymeCleavesWt,
         Boolean enzymeCleavesMut,
         String expectedWtDigest,
@@ -79,6 +80,7 @@ public record AssayDTO(
                 a.getKaspGenomicSequence(),
                 a.getRestrictionEnzymeName(),
                 a.getRestrictionEnzymeCatalog(),
+                a.getRestrictionEnzymeVendor(),
                 a.getEnzymeCleavesWt(),
                 a.getEnzymeCleavesMut(),
                 a.getExpectedWtDigest(),
