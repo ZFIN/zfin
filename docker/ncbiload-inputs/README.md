@@ -33,12 +33,7 @@ docker compose build ncbiload
 
 ### Next steps:
 
-Run the perl version of ncbi load:
-```
-docker compose run --build --rm -it ncbiload bash -lc 'cd $SOURCEROOT/server_apps/data_transfer/NCBIGENE; cp /tmp/inputs/set1/* .; EARLY_EXIT=1 OVERRIDE_JAVA_HOME=$JAVA_HOME EMAIL_TO_FILE=true NO_SLEEP=1 SKIP_DOWNLOADS=1 LOAD_NCBI_ONE_WAY_GENES=true DB_NAME=zfindb TARGETROOT=$SOURCEROOT ROOT_PATH=$SOURCEROOT perl NCBI_gene_load.pl'
-```
-
-Run the java version of ncbi load:
+Run the ncbi load:
 ```
 docker compose run --build --rm -it ncbiload bash -lc 'export WORKING_DIR=$SOURCEROOT/server_apps/data_transfer/NCBIGENE; cp /tmp/inputs/set1/* $WORKING_DIR ; EARLY_EXIT=1 EMAIL_TO_FILE=true NO_SLEEP=1 SKIP_DOWNLOADS=1 LOAD_NCBI_ONE_WAY_GENES=true DB_NAME=zfindb TARGETROOT=$SOURCEROOT ROOT_PATH=$SOURCEROOT gradle ncbiLoadPort'
 ```
@@ -48,6 +43,11 @@ docker compose run --build --rm -it ncbiload bash -lc 'export WORKING_DIR=$SOURC
 You can store the results of a run by copying everything in server_apps/data_transfer/NCBIGENE/ into a directory for storage. Perhaps name it something like `docker/ncbiload-outputs/java-run-2025-06-17-17-44/`.
 
 Compare the .unl files between each run to see if they are the same. You can also look at the after_load.csv files for comparing the results.
+
+The perl load this folder was originally built to compare against (`NCBI_gene_load.pl`) was removed
+in ZFIN-10037; the Jenkins job `NCBI-Gene-Load-Java` is the only version now. The inputs here are
+still useful for reproducible runs of it - pinning the downloads with `SKIP_DOWNLOADS=1` so two runs
+see identical input.
 
 ### Shorter run:
 
