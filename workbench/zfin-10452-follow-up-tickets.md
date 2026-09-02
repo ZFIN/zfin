@@ -132,6 +132,20 @@ watson's copy postdates both ZFIN-9743 repair commits; production's
 predates them. So a fixed build *was* made at some point and never
 reached the host that serves queries.
 
+Confirmed at the filesystem level on 2026-09-02. `/mnt/netapp/zfin/blastdb`
+is a different directory on different hosts, not one shared volume:
+
+| seen from | `Current/gbk_zf_mrna.fa` | `dump*.fa` in the parent |
+| --- | --- | --- |
+| production tomcat / `is-zfin-dkr-p06` | absent | 731 |
+| `is-zfin-dkr-p07` (crick) | present, 1.08 GiB, 2024-06-23 | 652 |
+
+The `.x*` database files are byte-identical across both, so the copies
+were seeded alike — but each host accumulates its own query temp files
+and only production's gets cleaned, so they are visibly drifting apart
+now. Any host-specific database rebuild would drift the same way, with
+nothing to detect it.
+
 `processRefSeq.sh` has its distribution step commented out, and the
 script it names does not exist in the tree:
 
@@ -362,29 +376,24 @@ code mentions. If that job is ever disabled — and four BLAST
 regeneration jobs in this same area already have no cron at all, see #2 —
 the directory grows until the volume fills, with nothing to point at.
 
-**A loose end in the cleanup job.** The dump files sit directly in
-`/opt/zfin/blastdb/`, which is what `WEBHOST_BLAST_DATABASE_PATH` points
-at, and that is where the `find` cleans them — the two-day steady state
-above is that job working. But the `find` is recursive and matches
-`*.fa`, so it should also reach `Current/gbk_zf_mrna.fa` (1.08 GiB,
-2024-06-23), and that file is still there.
+**The cleanup job works.** It was worth checking, because the listing that
+turned this up showed a 1.08 GiB `Current/gbk_zf_mrna.fa` dated
+2024-06-23 that a recursive `find -name "*.fa" -mtime +1` should have
+removed long ago. The explanation is not the job:
 
-The most recent build log rules out the obvious causes: the job runs from
-`/opt/zfin/www_homes/zfin.org`, both `find`s execute, `-name "*.fa"`
-reaches `find` unexpanded, and it exits 0 under `/bin/sh -xe`, so there
-were no permission errors during traversal either. Something stops it at
-the top level instead — a `Current` that is a symlink would do it, since
-`find` without `-L` will not descend into one. One command in the same
-context the job runs, without the `-exec`, settles it:
+| `/mnt/netapp/zfin/blastdb` as seen from | `gbk_zf_mrna.fa` | `dump*.fa` |
+| --- | --- | --- |
+| the production tomcat container (host p06) | absent | 731 |
+| `is-zfin-dkr-p06` | absent | 731 |
+| `is-zfin-dkr-p07` (crick) | present, 1.08 GiB | 652 |
 
-```sh
-find /opt/zfin/blastdb/ -name "*.fa" -mtime +1
-ls -ld /opt/zfin/blastdb /opt/zfin/blastdb/Current
-```
+The job cleans production's copy, where the stale `.fa` is gone. The
+listing had been taken on crick, which holds a separate copy with no
+equivalent cleanup — see #3.
 
-Note also that the pattern misses `.fasta`, `.out` and `.ctx`, which is
-why the rest of the cruft in `Current/` would survive regardless: 26
-non-database files totalling 1.18 GiB, including `protein.fasta` and
+Note the pattern misses `.fasta`, `.out` and `.ctx` regardless, which is
+why the rest of the cruft survives on both: 26 non-database files
+totalling 1.18 GiB, including `protein.fasta` and
 `sebu1_033116.{ctx,out}` from 2016, an empty extensionless
 `vega_transcript`, and `.txt` files from 2009–2015.
 
@@ -396,8 +405,7 @@ non-database files totalling 1.18 GiB, including `protein.fasta` and
   reference to every path until then.
 - Write query temp files somewhere that is not the blast database
   directory.
-- Find out why `Delete-Old-Blast-Results_d` does not descend into
-  `Current/`, and sweep the stray files there while in the area.
+- Sweep the stray non-`.fa` files, on every host that holds a copy.
 - If the cron job is kept as a backstop, say so in a comment where the
   temp file is created.
 
@@ -421,25 +429,29 @@ cleanly.
 
 ZFIN-10452 fixed the mechanics. The source is now
 `BLAST_SOURCE_HOST`/`BLAST_SOURCE_PATH`, defaulting to
-`/mnt/netapp/zfin/blastdb/Current` — the only blast directory confirmed
-to exist — and a non-zero rsync throws with the exit code and the source
-it tried, so a wrong path fails in four seconds instead of silently.
+`/mnt/netapp/zfin/blastdb/Current`, and a non-zero rsync throws with the
+exit code and the source it tried, so a wrong path fails in four seconds
+instead of silently. crick has that path, so the default resolves against
+the `SSH_HOST` already in `docker/.env`.
 
-What is left is the decision the mechanics cannot make: **which host and
-path a developer should actually fetch from.** Three are named in the
-tree and no two agree.
+What is left is the decision the mechanics cannot make: **which host a
+developer should fetch from.** crick works, but crick's copy is one of
+several that are drifting apart (#3) — it still holds a 1.08 GiB build
+artifact production has cleaned — so "it resolves" is not the same as
+"it is authoritative". Three host/path pairs are named in the tree and no
+two agree.
 
 | named in | host | path |
 | --- | --- | --- |
 | `build.gradle` (before this ticket) | `$SSH_HOST` = crick | `/research/zfin.org/blastdb/Current` — gone |
+| `build.gradle` (now) | `$SSH_HOST` = crick | `/mnt/netapp/zfin/blastdb/Current` — resolves |
 | `docker/setup_blast.sh` | `watson.zfin.org` | `/opt/zfin/blastdb/Current` |
 | production containers | is-zfin-dkr-p0*x* | `/mnt/netapp/zfin/blastdb/Current` |
 
 There is also `/research/zblastfiles/zmore/dev_blastdb/Current`, which is
 where the complete 2023-06-24 `gbk_*` set was found when cell needed it,
 and per-instance directories beside it (`/research/zblastfiles/zmore/cell`
-is what cell mounts at `/opt/zfin/blastdb`). Whether crick can see any of
-these has not been established.
+is what cell mounts at `/opt/zfin/blastdb`).
 
 This overlaps #3 — "which host is authoritative for
 `/opt/zfin/blastdb/Current`" is the same question asked from the

@@ -847,10 +847,13 @@ task loadsolr(dependsOn: getLatestSolrIndex)
 // Where a blast database fetch comes from. These tasks used to hardcode
 // $SSH_HOST:/research/zfin.org/blastdb/Current, which exists on no host any
 // more -- checked on crick (the SSH_HOST in docker/.env) and on the production
-// hosts, 2026-09-02. Production's blast directory is /mnt/netapp/zfin/blastdb,
-// mounted into its containers at /opt/zfin/blastdb, so that is the default;
-// override either half when a fetch should come from somewhere else, e.g. the
-// complete gbk_* set in /research/zblastfiles/zmore/dev_blastdb/Current:
+// hosts, 2026-09-02. The live path is /mnt/netapp/zfin/blastdb, mounted into
+// the containers at /opt/zfin/blastdb, and crick has it too -- so the default
+// below resolves against the SSH_HOST already in docker/.env. Note that crick's
+// copy and production's are separate directories, not one shared volume: the
+// .x* database files match byte for byte, but their transient .fa content has
+// drifted apart (follow-up #3). Override either half to fetch elsewhere, e.g.
+// the complete gbk_* set in /research/zblastfiles/zmore/dev_blastdb/Current:
 //
 //   BLAST_SOURCE_HOST=... BLAST_SOURCE_PATH=... gradle getBlast
 //
