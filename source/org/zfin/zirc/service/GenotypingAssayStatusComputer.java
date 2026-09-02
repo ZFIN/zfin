@@ -74,25 +74,36 @@ public final class GenotypingAssayStatusComputer {
     }
 
     /**
-     * Primer fields carrying the ZFIN-10407 rule: a DNA sequence must be
+     * Primer fields carrying the ZFIN-10407 rule -- a DNA sequence must be
      * entered, and it must be at least {@link ZircAssayFormSchema#PRIMER_MIN_LENGTH}
-     * bases.
+     * bases -- mapped to the assay types on which the form actually shows that
+     * field.
      *
-     * <p>Scope is the forward / reverse pair the ticket names. The other five
-     * primer fields have the same ACGT normalization applied on the form but
-     * are deliberately not length-checked yet -- whether the minimum should
-     * extend to them is an open question with the curators.
+     * <p>The value matters as much as the key: a rule that fired regardless of
+     * type would report a missing forward primer on an ASA assay, which shows
+     * the WT/mutant/common trio instead and has no forward primer to fill in.
+     *
+     * <p>ZFIN-10407 named the forward / reverse pair; ZFIN-10439 asked for the
+     * same minimum on the ASA primer boxes, so the trio is here under its own
+     * type set. Still absent: {@code sequencingPrimer}, which no ticket has
+     * asked for, and {@code dcapsMismatchPrimerChoice}, which holds "Forward"
+     * or "Reverse" rather than a sequence.
+     *
+     * <p>Kept in step with the {@code minBases} options
+     * {@link ZircAssayFormSchema#uiSchema()} emits, which drive the matching
+     * inline hint on the form.
      */
-    private static final Set<String> LENGTH_CHECKED_PRIMERS =
-            Set.of(Field.FORWARD_PRIMER.getPath(), Field.REVERSE_PRIMER.getPath());
+    private static final Map<String, List<String>> LENGTH_CHECKED_PRIMERS = Map.of(
+            Field.FORWARD_PRIMER.getPath(),     ZircAssayFormSchema.FWD_REV_PRIMER_TYPES,
+            Field.REVERSE_PRIMER.getPath(),     ZircAssayFormSchema.FWD_REV_PRIMER_TYPES,
+            Field.WT_SPECIFIC_PRIMER.getPath(), ZircAssayFormSchema.ALLELE_SPECIFIC_TYPES,
+            Field.MUT_SPECIFIC_PRIMER.getPath(), ZircAssayFormSchema.ALLELE_SPECIFIC_TYPES,
+            Field.COMMON_PRIMER.getPath(),      ZircAssayFormSchema.ALLELE_SPECIFIC_TYPES);
 
     private static FieldStatus statusFor(GenotypingAssay ga, String path) {
         Object value = readProperty(ga, path);
 
-        // The primer rule only applies when the form would actually show the
-        // field: ASA and KASP use the WT/mut/common trio instead, so a blank
-        // forward primer there is correct, not missing.
-        if (LENGTH_CHECKED_PRIMERS.contains(path) && primerPairApplies(ga)) {
+        if (primerRuleApplies(ga, path)) {
             if (isEmpty(value)) return FieldStatus.MISSING;
             if (value instanceof String s
                     && s.trim().length() < ZircAssayFormSchema.PRIMER_MIN_LENGTH) {
@@ -105,10 +116,14 @@ public final class GenotypingAssayStatusComputer {
         return FieldStatus.COMPLETE;
     }
 
-    /** True when this assay's type is one that shows the forward / reverse pair. */
-    private static boolean primerPairApplies(GenotypingAssay ga) {
-        String type = ga.getAssayType();
-        return type != null && ZircAssayFormSchema.FWD_REV_PRIMER_TYPES.contains(type);
+    /**
+     * True when {@code path} is length-checked and this assay's type is one
+     * that shows it. A null type means the submitter has not picked one yet, so
+     * no primer box is on screen and nothing should be flagged.
+     */
+    private static boolean primerRuleApplies(GenotypingAssay ga, String path) {
+        List<String> types = LENGTH_CHECKED_PRIMERS.get(path);
+        return types != null && ga.getAssayType() != null && types.contains(ga.getAssayType());
     }
 
     private GenotypingAssayStatusComputer() {}

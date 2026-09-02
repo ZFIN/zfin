@@ -75,7 +75,7 @@ public final class ZircAssayFormSchema {
             "PCR + sequencing",
             "RFLP",
             "derived Cleaved Amplified Polymorphic Sequences dCAPS",
-            "ASA",
+            "Allele Specific Amplification (ASA)",
             "KASP",
             "HRMA",
             "SSLP");
@@ -114,7 +114,10 @@ public final class ZircAssayFormSchema {
             List.of("pcr_sequencing");
     private static final List<String> DCAPS_TYPES =
             List.of("dcaps");
-    private static final List<String> ALLELE_SPECIFIC_TYPES =
+    // Public for the same reason as FWD_REV_PRIMER_TYPES: these are the types
+    // that show the WT/mutant/common primer trio, and the status computer has
+    // to know that before it flags one of them as missing or short.
+    public static final List<String> ALLELE_SPECIFIC_TYPES =
             List.of("asa", "kasp");
     private static final List<String> KASP_TYPES =
             List.of("kasp");
@@ -194,10 +197,13 @@ public final class ZircAssayFormSchema {
                 .withWidget("nucleotideSequence")
                 .withAlphabet(PRIMER_ALPHABET)
                 .withHelpText("ACGT only.");
-        // Only the forward / reverse pair carries the minimum: that is the scope
-        // ZFIN-10407 names, and it matches what GenotypingAssayStatusComputer
-        // flags. Whether the other five primers should also have a minimum is
-        // still an open question with the curators.
+        // Carried by the forward / reverse pair (ZFIN-10407) and by the
+        // allele-specific trio (ZFIN-10439, which asks for the same minimum on
+        // the ASA primer boxes). Not on sequencingPrimer or the dCAPS mismatch
+        // question -- neither has been asked for, and the mismatch field is a
+        // Forward/Reverse choice rather than a sequence.
+        // Kept in step with GenotypingAssayStatusComputer.LENGTH_CHECKED_PRIMERS,
+        // which flags exactly these five paths.
         Options primerSequenceWithMin = primerSequence.withMinBases(PRIMER_MIN_LENGTH);
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
@@ -215,6 +221,21 @@ public final class ZircAssayFormSchema {
                 groupRevealedFor(FWD_REV_PRIMER_TYPES, List.of(
                         new Control("#/properties/forwardPrimer", primerSequenceWithMin, null),
                         new Control("#/properties/reversePrimer", primerSequenceWithMin, null)
+                )),
+                // ASA + KASP — WT/mut/common primer trio, in place of the
+                // forward / reverse pair above. KASP adds the genomic-sequence
+                // textarea in its own group below.
+                //
+                // Sits above the expected-PCR-product group because ZFIN-10439
+                // asks for the ASA primer boxes "right after assay type". Group
+                // order is shared across assay types, so this also moves the
+                // trio above the products for KASP; leaving KASP behind would
+                // put the same three boxes on opposite sides of the same two
+                // product boxes depending on the type.
+                groupRevealedFor(ALLELE_SPECIFIC_TYPES, List.of(
+                        new Control("#/properties/wtSpecificPrimer",  primerSequenceWithMin, null),
+                        new Control("#/properties/mutSpecificPrimer", primerSequenceWithMin, null),
+                        new Control("#/properties/commonPrimer",      primerSequenceWithMin, null)
                 )),
                 // Expected WT/MUT PCR product — shown for every type that
                 // produces a PCR amplicon (everything except sslp).
@@ -238,13 +259,6 @@ public final class ZircAssayFormSchema {
                                         .withStandardValues(DCAPS_MISMATCH_PRIMER_CHOICES)
                                         .withNoOther(true),
                                 null)
-                )),
-                // ASA + KASP — WT/mut/common primer trio. KASP adds the
-                // genomic-sequence textarea in its own group below.
-                groupRevealedFor(ALLELE_SPECIFIC_TYPES, List.of(
-                        new Control("#/properties/wtSpecificPrimer",  primerSequence, null),
-                        new Control("#/properties/mutSpecificPrimer", primerSequence, null),
-                        new Control("#/properties/commonPrimer",      primerSequence, null)
                 )),
                 groupRevealedFor(KASP_TYPES, List.of(
                         new Control("#/properties/kaspGenomicSequence",

@@ -163,7 +163,7 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
+          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "Allele Specific Amplification (ASA)", "KASP", "HRMA", "SSLP" ],
           "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],
           "widget" : "selectWithOther"
         },
@@ -195,6 +195,45 @@
         "condition" : {
           "schema" : {
             "enum" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/wtSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/mutSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/commonPrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "asa", "kasp" ]
           },
           "scope" : "#/properties/assayType"
         },
@@ -253,42 +292,6 @@
         "condition" : {
           "schema" : {
             "enum" : [ "dcaps" ]
-          },
-          "scope" : "#/properties/assayType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "alphabet" : "ACGT",
-          "helpText" : "ACGT only.",
-          "widget" : "nucleotideSequence"
-        },
-        "scope" : "#/properties/wtSpecificPrimer",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "alphabet" : "ACGT",
-          "helpText" : "ACGT only.",
-          "widget" : "nucleotideSequence"
-        },
-        "scope" : "#/properties/mutSpecificPrimer",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "alphabet" : "ACGT",
-          "helpText" : "ACGT only.",
-          "widget" : "nucleotideSequence"
-        },
-        "scope" : "#/properties/commonPrimer",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "asa", "kasp" ]
           },
           "scope" : "#/properties/assayType"
         },
