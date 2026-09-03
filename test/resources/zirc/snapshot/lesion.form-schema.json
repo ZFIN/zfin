@@ -85,9 +85,14 @@
         "title" : "Protein consequences",
         "type" : "array"
       },
-      "talenSequence" : {
+      "talenSequence1" : {
         "maxLength" : 5000,
-        "title" : "TALEN sequence",
+        "title" : "TALEN sequence 1",
+        "type" : [ "string", "null" ]
+      },
+      "talenSequence2" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence 2",
         "type" : [ "string", "null" ]
       },
       "threePrimeFlank" : {
@@ -223,7 +228,15 @@
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
-        "scope" : "#/properties/talenSequence",
+        "scope" : "#/properties/talenSequence1",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/talenSequence2",
         "type" : "Control"
       } ],
       "rule" : {

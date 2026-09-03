@@ -90,8 +90,17 @@ public class Lesion implements Serializable {
     @Column(name = "l_crispr_sequence")
     private String crisprSequence;
 
-    @Column(name = "l_talen_sequence")
-    private String talenSequence;
+    /**
+     * TALENs work as a pair — two arms flanking the cut site — so the form
+     * always asks for both sequences rather than one box the curator has to
+     * know to fill twice. Two columns rather than an array: the pair is fixed
+     * at two and each half is separately labelled in the form.
+     */
+    @Column(name = "l_talen_sequence_1")
+    private String talenSequence1;
+
+    @Column(name = "l_talen_sequence_2")
+    private String talenSequence2;
 
     /**
      * Legacy free-text amino-acid box, replaced by the from/to/position

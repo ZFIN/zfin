@@ -62,7 +62,8 @@ describe('lesion conditional reveals', () => {
         });
         assert.ok(screen.getByLabelText('TALEN'));
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 1'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 2'), null);
         h.cleanupFetch();
     });
 
@@ -83,8 +84,10 @@ describe('lesion conditional reveals', () => {
         // box now stands alone.
         const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['talen'] });
         await waitFor(() => {
-            assert.ok(screen.getByLabelText('TALEN sequence'));
+            assert.ok(screen.getByLabelText('TALEN sequence 1'));
         });
+        // A TALEN is a pair, so ticking the one box asks for both arms.
+        assert.ok(screen.getByLabelText('TALEN sequence 2'));
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
         h.cleanupFetch();
     });
@@ -99,7 +102,8 @@ describe('lesion conditional reveals', () => {
         await waitFor(() => {
             assert.ok(screen.getByLabelText('CRISPR sequence'));
         });
-        assert.ok(screen.getByLabelText('TALEN sequence'));
+        assert.ok(screen.getByLabelText('TALEN sequence 1'));
+        assert.ok(screen.getByLabelText('TALEN sequence 2'));
         h.cleanupFetch();
     });
 
@@ -114,7 +118,8 @@ describe('lesion conditional reveals', () => {
             assert.ok(screen.getByLabelText('Deleted sequence'));
         });
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 1'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 2'), null);
         h.cleanupFetch();
     });
 

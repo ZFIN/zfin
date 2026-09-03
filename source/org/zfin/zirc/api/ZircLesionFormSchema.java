@@ -153,7 +153,10 @@ public final class ZircLesionFormSchema {
                 new StringSchema(null, null, null, null, null),
                 null, null));
         properties.put("crisprSequence",         StringSchema.of("CRISPR sequence", 5000));
-        properties.put("talenSequence",          StringSchema.of("TALEN sequence", 5000));
+        // A TALEN is a pair — both arms are asked for, always. See
+        // Lesion#talenSequence1.
+        properties.put("talenSequence1",         StringSchema.of("TALEN sequence 1", 5000));
+        properties.put("talenSequence2",         StringSchema.of("TALEN sequence 2", 5000));
         // Protein-level
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
         // Structured amino-acid change (ZFIN-10379). from/to are
@@ -236,8 +239,19 @@ public final class ZircLesionFormSchema {
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withMulti(true),
                                 null))),
+                // Both arms are revealed by the one TALEN box: a TALEN
+                // always cuts as a pair, so a single sequence field would be
+                // asking for half an answer. Two Controls in one follow-up
+                // group rather than a repeatable list — the count is fixed
+                // at two and each half is labelled.
                 originFollowUp("talen", List.of(
-                        new Control("#/properties/talenSequence",
+                        new Control("#/properties/talenSequence1",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                null),
+                        new Control("#/properties/talenSequence2",
                                 Options.of()
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
@@ -393,7 +407,8 @@ public final class ZircLesionFormSchema {
                             ? new String[0] : l.getInsertionOrigins(),
                     (l, v) -> l.setInsertionOrigins(stringArray(v))),
             field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
-            field("/talenSequence",         Lesion::getTalenSequence,          (l, v) -> l.setTalenSequence(nucleotides(v))),
+            field("/talenSequence1",        Lesion::getTalenSequence1,         (l, v) -> l.setTalenSequence1(nucleotides(v))),
+            field("/talenSequence2",        Lesion::getTalenSequence2,         (l, v) -> l.setTalenSequence2(nucleotides(v))),
             field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
             field("/aaChangeFrom",          Lesion::getAaChangeFrom,           (l, v) -> l.setAaChangeFrom(text(v))),
             field("/aaChangeTo",            Lesion::getAaChangeTo,             (l, v) -> l.setAaChangeTo(text(v))),
