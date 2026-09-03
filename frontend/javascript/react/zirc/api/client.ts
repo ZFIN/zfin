@@ -4,7 +4,11 @@ const API_BASE = '/action/api/zirc';
 
 export class ApiError extends Error {
     constructor(public status: number, public problem: ProblemDetail) {
-        super(problem.title || problem.detail || `HTTP ${status}`);
+        // detail before title: ZircApiExceptionHandler sets title to the
+        // generic status label ("Bad Request") and puts the message that
+        // actually tells the curator what to fix in detail, so preferring
+        // title reduced every error in the UI to its HTTP status.
+        super(problem.detail || problem.title || `HTTP ${status}`);
         this.name = 'ApiError';
     }
 }

@@ -81,14 +81,21 @@ public class ZircAssayApiController {
      * Multipart upload — returns the refreshed AssayDTO so the client
      * can update both its attachments list and the local React Query cache
      * in one round trip.
+     *
+     * <p>{@code kind} names the bucket the file lands in — see
+     * {@link GenotypingAssayFile#KINDS}. It defaults to the results bucket so
+     * a client that predates the protocol bucket (ZFIN-10415) keeps working;
+     * the service rejects any other unrecognized value.
      */
     @PostMapping(
             value = "/api/zirc/assays/{assayId}/attachments",
             consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public AssayDTO uploadAttachment(
             @PathVariable Long assayId,
+            @RequestParam(value = "kind", required = false,
+                    defaultValue = GenotypingAssayFile.KIND_ASSAY_RESULT) String kind,
             @RequestParam("file") MultipartFile file) throws IOException {
-        return AssayDTO.of(zircSubmissionService.storeAttachment(assayId, file));
+        return AssayDTO.of(zircSubmissionService.storeAttachment(assayId, kind, file));
     }
 
     @DeleteMapping("/api/zirc/assays/attachments/{fileId}")

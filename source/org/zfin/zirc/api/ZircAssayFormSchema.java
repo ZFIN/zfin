@@ -15,6 +15,7 @@ import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.GenotypingAssay;
+import org.zfin.zirc.entity.GenotypingAssayFile;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.function.Function;
  *   <li><b>Allele-specific PCR</b> — AS-PCR</li>
  *   <li><b>KASP genomic sequence</b> — KASP</li>
  *   <li><b>SSLP</b> — SSLP</li>
+ *   <li><b>Protocol documentation</b> — every type (ZFIN-10415)</li>
  * </ul>
  *
  * <p>Canonical assay-type list is a starter — curators should review.
@@ -138,9 +140,11 @@ public final class ZircAssayFormSchema {
         // Catch-all
         properties.put("additionalInfo",             StringSchema.of("Additional info", 5000));
         // Attachments — summary rows; uploads happen through a dedicated
-        // multipart endpoint, not the field-path PATCH (AssayEdit's diff
-        // filter must skip /attachments).
-        properties.put("attachments",                attachmentsArrayProp());
+        // multipart endpoint, not the field-path PATCH, so the editor's diff
+        // filter must skip both of these paths (it does, off the Controls'
+        // managesOwnPersistence flag).
+        properties.put("attachments",                attachmentsArrayProp("Attachments"));
+        properties.put("protocolDocuments",          attachmentsArrayProp(PROTOCOL_DOC_LABEL));
         return ObjectSchema.of(null, properties, List.of("assayType"));
     }
 
@@ -220,6 +224,11 @@ public final class ZircAssayFormSchema {
                 attachmentBucketFor(CHROMATOGRAM_TYPES, "Chromatograms"),
                 attachmentBucketFor(RESULT_IMAGE_TYPES, "Annotated result images"),
                 attachmentBucketFor(MELT_CURVE_TYPES,   "Annotated melt curve files"),
+                // Protocol documentation — a second, separately-backed bucket
+                // that sits directly below whichever results bucket is
+                // showing. Ungated: every assay type gets it, so unlike the
+                // four above it needs no visibility rule.
+                protocolDocumentsBucket(),
                 // SSLP — its primers + gel-image bucket render above (in
                 // FWD_REV_PRIMER_TYPES / GEL_IMAGE_TYPES); the type-specific
                 // metadata fields all live here.
@@ -253,10 +262,31 @@ public final class ZircAssayFormSchema {
                         Options.of()
                                 .withWidget("attachmentsList")
                                 .withManagesOwnPersistence(true)
+                                .withAttachmentKind(GenotypingAssayFile.KIND_ASSAY_RESULT)
                                 .withLabel(label),
                         null)),
                 Options.of().withLayout("plain"),
                 Rule.showWhenIn("#/properties/assayType", assayTypes));
+    }
+
+    /**
+     * The Protocol documentation bucket (ZFIN-10415). Same widget as the four
+     * results buckets, but bound to {@code protocolDocuments} and with no
+     * visibility rule — it applies to every assay type.
+     */
+    private static Group protocolDocumentsBucket() {
+        return new Group(null,
+                List.of(new Control("#/properties/protocolDocuments",
+                        Options.of()
+                                .withWidget("attachmentsList")
+                                .withManagesOwnPersistence(true)
+                                .withAttachmentKind(GenotypingAssayFile.KIND_PROTOCOL_DOC)
+                                .withAccept(String.join(",", PROTOCOL_DOC_EXTENSIONS))
+                                .withHelpText(PROTOCOL_DOC_HELP_TEXT)
+                                .withLabel(PROTOCOL_DOC_LABEL),
+                        null)),
+                Options.of().withLayout("plain"),
+                null);
     }
 
     /**
@@ -307,22 +337,43 @@ public final class ZircAssayFormSchema {
     // (Schema records live in org.zfin.zirc.api.jsonschema; helpers below
     //  return the typed records directly.)
 
-    /** Hard cap on attachments per assay; same MAX_CHILD_ROWS_PER_MUTATION shape from the alt branch. */
+    /**
+     * Hard cap on attachments per assay; same MAX_CHILD_ROWS_PER_MUTATION shape
+     * from the alt branch. Applied per bucket, so a full results bucket does
+     * not block a protocol document.
+     */
     public static final int MAX_ATTACHMENTS_PER_ASSAY = 10;
+
+    /** Heading on the Protocol documentation bucket (ZFIN-10415). */
+    public static final String PROTOCOL_DOC_LABEL = "Protocol Documentation";
+
+    /**
+     * Filename extensions accepted in the Protocol documentation bucket, per
+     * ZFIN-10415. Doubles as the picker's {@code accept} attribute and as the
+     * server-side allow-list — browsers report inconsistent content types for
+     * Office formats (docx frequently arrives as application/octet-stream),
+     * so the extension is the check that actually holds.
+     */
+    public static final List<String> PROTOCOL_DOC_EXTENSIONS =
+            List.of(".pdf", ".docx", ".doc", ".txt", ".rtf", ".odt");
+
+    /** Curator-facing companion to PROTOCOL_DOC_EXTENSIONS. */
+    public static final String PROTOCOL_DOC_HELP_TEXT =
+            "Accepted file types: " + String.join(", ", PROTOCOL_DOC_EXTENSIONS) + ".";
 
     /**
      * Mirror of {@link org.zfin.zirc.dto.AssayFileDTO}; the renderer reads
      * the summary fields. File content is fetched via the streaming
      * endpoint, not as part of the form data.
      */
-    private static ArraySchema attachmentsArrayProp() {
+    private static ArraySchema attachmentsArrayProp(String title) {
         Map<String, JsonSchema> itemProps = new LinkedHashMap<>();
         itemProps.put("id",               NumberSchema.of());
         itemProps.put("originalFilename", new StringSchema(null, null, null, null, null));
         itemProps.put("contentType",      StringSchema.nullable());
         itemProps.put("fileSize",         new NumberSchema(null, Boolean.TRUE));
         itemProps.put("uploadedAt",       StringSchema.nullable());
-        return new ArraySchema("Attachments", ObjectSchema.of(itemProps),
+        return new ArraySchema(title, ObjectSchema.of(itemProps),
                 MAX_ATTACHMENTS_PER_ASSAY, null);
     }
 

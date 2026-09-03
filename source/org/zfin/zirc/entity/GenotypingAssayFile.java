@@ -16,12 +16,12 @@ import org.zfin.profile.Person;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * One uploaded file attached to a {@link GenotypingAssay}. {@code af_kind}
- * categorizes the file by its role in the form (chromatogram, gel image,
- * result image, melt curve) — different assay types surface different
- * kinds per the xlsx field matrix.
+ * says which of the form's two upload buckets the file belongs to — see
+ * {@link #KIND_ASSAY_RESULT} and {@link #KIND_PROTOCOL_DOC}.
  */
 @Entity(name = "ZircGenotypingAssayFile")
 @Table(schema = "zirc", name = "genotyping_assay_file")
@@ -39,10 +39,25 @@ public class GenotypingAssayFile implements Serializable {
     @JoinColumn(name = "af_assay_id", referencedColumnName = "ga_id", nullable = false)
     private GenotypingAssay assay;
 
-    // Nullable since M4.3 — the form exposes a single "Attachments" slot per
-    // assay rather than the original four-kind matrix; curators may
-    // re-introduce categorization later.
-    @Column(name = "af_kind")
+    /**
+     * The per-assay-type results bucket — rendered as "Annotated gel images",
+     * "Chromatograms", "Annotated result images" or "Annotated melt curve
+     * files" depending on {@code ga_assay_type}. Which of those four labels
+     * applies is derived from the assay type at render time, so it is not
+     * stored per file.
+     */
+    public static final String KIND_ASSAY_RESULT = "assay_result";
+
+    /** Protocol documentation (ZFIN-10415); offered for every assay type. */
+    public static final String KIND_PROTOCOL_DOC = "protocol_doc";
+
+    /** The kinds {@code af_kind}'s CHECK constraint permits. */
+    public static final Set<String> KINDS = Set.of(KIND_ASSAY_RESULT, KIND_PROTOCOL_DOC);
+
+    // Which upload bucket this file belongs to; one of KINDS. NOT NULL since
+    // ZFIN-10415 — a kind-less row belongs to no bucket and so would be
+    // invisible in the form.
+    @Column(name = "af_kind", nullable = false)
     private String kind;
 
     @Column(name = "af_original_filename", nullable = false)

@@ -139,9 +139,17 @@ export function useAssayById(id: number | null) {
 export function useUploadAttachment() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({ assayId, file }: { assayId: number; file: File }) => {
+        mutationFn: ({
+            assayId,
+            file,
+            kind,
+        }: { assayId: number; file: File; kind?: string }) => {
             const form = new FormData();
             form.append('file', file);
+            // Which bucket the file lands in (af_kind). Omitted by callers
+            // that predate the protocol-documentation bucket; the server
+            // then defaults to the results bucket.
+            if (kind) {form.append('kind', kind);}
             return api.upload<AssayDTO>(`/assays/${assayId}/attachments`, form);
         },
         onSuccess: (_data, vars) => {

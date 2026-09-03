@@ -189,6 +189,8 @@ vocabulary:
 | `managesOwnPersistence` | boolean          | The widget owns its writes (uploads/deletes/add-row via dedicated POST/DELETE), so the autosave loop skips this Control's path and mirror-syncs it from refetches. Set on the self-managed list widgets. |
 | `refreshesParent` | boolean                | Editing this field changes the parent's collapsed-card label, so a successful PATCH invalidates the parent query. Set on the field that feeds the card (discriminator, gene marker id, phenotype description). |
 | `addLabel`      | string                   | For the `stringList` widget — label for the "+ Add …" button (e.g. `"+ Add publication"`). Defaults to `"+ Add"`. |
+| `attachmentKind`| string                   | For the `attachmentsList` widget — the `af_kind` this bucket uploads as (`assay_result` / `protocol_doc`). Two Controls bind to two arrays on the same assay, so the upload has to say which. |
+| `accept`        | string                   | For the `attachmentsList` widget — the file input's `accept` attribute. A picker filter only; the server re-validates on upload. |
 
 **Convention**: render-metadata that's curator-facing belongs in
 `options`, not in the JSON Schema. The schema is for constraints

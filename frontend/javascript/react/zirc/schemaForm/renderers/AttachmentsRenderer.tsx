@@ -12,12 +12,23 @@ import { AssayFileDTO } from '../../api/types';
 import { useUploadAttachment, useDeleteAttachment } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 
+type AttachmentsOptions = {
+    label?: string;
+    attachmentKind?: string;
+    accept?: string;
+    helpText?: string;
+};
+
 /**
- * Per-assay attachments. Single "Attachments" section regardless of
- * assayType — the original four-kind matrix (chromatogram / gel_image /
- * result_image / melt_curve) is collapsed to a generic uploader for now.
+ * Per-assay attachments. The form has two buckets, both rendered by this
+ * widget: the per-assay-type results bucket (labeled "Annotated gel images",
+ * "Chromatograms", …) bound to `attachments`, and Protocol Documentation
+ * bound to `protocolDocuments` (ZFIN-10415). Which is which comes from the
+ * uischema — `options.attachmentKind` is sent with the upload so the server
+ * files it in the right bucket, and `options.accept` narrows the picker.
+ *
  * Uploads go through a dedicated multipart endpoint, not the field-path
- * PATCH; AssayEdit's diff filter skips /attachments.
+ * PATCH; the editor's diff filter skips both managesOwnPersistence paths.
  *
  * assayId arrives via JsonForms' config prop.
  */
@@ -29,10 +40,10 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const view = viewConfigFrom(config);
-    // Per-assay-type bucket label (e.g. "Annotated gel images", "Chromatograms")
-    // — set via uischema options.label so the same Attachments widget can
-    // appear under different headings depending on the assay type.
-    const bucketLabel = ((uischema as { options?: { label?: string } } | undefined)?.options)?.label;
+    // Bucket heading, af_kind, picker filter and helper text all ride on the
+    // uischema options so one widget can serve both buckets.
+    const opts = ((uischema as { options?: AttachmentsOptions } | undefined)?.options) ?? {};
+    const bucketLabel = opts.label;
 
     if (view.readonly) {
         return (
@@ -65,7 +76,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
         if (!file || !assayId) {return;}
         setErrorMsg(null);
         upload.mutate(
-            { assayId, file },
+            { assayId, file, kind: opts.attachmentKind },
             {
                 onError: (err) => {
                     setErrorMsg(err instanceof Error ? err.message : 'Upload failed');
@@ -132,6 +143,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                 <input
                     ref={inputRef}
                     type='file'
+                    accept={opts.accept}
                     onChange={handlePick}
                     disabled={!assayId || upload.isPending || atCapacity}
                     title={capTitle}
@@ -140,6 +152,9 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                     <span className='text-muted small ml-2'>Uploading…</span>
                 )}
             </div>
+            {opts.helpText && (
+                <small className='form-text text-muted'>{opts.helpText}</small>
+            )}
             {errorMsg && (
                 <div className='alert alert-danger mt-2 mb-0' role='alert'>
                     {errorMsg}
