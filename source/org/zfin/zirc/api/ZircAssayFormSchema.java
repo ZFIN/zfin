@@ -70,6 +70,18 @@ public final class ZircAssayFormSchema {
     private static final List<String> DCAPS_MISMATCH_PRIMER_CHOICES =
             List.of("Forward", "Reverse");
 
+    /**
+     * Where the marker sits relative to the mutation (ZFIN-10442). Closed:
+     * the ticket asks for "a drop down menu with Proximal and Distal as
+     * choices to pick", and the mockup offers nothing else, so the
+     * selectWithOther widget runs with noOther.
+     */
+    private static final List<String> SSLP_MARKER_LOCATIONS =
+            List.of("Proximal", "Distal");
+
+    /** Helper text ZFIN-10442 asks for on both SSLP background fields. */
+    private static final String STRAIN_EXAMPLES = "e.g. AB, TU, …";
+
     private static final List<String> ASSAY_TYPE_LABELS = List.of(
             "PCR + gel electrophoresis",
             "PCR + sequencing",
@@ -78,7 +90,7 @@ public final class ZircAssayFormSchema {
             "Allele Specific Amplification (ASA)",
             "KASP",
             "High-Resolution Melting Analysis (HRMA)",
-            "SSLP");
+            "Simple Sequence Length Polymorphism (SSLP)");
 
     /**
      * Bases accepted in the primer fields (ZFIN-10407). Emitted onto every
@@ -164,10 +176,13 @@ public final class ZircAssayFormSchema {
         properties.put("expectedWtDigest",           StringSchema.of("Expected WT product after digest", 2000));
         properties.put("expectedMutDigest",          StringSchema.of("Expected MUT product after digest", 2000));
         // SSLP
-        properties.put("sslpMarkerName",             StringSchema.of("SSLP marker name", 255));
-        properties.put("sslpDistance",               StringSchema.of("Distance marker → mutation", 255));
-        properties.put("sslpGenomicLocation",        StringSchema.of("Genomic location of marker", 255));
-        properties.put("sslpInducedBackground",      StringSchema.of("Background mutation was induced on", 255));
+        // Labels are the curators' wording from ZFIN-10442's mockup. The
+        // "(Z Marker)" parenthetical is what tells a submitter which
+        // identifier to type -- the field takes free text, not a lookup.
+        properties.put("sslpMarkerName",             StringSchema.of("SSLP marker name (Z Marker)", 255));
+        properties.put("sslpDistance",               StringSchema.of("Distance between marker and mutation", 255));
+        properties.put("sslpGenomicLocation",        StringSchema.of("Location of the marker vs mutation", 255));
+        properties.put("sslpInducedBackground",      StringSchema.of("Mutation was induced on background", 255));
         properties.put("sslpOutcrossedBackground",   StringSchema.of("Recommended outcrossing background", 255));
         properties.put("sslpInducedPcr",             StringSchema.of("PCR product on induced background", 2000));
         properties.put("sslpOutcrossedPcr",          StringSchema.of("PCR product on outcrossing background", 2000));
@@ -213,6 +228,33 @@ public final class ZircAssayFormSchema {
                                         .withStandardValues(ASSAY_TYPES)
                                         .withStandardLabels(ASSAY_TYPE_LABELS)
                                         .withRefreshesParent(true),
+                                null)
+                )),
+                // SSLP metadata — above the forward / reverse pair, which SSLP
+                // shares with the PCR-style types. ZFIN-10442's mockup
+                // interleaves the two: backgrounds and marker details first,
+                // then the primers, then SSLP's own two PCR products (below).
+                // That is why this is two groups rather than a reorder inside
+                // one -- the primer pair renders from a group in between.
+                //
+                // Safe to bracket the shared group this way because SSLP_TYPES
+                // has a single member, so neither half can reach another type.
+                groupRevealedFor(SSLP_TYPES, List.of(
+                        new Control("#/properties/sslpInducedBackground",
+                                Options.of().withPlaceholder(STRAIN_EXAMPLES), null),
+                        new Control("#/properties/sslpOutcrossedBackground",
+                                Options.of().withPlaceholder(STRAIN_EXAMPLES), null),
+                        // No placeholder: the box used to advertise "Search ZFIN
+                        // SSLP markers…", promising a lookup that was never
+                        // built. ZFIN-10442 asks for "just a text entry box",
+                        // and the Z-marker hint now lives in the label.
+                        Control.of("#/properties/sslpMarkerName"),
+                        Control.of("#/properties/sslpDistance"),
+                        new Control("#/properties/sslpGenomicLocation",
+                                Options.of()
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(SSLP_MARKER_LOCATIONS)
+                                        .withNoOther(true),
                                 null)
                 )),
                 // Forward / Reverse primer — shown for the six types that
@@ -285,6 +327,13 @@ public final class ZircAssayFormSchema {
                         Control.of("#/properties/expectedWtDigest"),
                         Control.of("#/properties/expectedMutDigest")
                 )),
+                // SSLP's own two PCR products — below the primer pair and above
+                // the gel-image bucket, per the mockup. Not part of the
+                // EXPECTED_PCR_TYPES group, which excludes sslp.
+                groupRevealedFor(SSLP_TYPES, List.of(
+                        Control.of("#/properties/sslpInducedPcr"),
+                        Control.of("#/properties/sslpOutcrossedPcr")
+                )),
                 // Attachment buckets — same underlying `attachments` field,
                 // labeled per-workflow via four parallel Controls with
                 // visibility rules.
@@ -292,19 +341,6 @@ public final class ZircAssayFormSchema {
                 attachmentBucketFor(CHROMATOGRAM_TYPES, "Chromatograms"),
                 attachmentBucketFor(RESULT_IMAGE_TYPES, "Annotated result images"),
                 attachmentBucketFor(MELT_CURVE_TYPES,   "Annotated melt curve files"),
-                // SSLP — its primers + gel-image bucket render above (in
-                // FWD_REV_PRIMER_TYPES / GEL_IMAGE_TYPES); the type-specific
-                // metadata fields all live here.
-                groupRevealedFor(SSLP_TYPES, List.of(
-                        new Control("#/properties/sslpMarkerName",
-                                Options.of().withPlaceholder("Search ZFIN SSLP markers…"), null),
-                        Control.of("#/properties/sslpDistance"),
-                        Control.of("#/properties/sslpGenomicLocation"),
-                        Control.of("#/properties/sslpInducedBackground"),
-                        Control.of("#/properties/sslpOutcrossedBackground"),
-                        Control.of("#/properties/sslpInducedPcr"),
-                        Control.of("#/properties/sslpOutcrossedPcr")
-                )),
                 // Additional info — last row in every variant.
                 Group.of(null, List.of(
                         new Control("#/properties/additionalInfo",
