@@ -11,6 +11,7 @@ import org.zfin.profile.Person;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.zirc.api.ZircAssayFormSchema;
+import org.zfin.zirc.api.ZircAttachmentKind;
 import org.zfin.zirc.api.ZircFormSchema;
 import org.zfin.zirc.api.ZircGeneFormSchema;
 import org.zfin.zirc.api.ZircLesionFormSchema;
@@ -38,7 +39,6 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @Log4j2
@@ -356,14 +356,12 @@ public class ZircSubmissionService {
     /** Hard upper bound on a single uploaded attachment. */
     public static final long MAX_ATTACHMENT_BYTES = 20L * 1024 * 1024;
 
-    /**
-     * Content-types we'll accept. Starter list — internal-curator workflow.
-     * For richer formats (e.g. CSV chromatograms) extend this list.
-     */
-    private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of(
-            "image/jpeg", "image/png", "image/gif", "image/svg+xml", "image/tiff",
-            "application/pdf",
-            "text/plain", "text/csv");
+    // Accepted file types are per attachment bucket, keyed off the assay's
+    // assayType — see ZircAttachmentKind, which the form schema reads too.
+    // This replaced a single global Content-Type allow-list: browsers report
+    // application/octet-stream for the instrument formats (.abi/.ab1, .scf),
+    // so a MIME allow-list rejected the very chromatograms ZFIN-10417 asks
+    // us to accept. Extension is the only signal available for those.
 
     public GenotypingAssayFile getRequiredAssayFile(Long fileId) {
         GenotypingAssayFile file = repository.getAssayFile(fileId);
@@ -390,13 +388,25 @@ public class ZircSubmissionService {
             throw new IllegalArgumentException(
                     "Attachment exceeds size limit (" + MAX_ATTACHMENT_BYTES + " bytes)");
         }
-        String contentType = upload.getContentType();
-        if (contentType == null || !ALLOWED_CONTENT_TYPES.contains(contentType)) {
-            throw new IllegalArgumentException(
-                    "Content type not allowed: " + contentType);
-        }
-
         GenotypingAssay assay = getRequiredAssayById(assayId);
+        // Which bucket this upload lands in follows from the assay type, so
+        // the assay has to be resolved before the file type can be judged.
+        // A null kind means the type is unset or unrecognized — no rule to
+        // apply, so the upload proceeds rather than being rejected.
+        ZircAttachmentKind kind =
+                ZircAttachmentKind.forAssayType(assay.getAssayType());
+        if (kind != null && !kind.accepts(upload.getOriginalFilename())) {
+            throw new IllegalArgumentException(
+                    upload.getOriginalFilename()
+                            + " is not an accepted file type for "
+                            + kind.getLabel() + ". Accepted file types: "
+                            + kind.getAcceptedExtensionsDisplay());
+        }
+        // Derived from the extension, never taken from the upload — the
+        // download endpoint serves this back inline. See contentTypeFor.
+        String contentType =
+                ZircAttachmentKind.contentTypeFor(upload.getOriginalFilename());
+
         int existing = assay.getFiles() == null ? 0 : assay.getFiles().size();
         if (existing >= ZircAssayFormSchema.MAX_ATTACHMENTS_PER_ASSAY) {
             throw new IllegalArgumentException(

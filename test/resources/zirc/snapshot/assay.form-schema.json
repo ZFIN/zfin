@@ -339,6 +339,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "acceptedExtensions" : [ "tif", "tiff", "jpg", "jpeg", "png", "gif", "pdf" ],
           "label" : "Annotated gel images",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -362,6 +363,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "acceptedExtensions" : [ "abi", "ab1", "scf", "fa", "txt", "docx" ],
           "label" : "Chromatograms",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"
@@ -385,6 +387,7 @@
     }, {
       "elements" : [ {
         "options" : {
+          "acceptedExtensions" : [ "tif", "tiff", "jpg", "jpeg", "png", "gif", "pdf" ],
           "label" : "Annotated result images",
           "managesOwnPersistence" : true,
           "widget" : "attachmentsList"

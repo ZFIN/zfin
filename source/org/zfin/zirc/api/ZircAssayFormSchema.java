@@ -60,7 +60,9 @@ public final class ZircAssayFormSchema {
 
     // Stable enum tokens stored on the wire (and in ga_assay_type). Display
     // labels for the dropdown live in ASSAY_TYPE_LABELS, parallel by index.
-    private static final List<String> ASSAY_TYPES = List.of(
+    // Package-private rather than private: ZircAttachmentKindTest reads it to
+    // assert every assay type has exactly one attachment bucket.
+    static final List<String> ASSAY_TYPES = List.of(
             "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp");
     private static final List<String> ASSAY_TYPE_LABELS = List.of(
             "PCR + gel electrophoresis",
@@ -90,16 +92,9 @@ public final class ZircAssayFormSchema {
             List.of("rflp", "dcaps");
     private static final List<String> SSLP_TYPES =
             List.of("sslp");
-    // Per-type attachment-bucket labels — each visibility rule shows the
-    // attachments Control with the matching heading for that workflow.
-    private static final List<String> GEL_IMAGE_TYPES =
-            List.of("pcr_gel", "rflp", "dcaps", "sslp");
-    private static final List<String> CHROMATOGRAM_TYPES =
-            List.of("pcr_sequencing");
-    private static final List<String> RESULT_IMAGE_TYPES =
-            List.of("asa", "kasp");
-    private static final List<String> MELT_CURVE_TYPES =
-            List.of("hrma");
+    // Per-type attachment buckets — heading, revealing assay types and
+    // accepted file extensions all live on ZircAttachmentKind, which the
+    // upload endpoint validates against too (ZFIN-10413, ZFIN-10417).
 
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
@@ -217,13 +212,13 @@ public final class ZircAssayFormSchema {
                 // Attachment buckets — same underlying `attachments` field,
                 // labeled per-workflow via four parallel Controls with
                 // visibility rules.
-                attachmentBucketFor(GEL_IMAGE_TYPES,    "Annotated gel images"),
-                attachmentBucketFor(CHROMATOGRAM_TYPES, "Chromatograms"),
-                attachmentBucketFor(RESULT_IMAGE_TYPES, "Annotated result images"),
-                attachmentBucketFor(MELT_CURVE_TYPES,   "Annotated melt curve files"),
+                attachmentBucketFor(ZircAttachmentKind.GEL_IMAGE),
+                attachmentBucketFor(ZircAttachmentKind.CHROMATOGRAM),
+                attachmentBucketFor(ZircAttachmentKind.RESULT_IMAGE),
+                attachmentBucketFor(ZircAttachmentKind.MELT_CURVE),
                 // SSLP — its primers + gel-image bucket render above (in
-                // FWD_REV_PRIMER_TYPES / GEL_IMAGE_TYPES); the type-specific
-                // metadata fields all live here.
+                // FWD_REV_PRIMER_TYPES / ZircAttachmentKind.GEL_IMAGE); the
+                // type-specific metadata fields all live here.
                 groupRevealedFor(SSLP_TYPES, List.of(
                         new Control("#/properties/sslpMarkerName",
                                 Options.of().withPlaceholder("Search ZFIN SSLP markers…"), null),
@@ -247,17 +242,24 @@ public final class ZircAssayFormSchema {
      * group, labeled with the per-workflow bucket heading. All four buckets
      * share the same backing {@code attachments} array on the entity; the
      * label changes are UI-only.
+     *
+     * <p>{@code acceptedExtensions} is published only for buckets that
+     * restrict file types — the unrestricted melt-curve bucket omits the key
+     * entirely rather than sending an empty array, so the renderer's
+     * "any extension" branch is the plain absent-option case.
      */
-    private static Group attachmentBucketFor(List<String> assayTypes, String label) {
+    private static Group attachmentBucketFor(ZircAttachmentKind kind) {
+        Options options = Options.of()
+                .withWidget("attachmentsList")
+                .withManagesOwnPersistence(true)
+                .withLabel(kind.getLabel());
+        if (!kind.acceptsAnyExtension()) {
+            options = options.withAcceptedExtensions(kind.getAcceptedExtensions());
+        }
         return new Group(null,
-                List.of(new Control("#/properties/attachments",
-                        Options.of()
-                                .withWidget("attachmentsList")
-                                .withManagesOwnPersistence(true)
-                                .withLabel(label),
-                        null)),
+                List.of(new Control("#/properties/attachments", options, null)),
                 Options.of().withLayout("plain"),
-                Rule.showWhenIn("#/properties/assayType", assayTypes));
+                Rule.showWhenIn("#/properties/assayType", kind.getAssayTypes()));
     }
 
     /**

@@ -115,7 +115,14 @@ public record Options(
         String positionField,
         // For the aminoAcidChange widget — the end of the position range.
         // Optional: omit it and the widget renders a single position box.
-        String positionEndField
+        String positionEndField,
+        // For the attachmentsList widget — the file extensions this bucket
+        // accepts, lowercase and without the leading dot (e.g. ["abi",
+        // "scf"]). The renderer turns them into the file input's `accept`
+        // attribute and the "Accepted file types: …" helper text; the upload
+        // endpoint enforces the same list. Omit (or leave empty) to accept
+        // any extension. Source of truth is ZircAttachmentKind.
+        List<String> acceptedExtensions
 ) {
 
     /**
