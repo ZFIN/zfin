@@ -129,8 +129,16 @@ public class FormSchemaInvariantsTest {
                 // ZFIN-10379, replaced by the structured aaChange* fields) —
                 // but the columns and DTO components remain so previously
                 // entered values are not discarded.
+                //
+                // The insertionOrigins checklist and its follow-ups joined
+                // them when the CRISPR/TALEN sequences moved to the mutation's
+                // Mutagenesis Protocol: crisprSequence and talenSequence now
+                // live on MutationDTO, and curators dropped the rest of the
+                // question rather than leave it revealing nothing.
                 Set.of("id", "mutationId", "sortOrder", "locationInline",
-                        "mutatedAminoAcids"),
+                        "mutatedAminoAcids", "insertionOrigins",
+                        "insertionOriginOther", "crisprSequence",
+                        "talenSequence", "constructName"),
                 // lesionSizeBp / insertionSizeBp are server-computed
                 // (recalcLesionSizes) and read-only, so they're in the schema
                 // + DTO but deliberately absent from the patchable FIELDS map.

@@ -19,6 +19,7 @@ import { genesListRendererEntry } from '../schemaForm/renderers/GenesListRendere
 import { lesionsListRendererEntry } from '../schemaForm/renderers/LesionsListRenderer';
 import { phenotypesListRendererEntry } from '../schemaForm/renderers/PhenotypesListRenderer';
 import { autocompleteRendererEntry } from '../schemaForm/renderers/AutocompleteRenderer';
+import { nucleotideSequenceRendererEntry } from '../schemaForm/renderers/NucleotideSequenceRenderer';
 
 export type MutationEditProps = {
     // From data-mutation-id on the JSP mount.
@@ -55,6 +56,10 @@ export const mutationRenderers = [
     lesionsListRendererEntry,
     phenotypesListRendererEntry,
     autocompleteRendererEntry,
+    // The mutagenesis-protocol sequences (CRISPR / TALEN) use it. View mode
+    // gets it via fieldRenderers; this edit-mode list is its own registry, so
+    // it has to be named here too or the boxes fall back to a plain input.
+    nucleotideSequenceRendererEntry,
 ];
 
 function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {

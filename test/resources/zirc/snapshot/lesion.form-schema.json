@@ -24,16 +24,6 @@
         "title" : "Additional Info",
         "type" : [ "string", "null" ]
       },
-      "constructName" : {
-        "maxLength" : 255,
-        "title" : "Construct name",
-        "type" : [ "string", "null" ]
-      },
-      "crisprSequence" : {
-        "maxLength" : 5000,
-        "title" : "CRISPR sequence",
-        "type" : [ "string", "null" ]
-      },
       "deletedSequence" : {
         "maxLength" : 5000,
         "title" : "Deleted sequence",
@@ -52,18 +42,6 @@
         "maxLength" : 5000,
         "title" : "Inserted sequence",
         "type" : [ "string", "null" ]
-      },
-      "insertionOriginOther" : {
-        "maxLength" : 255,
-        "title" : "Other origin",
-        "type" : [ "string", "null" ]
-      },
-      "insertionOrigins" : {
-        "items" : {
-          "type" : "string"
-        },
-        "title" : "The insertion is a consequence of",
-        "type" : "array"
       },
       "insertionSizeBp" : {
         "title" : "Insertion size (bp)",
@@ -94,11 +72,6 @@
         },
         "title" : "Protein consequences",
         "type" : "array"
-      },
-      "talenSequence" : {
-        "maxLength" : 5000,
-        "title" : "TALEN sequence",
-        "type" : [ "string", "null" ]
       },
       "threePrimeFlank" : {
         "maxLength" : 5000,
@@ -170,148 +143,6 @@
             "enum" : [ "point_mutation" ]
           },
           "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "exclusiveValue" : "unknown",
-          "helpText" : "Check all that apply.",
-          "standardLabels" : [ "CRISPR", "TALEN", "Construct or other species DNA", "Other", "Unknown" ],
-          "standardValues" : [ "crispr", "talen", "construct", "other", "unknown" ],
-          "widget" : "checkboxGroup"
-        },
-        "scope" : "#/properties/insertionOrigins",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "insertion", "indel" ]
-          },
-          "scope" : "#/properties/lesionType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "alphabet" : "ACGT",
-          "multi" : true,
-          "widget" : "nucleotideSequence"
-        },
-        "scope" : "#/properties/crisprSequence",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "crispr"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "alphabet" : "ACGT",
-          "multi" : true,
-          "widget" : "nucleotideSequence"
-        },
-        "scope" : "#/properties/talenSequence",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "talen"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "placeholder" : "e.g. Tg(fli1a:EGFP)"
-        },
-        "scope" : "#/properties/constructName",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "construct"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "placeholder" : "e.g. Tol2 transposon"
-        },
-        "scope" : "#/properties/insertionOriginOther",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "other"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
         },
         "effect" : "SHOW"
       },

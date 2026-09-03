@@ -29,6 +29,11 @@
         "title" : "Genotyping Assays",
         "type" : "array"
       },
+      "crisprSequence" : {
+        "maxLength" : 5000,
+        "title" : "CRISPR sequence",
+        "type" : [ "string", "null" ]
+      },
       "genes" : {
         "items" : {
           "properties" : {
@@ -153,6 +158,16 @@
         },
         "title" : "Publications",
         "type" : "array"
+      },
+      "talenSequence1" : {
+        "maxLength" : 5000,
+        "title" : "TALEN 1 sequence",
+        "type" : [ "string", "null" ]
+      },
+      "talenSequence2" : {
+        "maxLength" : 5000,
+        "title" : "TALEN 2 sequence",
+        "type" : [ "string", "null" ]
       }
     },
     "required" : [ "alleleDesignation", "mutagenesisStage", "mutagenesisProtocol", "mutationType" ],
@@ -237,6 +252,57 @@
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/mutagenesisProtocol",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "CRISPR/Cas9" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/crisprSequence",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "TALEN" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/talenSequence1",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "TALEN" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/talenSequence2",
         "type" : "Control"
       }, {
         "options" : {

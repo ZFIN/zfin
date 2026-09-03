@@ -63,8 +63,24 @@ public final class ZircMutationFormSchema {
     private static final List<String> MUTAGENESIS_STAGES = List.of(
             "oocyte", "sperm", "embryo", "larva", "adult", "unknown");
 
+    // The two protocols that carry sequences. Named rather than spelled out
+    // at the rule sites: the reveal conditions match these values exactly, so
+    // renaming an option here moves its rule with it. ZircMutationFormSchemaTest
+    // pins them to the dropdown list.
+    static final String PROTOCOL_CRISPR = "CRISPR/Cas9";
+    static final String PROTOCOL_TALEN = "TALEN";
+
     private static final List<String> MUTAGENESIS_PROTOCOLS = List.of(
-            "ENU", "CRISPR/Cas9", "TALEN", "ZFN", "ionizing radiation", "spontaneous");
+            "ENU", PROTOCOL_CRISPR, PROTOCOL_TALEN, "ZFN",
+            "ionizing radiation", "spontaneous");
+
+    /**
+     * Bases accepted in the protocol sequence fields, emitted onto the
+     * Control and used by the write coercer, so the widget and the
+     * server-side normalization are driven by one value. Same treatment
+     * these fields had on the lesion form.
+     */
+    private static final String NUCLEOTIDE_ALPHABET = "ACGT";
 
     private static final List<String> LETHALITY_STAGES = List.of(
             "embryonic", "larval", "juvenile", "adult", "unknown");
@@ -80,6 +96,11 @@ public final class ZircMutationFormSchema {
         // Mutagenesis
         properties.put("mutagenesisStage",           StringSchema.of("Mutagenesis Stage", 255));
         properties.put("mutagenesisProtocol",        StringSchema.of("Mutagenesis Protocol", 255));
+        // Protocol-specific sequences, moved here from the lesion form. Each
+        // is revealed by the protocol it describes.
+        properties.put("crisprSequence",             StringSchema.of("CRISPR sequence", 5000));
+        properties.put("talenSequence1",             StringSchema.of("TALEN 1 sequence", 5000));
+        properties.put("talenSequence2",             StringSchema.of("TALEN 2 sequence", 5000));
         properties.put("molecularlyCharacterized",   BooleanSchema.nullable("Molecularly Characterized"));
         // Lethality
         properties.put("homozygousLethal",           BooleanSchema.nullable("Homozygous Lethal"));
@@ -164,6 +185,16 @@ public final class ZircMutationFormSchema {
                         new Control("#/properties/mutagenesisProtocol",
                                 Options.of().withWidget("selectWithOther").withStandardValues(MUTAGENESIS_PROTOCOLS),
                                 null),
+                        // Sequences sit directly under the protocol that
+                        // reveals them. Gated per-Control rather than by a
+                        // wrapping Group: a ruled Group nested inside this
+                        // one would put a <section> inside a <tbody>.
+                        new Control("#/properties/crisprSequence",
+                                sequenceOptions(), protocolIs(PROTOCOL_CRISPR)),
+                        new Control("#/properties/talenSequence1",
+                                sequenceOptions(), protocolIs(PROTOCOL_TALEN)),
+                        new Control("#/properties/talenSequence2",
+                                sequenceOptions(), protocolIs(PROTOCOL_TALEN)),
                         new Control("#/properties/molecularlyCharacterized",
                                 Options.of().withWidget("yesNoRadio"), null)
                 )),
@@ -242,6 +273,12 @@ public final class ZircMutationFormSchema {
             // Mutagenesis
             field("/mutagenesisStage",
                     Mutation::getMutagenesisStage,          (m, v) -> m.setMutagenesisStage(text(v))),
+            field("/crisprSequence",
+                    Mutation::getCrisprSequence,           (m, v) -> m.setCrisprSequence(nucleotides(v))),
+            field("/talenSequence1",
+                    Mutation::getTalenSequence1,           (m, v) -> m.setTalenSequence1(nucleotides(v))),
+            field("/talenSequence2",
+                    Mutation::getTalenSequence2,           (m, v) -> m.setTalenSequence2(nucleotides(v))),
             field("/mutagenesisProtocol",
                     Mutation::getMutagenesisProtocol,       (m, v) -> m.setMutagenesisProtocol(text(v))),
             field("/molecularlyCharacterized",
@@ -357,6 +394,34 @@ public final class ZircMutationFormSchema {
     }
 
     // ─── value coercers ────────────────────────────────────────────────────
+
+    /** The nucleotideSequence widget config shared by all three sequences. */
+    private static Options sequenceOptions() {
+        return Options.of()
+                .withWidget("nucleotideSequence")
+                .withAlphabet(NUCLEOTIDE_ALPHABET)
+                .withMulti(true);
+    }
+
+    /** SHOW this control only when the mutagenesis protocol is {@code value}. */
+    private static Rule protocolIs(String value) {
+        return Rule.showWhenIn("#/properties/mutagenesisProtocol", value);
+    }
+
+    /**
+     * Keep only bases, uppercased — so a pasted FASTA record or a numbered
+     * sequence normalizes on write rather than being stored verbatim. Same
+     * coercer the lesion form applied to these fields before the move.
+     */
+    private static String nucleotides(JsonNode v) {
+        String s = text(v);
+        if (s == null) {return null;}
+        StringBuilder out = new StringBuilder(s.length());
+        for (char c : s.toUpperCase().toCharArray()) {
+            if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
+        }
+        return out.isEmpty() ? null : out.toString();
+    }
 
     private static String text(JsonNode v) {
         if (v == null || v.isNull()) {return null;}

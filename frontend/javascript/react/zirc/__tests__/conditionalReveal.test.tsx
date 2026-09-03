@@ -11,20 +11,16 @@ import {
 } from './renderHelpers';
 
 /**
- * Reveal rules on the real lesion form, driven from the committed schema
- * snapshot rather than a hand-written fragment — so this cannot pass while
- * the server emits something different.
- *
- * The case worth pinning down is ZFIN-10400's AND condition. The follow-up
- * fields are gated on the lesion type *and* the answer, because a rule on the
- * answer alone leaks: the boolean survives a later change of lesion type, so
- * a CRISPR box would reappear under a deletion. That leak is invisible in the
- * common path and only shows up when a curator changes their mind about the
- * type, which is exactly the kind of thing that reaches production.
+ * Reveal rules on the real lesion and mutation forms, driven from the
+ * committed schema snapshots rather than hand-written fragments — so these
+ * cannot pass while the server emits something different.
  */
 
 const SNAPSHOT = path.resolve(
     __dirname, '../../../../../test/resources/zirc/snapshot/lesion.form-schema.json',
+);
+const MUTATION_SNAPSHOT = path.resolve(
+    __dirname, '../../../../../test/resources/zirc/snapshot/mutation.form-schema.json',
 );
 
 function lesionForm(data: Record<string, unknown>) {
@@ -41,95 +37,47 @@ function lesionForm(data: Record<string, unknown>) {
     });
 }
 
+/**
+ * Just the Mutagenesis group of the real mutation form. Narrowed to that
+ * group rather than mounting the whole page: the sibling Genes / Lesions /
+ * Assays / Phenotypes groups are self-persisting list widgets that would call
+ * endpoints this harness deliberately does not stub. The schema stays whole,
+ * so the Controls resolve exactly as they do in the app.
+ */
+function mutagenesisForm(data: Record<string, unknown>) {
+    const parsed = JSON.parse(fs.readFileSync(MUTATION_SNAPSHOT, 'utf8'));
+    const group = (parsed.uiSchema.elements as { label?: string }[])
+        .find((e) => e.label === 'Mutagenesis');
+    assert.ok(group, 'expected a Mutagenesis group in the mutation snapshot');
+    return renderForm({ schema: parsed.schema, uischema: group, data });
+}
+
 afterEach(() => {
     cleanup();
 });
 
 describe('lesion conditional reveals', () => {
-    it('hides the origin checklist for a lesion type that cannot carry an insertion', async () => {
-        const h = lesionForm({ lesionType: 'deletion' });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('Deleted sequence'));
-        });
-        assert.equal(screen.queryByText('The insertion is a consequence of'), null);
-        h.cleanupFetch();
-    });
-
-    it('offers the checklist on an insertion with every follow-up hidden', async () => {
-        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: [] });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('CRISPR'));
-        });
-        for (const box of ['TALEN', 'Construct or other species DNA', 'Other', 'Unknown']) {
-            assert.ok(screen.getByLabelText(box), `expected a ${box} box`);
+    it('no longer asks where an insertion came from', async () => {
+        // The checklist and all four follow-ups moved off this form: the
+        // CRISPR and TALEN sequences went to the mutation's Mutagenesis
+        // Protocol, and curators dropped the rest of the question with them.
+        for (const lesionType of ['insertion', 'indel']) {
+            const h = lesionForm({ lesionType });
+            await waitFor(() => {
+                assert.ok(screen.getByLabelText('Inserted sequence'));
+            });
+            assert.equal(
+                screen.queryByText('The insertion is a consequence of'), null,
+                `checklist should be gone for ${lesionType}`,
+            );
+            for (const gone of ['CRISPR sequence', 'TALEN sequence',
+                'Construct name', 'Other origin']) {
+                assert.equal(screen.queryByLabelText(gone), null,
+                    `${gone} should be gone for ${lesionType}`);
+            }
+            h.cleanupFetch();
+            cleanup();
         }
-        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
-        assert.equal(screen.queryByLabelText('Other origin'), null);
-        h.cleanupFetch();
-    });
-
-    it('reveals only the follow-up belonging to each ticked box', async () => {
-        // The old form opened CRISPR and TALEN together off one "yes"; each
-        // box now stands alone.
-        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['talen'] });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('TALEN sequence'));
-        });
-        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
-        h.cleanupFetch();
-    });
-
-    it('reveals several follow-ups when origins combine', async () => {
-        // A CRISPR knock-in of a construct is both, which is why this is a
-        // checklist and not a single choice.
-        const h = lesionForm({
-            lesionType: 'insertion',
-            insertionOrigins: ['crispr', 'construct'],
-        });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('CRISPR sequence'));
-        });
-        assert.ok(screen.getByLabelText('Construct name'));
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
-        h.cleanupFetch();
-    });
-
-    it('reveals a free-text box for Other', async () => {
-        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['other'] });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('Other origin'));
-        });
-        h.cleanupFetch();
-    });
-
-    it('does not leak a follow-up to another lesion type when the tokens persist', async () => {
-        // The AND condition's reason for being: a stale token from an earlier
-        // insertion must not surface a CRISPR box on a deletion.
-        const h = lesionForm({
-            lesionType: 'deletion',
-            insertionOrigins: ['crispr', 'construct'],
-        });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('Deleted sequence'));
-        });
-        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
-        h.cleanupFetch();
-    });
-
-    it('offers the same checklist on an indel', async () => {
-        // Unifying the two questions means one option list, so indel now
-        // offers "construct" where ZFIN-10403's mockup showed only the
-        // CRISPR/TALEN question.
-        const h = lesionForm({ lesionType: 'indel' });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('CRISPR'));
-        });
-        assert.ok(screen.getByLabelText('Construct or other species DNA'));
-        h.cleanupFetch();
     });
 
     it('carries the size inline on the sequence box, with no separate row', async () => {
@@ -251,5 +199,73 @@ describe('lesion conditional reveals', () => {
             h.cleanupFetch();
             cleanup();
         }
+    });
+});
+
+describe('mutagenesis protocol conditional reveals', () => {
+    it('shows the CRISPR sequence only for CRISPR/Cas9', async () => {
+        const h = mutagenesisForm({ mutagenesisProtocol: 'CRISPR/Cas9' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('CRISPR sequence'));
+        });
+        // TALEN's pair belongs to the other protocol.
+        assert.equal(screen.queryByLabelText('TALEN 1 sequence'), null);
+        assert.equal(screen.queryByLabelText('TALEN 2 sequence'), null);
+        h.cleanupFetch();
+    });
+
+    it('shows both TALEN sequences only for TALEN', async () => {
+        // TALENs act as a pair, so the submitter has two sequences to give —
+        // the single field this replaced could only hold one.
+        const h = mutagenesisForm({ mutagenesisProtocol: 'TALEN' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('TALEN 1 sequence'));
+        });
+        assert.ok(screen.getByLabelText('TALEN 2 sequence'));
+        assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
+        h.cleanupFetch();
+    });
+
+    it('shows no sequence box for a protocol that carries none', async () => {
+        for (const protocol of ['ENU', 'ZFN', 'ionizing radiation', 'spontaneous']) {
+            const h = mutagenesisForm({ mutagenesisProtocol: protocol });
+            await waitFor(() => {
+                assert.ok(screen.getByLabelText('Mutagenesis Protocol'));
+            });
+            for (const box of ['CRISPR sequence', 'TALEN 1 sequence',
+                'TALEN 2 sequence']) {
+                assert.equal(screen.queryByLabelText(box), null,
+                    `${box} should be hidden for ${protocol}`);
+            }
+            h.cleanupFetch();
+            cleanup();
+        }
+    });
+
+    it('shows no sequence box before a protocol is chosen', async () => {
+        // An unset protocol must fail closed rather than revealing everything.
+        const h = mutagenesisForm({});
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('Mutagenesis Protocol'));
+        });
+        for (const box of ['CRISPR sequence', 'TALEN 1 sequence',
+            'TALEN 2 sequence']) {
+            assert.equal(screen.queryByLabelText(box), null);
+        }
+        h.cleanupFetch();
+    });
+
+    it('constrains the protocol sequences to bases', async () => {
+        // Same nucleotide widget these fields carried on the lesion form.
+        const h = mutagenesisForm({ mutagenesisProtocol: 'TALEN' });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('TALEN 1 sequence'));
+        });
+        for (const field of ['TALEN 1 sequence', 'TALEN 2 sequence']) {
+            assert.equal(screen.getByLabelText(field).tagName, 'TEXTAREA',
+                `${field} should be a sequence box`);
+        }
+        assert.equal(screen.getAllByText(/A \/ C \/ G \/ T only/).length, 2);
+        h.cleanupFetch();
     });
 });

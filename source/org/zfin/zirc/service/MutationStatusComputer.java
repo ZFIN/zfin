@@ -37,6 +37,9 @@ public final class MutationStatusComputer {
         ALLELE_DESIGNATION          ("alleleDesignation"),
         MUTAGENESIS_STAGE           ("mutagenesisStage"),
         MUTAGENESIS_PROTOCOL        ("mutagenesisProtocol"),
+        CRISPR_SEQUENCE             ("crisprSequence"),
+        TALEN_SEQUENCE_1            ("talenSequence1"),
+        TALEN_SEQUENCE_2            ("talenSequence2"),
         MOLECULARLY_CHARACTERIZED   ("molecularlyCharacterized"),
         MUTATION_TYPE               ("mutationType"),
         MUTATION_DISCOVERER         ("mutationDiscoverer"),
@@ -96,8 +99,14 @@ public final class MutationStatusComputer {
         FieldStatus general = rollup(byField,
                 Field.ALLELE_IN_ZFIN, Field.ALLELE_DESIGNATION, Field.MUTATION_TYPE,
                 Field.MUTATION_DISCOVERER, Field.MUTATION_INSTITUTION);
+        // The three sequence fields are optional and only shown for their own
+        // protocol, so they roll up as COMPLETE when blank (statusFor only
+        // reports MISSING for paths in the schema's required array) and do
+        // not drag the section down for an ENU or spontaneous mutation.
         FieldStatus mutagenesis = rollup(byField,
                 Field.MUTAGENESIS_STAGE, Field.MUTAGENESIS_PROTOCOL,
+                Field.CRISPR_SEQUENCE, Field.TALEN_SEQUENCE_1,
+                Field.TALEN_SEQUENCE_2,
                 Field.MOLECULARLY_CHARACTERIZED);
 
         // Genes section is required at the Mutation level: a mutation must

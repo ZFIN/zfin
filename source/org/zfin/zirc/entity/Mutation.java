@@ -70,6 +70,25 @@ public class Mutation implements Serializable {
     @Column(name = "m_mutagenesis_protocol_other")
     private String mutagenesisProtocolOther;
 
+    /**
+     * Mutagenesis-protocol sequences, moved here from {@code Lesion} — the
+     * protocol is a property of how the line was made, recorded once per
+     * mutation, so the sequences that describe it belong alongside it. Each
+     * is revealed by the matching {@code mutagenesisProtocol} value; see
+     * {@link org.zfin.zirc.api.ZircMutationFormSchema#uiSchema()}.
+     *
+     * <p>TALEN takes a pair: TALENs act in twos and submitters have two
+     * sequences to give, which the single lesion-level column could not hold.
+     */
+    @Column(name = "m_crispr_sequence")
+    private String crisprSequence;
+
+    @Column(name = "m_talen_sequence_1")
+    private String talenSequence1;
+
+    @Column(name = "m_talen_sequence_2")
+    private String talenSequence2;
+
     @Column(name = "m_molecularly_characterized")
     private Boolean molecularlyCharacterized;
 

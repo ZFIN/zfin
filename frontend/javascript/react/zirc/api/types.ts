@@ -42,6 +42,9 @@ export interface MutationDTO {
     mutationInstitution: string | null;
     mutagenesisStage: string | null;
     mutagenesisProtocol: string | null;
+    crisprSequence: string | null;
+    talenSequence1: string | null;
+    talenSequence2: string | null;
     molecularlyCharacterized: boolean | null;
     homozygousLethal: boolean | null;
     lethalityStageTypical: string | null;

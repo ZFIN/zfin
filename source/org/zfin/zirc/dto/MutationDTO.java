@@ -31,6 +31,11 @@ public record MutationDTO(
         // Mutagenesis
         String mutagenesisStage,
         String mutagenesisProtocol,
+        // Revealed by the protocol they belong to: CRISPR/Cas9 and TALEN
+        // respectively. Moved up from LesionDTO.
+        String crisprSequence,
+        String talenSequence1,
+        String talenSequence2,
         Boolean molecularlyCharacterized,
         // Lethality
         Boolean homozygousLethal,
@@ -108,6 +113,9 @@ public record MutationDTO(
                 m.getMutationInstitution(),
                 m.getMutagenesisStage(),
                 m.getMutagenesisProtocol(),
+                m.getCrisprSequence(),
+                m.getTalenSequence1(),
+                m.getTalenSequence2(),
                 m.getMolecularlyCharacterized(),
                 m.getHomozygousLethal(),
                 m.getLethalityStageTypical(),
