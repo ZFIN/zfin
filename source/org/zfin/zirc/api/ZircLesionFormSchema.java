@@ -87,22 +87,25 @@ public final class ZircLesionFormSchema {
     private static final List<String> PROTEIN_TYPES =
             List.of("point_mutation", "deletion");
     // ZFIN-10400. One checklist for both types that can carry an insertion.
-    // The separate mutagenesis / construct lists are gone: unifying the two
-    // questions into one picker means one option list, so indel now offers
-    // "construct" where ZFIN-10403's mockup showed only the CRISPR/TALEN
-    // question. An indel whose inserted part came from a construct is a real
-    // case, so this is a widening rather than a mistake — worth a curator's
-    // eye all the same.
+    // The separate mutagenesis / construct questions are gone: unifying them
+    // into one picker means one option list, shared by insertion and indel.
     private static final List<String> INSERTION_ORIGIN_TYPES =
             List.of("insertion", "indel");
 
     // Stable tokens, not mdcv term ids: this list has no Sequence Ontology
     // counterpart and is specific to the submission form.
+    //
+    // ZFIN-10403b narrows it back to the two mutagenesis mechanisms the
+    // mockup asked for. "Construct or other species DNA", "Other" and
+    // "Unknown" are not wanted: the first two only ever collected a name that
+    // nothing downstream reads, and "unknown" duplicates leaving the list
+    // blank closely enough that curators do not need both. Anything outside
+    // CRISPR/TALEN belongs in Additional Info until a ticket asks for it as a
+    // field.
     private static final List<String> INSERTION_ORIGINS = List.of(
-            "crispr", "talen", "construct", "other", "unknown");
+            "crispr", "talen");
     private static final List<String> INSERTION_ORIGIN_LABELS = List.of(
-            "CRISPR", "TALEN", "Construct or other species DNA",
-            "Other", "Unknown");
+            "CRISPR", "TALEN");
 
     /**
      * Bases accepted in sequence fields. Declared here and emitted onto every
@@ -149,10 +152,8 @@ public final class ZircLesionFormSchema {
                 "The insertion is a consequence of",
                 new StringSchema(null, null, null, null, null),
                 null, null));
-        properties.put("insertionOriginOther", StringSchema.of("Other origin", 255));
         properties.put("crisprSequence",         StringSchema.of("CRISPR sequence", 5000));
         properties.put("talenSequence",          StringSchema.of("TALEN sequence", 5000));
-        properties.put("constructName",          StringSchema.of("Construct name", 255));
         // Protein-level
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
         // Structured amino-acid change (ZFIN-10379). from/to are
@@ -225,7 +226,6 @@ public final class ZircLesionFormSchema {
                                         .withWidget("checkboxGroup")
                                         .withStandardValues(INSERTION_ORIGINS)
                                         .withStandardLabels(INSERTION_ORIGIN_LABELS)
-                                        .withExclusiveValue("unknown")
                                         .withHelpText("Check all that apply."),
                                 null)
                 )),
@@ -243,12 +243,6 @@ public final class ZircLesionFormSchema {
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
                                         .withMulti(true),
                                 null))),
-                originFollowUp("construct", List.of(
-                        new Control("#/properties/constructName",
-                                Options.of().withPlaceholder("e.g. Tg(fli1a:EGFP)"), null))),
-                originFollowUp("other", List.of(
-                        new Control("#/properties/insertionOriginOther",
-                                Options.of().withPlaceholder("e.g. Tol2 transposon"), null))),
                 // Deletion / indel: the deleted sequence, with its length
                 // named inline. There is no separate read-only size row —
                 // the box already counts what it holds, and a second field
@@ -398,10 +392,8 @@ public final class ZircLesionFormSchema {
                     l -> l.getInsertionOrigins() == null
                             ? new String[0] : l.getInsertionOrigins(),
                     (l, v) -> l.setInsertionOrigins(stringArray(v))),
-            field("/insertionOriginOther", Lesion::getInsertionOriginOther, (l, v) -> l.setInsertionOriginOther(text(v))),
             field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
             field("/talenSequence",         Lesion::getTalenSequence,          (l, v) -> l.setTalenSequence(nucleotides(v))),
-            field("/constructName",         Lesion::getConstructName,          (l, v) -> l.setConstructName(text(v))),
             field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
             field("/aaChangeFrom",          Lesion::getAaChangeFrom,           (l, v) -> l.setAaChangeFrom(text(v))),
             field("/aaChangeTo",            Lesion::getAaChangeTo,             (l, v) -> l.setAaChangeTo(text(v))),
