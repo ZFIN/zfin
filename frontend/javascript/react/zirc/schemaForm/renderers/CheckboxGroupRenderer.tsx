@@ -16,8 +16,6 @@ import { FieldComments } from '../../components/FieldComments';
 type CheckboxGroupOptions = {
     standardValues?: string[];
     standardLabels?: string[];
-    /** A value that cannot coexist with any other, e.g. "unknown". */
-    exclusiveValue?: string;
     helpText?: string;
 };
 
@@ -48,7 +46,6 @@ function CheckboxGroupRenderer({
     const opts = ((uischema as { options?: CheckboxGroupOptions } | undefined)?.options) ?? {};
     const values = opts.standardValues ?? [];
     const labels = opts.standardLabels ?? null;
-    const exclusive = opts.exclusiveValue;
     const selected = Array.isArray(data) ? (data as string[]) : [];
     const view = viewConfigFrom(config);
 
@@ -91,17 +88,9 @@ function CheckboxGroupRenderer({
             handleChange(path, selected.filter((s) => s !== value));
             return;
         }
-        // The exclusive value contradicts every specific one, so ticking it
-        // clears the rest and ticking anything else clears it. Without this
-        // a lesion could claim both "unknown" and "CRISPR".
-        if (exclusive && value === exclusive) {
-            handleChange(path, [exclusive]);
-            return;
-        }
-        const kept = exclusive ? selected.filter((s) => s !== exclusive) : selected;
         // Ordered by the canonical list rather than by click order, so the
         // stored array reads the same however it was filled in.
-        const next = [...kept, value];
+        const next = [...selected, value];
         handleChange(path, values.filter((v) => next.includes(v)));
     };
 

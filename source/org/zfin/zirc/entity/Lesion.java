@@ -79,25 +79,28 @@ public class Lesion implements Serializable {
 
     /**
      * ZFIN-10400 — where an insertion came from, as a check-all-that-apply
-     * list of stable tokens (crispr / talen / construct / other / unknown).
-     * Origins combine: a CRISPR knock-in of a construct is both. Empty means
-     * unanswered, which is distinct from the "unknown" token.
+     * list of stable tokens. ZFIN-10403b cut the list to crispr / talen, the
+     * two mechanisms the mockup asks about; they combine, so this stays
+     * multi-valued. Empty means unanswered.
      */
     @Column(name = "l_insertion_origins", columnDefinition = "text[]", nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] insertionOrigins = new String[0];
 
-    @Column(name = "l_insertion_origin_other")
-    private String insertionOriginOther;
-
     @Column(name = "l_crispr_sequence")
     private String crisprSequence;
 
-    @Column(name = "l_talen_sequence")
-    private String talenSequence;
+    /**
+     * TALENs work as a pair — two arms flanking the cut site — so the form
+     * always asks for both sequences rather than one box the curator has to
+     * know to fill twice. Two columns rather than an array: the pair is fixed
+     * at two and each half is separately labelled in the form.
+     */
+    @Column(name = "l_talen_sequence_1")
+    private String talenSequence1;
 
-    @Column(name = "l_construct_name")
-    private String constructName;
+    @Column(name = "l_talen_sequence_2")
+    private String talenSequence2;
 
     /**
      * Legacy free-text amino-acid box, replaced by the from/to/position

@@ -24,11 +24,6 @@
         "title" : "Additional Info",
         "type" : [ "string", "null" ]
       },
-      "constructName" : {
-        "maxLength" : 255,
-        "title" : "Construct name",
-        "type" : [ "string", "null" ]
-      },
       "crisprSequence" : {
         "maxLength" : 5000,
         "title" : "CRISPR sequence",
@@ -51,11 +46,6 @@
       "insertedSequence" : {
         "maxLength" : 5000,
         "title" : "Inserted sequence",
-        "type" : [ "string", "null" ]
-      },
-      "insertionOriginOther" : {
-        "maxLength" : 255,
-        "title" : "Other origin",
         "type" : [ "string", "null" ]
       },
       "insertionOrigins" : {
@@ -95,9 +85,14 @@
         "title" : "Protein consequences",
         "type" : "array"
       },
-      "talenSequence" : {
+      "talenSequence1" : {
         "maxLength" : 5000,
-        "title" : "TALEN sequence",
+        "title" : "TALEN sequence 1",
+        "type" : [ "string", "null" ]
+      },
+      "talenSequence2" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence 2",
         "type" : [ "string", "null" ]
       },
       "threePrimeFlank" : {
@@ -177,10 +172,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "exclusiveValue" : "unknown",
           "helpText" : "Check all that apply.",
-          "standardLabels" : [ "CRISPR", "TALEN", "Construct or other species DNA", "Other", "Unknown" ],
-          "standardValues" : [ "crispr", "talen", "construct", "other", "unknown" ],
+          "standardLabels" : [ "CRISPR", "TALEN" ],
+          "standardValues" : [ "crispr", "talen" ],
           "widget" : "checkboxGroup"
         },
         "scope" : "#/properties/insertionOrigins",
@@ -234,7 +228,15 @@
           "multi" : true,
           "widget" : "nucleotideSequence"
         },
-        "scope" : "#/properties/talenSequence",
+        "scope" : "#/properties/talenSequence1",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/talenSequence2",
         "type" : "Control"
       } ],
       "rule" : {
@@ -248,64 +250,6 @@
             "schema" : {
               "contains" : {
                 "const" : "talen"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "placeholder" : "e.g. Tg(fli1a:EGFP)"
-        },
-        "scope" : "#/properties/constructName",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "construct"
-              },
-              "type" : "array"
-            },
-            "scope" : "#/properties/insertionOrigins"
-          } ],
-          "type" : "AND"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "placeholder" : "e.g. Tol2 transposon"
-        },
-        "scope" : "#/properties/insertionOriginOther",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "conditions" : [ {
-            "schema" : {
-              "enum" : [ "insertion", "indel" ]
-            },
-            "scope" : "#/properties/lesionType"
-          }, {
-            "schema" : {
-              "contains" : {
-                "const" : "other"
               },
               "type" : "array"
             },

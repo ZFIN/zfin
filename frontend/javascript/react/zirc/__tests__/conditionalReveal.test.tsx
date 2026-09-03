@@ -60,13 +60,22 @@ describe('lesion conditional reveals', () => {
         await waitFor(() => {
             assert.ok(screen.getByLabelText('CRISPR'));
         });
-        for (const box of ['TALEN', 'Construct or other species DNA', 'Other', 'Unknown']) {
-            assert.ok(screen.getByLabelText(box), `expected a ${box} box`);
-        }
+        assert.ok(screen.getByLabelText('TALEN'));
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
-        assert.equal(screen.queryByLabelText('Other origin'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 1'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 2'), null);
+        h.cleanupFetch();
+    });
+
+    it('offers only the two mutagenesis boxes', async () => {
+        // ZFIN-10403b: the construct / other / unknown boxes are not wanted.
+        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: [] });
+        await waitFor(() => {
+            assert.ok(screen.getByLabelText('CRISPR'));
+        });
+        for (const box of ['Construct or other species DNA', 'Other', 'Unknown']) {
+            assert.equal(screen.queryByLabelText(box), null, `${box} should be gone`);
+        }
         h.cleanupFetch();
     });
 
@@ -75,33 +84,26 @@ describe('lesion conditional reveals', () => {
         // box now stands alone.
         const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['talen'] });
         await waitFor(() => {
-            assert.ok(screen.getByLabelText('TALEN sequence'));
+            assert.ok(screen.getByLabelText('TALEN sequence 1'));
         });
+        // A TALEN is a pair, so ticking the one box asks for both arms.
+        assert.ok(screen.getByLabelText('TALEN sequence 2'));
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
         h.cleanupFetch();
     });
 
-    it('reveals several follow-ups when origins combine', async () => {
-        // A CRISPR knock-in of a construct is both, which is why this is a
-        // checklist and not a single choice.
+    it('reveals both follow-ups when origins combine', async () => {
+        // A lesion made with both mechanisms is why this is a checklist and
+        // not a single choice.
         const h = lesionForm({
             lesionType: 'insertion',
-            insertionOrigins: ['crispr', 'construct'],
+            insertionOrigins: ['crispr', 'talen'],
         });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('CRISPR sequence'));
         });
-        assert.ok(screen.getByLabelText('Construct name'));
-        assert.equal(screen.queryByLabelText('TALEN sequence'), null);
-        h.cleanupFetch();
-    });
-
-    it('reveals a free-text box for Other', async () => {
-        const h = lesionForm({ lesionType: 'insertion', insertionOrigins: ['other'] });
-        await waitFor(() => {
-            assert.ok(screen.getByLabelText('Other origin'));
-        });
+        assert.ok(screen.getByLabelText('TALEN sequence 1'));
+        assert.ok(screen.getByLabelText('TALEN sequence 2'));
         h.cleanupFetch();
     });
 
@@ -110,25 +112,24 @@ describe('lesion conditional reveals', () => {
         // insertion must not surface a CRISPR box on a deletion.
         const h = lesionForm({
             lesionType: 'deletion',
-            insertionOrigins: ['crispr', 'construct'],
+            insertionOrigins: ['crispr', 'talen'],
         });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('Deleted sequence'));
         });
         assert.equal(screen.queryByLabelText('CRISPR sequence'), null);
-        assert.equal(screen.queryByLabelText('Construct name'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 1'), null);
+        assert.equal(screen.queryByLabelText('TALEN sequence 2'), null);
         h.cleanupFetch();
     });
 
     it('offers the same checklist on an indel', async () => {
-        // Unifying the two questions means one option list, so indel now
-        // offers "construct" where ZFIN-10403's mockup showed only the
-        // CRISPR/TALEN question.
+        // One option list for both types that can carry an insertion.
         const h = lesionForm({ lesionType: 'indel' });
         await waitFor(() => {
             assert.ok(screen.getByLabelText('CRISPR'));
         });
-        assert.ok(screen.getByLabelText('Construct or other species DNA'));
+        assert.ok(screen.getByLabelText('TALEN'));
         h.cleanupFetch();
     });
 
