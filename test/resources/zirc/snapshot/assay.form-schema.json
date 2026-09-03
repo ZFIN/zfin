@@ -163,7 +163,7 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "Allele Specific Amplification (ASA)", "KASP", "HRMA", "SSLP" ],
+          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "Allele Specific Amplification (ASA)", "KASP", "High-Resolution Melting Analysis (HRMA)", "SSLP" ],
           "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],
           "widget" : "selectWithOther"
         },

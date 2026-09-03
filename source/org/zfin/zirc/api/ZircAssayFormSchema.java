@@ -77,7 +77,7 @@ public final class ZircAssayFormSchema {
             "derived Cleaved Amplified Polymorphic Sequences dCAPS",
             "Allele Specific Amplification (ASA)",
             "KASP",
-            "HRMA",
+            "High-Resolution Melting Analysis (HRMA)",
             "SSLP");
 
     /**
