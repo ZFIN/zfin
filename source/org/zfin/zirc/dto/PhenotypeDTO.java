@@ -30,7 +30,11 @@ public record PhenotypeDTO(
         String nonMendelianComment,
         // Single-valued scalar text columns
         String segregation,
-        String type) {
+        String type,
+        // Background dependence (ZFIN-10449). Nullable boolean: null is
+        // "unanswered", distinct from an explicit false.
+        Boolean backgroundDependent,
+        String backgroundComment) {
 
     public static PhenotypeDTO of(Phenotype p) {
         return new PhenotypeDTO(
@@ -46,6 +50,8 @@ public record PhenotypeDTO(
                 p.getNonMendelianPercentage(),
                 p.getNonMendelianComment(),
                 p.getSegregation(),
-                p.getType());
+                p.getType(),
+                p.getBackgroundDependent(),
+                p.getBackgroundComment());
     }
 }

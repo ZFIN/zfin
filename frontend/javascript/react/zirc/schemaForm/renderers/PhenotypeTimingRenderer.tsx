@@ -17,13 +17,19 @@ import { viewConfigFrom } from '../useViewConfig';
  * {@code stage} from the parent form data via {@code useJsonForms}
  * and writes back to them through {@code handleChange}.
  *
+ * <p>The row label comes from the bound field's schema title, not a literal
+ * here: it used to read "Timing", and ZFIN-10449 replaced that with the
+ * question spelled out. Since this widget draws the whole row from one
+ * Control, the schema title is the only place that label can live, and
+ * hardcoding it here made the schema change invisible.
+ *
  * <p>The hpf/dpf unit toggle is purely UI state. The wire format is
  * always integer hpf — selecting 'dpf' multiplies by 24 on input and
  * divides by 24 on display. {@code stage} is server-derived in the
  * legacy code path; here it's a read-only echo (TODO: re-derive
  * once the STAGE lookup is wired in).
  */
-function PhenotypeTimingRenderer({ data, handleChange, path, config }: ControlProps) {
+function PhenotypeTimingRenderer({ data, handleChange, path, config, label }: ControlProps) {
     const ctx = useJsonForms();
     const root = (ctx.core?.data ?? {}) as {
         hpfStart?: number | null;
@@ -34,13 +40,16 @@ function PhenotypeTimingRenderer({ data, handleChange, path, config }: ControlPr
     const hpfEnd = root.hpfEnd ?? null;
     const stage = root.stage ?? null;
     const view = viewConfigFrom(config);
+    // JsonForms derives `label` from the schema title. Fall back to the old
+    // literal so a Control without a title still labels its row.
+    const rowLabel = label || 'Timing';
 
     if (view.readonly) {
         const startDisplay = hpfStart == null ? '—' : `${hpfStart} hpf`;
         const endDisplay = hpfEnd == null ? '' : ` – ${hpfEnd} hpf`;
         return (
             <div className='form-group row mb-2'>
-                <span className='col-sm-3 col-form-label'>Timing</span>
+                <span className='col-sm-3 col-form-label'>{rowLabel}</span>
                 <div className='col-sm-9'>
                     <span>{startDisplay}{endDisplay}</span>
                     {stage && (
@@ -75,7 +84,7 @@ function PhenotypeTimingRenderer({ data, handleChange, path, config }: ControlPr
     const unitGroupName = `phn-unit-${path}`;
     return (
         <div className='form-group row'>
-            <span className='col-sm-3 col-form-label'>Timing</span>
+            <span className='col-sm-3 col-form-label'>{rowLabel}</span>
             <div className='col-sm-9'>
                 <div className='d-flex align-items-center flex-wrap' style={{ gap: 12 }}>
                     <div role='radiogroup' aria-label='Unit'>

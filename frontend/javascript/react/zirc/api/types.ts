@@ -179,6 +179,8 @@ export interface PhenotypeDTO {
     nonMendelianComment: string | null;
     segregation: string | null;
     type: string | null;
+    backgroundDependent: boolean | null;
+    backgroundComment: string | null;
 }
 
 export interface AutocompleteItemDTO {

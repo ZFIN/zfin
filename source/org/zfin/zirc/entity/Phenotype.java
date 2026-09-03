@@ -73,4 +73,15 @@ public class Phenotype implements Serializable {
     @Column(name = "p_type")
     private String type;
 
+    /**
+     * Nullable on purpose (ZFIN-10449): NULL means unanswered, which the
+     * status badge must distinguish from an explicit "no".
+     */
+    @Column(name = "p_background_dependent")
+    private Boolean backgroundDependent;
+
+    /** Only shown by the form when {@link #backgroundDependent} is true. */
+    @Column(name = "p_background_comment")
+    private String backgroundComment;
+
 }

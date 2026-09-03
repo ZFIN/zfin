@@ -1,6 +1,15 @@
 {
   "schema" : {
     "properties" : {
+      "backgroundComment" : {
+        "maxLength" : 5000,
+        "title" : "Background comment",
+        "type" : [ "string", "null" ]
+      },
+      "backgroundDependent" : {
+        "title" : "Is phenotype background dependent",
+        "type" : [ "boolean", "null" ]
+      },
       "description" : {
         "maxLength" : 5000,
         "title" : "Description",
@@ -11,7 +20,7 @@
         "type" : [ "number", "null" ]
       },
       "hpfStart" : {
-        "title" : "Start (hpf)",
+        "title" : "Optimal temporal window to detect/observe the phenotype",
         "type" : [ "number", "null" ]
       },
       "nonMendelianComment" : {
@@ -133,6 +142,30 @@
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/type",
+        "type" : "Control"
+      } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/backgroundDependent",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/backgroundDependent"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/backgroundComment",
         "type" : "Control"
       } ],
       "type" : "Group"
