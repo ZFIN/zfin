@@ -855,35 +855,157 @@ task getsolr(dependsOn: getLatestSolrUnload)
 // loadsolr as alias for getLatestSolrIndex
 task loadsolr(dependsOn: getLatestSolrIndex)
 
+// Where a blast database fetch comes from. These tasks used to hardcode
+// $SSH_HOST:/research/zfin.org/blastdb/Current, which exists on no host any
+// more -- checked on crick (the SSH_HOST in docker/.env) and on the production
+// hosts, 2026-09-02. The live path is /mnt/netapp/zfin/blastdb, mounted into
+// the containers at /opt/zfin/blastdb, and crick has it too -- so the default
+// below resolves against the SSH_HOST already in docker/.env. Note that crick's
+// copy and production's are separate directories, not one shared volume: the
+// .x* database files match byte for byte, but their transient .fa content has
+// drifted apart (follow-up #3). Override either half to fetch elsewhere, e.g.
+// the complete gbk_* set in /research/zblastfiles/zmore/dev_blastdb/Current:
+//
+//   BLAST_SOURCE_HOST=... BLAST_SOURCE_PATH=... gradle getBlast
+//
+// The old tasks also set ignoreExitValue = true, which is how a source path
+// that resolved nowhere went unnoticed: rsync failed, nothing transferred, and
+// the build reported success. Fetches now fail loudly instead. See ZFIN-10452
+// follow-up #10.
+def blastSourceHost = env['BLAST_SOURCE_HOST'] ?: env['SSH_HOST']
+def blastSourcePath = env['BLAST_SOURCE_PATH'] ?: "/mnt/netapp/zfin/blastdb/Current"
+
+// BatchMode=yes because there is nobody to answer a prompt in a gradle run. The
+// gradle user in the compile container has no key and no writable known_hosts,
+// so ssh otherwise falls through to asking for a password and the build hangs
+// or dies at host-key verification -- the second reason, alongside the dead
+// source path, that these fetches have been doing nothing. Failing in a second
+// with "Permission denied" or "Host key verification failed" beats hanging.
+def rsyncBlast = { List<String> options, String source, String destination ->
+    // Without this an unset variable becomes a literal "null" in the spec and
+    // the failure reads as a rejected login rather than a missing setting.
+    def unset = []
+    if (!env['SSH_USER']) unset << "SSH_USER"
+    if (!blastSourceHost) unset << "SSH_HOST (or BLAST_SOURCE_HOST)"
+    if (unset) {
+        throw new GradleException("cannot fetch blast files: ${unset.join(' and ')} not set " +
+                "in this environment. They come from DOCKER_SSH_USER / DOCKER_SSH_HOST in docker/.env.")
+    }
+
+    def spec = env['SSH_USER'] + "@" + blastSourceHost + ":" + source
+    def result = exec {
+        ignoreExitValue = true
+        commandLine(["rsync", "-av", "-e", "ssh -o BatchMode=yes"] + options + [spec, destination])
+    }
+    if (result.exitValue != 0) {
+        throw new GradleException(
+                "rsync exited ${result.exitValue} fetching ${spec}.\n" +
+                "  - if the source moved, set BLAST_SOURCE_HOST / BLAST_SOURCE_PATH\n" +
+                "  - if ssh was refused, check SSH_USER (docker/.env) and that a key for it\n" +
+                "    reaches ${blastSourceHost} from here without a password")
+    }
+}
+
 task getBlastAllDatabases() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast([], blastSourcePath, "/opt/zfin/blastdb/")
     }
 }
 
 task getBlastSmallDatabases() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", "--max-size=100m", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/research/zfin.org/blastdb/Current", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast(["--max-size=100m"], blastSourcePath, "/opt/zfin/blastdb/")
     }
 }
 
+// An AB-BLAST database is a set of four files -- .xnd .xni .xns .xnt for
+// nucleotide, .xpd .xpi .xps .xpt for protein. rsync's --max-size filters per
+// *file*, so capping the fetch above does not skip a large database, it leaves a
+// fragment: gbk_zf_mrna arrives as a lone 12MB .xnt while its .xnd/.xni/.xns
+// (171/157/240MB) are dropped. The directory then looks populated to anything
+// that merely checks whether a file exists, and xdget's only complaint is
+// "xdf_db_fopen failed code 8". That is how ZFIN-10452 presented on a dev
+// instance. Delete the fragments so absent reads as absent.
+//
+// Against production's Current on 2026-09-02 this is not a corner case: of 49
+// databases the cap leaves 33 intact, 16 as fragments (every gbk_*, plus
+// refseq_zf_rna, zfin_gb_seq, GenomicDNA, sptr_hs, sptr_ms, wgs_zf), and skips
+// none cleanly -- 1.3GiB of 33.5GiB arrives.
+//
+// A database whose .xni is present but holds no identifier index survives this
+// on purpose -- that is Validate-Blast-Databases_d's job to report, not rsync's.
+task pruneIncompleteBlastDatabases() {
+    doLast {
+        def current = file("/opt/zfin/blastdb/Current")
+        if (!current.isDirectory()) {
+            logger.lifecycle("pruneIncompleteBlastDatabases: no ${current}, nothing to do")
+            return
+        }
+
+        def present = [:]   // "<database>|<n or p>" -> set of suffix letters found
+        current.listFiles().each { f ->
+            def m = f.name =~ /^(.+)\.x([np])([dist])$/
+            if (m.matches()) {
+                present.get(m.group(1) + "|" + m.group(2), [] as Set) << m.group(3)
+            }
+        }
+
+        def pruned = 0
+        present.each { key, found ->
+            if (found.size() == 4) {
+                return
+            }
+            def (database, alphabet) = key.tokenize("|")
+            def missing = (["d", "i", "s", "t"] - found).collect { ".x${alphabet}${it}" }
+            logger.lifecycle("incomplete blast database ${database}: missing ${missing.join(' ')} -- deleting the ${found.size()} file(s) that did arrive")
+            found.each { new File(current, "${database}.x${alphabet}${it}").delete() }
+            pruned++
+        }
+        logger.lifecycle("pruneIncompleteBlastDatabases: pruned ${pruned} incomplete database(s)")
+    }
+}
+
+// The databases Regenerate-ZFIN-BlastDBs_d reads as *input*:
+// ZFIN/zfin_cdna/assemblezfin_cdna.sh and
+// ZFIN/zfin_genomicDNA/assemblezfin_genomicDNA.sh xdget accessions out of the
+// gbk_* sets and refseq_zf_rna, and ZFIN/zfin_cdna/convertzfin_cdna.sh dumps
+// vega_zfin whole. Fetched with no size cap, because a partial one is useless --
+// 3.2GiB, against 33.5GiB for all 49 databases. Run this on a dev or stage
+// instance that needs to exercise the nightly ZFIN blast load end to end;
+// getBlast alone cannot, since every gbk_* database exceeds the cap.
+def zfinLoadBlastDatabases = ["gbk_zf_mrna", "gbk_zf_dna", "gbk_zf_rna", "refseq_zf_rna", "vega_zfin"]
+
+task getBlastZfinLoadDatabases() {
+    doLast {
+        def current = file("/opt/zfin/blastdb/Current")
+        current.mkdirs()
+        rsyncBlast(zfinLoadBlastDatabases.collect { "--include=${it}.x??".toString() } + ["--exclude=*"],
+                blastSourcePath + "/", current.path + "/")
+    }
+}
+
+// /opt/ab-blast on the source host: confirmed live on crick, x86-64 ELF, so
+// these will not exec in an aarch64 compile container on Apple Silicon -- only
+// the blast container runs them. Note this lands at /opt/zfin/blastdb/ab-blast,
+// which matches neither DOCKER_ABBLAST_PATH in the tree; see follow-up #10.
 task getBlastBinaries() {
     doLast {
-        exec {
-            ignoreExitValue = true
-            commandLine "rsync", "-av", env['SSH_USER'] + "@" + env['SSH_HOST'] + ":/opt/ab-blast", "/opt/zfin/blastdb/"
-        }
+        rsyncBlast([], "/opt/ab-blast", "/opt/zfin/blastdb/")
     }
 }
 
 task getBlast(type: GradleBuild) {
     tasks = ['getBlastSmallDatabases',
+             'pruneIncompleteBlastDatabases',
+             'getBlastBinaries'
+    ]
+}
+
+// getBlast plus the un-capped input databases the nightly ZFIN blast load needs.
+task getBlastForZfinLoad(type: GradleBuild) {
+    tasks = ['getBlastSmallDatabases',
+             'getBlastZfinLoadDatabases',
+             'pruneIncompleteBlastDatabases',
              'getBlastBinaries'
     ]
 }

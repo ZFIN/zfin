@@ -19,6 +19,8 @@ import org.zfin.sequence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.zfin.framework.HibernateUtil.currentSession;
@@ -357,11 +359,13 @@ public class BlastAccessTest extends AbstractDatabaseTest {
     @Test
     public void validateAllPhysicalDatabases() {
         try {
-            List<String> strings = MountedWublastBlastService.getInstance().validateAllPhysicalDatabasesReadable();
-            if (CollectionUtils.isNotEmpty(strings)) {
+            List<BlastDatabaseValidationFinding> findings = MountedWublastBlastService.getInstance()
+                    .validatePhysicalDatabases(new BlastDatabaseStalenessPolicy(
+                            BlastDatabaseStalenessPolicy.DEFAULT_MAX_AGE_DAYS, Map.of(), Set.of()));
+            if (CollectionUtils.isNotEmpty(findings)) {
                 logger.error("there was a problem validating all of the physical database");
-                for (String string : strings) {
-                    logger.warn(string);
+                for (BlastDatabaseValidationFinding finding : findings) {
+                    logger.warn(finding);
                 }
             }
         } catch (Exception e) {

@@ -7,6 +7,7 @@ import org.zfin.sequence.blast.Origination;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -20,6 +21,13 @@ public interface BlastRepository {
     List<Database> getDatabaseByOrigination(Origination.Type... originationType) ;
     List<DatabaseRelationship> getChildDatabaseRelationshipsByOrigination(Origination.Type originationType) ;
     Set<String> getAllValidAccessionNumbers(Database database) ;
+
+    /**
+     * One accession ZFIN expects to find in this blast database, for cheaply probing
+     * that the database can still be read by accession. Empty when ZFIN has no
+     * accessions pointing at this database.
+     */
+    Optional<String> getSampleAccessionNumber(Database database) ;
     List<String> getPreviousAccessionsForDatabase(Database database) ;
     Integer getNumberValidAccessionNumbers(Database database) ;
     Map<String, Integer> getValidAccessionCountsForAllBlastDatabases();

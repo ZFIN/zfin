@@ -6,6 +6,7 @@ import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.infrastructure.ant.ReportConfiguration;
 
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -24,16 +25,28 @@ public class ValidateBlastDatabases extends AbstractValidateDataReportTask {
         setReportProperties();
         clearReportDirectory();
 
-        List<String> failures = MountedWublastBlastService.getInstance().validateAllPhysicalDatabasesReadable();
-        if (CollectionUtils.isNotEmpty(failures)) {
+        BlastDatabaseStalenessPolicy stalenessPolicy = BlastDatabaseStalenessPolicy.fromProperties(reportProperties, jobName);
+        logger.info("staleness policy: default " + stalenessPolicy.defaultMaxAgeDays() + " days, "
+                    + stalenessPolicy.overrides().size() + " override(s), "
+                    + stalenessPolicy.exempt().size() + " exempt database(s)");
+
+        List<BlastDatabaseValidationFinding> findings = MountedWublastBlastService.getInstance().validatePhysicalDatabases(stalenessPolicy);
+        if (CollectionUtils.isNotEmpty(findings)) {
+            // Worst first, so a database that has gone missing outranks one that is
+            // merely overdue for a rebuild.
+            findings.sort(Comparator.comparing((BlastDatabaseValidationFinding finding) -> finding.problem().ordinal())
+                    .thenComparing(BlastDatabaseValidationFinding::abbrev));
+            for (BlastDatabaseValidationFinding finding : findings) {
+                logger.error(finding);
+            }
             String reportName = jobName + ".errors";
             ReportConfiguration config = new ReportConfiguration(jobName, dataDirectory, reportName, true);
-            createErrorReport(null, getStringifiedList(failures), config);
+            createErrorReport(null, findings.stream().map(BlastDatabaseValidationFinding::toReportRow).toList(), config);
         } else {
             logger.info("No failed databases found.");
         }
         HibernateUtil.closeSession();
-        return failures.size();
+        return findings.size();
     }
 
     public static void main(String[] args) {

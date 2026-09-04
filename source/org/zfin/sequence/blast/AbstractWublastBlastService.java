@@ -429,31 +429,171 @@ public abstract class AbstractWublastBlastService implements BlastService {
     }
 
 
-    public List<String> validateAllPhysicalDatabasesReadable() {
+    /**
+     * WU-BLAST's own wording when xdget is pointed at a database that carries no
+     * identifier index. Matched case-insensitively against xdget's stderr.
+     */
+    private static final String NO_INDEX_MARKER = "nothing to index";
+
+    /**
+     * An accession no real database can contain, used to ask xdget whether the
+     * database has an identifier index at all without needing a known-good id.
+     */
+    private static final String INDEX_PROBE_ACCESSION = "ZFIN_INDEX_PROBE";
+
+    private static final long MILLISECONDS_PER_DAY = 1000L * 60 * 60 * 24;
+
+    /**
+     * Checks every physical (non-generated, non-external) blast database for the
+     * problems that make a database useless without making it disappear:
+     * unreadable, empty, missing its identifier index, or simply never rebuilt.
+     * <p/>
+     * The identifier-index check exists because a database can serve BLAST
+     * searches perfectly while xdget cannot retrieve a single sequence from it,
+     * which is how every RefSeq silently vanished from zfin_cdna_seq for thirteen
+     * months (ZFIN-10452).
+     *
+     * @param stalenessPolicy How old each database is allowed to get. Curated
+     *                        databases are never age-checked -- they change only when
+     *                        a curator edits them, so their age means nothing.
+     * @return One finding per problem found, empty when everything looks healthy.
+     */
+    public List<BlastDatabaseValidationFinding> validatePhysicalDatabases(BlastDatabaseStalenessPolicy stalenessPolicy) {
         List<Database> databases = blastRepository.getDatabaseByOrigination(Origination.Type.CURATED, Origination.Type.LOADED, Origination.Type.MARKERSEQUENCE);
         int numDatabases = getDatabaseStaticsCache().clearCache();
         logger.info("cleared cache of " + numDatabases + " databases");
-        List<String> failures = new ArrayList<>();
+        List<BlastDatabaseValidationFinding> findings = new ArrayList<>();
         for (Database database : databases) {
-            try {
-                DatabaseStatistics databaseStatistics = getDatabaseStaticsCache().getDatabaseStatistics(database);
-                if (databaseStatistics.getNumSequences() == 0) {
-                    if (failures.size() == 0) {
-                        logger.warn("0 sequences in database [" + database.getAbbrev() + "]: " + database);
-                    } else {
-                        logger.warn(failures.get(failures.size() - 1));
-                    }
-
-                } else if (databaseStatistics.getNumSequences() < 0) {
-                    failures.add("no database available[" + database.getAbbrev() + "]: " + database);
-                    logger.error(failures.get(failures.size() - 1));
-                }
-            } catch (BlastDatabaseException e) {
-                logger.error(e);
-                failures.add("error in database [" + database + "]: " + e);
-            }
+            findings.addAll(validatePhysicalDatabase(database, stalenessPolicy));
         }
-        return failures;
+        return findings;
+    }
+
+    private List<BlastDatabaseValidationFinding> validatePhysicalDatabase(Database database, BlastDatabaseStalenessPolicy stalenessPolicy) {
+        String abbrev = database.getAbbrev().toString();
+        DatabaseStatistics statistics;
+        try {
+            statistics = getDatabaseStaticsCache().getDatabaseStatistics(database);
+        } catch (BlastDatabaseException e) {
+            logger.error("failed to read statistics for database [" + abbrev + "]", e);
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.UNREADABLE,
+                    "could not read the database header: " + e.getMessage(),
+                    DatabaseStatistics.BAD_DATABASE, null));
+        }
+
+        int numSequences = statistics.getNumSequences();
+        Date created = statistics.getCreationDate();
+
+        // An unreadable or empty database tells us nothing further, so stop here
+        // rather than piling a stale/no-index finding on top of the real problem.
+        if (numSequences < 0) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.UNREADABLE,
+                    "no database available at " + getCurrentDatabasePath(database),
+                    numSequences, created));
+        }
+        if (numSequences == 0) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.EMPTY,
+                    "database holds no sequences at all",
+                    numSequences, created));
+        }
+
+        List<BlastDatabaseValidationFinding> findings = new ArrayList<>();
+        findings.addAll(validateIdentifierIndex(database, abbrev, numSequences, created));
+        findings.addAll(validateFreshness(database, abbrev, numSequences, created, stalenessPolicy));
+        return findings;
+    }
+
+    private List<BlastDatabaseValidationFinding> validateIdentifierIndex(Database database, String abbrev, int numSequences, Date created) {
+        if (!hasIdentifierIndex(database)) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.NO_IDENTIFIER_INDEX,
+                    "xdget cannot retrieve anything from this database, so BLAST searches still work but every load that pulls sequences out by accession silently gets nothing -- rebuild it",
+                    numSequences, created));
+        }
+
+        // The index exists; now confirm it actually resolves an accession ZFIN
+        // expects to find in there. This is what catches deflines indexed under
+        // something other than the accession ZFIN stores, a versioned
+        // XM_685006.11 against a bare XM_685006 for instance.
+        Optional<String> sampleAccession = blastRepository.getSampleAccessionNumber(database);
+        if (sampleAccession.isEmpty()) {
+            return List.of();
+        }
+        String accession = sampleAccession.get();
+        if (!isRetrievableByAccession(database, accession)) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.ACCESSION_NOT_RETRIEVABLE,
+                    "the database has an identifier index but xdget could not retrieve [" + accession + "], which ZFIN expects to be in it -- are the deflines indexed under the accessions ZFIN stores?",
+                    numSequences, created));
+        }
+        return List.of();
+    }
+
+    private List<BlastDatabaseValidationFinding> validateFreshness(Database database, String abbrev, int numSequences, Date created, BlastDatabaseStalenessPolicy stalenessPolicy) {
+        // A curated database is only as new as the last time a curator touched it,
+        // so its age says nothing about whether anything is broken.
+        Origination origination = database.getOrigination();
+        if (origination != null
+            && (origination.getType() == Origination.Type.CURATED || origination.getType() == Origination.Type.CURATED_IGNORE)) {
+            return List.of();
+        }
+
+        OptionalInt maxAge = stalenessPolicy.maxAgeDays(abbrev);
+        if (maxAge.isEmpty()) {
+            return List.of();
+        }
+        if (created == null) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.STALE,
+                    "database header carries no creation date, so its age cannot be checked",
+                    numSequences, null));
+        }
+        long ageInDays = (System.currentTimeMillis() - created.getTime()) / MILLISECONDS_PER_DAY;
+        if (ageInDays > maxAge.getAsInt()) {
+            return List.of(new BlastDatabaseValidationFinding(abbrev, BlastDatabaseValidationFinding.Problem.STALE,
+                    "last rebuilt " + ageInDays + " days ago, over the " + maxAge.getAsInt() + " day limit -- is the job that regenerates it scheduled and passing?",
+                    numSequences, created));
+        }
+        return List.of();
+    }
+
+    /**
+     * Asks xdget for an accession that cannot exist. A database with an identifier
+     * index answers "not found"; one without an index refuses outright with
+     * "Nothing to index!", which is the signature we are after.
+     */
+    protected boolean hasIdentifierIndex(Database database) {
+        String stderr = runXdget(database, INDEX_PROBE_ACCESSION).getStandardError();
+        return stderr == null || !stderr.toLowerCase().contains(NO_INDEX_MARKER);
+    }
+
+    /**
+     * True when xdget hands back a fasta record for this accession.
+     */
+    private boolean isRetrievableByAccession(Database database, String accession) {
+        String stdout = runXdget(database, accession).getStandardOutput();
+        return stdout != null && stdout.trim().startsWith(">");
+    }
+
+    /**
+     * Runs xdget for a single accession. The returned process always has its
+     * streams populated; callers decide what stdout and stderr mean.
+     */
+    private ExecProcess runXdget(Database database, String accession) {
+        List<String> commandList = new ArrayList<>();
+        commandList.addAll(getPrefixCommands());
+        commandList.add(getKeyPath() + getBlastGetBinary());
+        commandList.add("-" + database.getTypeCharacter());
+        commandList.add(getCurrentDatabasePath(database));
+        commandList.add(accession);
+
+        ExecProcess execProcess = new ExecProcess(commandList);
+        try {
+            execProcess.exec();
+        } catch (Exception e) {
+            // xdget exits non-zero for an absent accession just as it does for a
+            // missing index, so a failure here is expected; the streams decide.
+            logger.debug("xdget returned non-zero for [" + database.getAbbrev() + "] accession [" + accession + "]", e);
+        }
+        logger.debug("xdget stderr for [" + database.getAbbrev() + "]: " + execProcess.getStandardError());
+        return execProcess;
     }
 
     /**

@@ -7,15 +7,17 @@ source "../config.sh"
 
 /local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_CDNA" -O zfin_genbank_cdna_acc.unl
 
-if [ -f zfin_genbank_cdna_acc.unl ]; then
-  log_message "Successfully downloaded cDNA GenBank accessions ($(wc -l <zfin_genomic_genbank_acc.unl) lines)"
+# -s not -f: wget -O creates the file even when the request fails, so an empty
+# accession list would otherwise sail past this guard (ZFIN-10452).
+if [ -s zfin_genbank_cdna_acc.unl ]; then
+  log_message "Successfully downloaded cDNA GenBank accessions ($(wc -l <zfin_genbank_cdna_acc.unl) lines)"
 else
   error_exit "file zfin_genbank_cdna_acc.unl is empty, not copying."
 fi
 
 /local/bin/wget "http://zfin.org/action/blast/blast-files?action=GENBANK_ALL" -O zfin_genbank_acc.unl
 
-if [ -f zfin_genbank_acc.unl ]; then
+if [ -s zfin_genbank_acc.unl ]; then
   log_message "Successfully downloaded GenBank accessions ($(wc -l <zfin_genbank_acc.unl) lines)"
 else
   error_exit "file zfin_genbank_acc.unl is empty, not copying."
