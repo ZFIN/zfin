@@ -32,11 +32,44 @@ const SERVED = {
     type: 'Zygotic (Z)',
     backgroundDependent: true,
     backgroundComment: 'asdad',
+    attachments: [],
 };
+
+/** One uploaded image, as PhenotypeFileDTO serializes it. */
+const ONE_IMAGE = [{
+    id: 7,
+    originalFilename: 'lateral-view.png',
+    contentType: 'image/png',
+    fileSize: 2048,
+    uploadedAt: '2026-09-03T12:00:00Z',
+}];
 
 function phenotypeForm(data: Record<string, unknown>) {
     const snap = JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8'));
-    return renderForm({ schema: snap.schema, uischema: snap.uiSchema, data });
+    // phenotypeId is what the attachments widget reads to know whose upload
+    // endpoint to call; the real editor supplies it the same way.
+    return renderForm({
+        schema: snap.schema,
+        uischema: snap.uiSchema,
+        data,
+        config: { phenotypeId: 1 },
+    });
+}
+
+/** Field order for the whole form, read off the committed snapshot. */
+function fieldOrder(): string[] {
+    const snap = JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8'));
+    const out: string[] = [];
+    const walk = (n: unknown) => {
+        if (Array.isArray(n)) {n.forEach(walk); return;}
+        if (n && typeof n === 'object') {
+            const e = n as { scope?: unknown; elements?: unknown };
+            if (typeof e.scope === 'string') {out.push(e.scope.replace('#/properties/', ''));}
+            if (e.elements) {walk(e.elements);}
+        }
+    };
+    walk(snap.uiSchema);
+    return out;
 }
 
 describe('phenotype form round trip', () => {
@@ -76,5 +109,61 @@ describe('phenotype form round trip', () => {
         phenotypeForm(SERVED);
         assert.ok(screen.queryByText(/Optimal temporal window/),
             'timing row should take its label from the schema title, not "Timing"');
+    });
+
+    // --- ZFIN-10449 item 2: phenotype images ---
+
+    it('renders the upload section with its heading', () => {
+        phenotypeForm(SERVED);
+        assert.ok(screen.queryByText('Phenotype images'), 'heading should render');
+        assert.ok(screen.queryByText('No attachments yet.'), 'empty state should render');
+    });
+
+    it('sits between the timing row and the image permissions', () => {
+        // The mockup order: upload the images, then answer who may use them.
+        const order = fieldOrder();
+        const timing = order.indexOf('hpfStart');
+        const files = order.indexOf('attachments');
+        const perm = order.indexOf('zfinImagePermission');
+        assert.ok(timing >= 0 && files >= 0 && perm >= 0, order.join(', '));
+        assert.ok(timing < files && files < perm,
+            `expected timing < attachments < permissions, got ${order.join(', ')}`);
+    });
+
+    it('links an uploaded file to the phenotype endpoint, not the assay one', () => {
+        // The owner plumbing is the whole point of the generalisation: a
+        // default-to-assay renderer would build /assays/attachments/7/content
+        // here and 404 (or worse, serve someone else's file id).
+        phenotypeForm({ ...SERVED, attachments: ONE_IMAGE });
+
+        const link = screen.queryByText('lateral-view.png') as HTMLAnchorElement | null;
+        assert.ok(link, 'the filename should render as a link');
+        assert.equal(link!.getAttribute('href'),
+            '/action/api/zirc/phenotypes/attachments/7/content');
+    });
+
+    it('shows the file metadata', () => {
+        phenotypeForm({ ...SERVED, attachments: ONE_IMAGE });
+        assert.ok(screen.queryByText(/image\/png/), 'content type should render');
+        assert.ok(screen.queryByText(/2\.0 KB/), 'size should render');
+    });
+
+    it('offers an enabled file input below the cap', () => {
+        phenotypeForm({ ...SERVED, attachments: ONE_IMAGE });
+        const input = document.querySelector('input[type=file]') as HTMLInputElement | null;
+        assert.ok(input, 'file input should render');
+        assert.equal(input!.disabled, false, '1 of 10 images is below the cap');
+    });
+
+    it('disables the file input at the cap', () => {
+        // maxItems comes from MAX_ATTACHMENTS_PER_PHENOTYPE via the schema, so
+        // the disabled state cannot disagree with what the server rejects.
+        const full = Array.from({ length: 10 }, (_, i) => ({
+            ...ONE_IMAGE[0], id: i + 1, originalFilename: `img-${i}.png`,
+        }));
+        phenotypeForm({ ...SERVED, attachments: full });
+
+        const input = document.querySelector('input[type=file]') as HTMLInputElement | null;
+        assert.equal(input!.disabled, true, '10 of 10 should disable the input');
     });
 });

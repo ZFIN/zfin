@@ -65,6 +65,17 @@ public final class ZircPhenotypeFormSchema {
      * One type per phenotype.
      */
     /**
+     * Cap on uploaded images per phenotype (ZFIN-10449). Published to the
+     * client as the attachments array's maxItems, so the widget's disabled
+     * state and the server's rejection agree. Same value as the assay cap;
+     * separate constant because it is a per-owner policy, not a shared one.
+     */
+    public static final int MAX_ATTACHMENTS_PER_PHENOTYPE = 10;
+
+    /** Heading over the upload section, per ZFIN-10449's mockup. */
+    private static final String IMAGES_LABEL = "Phenotype images";
+
+    /**
      * Label for the timing row (ZFIN-10449). Curators asked for the question
      * spelled out rather than "Timing": the row asks when to look, not when
      * the phenotype exists.
@@ -100,6 +111,11 @@ public final class ZircPhenotypeFormSchema {
         properties.put("backgroundDependent",    BooleanSchema.nullable(
                 "Is phenotype background dependent"));
         properties.put("backgroundComment",      StringSchema.of("Background comment", 5000));
+        // Phenotype images (ZFIN-10449) — summary rows only. Uploads go
+        // through a dedicated multipart endpoint rather than the field-path
+        // PATCH, which is what managesOwnPersistence on the Control declares.
+        properties.put("attachments",            ZircAttachmentSchema.attachmentsArrayProp(
+                IMAGES_LABEL, MAX_ATTACHMENTS_PER_PHENOTYPE));
         return ObjectSchema.of(null, properties, List.of("description"));
     }
 
@@ -129,6 +145,24 @@ public final class ZircPhenotypeFormSchema {
                         new Control("#/properties/hpfStart",
                                 Options.of().withWidget("phenotypeTiming"), null)
                 )),
+                // Phenotype images (ZFIN-10449) — above the two permission
+                // questions, per the mockup: upload the images, then answer
+                // who may use them.
+                //
+                // managesOwnPersistence keeps this Control out of the autosave
+                // diff (the array is not PATCHable) and instead mirror-syncs it
+                // from the entity after every upload or delete. layout "plain"
+                // drops the table wrapper so the uploader is not squeezed into
+                // a label/value row.
+                new Group(null, List.of(
+                        new Control("#/properties/attachments",
+                                Options.of()
+                                        .withWidget("attachmentsList")
+                                        .withManagesOwnPersistence(true)
+                                        .withLabel(IMAGES_LABEL)
+                                        .withOwner("phenotype"),
+                                null)),
+                        Options.of().withLayout("plain"), null),
                 Group.of(null, List.of(
                         new Control("#/properties/zfinImagePermission",
                                 Options.of().withWidget("yesNoRadio"), null),

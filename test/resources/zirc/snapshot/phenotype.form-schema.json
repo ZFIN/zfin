@@ -1,6 +1,31 @@
 {
   "schema" : {
     "properties" : {
+      "attachments" : {
+        "items" : {
+          "properties" : {
+            "contentType" : {
+              "type" : [ "string", "null" ]
+            },
+            "fileSize" : {
+              "type" : [ "number", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "originalFilename" : {
+              "type" : "string"
+            },
+            "uploadedAt" : {
+              "type" : [ "string", "null" ]
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Phenotype images",
+        "type" : "array"
+      },
       "backgroundComment" : {
         "maxLength" : 5000,
         "title" : "Background comment",
@@ -78,6 +103,21 @@
         "scope" : "#/properties/hpfStart",
         "type" : "Control"
       } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Phenotype images",
+          "managesOwnPersistence" : true,
+          "owner" : "phenotype",
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
       "type" : "Group"
     }, {
       "elements" : [ {
