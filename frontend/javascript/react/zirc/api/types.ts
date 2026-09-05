@@ -178,6 +178,17 @@ export interface PhenotypeDTO {
     nonMendelianComment: string | null;
     segregation: string | null;
     type: string | null;
+    backgroundDependent: boolean | null;
+    backgroundComment: string | null;
+    attachments: PhenotypeFileDTO[];
+}
+
+export interface PhenotypeFileDTO {
+    id: number;
+    originalFilename: string;
+    contentType: string | null;
+    fileSize: number | null;
+    uploadedAt: string | null;
 }
 
 export interface AutocompleteItemDTO {

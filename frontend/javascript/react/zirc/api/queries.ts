@@ -136,16 +136,46 @@ export function useAssayById(id: number | null) {
     });
 }
 
+/**
+ * Which aggregates own uploadable files, and where their endpoints live.
+ *
+ * Attachments started out assay-only; ZFIN-10449 added phenotype images. The
+ * endpoints follow one convention, so the owner is a parameter rather than a
+ * second pair of near-identical hooks.
+ */
+export type AttachmentOwner = 'assay' | 'phenotype';
+
+const ATTACHMENT_OWNERS: Record<AttachmentOwner, {
+    base: string;
+    cacheKey: (id: number) => readonly unknown[];
+}> = {
+    // The key builders are wrapped rather than referenced directly:
+    // phenotypeKey is declared further down this module, and a bare
+    // `cacheKey: phenotypeKey` here would be a temporal-dead-zone error at
+    // import time. Wrapping defers the lookup to call time.
+    assay:     { base: '/assays',     cacheKey: (id) => assayKey(id) },
+    phenotype: { base: '/phenotypes', cacheKey: (id) => phenotypeKey(id) },
+};
+
+/** Absolute URL the browser uses to fetch one attachment's bytes. */
+export function attachmentContentUrl(owner: AttachmentOwner, fileId: number): string {
+    return `/action/api/zirc${ATTACHMENT_OWNERS[owner].base}/attachments/${fileId}/content`;
+}
+
 export function useUploadAttachment() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({ assayId, file }: { assayId: number; file: File }) => {
+        mutationFn: ({ owner, ownerId, file }:
+        { owner: AttachmentOwner; ownerId: number; file: File }) => {
             const form = new FormData();
             form.append('file', file);
-            return api.upload<AssayDTO>(`/assays/${assayId}/attachments`, form);
+            return api.upload<unknown>(
+                `${ATTACHMENT_OWNERS[owner].base}/${ownerId}/attachments`, form);
         },
         onSuccess: (_data, vars) => {
-            qc.invalidateQueries({ queryKey: assayKey(vars.assayId) });
+            qc.invalidateQueries({
+                queryKey: ATTACHMENT_OWNERS[vars.owner].cacheKey(vars.ownerId),
+            });
         },
     });
 }
@@ -153,10 +183,13 @@ export function useUploadAttachment() {
 export function useDeleteAttachment() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({ fileId }: { assayId: number; fileId: number }) =>
-            api.delete<void>(`/assays/attachments/${fileId}`),
+        mutationFn: ({ owner, fileId }:
+        { owner: AttachmentOwner; ownerId: number; fileId: number }) =>
+            api.delete<void>(`${ATTACHMENT_OWNERS[owner].base}/attachments/${fileId}`),
         onSuccess: (_data, vars) => {
-            qc.invalidateQueries({ queryKey: assayKey(vars.assayId) });
+            qc.invalidateQueries({
+                queryKey: ATTACHMENT_OWNERS[vars.owner].cacheKey(vars.ownerId),
+            });
         },
     });
 }

@@ -113,7 +113,12 @@ public record Options(
         String positionField,
         // For the aminoAcidChange widget — the end of the position range.
         // Optional: omit it and the widget renders a single position box.
-        String positionEndField
+        String positionEndField,
+
+        // For the attachmentsList widget — which aggregate owns the files,
+        // and therefore which upload / delete / content endpoints to call.
+        // Omitted means "assay", the original and still most common owner.
+        String owner
 ) {
 
     /**

@@ -341,6 +341,7 @@
         <mapping class="org.zfin.zirc.entity.GenotypingAssay"/>
         <mapping class="org.zfin.zirc.entity.GenotypingAssayFile"/>
         <mapping class="org.zfin.zirc.entity.Phenotype"/>
+        <mapping class="org.zfin.zirc.entity.PhenotypeFile"/>
         <mapping class="org.zfin.zirc.entity.LinkedFeature"/>
         <mapping class="org.zfin.zirc.entity.AuditEntry"/>
         <mapping class="org.zfin.zirc.entity.ZircVocabularyTerm"/>

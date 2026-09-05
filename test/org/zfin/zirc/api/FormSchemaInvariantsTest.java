@@ -148,7 +148,10 @@ public class FormSchemaInvariantsTest {
                 ZircPhenotypeFormSchema.FIELDS.keySet(),
                 PhenotypeDTO.class,
                 Set.of("id", "mutationId", "sortOrder"),
-                Set.of()));
+                // attachments is server-managed through the multipart upload
+                // endpoints, not the field-path PATCH, so it has no FIELDS
+                // entry — same exemption the assay form carries.
+                Set.of("/attachments")));
     }
 
     @Test
