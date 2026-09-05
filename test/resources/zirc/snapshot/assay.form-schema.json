@@ -41,8 +41,8 @@
         "title" : "Common primer",
         "type" : [ "string", "null" ]
       },
-      "dcapsMismatchPrimer" : {
-        "maxLength" : 2000,
+      "dcapsMismatchPrimerChoice" : {
+        "maxLength" : 255,
         "title" : "Primer with introduced mismatch",
         "type" : [ "string", "null" ]
       },
@@ -99,6 +99,11 @@
         "title" : "Restriction enzyme name",
         "type" : [ "string", "null" ]
       },
+      "restrictionEnzymeVendor" : {
+        "maxLength" : 255,
+        "title" : "Restriction enzyme vendor",
+        "type" : [ "string", "null" ]
+      },
       "reversePrimer" : {
         "maxLength" : 2000,
         "title" : "Reverse primer",
@@ -111,17 +116,17 @@
       },
       "sslpDistance" : {
         "maxLength" : 255,
-        "title" : "Distance marker → mutation",
+        "title" : "Distance between marker and mutation",
         "type" : [ "string", "null" ]
       },
       "sslpGenomicLocation" : {
         "maxLength" : 255,
-        "title" : "Genomic location of marker",
+        "title" : "Location of the marker vs mutation",
         "type" : [ "string", "null" ]
       },
       "sslpInducedBackground" : {
         "maxLength" : 255,
-        "title" : "Background mutation was induced on",
+        "title" : "Mutation was induced on background",
         "type" : [ "string", "null" ]
       },
       "sslpInducedPcr" : {
@@ -131,7 +136,7 @@
       },
       "sslpMarkerName" : {
         "maxLength" : 255,
-        "title" : "SSLP marker name",
+        "title" : "SSLP marker name (Z Marker)",
         "type" : [ "string", "null" ]
       },
       "sslpOutcrossedBackground" : {
@@ -158,7 +163,7 @@
       "elements" : [ {
         "options" : {
           "refreshesParent" : true,
-          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "dCAPS", "ASA", "KASP", "HRMA", "SSLP" ],
+          "standardLabels" : [ "PCR + gel electrophoresis", "PCR + sequencing", "RFLP", "derived Cleaved Amplified Polymorphic Sequences dCAPS", "Allele Specific Amplification (ASA)", "KASP", "High-Resolution Melting Analysis (HRMA)", "Simple Sequence Length Polymorphism (SSLP)" ],
           "standardValues" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp" ],
           "widget" : "selectWithOther"
         },
@@ -169,13 +174,57 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "placeholder" : "e.g. AB, TU, …"
+        },
+        "scope" : "#/properties/sslpInducedBackground",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "placeholder" : "e.g. AB, TU, …"
+        },
+        "scope" : "#/properties/sslpOutcrossedBackground",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpMarkerName",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpDistance",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "noOther" : true,
+          "standardValues" : [ "Proximal", "Distal" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/sslpGenomicLocation",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/forwardPrimer",
         "type" : "Control"
       }, {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/reversePrimer",
         "type" : "Control"
@@ -184,6 +233,45 @@
         "condition" : {
           "schema" : {
             "enum" : [ "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "hrma", "sslp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/wtSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/mutSpecificPrimer",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "minBases" : 10,
+          "widget" : "nucleotideSequence"
+        },
+        "scope" : "#/properties/commonPrimer",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "asa", "kasp" ]
           },
           "scope" : "#/properties/assayType"
         },
@@ -211,7 +299,9 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "alphabet" : "ACGT",
+          "helpText" : "ACGT only.",
+          "widget" : "nucleotideSequence"
         },
         "scope" : "#/properties/sequencingPrimer",
         "type" : "Control"
@@ -229,45 +319,17 @@
     }, {
       "elements" : [ {
         "options" : {
-          "helpText" : "ACTGN only."
+          "noOther" : true,
+          "standardValues" : [ "Forward", "Reverse" ],
+          "widget" : "selectWithOther"
         },
-        "scope" : "#/properties/dcapsMismatchPrimer",
+        "scope" : "#/properties/dcapsMismatchPrimerChoice",
         "type" : "Control"
       } ],
       "rule" : {
         "condition" : {
           "schema" : {
             "enum" : [ "dcaps" ]
-          },
-          "scope" : "#/properties/assayType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "helpText" : "ACTGN only."
-        },
-        "scope" : "#/properties/wtSpecificPrimer",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "helpText" : "ACTGN only."
-        },
-        "scope" : "#/properties/mutSpecificPrimer",
-        "type" : "Control"
-      }, {
-        "options" : {
-          "helpText" : "ACTGN only."
-        },
-        "scope" : "#/properties/commonPrimer",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "asa", "kasp" ]
           },
           "scope" : "#/properties/assayType"
         },
@@ -301,8 +363,8 @@
         "type" : "Control"
       }, {
         "options" : {
-          "infoHref" : "https://international.neb.com/",
-          "placeholder" : "vendor + cat #"
+          "vendorField" : "restrictionEnzymeVendor",
+          "widget" : "vendorCatalog"
         },
         "scope" : "#/properties/restrictionEnzymeCatalog",
         "type" : "Control"
@@ -329,6 +391,24 @@
         "condition" : {
           "schema" : {
             "enum" : [ "rflp", "dcaps" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "scope" : "#/properties/sslpInducedPcr",
+        "type" : "Control"
+      }, {
+        "scope" : "#/properties/sslpOutcrossedPcr",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "sslp" ]
           },
           "scope" : "#/properties/assayType"
         },
@@ -421,42 +501,6 @@
         "condition" : {
           "schema" : {
             "enum" : [ "hrma" ]
-          },
-          "scope" : "#/properties/assayType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "placeholder" : "Search ZFIN SSLP markers…"
-        },
-        "scope" : "#/properties/sslpMarkerName",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpDistance",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpGenomicLocation",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpInducedBackground",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpOutcrossedBackground",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpInducedPcr",
-        "type" : "Control"
-      }, {
-        "scope" : "#/properties/sslpOutcrossedPcr",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "sslp" ]
           },
           "scope" : "#/properties/assayType"
         },

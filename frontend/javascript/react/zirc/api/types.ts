@@ -128,13 +128,14 @@ export interface AssayDTO {
     expectedWtPcr: string | null;
     expectedMutPcr: string | null;
     sequencingPrimer: string | null;
-    dcapsMismatchPrimer: string | null;
+    dcapsMismatchPrimerChoice: string | null;
     wtSpecificPrimer: string | null;
     mutSpecificPrimer: string | null;
     commonPrimer: string | null;
     kaspGenomicSequence: string | null;
     restrictionEnzymeName: string | null;
     restrictionEnzymeCatalog: string | null;
+    restrictionEnzymeVendor: string | null;
     enzymeCleavesWt: boolean | null;
     enzymeCleavesMut: boolean | null;
     expectedWtDigest: string | null;
