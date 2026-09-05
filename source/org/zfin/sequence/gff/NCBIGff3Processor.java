@@ -164,6 +164,7 @@ public class NCBIGff3Processor {
     }
 
     public void processNcbiGff3(String gff3FilePath) throws IOException {
+        long previousGeneration = highestRecordId();
         AtomicInteger index = new AtomicInteger(0);
         Gff3Reader reader = new Gff3Reader(gff3FilePath);
 
@@ -196,6 +197,60 @@ public class NCBIGff3Processor {
         reader.close();
         System.out.println("Total records: " + index.get());
         summaryTableLoad.addSummaryRow(List.of("All records in GFF3 File", String.valueOf(index.get())));
+        deletePreviousGeneration(previousGeneration);
+    }
+
+    /**
+     * Highest {@code gff_pk_id} in the table before this run inserts anything. Everything at
+     * or below it belongs to an earlier run.
+     */
+    private long highestRecordId() {
+        HibernateUtil.createTransaction();
+        Long highest = HibernateUtil.currentSession()
+            .createQuery("select coalesce(max(record.id), 0) from Gff3Ncbi record", Long.class)
+            .uniqueResult();
+        HibernateUtil.flushAndCommitCurrentSession();
+        return highest == null ? 0L : highest;
+    }
+
+    /**
+     * Drop the previous run's records now that this run has loaded a complete copy of the
+     * file. Nothing else ever deleted from gff3_ncbi, so every run used to append a second
+     * full copy of the GFF3 - and Gff3Ncbi.getGeneID()/getGeneZdbID() pick from a record's
+     * attributes with findAny(), so duplicated records made the answer arbitrary in exactly
+     * the way duplicated gene_id pairs did.
+     *
+     * <p>Deleted after the load rather than before it on purpose. gff3_ncbi is not private to
+     * this job: Gff3Writer reads it back to emit zfin_genes.grcz12.gff3, and the NCBI gene
+     * load's markerAssemblyUpdate.sql joins against it. Clearing up front would leave those
+     * readers with an empty or half-filled table for the length of the run, and a run that
+     * died midway would leave nothing behind at all. Loading first and deleting the old
+     * generation last costs one run's worth of rows transiently and leaves the previous copy
+     * intact until a complete replacement exists.
+     *
+     * <p>The FK from gff3_ncbi_attribute is not ON DELETE CASCADE, and CascadeType.ALL on the
+     * collection is ORM-level only - it does not apply to a bulk delete - so the attribute
+     * rows have to go first.
+     */
+    private void deletePreviousGeneration(long watermark) {
+        if (watermark <= 0) {
+            log.info("No previous gff3_ncbi records to clear.");
+            return;
+        }
+        HibernateUtil.createTransaction();
+        int pairs = HibernateUtil.currentSession()
+            .createMutationQuery("delete from Gff3NcbiAttributePair pair where pair.gff3Ncbi.id <= :watermark")
+            .setParameter("watermark", watermark)
+            .executeUpdate();
+        int records = HibernateUtil.currentSession()
+            .createMutationQuery("delete from Gff3Ncbi record where record.id <= :watermark")
+            .setParameter("watermark", watermark)
+            .executeUpdate();
+        HibernateUtil.flushAndCommitCurrentSession();
+        HibernateUtil.currentSession().clear();
+        log.info("Cleared the previous run's staging data: " + records + " gff3_ncbi records and "
+                 + pairs + " attribute pairs.");
+        summaryTableLoad.addSummaryRow(List.of("Previous run's records cleared", getFormattedNumber(records)));
     }
 
     private String generateAttributes(Map<String, List<String>> attributes) {
@@ -289,11 +344,18 @@ public class NCBIGff3Processor {
     private void addGeneIDToAttributes() {
         HibernateUtil.createTransaction();
 
-        // Clear the gene_id pairs from any previous run before deriving them again. These
-        // cache the NCBI-Gene-ID -> ZFIN-gene answer taken from db_link, and db_link moves
-        // underneath them every time the NCBI gene load runs. Without this delete a second
-        // run leaves two gene_id pairs on the same record and Gff3Ncbi.getGeneZdbID() picks
-        // between them with findAny(), so the gene a record resolves to becomes arbitrary.
+        // Clear the gene_id pairs before deriving them again. These cache the
+        // NCBI-Gene-ID -> ZFIN-gene answer taken from db_link, and db_link moves underneath
+        // them every time the NCBI gene load runs. Without this delete a second run leaves
+        // two gene_id pairs on the same record and Gff3Ncbi.getGeneZdbID() picks between them
+        // with findAny(), so the gene a record resolves to becomes arbitrary.
+        //
+        // In the normal flow deletePreviousGeneration() has already taken the old records and
+        // their pairs, so this usually clears 0. It still has to be here: the GFF3 file may
+        // itself carry a gene_id attribute (it is in persistKeySet), markerAssemblyUpdate.sql
+        // writes gene_id pairs of its own between runs, and this method is not guaranteed to
+        // be reached only through processNcbiGff3().
+        //
         // Done before the records are read back so their lazy attribute collections are
         // populated from the post-delete state.
         int clearedGeneIdPairs = HibernateUtil.currentSession()
