@@ -41,23 +41,53 @@ public class LegacyReportAdapterTest {
     }
 
     @Test
-    public void kvBodyWithArrowProducesFieldBeforeAfterTable() {
+    public void kvBodyWithArrowCollapsesUnchangedAndMarksChangedRows() {
         ReportTable t = LegacyReportAdapter.tryParseKeyValueTable(
             "ZDB ID          : ZDB-GENE-050419-154\n" +
             "Length          : 9069 -> 9069\n" +
             "Pub ZDB ID      : ZDB-PUB-130725-2 -> ZDB-PUB-020723-3\n");
 
-        assertEquals(Arrays.asList("Field", "Before", "After"),
+        // Always Field/Value now — a Before/After pair of columns made every
+        // unchanged field look like it had moved.
+        assertEquals(Arrays.asList("Field", "Value"),
             t.getColumns().stream().map(ReportTable.Column::getTitle).collect(Collectors.toList()));
         assertEquals(3, t.getRows().size());
-        // identifier-style row: value in Before, After blank
+        // identifier-style row (no arrow): bare value, no marker
         assertEquals("ZDB ID",              t.getRows().get(0).get("field"));
-        assertEquals("ZDB-GENE-050419-154", t.getRows().get(0).get("before"));
-        assertEquals("",                    t.getRows().get(0).get("after"));
-        // arrow-style row: split across Before / After
-        assertEquals("Pub ZDB ID",         t.getRows().get(2).get("field"));
-        assertEquals("ZDB-PUB-130725-2",   t.getRows().get(2).get("before"));
-        assertEquals("ZDB-PUB-020723-3",   t.getRows().get(2).get("after"));
+        assertEquals("ZDB-GENE-050419-154", t.getRows().get(0).get("value"));
+        // arrow row with equal sides: collapsed to the single unchanged value
+        assertEquals("Length",              t.getRows().get(1).get("field"));
+        assertEquals("9069",                t.getRows().get(1).get("value"));
+        // arrow row with differing sides: marked, rendered inline
+        assertEquals("\u25cf Pub ZDB ID",                          t.getRows().get(2).get("field"));
+        assertEquals("ZDB-PUB-130725-2 \u2192 ZDB-PUB-020723-3",    t.getRows().get(2).get("value"));
+    }
+
+    @Test
+    public void emptySideOfArrowRendersAsPlaceholderRatherThanBlankCell() {
+        // The NCBI load emits "Annotation Stat : Current -> " when a gene loses its
+        // status, and " : -> Current" when it gains one. The old \\s+ regex split
+        // neither, leaving the literal "Current ->" in one cell and a blank neighbour.
+        ReportTable lost = LegacyReportAdapter.tryParseKeyValueTable(
+            "Annotation Stat : Current -> \n");
+        assertEquals(1, lost.getRows().size());
+        assertEquals("\u25cf Annotation Stat",  lost.getRows().get(0).get("field"));
+        assertEquals("Current \u2192 (none)",   lost.getRows().get(0).get("value"));
+
+        ReportTable gained = LegacyReportAdapter.tryParseKeyValueTable(
+            "Annotation Stat :  -> Current\n");
+        assertEquals(1, gained.getRows().size());
+        assertEquals("\u25cf Annotation Stat",  gained.getRows().get(0).get("field"));
+        assertEquals("(none) \u2192 Current",   gained.getRows().get(0).get("value"));
+    }
+
+    @Test
+    public void bothSidesBlankCollapsesToSinglePlaceholder() {
+        ReportTable t = LegacyReportAdapter.tryParseKeyValueTable("Assemblies : -> \n");
+
+        assertEquals(1, t.getRows().size());
+        assertEquals("Assemblies", t.getRows().get(0).get("field"));
+        assertEquals("(none)",     t.getRows().get(0).get("value"));
     }
 
     @Test
