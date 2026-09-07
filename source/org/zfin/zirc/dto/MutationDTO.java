@@ -32,6 +32,9 @@ public record MutationDTO(
         String mutagenesisStage,
         String mutagenesisProtocol,
         Boolean molecularlyCharacterized,
+        // ZFIN-10450. Free text: the picklist has an Other escape, and the
+        // widget writes that answer into this same field.
+        String inducedBackground,
         // Lethality
         Boolean homozygousLethal,
         String lethalityStageTypical,
@@ -109,6 +112,7 @@ public record MutationDTO(
                 m.getMutagenesisStage(),
                 m.getMutagenesisProtocol(),
                 m.getMolecularlyCharacterized(),
+                m.getInducedBackground(),
                 m.getHomozygousLethal(),
                 m.getLethalityStageTypical(),
                 m.getLethalitySpecificTimepoint(),
