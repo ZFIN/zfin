@@ -129,4 +129,34 @@ describe('assay field order', () => {
             assert.match(String(opts.placeholder), /AB/, `${field} should hint e.g. AB, TU`);
         }
     });
+
+    it('sizes every expected-product box the same way (ZFIN-10408)', () => {
+        // The ask was for consistency, so this asserts the exact set: a new
+        // product-size box added without the shared options, or one of these
+        // losing them, fails here rather than showing up as a form that mixes
+        // widths.
+        const sized: string[] = [];
+        const walk = (node: Elem) => {
+            const opts = node.options ?? {};
+            if (node.scope && opts.boxSize === 'short') {
+                sized.push(node.scope.replace('#/properties/', ''));
+            }
+            (node.elements ?? []).forEach(walk);
+        };
+        walk(snapshot().uiSchema);
+
+        assert.deepEqual(sized.sort(), [
+            'expectedMutDigest',
+            'expectedMutPcr',
+            'expectedWtDigest',
+            'expectedWtPcr',
+            'sslpInducedPcr',
+            'sslpOutcrossedPcr',
+        ]);
+
+        for (const field of sized) {
+            assert.equal(control(field).options?.suffix, 'bp',
+                `${field} should carry the bp suffix outside the box`);
+        }
+    });
 });

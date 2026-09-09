@@ -34,6 +34,21 @@ type RowOptions = {
     helpText?: string;
     infoHref?: string;
     suffix?: string;
+    boxSize?: string;
+};
+
+/**
+ * Named box widths (ZFIN-10408). The point of naming them is that every
+ * "expected product size" box on the form is the same width, which is what
+ * curators asked for — per-field em values would have drifted apart. Add a
+ * token here rather than a one-off style at a call site.
+ *
+ * "short" fits a five-digit base-pair count with room to spare; the suffix, if
+ * any, sits outside the input and inside this width.
+ */
+const BOX_WIDTHS: Record<string, string> = {
+    short: '9em',
+    full: '40em',
 };
 
 function isNumericSchema(schemaType: unknown): boolean {
@@ -60,7 +75,10 @@ function RowControlRenderer({
     const inputId = `fr-${fieldName}`;
     const labelId = `fr-label-${fieldName}`;
     const opts = ((uischema as { options?: RowOptions } | undefined)?.options) ?? {};
-    const { placeholder, helpText, infoHref, suffix } = opts;
+    const { placeholder, helpText, infoHref, suffix, boxSize } = opts;
+    // Unknown tokens fall back to full width rather than collapsing the box:
+    // a typo in the schema should look unstyled, not unusable.
+    const boxWidth = BOX_WIDTHS[boxSize ?? 'full'] ?? BOX_WIDTHS.full;
     const view = viewConfigFrom(config);
 
     // Read-only sources: (a) the whole form is in view mode; (b) the schema
@@ -141,7 +159,7 @@ function RowControlRenderer({
                 )}
             </th>
             <td>
-                <div style={{ maxWidth: '40em' }}>
+                <div style={{ maxWidth: boxWidth }}>
                     {suffix ? (
                         <div className='input-group'>
                             {input}

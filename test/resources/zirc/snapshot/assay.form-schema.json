@@ -280,9 +280,17 @@
       "type" : "Group"
     }, {
       "elements" : [ {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/expectedWtPcr",
         "type" : "Control"
       }, {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/expectedMutPcr",
         "type" : "Control"
       } ],
@@ -381,9 +389,17 @@
         "scope" : "#/properties/enzymeCleavesMut",
         "type" : "Control"
       }, {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/expectedWtDigest",
         "type" : "Control"
       }, {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/expectedMutDigest",
         "type" : "Control"
       } ],
@@ -399,9 +415,17 @@
       "type" : "Group"
     }, {
       "elements" : [ {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/sslpInducedPcr",
         "type" : "Control"
       }, {
+        "options" : {
+          "boxSize" : "short",
+          "suffix" : "bp"
+        },
         "scope" : "#/properties/sslpOutcrossedPcr",
         "type" : "Control"
       } ],
