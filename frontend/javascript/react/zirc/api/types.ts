@@ -43,6 +43,7 @@ export interface MutationDTO {
     mutagenesisStage: string | null;
     mutagenesisProtocol: string | null;
     molecularlyCharacterized: boolean | null;
+    inducedBackground: string | null;
     homozygousLethal: boolean | null;
     lethalityStageTypical: string | null;
     lethalitySpecificTimepoint: string | null;
