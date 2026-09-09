@@ -17,16 +17,36 @@
 
   <Service name="Catalina">
 
+    <!-- maxSwallowSize: how much of an aborted request body Tomcat will read
+         and discard before closing the connection. Left at the 2 MB default,
+         an upload exceeding the multipart limits in web.xml was abandoned
+         mid-stream. Tomcat dropped the connection with roughly 58 MB of a
+         60 MB PDF still in flight, Apache turned the broken upstream response
+         into a bare "502 Bad Gateway", and Spring's 413 never reached the
+         client. The uploader had no way to tell that the file was simply too
+         large (ZFIN-10476).
+
+         Set to the max-request-size declared in web.xml, deliberately, rather
+         than to minus one. Any request small enough that we would have
+         accepted it, including one whose single file part is over the per-file
+         cap, now drains and gets a real 413 with a readable body. A request
+         beyond the total request cap is still cut off, which is the right
+         answer for a body we would never accept and avoids reading unbounded
+         data purely to reject it.
+
+         Keep this in step with max-request-size in home/WEB-INF/web.xml. -->
     <Connector port="@Non-SECUREPORT@" protocol="HTTP/1.1"
                connectionTimeout="20000"
                redirectPort="8443"
                maxParameterCount="1000"
+               maxSwallowSize="104857600"
                />
     <Connector port="@SECUREPORT@" maxHttpHeaderSize="8192"
                proxyPort="443"
                acceptCount="200"
                maxThreads="100"
                maxParameterCount="1000"
+               maxSwallowSize="104857600"
                enableLookups="false" disableUploadTimeout="true"
                SSLEnabled="true" scheme="https" secure="true"
                clientAuth="false" compression="on"
