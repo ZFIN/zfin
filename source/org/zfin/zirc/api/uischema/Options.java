@@ -122,7 +122,18 @@ public record Options(
         String positionField,
         // For the aminoAcidChange widget — the end of the position range.
         // Optional: omit it and the widget renders a single position box.
-        String positionEndField
+        String positionEndField,
+
+        // Named box width for a scalar Control: "short" for a value only a few
+        // characters wide, such as a base-pair count. Omitted means the
+        // default full width.
+        //
+        // A token rather than a CSS length on purpose. ZFIN-10408 asks for
+        // *consistent* sizing across the form, and per-field em values would
+        // drift apart the first time two people picked different ones.
+        // RowControlRenderer owns the token → width mapping, so changing what
+        // "short" means is one edit.
+        String boxSize
 ) {
 
     /**

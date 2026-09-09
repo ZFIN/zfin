@@ -220,6 +220,17 @@ public final class ZircAssayFormSchema {
         // Kept in step with GenotypingAssayStatusComputer.LENGTH_CHECKED_PRIMERS,
         // which flags exactly these five paths.
         Options primerSequenceWithMin = primerSequence.withMinBases(PRIMER_MIN_LENGTH);
+        // Every "expected product size" box on the form (ZFIN-10408): narrow,
+        // with "bp" outside the box. One constant rather than six call sites
+        // because the ask was explicitly for *consistent* sizing -- Yvonne
+        // agreed to widen it from the two PCR-product boxes the ticket names to
+        // every box of this kind, so that the form does not mix widths.
+        //
+        // Presentational only. These stay 2000-char text columns, so a value
+        // like "300, 150" for a two-fragment digest is still accepted; the box
+        // is narrow, not restrictive. Whether they should become numeric-only
+        // is the open half of the ticket, pending a curator meeting.
+        Options productSize = Options.of().withSuffix("bp").withBoxSize("short");
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/assayType",
@@ -282,8 +293,8 @@ public final class ZircAssayFormSchema {
                 // Expected WT/MUT PCR product — shown for every type that
                 // produces a PCR amplicon (everything except sslp).
                 groupRevealedFor(EXPECTED_PCR_TYPES, List.of(
-                        Control.of("#/properties/expectedWtPcr"),
-                        Control.of("#/properties/expectedMutPcr")
+                        new Control("#/properties/expectedWtPcr",  productSize, null),
+                        new Control("#/properties/expectedMutPcr", productSize, null)
                 )),
                 // PCR + sequencing — sits between the PCR products and the
                 // chromatogram-attachments block.
@@ -324,15 +335,15 @@ public final class ZircAssayFormSchema {
                                 Options.of().withWidget("checkbox"), null),
                         new Control("#/properties/enzymeCleavesMut",
                                 Options.of().withWidget("checkbox"), null),
-                        Control.of("#/properties/expectedWtDigest"),
-                        Control.of("#/properties/expectedMutDigest")
+                        new Control("#/properties/expectedWtDigest",  productSize, null),
+                        new Control("#/properties/expectedMutDigest", productSize, null)
                 )),
                 // SSLP's own two PCR products — below the primer pair and above
                 // the gel-image bucket, per the mockup. Not part of the
                 // EXPECTED_PCR_TYPES group, which excludes sslp.
                 groupRevealedFor(SSLP_TYPES, List.of(
-                        Control.of("#/properties/sslpInducedPcr"),
-                        Control.of("#/properties/sslpOutcrossedPcr")
+                        new Control("#/properties/sslpInducedPcr",    productSize, null),
+                        new Control("#/properties/sslpOutcrossedPcr", productSize, null)
                 )),
                 // Attachment buckets — same underlying `attachments` field,
                 // labeled per-workflow via four parallel Controls with
