@@ -9,11 +9,27 @@ import {
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
 import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
-import { DEFAULT_ALPHABET, baseCount, caretAfterNormalize, normalizeSequence } from '../nucleotides';
+import {
+    DEFAULT_ALPHABET,
+    baseCount,
+    caretAfterNormalize,
+    invalidCharacterMessage,
+    invalidCharacters,
+    normalizeSequence,
+} from '../nucleotides';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
 import { ValueDisplay } from '../../components/ValueDisplay';
+
+/**
+ * How long the out-of-alphabet warning stays up, in ms.
+ *
+ * It dismisses on a timer rather than on the next accepted keystroke: the
+ * character after a typo is usually the corrected one, and clearing on it
+ * would pull the message away before it had been read.
+ */
+const WARNING_MS = 4000;
 
 type NucleotideOptions = {
     alphabet?: string;
@@ -27,8 +43,10 @@ type NucleotideOptions = {
 
 /**
  * Constrained DNA-sequence input. Everything typed or pasted is uppercased
- * and reduced to `options.alphabet` (default ACGTN), and the field carries a
- * live base count so a paste that silently lost content reads short.
+ * and reduced to `options.alphabet` (default ACGT), and the field carries a
+ * live base count so a paste that silently lost content reads short. Typing
+ * a character outside the alphabet raises a warning under the field for a
+ * few seconds, so a keystroke that produces nothing says why.
  *
  * Ranks above both TextareaRowRenderer (20) and RowControlRenderer (10), so
  * a Control can keep `options.multi` for its textarea shape and still land
@@ -53,6 +71,14 @@ function NucleotideSequenceRenderer({
     const inputRef = React.useRef<HTMLInputElement & HTMLTextAreaElement>(null);
     // Set during onChange, applied after the controlled re-render paints.
     const caretRef = React.useRef<number | null>(null);
+    const [warning, setWarning] = React.useState<string | null>(null);
+    const warningTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
+    // Don't leave a dismissal pending against an unmounted field — the
+    // lesion form mounts and unmounts these as conditional sections reveal.
+    React.useEffect(() => () => {
+        if (warningTimer.current != null) {clearTimeout(warningTimer.current);}
+    }, []);
 
     React.useLayoutEffect(() => {
         const caret = caretRef.current;
@@ -113,6 +139,17 @@ function NucleotideSequenceRenderer({
         const raw = e.target.value;
         const caret = e.target.selectionStart ?? raw.length;
         caretRef.current = caretAfterNormalize(raw, caret, alphabet);
+        // The keystroke that silently does nothing is the one that needs
+        // explaining; whitespace and margin numbering are dropped by design
+        // and invalidCharacters() already excludes them.
+        if (invalidCharacters(raw, alphabet).length > 0) {
+            setWarning(invalidCharacterMessage(alphabet));
+            if (warningTimer.current != null) {clearTimeout(warningTimer.current);}
+            warningTimer.current = setTimeout(() => {
+                warningTimer.current = null;
+                setWarning(null);
+            }, WARNING_MS);
+        }
         handleChange(path, normalizeSequence(raw, alphabet));
     };
 
@@ -159,6 +196,11 @@ function NucleotideSequenceRenderer({
                             : sizeText(value)}
                         {opts.helpText && <> — {opts.helpText}</>}
                     </small>
+                    {warning && (
+                        <small className='form-text text-danger' role='alert'>
+                            {warning}
+                        </small>
+                    )}
                     {errors && <small className='text-danger'>{errors}</small>}
                 </div>
             </td>
