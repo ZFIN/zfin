@@ -37,6 +37,9 @@ public record MutationDTO(
         String talenSequence1,
         String talenSequence2,
         Boolean molecularlyCharacterized,
+        // ZFIN-10450. Free text: the picklist has an Other escape, and the
+        // widget writes that answer into this same field.
+        String inducedBackground,
         // Lethality
         Boolean homozygousLethal,
         String lethalityStageTypical,
@@ -117,6 +120,7 @@ public record MutationDTO(
                 m.getTalenSequence1(),
                 m.getTalenSequence2(),
                 m.getMolecularlyCharacterized(),
+                m.getInducedBackground(),
                 m.getHomozygousLethal(),
                 m.getLethalityStageTypical(),
                 m.getLethalitySpecificTimepoint(),

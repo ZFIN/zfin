@@ -44,6 +44,7 @@ public final class MutationStatusComputer {
         TALEN_SEQUENCE_1            ("talenSequence1"),
         TALEN_SEQUENCE_2            ("talenSequence2"),
         MOLECULARLY_CHARACTERIZED   ("molecularlyCharacterized"),
+        INDUCED_BACKGROUND          ("inducedBackground"),
         MUTATION_TYPE               ("mutationType"),
         MUTATION_DISCOVERER         ("mutationDiscoverer"),
         MUTATION_INSTITUTION        ("mutationInstitution");
@@ -104,7 +105,7 @@ public final class MutationStatusComputer {
                 Field.MUTATION_DISCOVERER, Field.MUTATION_INSTITUTION);
         FieldStatus mutagenesis = rollup(byField,
                 Field.MUTAGENESIS_STAGE, Field.MUTAGENESIS_PROTOCOL,
-                Field.MOLECULARLY_CHARACTERIZED);
+                Field.MOLECULARLY_CHARACTERIZED, Field.INDUCED_BACKGROUND);
 
         // Genes section is required at the Mutation level: a mutation must
         // declare at least one Gene; if present, each Gene rolls up its own

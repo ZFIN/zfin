@@ -95,6 +95,14 @@ public class Mutation implements Serializable {
     @Column(name = "m_molecularly_characterized")
     private Boolean molecularlyCharacterized;
 
+    /**
+     * Strain background the mutation was made in (ZFIN-10450). Free text
+     * because the form's picklist offers an Other escape, which the
+     * selectWithOther widget writes into this same field.
+     */
+    @Column(name = "m_induced_background")
+    private String inducedBackground;
+
     @Column(name = "m_mutation_type")
     private String mutationType;
 

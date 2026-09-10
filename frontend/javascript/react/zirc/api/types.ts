@@ -46,6 +46,7 @@ export interface MutationDTO {
     talenSequence1: string | null;
     talenSequence2: string | null;
     molecularlyCharacterized: boolean | null;
+    inducedBackground: string | null;
     homozygousLethal: boolean | null;
     lethalityStageTypical: string | null;
     lethalitySpecificTimepoint: string | null;
@@ -127,13 +128,14 @@ export interface AssayDTO {
     expectedWtPcr: string | null;
     expectedMutPcr: string | null;
     sequencingPrimer: string | null;
-    dcapsMismatchPrimer: string | null;
+    dcapsMismatchPrimerChoice: string | null;
     wtSpecificPrimer: string | null;
     mutSpecificPrimer: string | null;
     commonPrimer: string | null;
     kaspGenomicSequence: string | null;
     restrictionEnzymeName: string | null;
     restrictionEnzymeCatalog: string | null;
+    restrictionEnzymeVendor: string | null;
     enzymeCleavesWt: boolean | null;
     enzymeCleavesMut: boolean | null;
     expectedWtDigest: string | null;

@@ -60,6 +60,11 @@
         "title" : "Homozygous Lethal",
         "type" : [ "boolean", "null" ]
       },
+      "inducedBackground" : {
+        "maxLength" : 255,
+        "title" : "Background on which the mutation was induced",
+        "type" : [ "string", "null" ]
+      },
       "lesions" : {
         "items" : {
           "properties" : {
@@ -309,6 +314,13 @@
           "widget" : "yesNoRadio"
         },
         "scope" : "#/properties/molecularlyCharacterized",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "AB", "TU", "WIK", "AB/TU", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/inducedBackground",
         "type" : "Control"
       } ],
       "label" : "Mutagenesis",

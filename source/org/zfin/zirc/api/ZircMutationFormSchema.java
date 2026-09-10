@@ -65,6 +65,20 @@ public final class ZircMutationFormSchema {
             "oocyte", "sperm", "embryo", "larva", "adult", "unknown");
 
     /**
+     * Strain backgrounds offered for "Background on which the mutation was
+     * induced" (ZFIN-10450), in the mockup's order. Not a closed list: the
+     * widget keeps its Other escape, because a submitter may well have used a
+     * background outside these five and the mockup shows Other as the last
+     * entry.
+     *
+     * <p>"unknown" is a standard value rather than an Other answer, matching
+     * MUTAGENESIS_STAGES, so that "we do not know" is one click and reads the
+     * same way everywhere.
+     */
+    private static final List<String> INDUCED_BACKGROUNDS = List.of(
+            "AB", "TU", "WIK", "AB/TU", "unknown");
+
+    /**
      * Submitter-facing mutagenesis-protocol picklist (ZFIN-10402): the whole
      * {@link Mutagen} vocabulary, in the order curators asked for, minus
      * {@link Mutagen#NOT_SPECIFIED} — a submitter always knows which protocol
@@ -138,6 +152,8 @@ public final class ZircMutationFormSchema {
         properties.put("talenSequence1",             StringSchema.of("TALEN sequence 1", 5000));
         properties.put("talenSequence2",             StringSchema.of("TALEN sequence 2", 5000));
         properties.put("molecularlyCharacterized",   BooleanSchema.nullable("Molecularly Characterized"));
+        properties.put("inducedBackground",          StringSchema.of(
+                "Background on which the mutation was induced", 255));
         // Lethality
         properties.put("homozygousLethal",           BooleanSchema.nullable("Homozygous Lethal"));
         properties.put("lethalityStageTypical",      StringSchema.of("Typical Lethality Stage", 255));
@@ -247,7 +263,15 @@ public final class ZircMutationFormSchema {
                                 Rule.showWhenIn("#/properties/mutagenesisProtocol",
                                         TALEN_PROTOCOLS)),
                         new Control("#/properties/molecularlyCharacterized",
-                                Options.of().withWidget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null),
+                        // ZFIN-10450 — last row of the section, per the mockup,
+                        // below Molecularly Characterized. Other stays enabled:
+                        // the widget writes a free-text answer into this same
+                        // field, so there is no companion column.
+                        new Control("#/properties/inducedBackground",
+                                Options.of().withWidget("selectWithOther")
+                                        .withStandardValues(INDUCED_BACKGROUNDS),
+                                null)
                 )),
                 // Genes: same inline-expand pattern as assays.
                 new Group("Genes",
@@ -334,6 +358,8 @@ public final class ZircMutationFormSchema {
                     Mutation::getTalenSequence2,            (m, v) -> m.setTalenSequence2(nucleotides(v))),
             field("/molecularlyCharacterized",
                     Mutation::getMolecularlyCharacterized,  (m, v) -> m.setMolecularlyCharacterized(boolNullable(v))),
+            field("/inducedBackground",
+                    Mutation::getInducedBackground,         (m, v) -> m.setInducedBackground(text(v))),
             // Lethality
             field("/homozygousLethal",
                     Mutation::getHomozygousLethal,          (m, v) -> m.setHomozygousLethal(boolNullable(v))),
