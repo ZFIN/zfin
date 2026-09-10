@@ -37,6 +37,12 @@ public final class MutationStatusComputer {
         ALLELE_DESIGNATION          ("alleleDesignation"),
         MUTAGENESIS_STAGE           ("mutagenesisStage"),
         MUTAGENESIS_PROTOCOL        ("mutagenesisProtocol"),
+        // ZFIN-10475 — moved up from Lesion with the boxes that collect them.
+        // Not required: only two of the eleven protocols ask for each, and
+        // neither is in the schema's `required` list.
+        CRISPR_SEQUENCE             ("crisprSequence"),
+        TALEN_SEQUENCE_1            ("talenSequence1"),
+        TALEN_SEQUENCE_2            ("talenSequence2"),
         MOLECULARLY_CHARACTERIZED   ("molecularlyCharacterized"),
         MUTATION_TYPE               ("mutationType"),
         MUTATION_DISCOVERER         ("mutationDiscoverer"),

@@ -77,30 +77,9 @@ public class Lesion implements Serializable {
     @Column(name = "l_has_large_variant")
     private Boolean hasLargeVariant;
 
-    /**
-     * ZFIN-10400 — where an insertion came from, as a check-all-that-apply
-     * list of stable tokens. ZFIN-10403b cut the list to crispr / talen, the
-     * two mechanisms the mockup asks about; they combine, so this stays
-     * multi-valued. Empty means unanswered.
-     */
-    @Column(name = "l_insertion_origins", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] insertionOrigins = new String[0];
-
-    @Column(name = "l_crispr_sequence")
-    private String crisprSequence;
-
-    /**
-     * TALENs work as a pair — two arms flanking the cut site — so the form
-     * always asks for both sequences rather than one box the curator has to
-     * know to fill twice. Two columns rather than an array: the pair is fixed
-     * at two and each half is separately labelled in the form.
-     */
-    @Column(name = "l_talen_sequence_1")
-    private String talenSequence1;
-
-    @Column(name = "l_talen_sequence_2")
-    private String talenSequence2;
+    // ZFIN-10475 moved the insertion-origin checklist and the CRISPR / TALEN
+    // sequences it revealed onto Mutation, beside the mutagenesis protocol
+    // that already names the mechanism. See Mutation#crisprSequence.
 
     /**
      * Legacy free-text amino-acid box, replaced by the from/to/position

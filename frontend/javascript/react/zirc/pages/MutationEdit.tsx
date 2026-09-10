@@ -19,6 +19,7 @@ import { genesListRendererEntry } from '../schemaForm/renderers/GenesListRendere
 import { lesionsListRendererEntry } from '../schemaForm/renderers/LesionsListRenderer';
 import { phenotypesListRendererEntry } from '../schemaForm/renderers/PhenotypesListRenderer';
 import { autocompleteRendererEntry } from '../schemaForm/renderers/AutocompleteRenderer';
+import { nucleotideSequenceRendererEntry } from '../schemaForm/renderers/NucleotideSequenceRenderer';
 
 export type MutationEditProps = {
     // From data-mutation-id on the JSP mount.
@@ -55,6 +56,9 @@ export const mutationRenderers = [
     lesionsListRendererEntry,
     phenotypesListRendererEntry,
     autocompleteRendererEntry,
+    // ZFIN-10475 put the CRISPR / TALEN reagent boxes in the Mutagenesis
+    // section, so this page now renders sequence fields too.
+    nucleotideSequenceRendererEntry,
 ];
 
 function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
