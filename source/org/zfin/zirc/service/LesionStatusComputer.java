@@ -35,11 +35,6 @@ public final class LesionStatusComputer {
         FIVE_PRIME_FLANK         ("fivePrimeFlank"),
         THREE_PRIME_FLANK        ("threePrimeFlank"),
         HAS_LARGE_VARIANT        ("hasLargeVariant"),
-        INSERTION_ORIGINS        ("insertionOrigins"),
-        INSERTION_ORIGIN_OTHER   ("insertionOriginOther"),
-        CRISPR_SEQUENCE          ("crisprSequence"),
-        TALEN_SEQUENCE           ("talenSequence"),
-        CONSTRUCT_NAME           ("constructName"),
         MUTATED_AMINO_ACIDS      ("mutatedAminoAcids"),
         MUTATED_AMINO_ACIDS_HGVS ("mutatedAminoAcidsHgvs"),
         AA_CHANGE_FROM           ("aaChangeFrom"),
@@ -77,10 +72,10 @@ public final class LesionStatusComputer {
      * at least one must be answered, and until one is, every member shows
      * MISSING.
      *
-     * <p>ZFIN-10400 asks for this on the insertion-origin checklist, and
-     * ZFIN-10379 on "either nucleotide information or amino acid information".
-     * Neither can come from {@link ZircLesionFormSchema#schema()}'s
-     * {@code required} list, which only expresses per-field requirements.
+     * <p>ZFIN-10379 asks for this on "either nucleotide information or amino
+     * acid information", which cannot come from
+     * {@link ZircLesionFormSchema#schema()}'s {@code required} list — that
+     * only expresses per-field requirements.
      *
      * <p>Deliberately a visual indicator only — nothing blocks a save. The
      * ticket defers real submission validation, and asks for a marker that
@@ -89,10 +84,6 @@ public final class LesionStatusComputer {
     private record RequiredGroup(List<String> paths, List<String> lesionTypes) {}
 
     private static final List<RequiredGroup> REQUIRED_GROUPS = List.of(
-            // Now a single field, but still expressed as a group because the
-            // requirement is scoped to one lesion type and the schema's
-            // `required` list is not.
-            new RequiredGroup(List.of("insertionOrigins"), List.of("insertion")),
             // ZFIN-10379: nucleotide information OR amino acid information.
             // Modelled as one flat "any of these" group rather than a
             // disjunction of two sub-groups. The two differ only once a

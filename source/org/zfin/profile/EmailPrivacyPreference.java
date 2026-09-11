@@ -9,13 +9,14 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import java.io.Serializable;
 import java.util.function.Supplier;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "email_privacy_preference")
-public class EmailPrivacyPreference {
+public class EmailPrivacyPreference implements Serializable {
 
     @Id
     @Column(name = "epp_pk_id")

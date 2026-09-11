@@ -70,8 +70,38 @@ public class Mutation implements Serializable {
     @Column(name = "m_mutagenesis_protocol_other")
     private String mutagenesisProtocolOther;
 
+    /**
+     * ZFIN-10475 — the guide sequence used, asked once per mutation next to
+     * the protocol that names the mechanism. Previously collected per lesion
+     * off a separate "the insertion is a consequence of" checklist; that
+     * checklist duplicated the mutagenesis protocol picklist (ZFIN-10402),
+     * and the reagent is a property of how the allele was made, not of each
+     * lesion it produced.
+     */
+    @Column(name = "m_crispr_sequence")
+    private String crisprSequence;
+
+    /**
+     * TALENs cut as a pair of arms flanking the target site, so both are
+     * asked for. Two columns rather than an array: the count is fixed at two
+     * and each half is separately labelled in the form.
+     */
+    @Column(name = "m_talen_sequence_1")
+    private String talenSequence1;
+
+    @Column(name = "m_talen_sequence_2")
+    private String talenSequence2;
+
     @Column(name = "m_molecularly_characterized")
     private Boolean molecularlyCharacterized;
+
+    /**
+     * Strain background the mutation was made in (ZFIN-10450). Free text
+     * because the form's picklist offers an Other escape, which the
+     * selectWithOther widget writes into this same field.
+     */
+    @Column(name = "m_induced_background")
+    private String inducedBackground;
 
     @Column(name = "m_mutation_type")
     private String mutationType;

@@ -77,7 +77,9 @@ public record Options(
         // ["PCR + gel electrophoresis"]). If null, values are used as labels.
         List<String> standardLabels,
         // For selectWithOther — when true, suppress the "Other" option (and
-        // its free-text input). Use for closed enums like assayType.
+        // its free-text input). Use for genuinely closed enums like the
+        // lesion nucleotideChange and phenotype segregation lists —
+        // assayType was one until ZFIN-10406 opened it up.
         Boolean noOther,
         // For the autoSize widget — the sibling field whose sequence length
         // this read-only control displays (e.g. lesionSizeBp derives from
@@ -93,10 +95,6 @@ public record Options(
         // see ZircVocabularyService for the served set. The stored value is
         // the term's ZDB ID, not its display name.
         String vocabulary,
-        // For the checkboxGroup widget — a value that cannot coexist with any
-        // other. Ticking it clears the rest and vice versa. Used for answers
-        // like "unknown" that contradict every specific one.
-        String exclusiveValue,
         // For the nucleotideSequence widget — names the inline base count,
         // e.g. "Lesion size: 13 bp" instead of a bare "13 bp". Set where the
         // count IS the lesion measurement, so the field carries it directly
@@ -107,6 +105,15 @@ public record Options(
         // a pasted FASTA record or numbered sequence normalizes to bases.
         // Defaults client-side to "ACGTN".
         String alphabet,
+        // For the nucleotideSequence widget — the shortest acceptable base
+        // count. Purely advisory: the widget shows an inline message under a
+        // shorter value, it does not block the edit, because the form
+        // autosaves as the submitter types (ZFIN-10407).
+        Integer minBases,
+        // For the vendorCatalog widget — the sibling field holding the vendor.
+        // Named rather than derived so the schema stays the single place field
+        // names are declared, matching the aminoAcidChange options below.
+        String vendorField,
         // For the aminoAcidChange widget — the sibling fields it writes
         // alongside the one it is bound to (which holds the "from" residue).
         // Named rather than derived so the schema stays the single place
@@ -122,7 +129,18 @@ public record Options(
         // attribute and the "Accepted file types: …" helper text; the upload
         // endpoint enforces the same list. Omit (or leave empty) to accept
         // any extension. Source of truth is ZircAttachmentKind.
-        List<String> acceptedExtensions
+        List<String> acceptedExtensions,
+
+        // Named box width for a scalar Control: "short" for a value only a few
+        // characters wide, such as a base-pair count. Omitted means the
+        // default full width.
+        //
+        // A token rather than a CSS length on purpose. ZFIN-10408 asks for
+        // *consistent* sizing across the form, and per-field em values would
+        // drift apart the first time two people picked different ones.
+        // RowControlRenderer owns the token → width mapping, so changing what
+        // "short" means is one edit.
+        String boxSize
 ) {
 
     /**

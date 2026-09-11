@@ -310,8 +310,17 @@
     <!--this will invalidate guest sessions-->
     <!--other sessions are validated via IP and the remember_me token and are valid for 4 days
      or the time in ZFIN_LOGIN_SECONDS -->
+    <!-- Must be finite, not -1. PersistentManager's store expiry compares
+         "timeIdle >= maxInactiveInterval" (StoreBase.processExpires), so a
+         negative maxInactiveInterval makes that test trivially true and every
+         session written to work/sessions is expired and deleted on the next
+         background pass, which silently defeated saveOnRestart and logged
+         everyone out on each context reload. 24h is longer than a work day;
+         the IP / remember-me token above still covers re-authentication
+         beyond it, so this does not shorten how long a login effectively
+         lasts. -->
     <session-config>
-        <session-timeout>-1</session-timeout>
+        <session-timeout>1440</session-timeout>
     </session-config>
 
     <!-- Treat every .jsp file's source bytes AND its rendered output as

@@ -85,9 +85,17 @@ SetEnvIf Remote_Addr "(87.245.153.182)|(204.251.10.202)|(155.230.158.26)|(38.99.
   # ".latest.*" aliases keep a stable name across builds (referenced by static
   # HTML pages), so they must NOT be long-cached or clients get stale bundles
   # after a deploy. Force revalidation on just these files.
+  #
+  # This matters more than it looks: zfin-common.latest.js carries webpack's
+  # runtime chunk map, so a stale copy keeps resolving OLD hashed chunk names
+  # and no amount of redeploying dist/ reaches the browser. Diagnosed the hard
+  # way in ZFIN-10407, where a client pinned react.<oldhash>.js for weeks.
+  #
+  # "always" so it applies to 304s too, not only 2xx: a revalidation reply that
+  # carried no Cache-Control would let the client fall back to ExpiresDefault.
   <FilesMatch "\.latest\.(css|js)$">
     ExpiresActive Off
-    Header set Cache-Control "no-cache, must-revalidate"
+    Header always set Cache-Control "no-cache, must-revalidate"
   </FilesMatch>
 </Directory>
 
