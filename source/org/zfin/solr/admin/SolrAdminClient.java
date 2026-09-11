@@ -59,6 +59,7 @@ public final class SolrAdminClient {
     /** Emit an in-progress progress line at most this often while polling. */
     private static final Duration SNAPSHOT_PROGRESS_LOG_INTERVAL = Duration.ofSeconds(60);
 
+    private final String solrBase;      // http://host:port/solr
     private final String coreBaseUrl;   // http://host:port/solr/<core>/
     private final String adminBaseUrl;  // http://host:port/solr/admin/
     private final String core;
@@ -68,6 +69,7 @@ public final class SolrAdminClient {
         .build();
 
     private SolrAdminClient(String solrBase, String core) {
+        this.solrBase     = solrBase;
         this.core         = core;
         this.coreBaseUrl  = solrBase + "/" + core + "/";
         this.adminBaseUrl = solrBase + "/admin/";
@@ -89,10 +91,31 @@ public final class SolrAdminClient {
         return new SolrAdminClient(solr, core);
     }
 
+    /**
+     * Same Solr endpoint, different core. The reindex orchestrator builds one
+     * of these for the staging core while keeping the live-core client for the
+     * final SWAP, so the two never get confused for one another.
+     */
+    public SolrAdminClient forCore(String otherCore) {
+        return new SolrAdminClient(solrBase, otherCore);
+    }
+
+    /** The core this client acts on. */
+    public String core() {
+        return core;
+    }
+
+    /** {@code http://host:port/solr/<core>/} — what SolrJ wants as its base URL. */
+    public String coreBaseUrl() {
+        return coreBaseUrl;
+    }
+
     // ---------- index lifecycle --------------------------------------------
 
     /**
-     * Initial wipe. POST the delete-by-query as the request body — Solr 9
+     * Delete every document in this core. No longer part of the reindex run,
+     * which builds into a staging core instead (ZFIN-10497); kept as an admin
+     * primitive for ad-hoc use. POST the delete-by-query as the request body — Solr 9
      * disabled {@code stream.body} by default, so the query-param form returns
      * HTTP 400 without {@code -Dsolr.enableStreamBody=true}.
      */
@@ -193,6 +216,109 @@ public final class SolrAdminClient {
             Thread.sleep(5000);
         }
         throw new RuntimeException("Solr core never came back up after RELOAD");
+    }
+
+    // ---------- core lifecycle (staging / swap) -----------------------------
+
+    /**
+     * Whether a core of this name is loaded. Uses {@code STATUS} for a single
+     * core: Solr answers 200 with an empty {@code status.<name>} block for an
+     * unknown core rather than erroring, so presence is decided on the block
+     * having contents (an {@code instanceDir}), not on the HTTP code.
+     */
+    public boolean coreExists(String name) throws Exception {
+        URI uri = new URIBuilder(adminBaseUrl + "cores")
+            .addParameter("action", "STATUS")
+            .addParameter("core", name)
+            .addParameter("wt", "json")
+            .build();
+        JsonNode status = mapper.readTree(get(uri, GET_TIMEOUT)).path("status").path(name);
+        return !status.path("instanceDir").asText("").isBlank();
+    }
+
+    /**
+     * Create a core from a named configset. The configset ships in the image
+     * ({@code /opt/solr/server/solr/configsets/<configSet>}) and carries the
+     * DIH jar and the JDBC driver in its {@code lib}, so a core created this
+     * way can run the same imports as the live one.
+     */
+    public void createCore(String name, String configSet) throws Exception {
+        logger.info("  ... creating core '{}' from configset '{}'", name, configSet);
+        URI uri = new URIBuilder(adminBaseUrl + "cores")
+            .addParameter("action", "CREATE")
+            .addParameter("name", name)
+            .addParameter("configSet", configSet)
+            .addParameter("wt", "json")
+            .build();
+        get(uri, RELOAD_TIMEOUT);
+    }
+
+    /**
+     * Unload a core, optionally deleting its data directory. Deleting is the
+     * point when recycling a staging core — without it the next run would
+     * index on top of the previous run's documents.
+     */
+    public void unloadCore(String name, boolean deleteIndex) throws Exception {
+        logger.info("  ... unloading core '{}' (deleteIndex={})", name, deleteIndex);
+        URI uri = new URIBuilder(adminBaseUrl + "cores")
+            .addParameter("action", "UNLOAD")
+            .addParameter("core", name)
+            .addParameter("deleteIndex", String.valueOf(deleteIndex))
+            .addParameter("deleteDataDir", String.valueOf(deleteIndex))
+            .addParameter("deleteInstanceDir", String.valueOf(deleteIndex))
+            .addParameter("wt", "json")
+            .build();
+        get(uri, RELOAD_TIMEOUT);
+    }
+
+    /**
+     * Atomically exchange the names of two cores. This is the publish step: the
+     * freshly built staging index takes over the live name, and the index that
+     * was live moves aside under the staging name, where it stays as a rollback
+     * until the next run recycles it.
+     *
+     * <p>Standalone-only. There is no SolrCloud collection alias here to flip —
+     * see the class comment on the reindex orchestrator.
+     */
+    public void swapCores(String a, String b) throws Exception {
+        logger.info("  ... swapping cores '{}' <-> '{}'", a, b);
+        URI uri = new URIBuilder(adminBaseUrl + "cores")
+            .addParameter("action", "SWAP")
+            .addParameter("core", a)
+            .addParameter("other", b)
+            .addParameter("wt", "json")
+            .build();
+        get(uri, RELOAD_TIMEOUT);
+    }
+
+    /**
+     * Document count per {@code category} for this core, as a facet over the
+     * whole index. The reindex gate compares these between the staging core and
+     * the live one; {@code category} is the field the site's own facets are
+     * built on, so a category missing here is a category missing from search.
+     *
+     * <p>Returns an empty map for an empty index rather than throwing —
+     * "no documents at all" is a legitimate reading that the caller decides
+     * what to do about.
+     */
+    public java.util.Map<String, Long> categoryCounts() throws Exception {
+        URI uri = new URIBuilder(coreBaseUrl + "select")
+            .addParameter("q", "*:*")
+            .addParameter("rows", "0")
+            .addParameter("facet", "true")
+            .addParameter("facet.field", "category")
+            .addParameter("facet.limit", "-1")
+            .addParameter("facet.mincount", "1")
+            .addParameter("wt", "json")
+            .build();
+        JsonNode counts = mapper.readTree(get(uri, GET_TIMEOUT))
+            .path("facet_counts").path("facet_fields").path("category");
+        // Solr returns a flat [name, count, name, count, ...] array here.
+        var out = new java.util.LinkedHashMap<String, Long>();
+        for (int i = 0; i + 1 < counts.size(); i += 2) {
+            out.put(counts.get(i).asText(), counts.get(i + 1).asLong());
+        }
+        return out;
     }
 
     // ---------- backup / restore -------------------------------------------
