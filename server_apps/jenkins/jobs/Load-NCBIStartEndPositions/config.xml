@@ -1,7 +1,37 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <project>
   <actions/>
-  <description></description>
+  <description>Loads GRCz11 gene start/end coordinates from NCBI into
+sequence_feature_chromosome_location_generated, under location source
+'NCBIStartEndLoader'.
+
+Runs server_apps/data_transfer/NCBIStartEnd/NCBIStartEnd.pl, which downloads
+GCF_000002035.6_GRCz11_feature_table.txt.gz from NCBI RefSeq, keeps rows where
+feature=gene on the Primary Assembly with numeric coordinates, then
+loadNCBIStartEnd.sql deletes every existing NCBIStartEndLoader row and re-inserts
+by joining the file's NCBI Gene IDs to db_link on ZDB-FDBCONT-040412-1.
+
+Because it rebuilds from current db_link on every run, its rows cannot carry a
+stale gene/accession pairing forward - unlike Load-NCBI-GFF3-File, whose upsert is
+keyed on accession alone and never revisits the gene. That is why ZFIN-10461's
+reconciliation is scoped to NCBILoader and not to this source.
+
+NOT the same job as Load-NCBI-GFF3-File: this one is GRCz11 and parses a RefSeq
+feature table; that one is GRCz12tu and parses a GFF3.
+
+Caveat: GRCz11 has been retired by NCBI into all_assembly_versions/suppressed/.
+A suppressed assembly is not re-annotated, so the input file is frozen (mtime
+2024-09-12) and each run re-loads the same 2024 coordinates. If GRCz11 start/end
+positions are being retired at ZFIN, retire this job rather than keep it pointed
+at a suppressed assembly.
+
+Schedule comes from server_apps/jenkins/trigger.production.properties
+(Load-NCBIStartEndPositions=2 22 * * 5, i.e. weekly, Friday 22:02).
+
+History: failed silently every week from 2025-05-23 until 2026-09-01. NCBI had
+moved the assembly path, and the script's error handler called
+ZFINPerlModules-&gt;sendMailWithAttachedReport without loading the module, so the
+failure email was never sent - only a red build.</description>
   <keepDependencies>false</keepDependencies>
   <properties/>
   <scm class="hudson.scm.NullSCM"/>
