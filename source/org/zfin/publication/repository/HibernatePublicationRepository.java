@@ -865,14 +865,43 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         return query.list();
     }
 
+    /**
+     * Find publications by DOI, tolerating however the DOI happens to be stored.
+     *
+     * <p>TEMPORARY SHAPE -- see workbench/doi-normalization-dedupe-ticket.md. Both the
+     * native-query indirection and the List return type exist only because pub_doi cannot yet be
+     * trusted, and both should be removed once it can:</p>
+     *
+     * <ul>
+     *   <li>The stored values are normalized as of release 1185, but nothing stops new
+     *       resolver-prefixed values arriving -- Citexplore writes whatever Europe PMC returns
+     *       with no validation. Until that write path is fixed and a format constraint added,
+     *       stripping prefixes at read time is still required.</li>
+     *   <li>Four DOIs currently map to two publications each, so this has to return a List and
+     *       GafService.getPublication has to reject the ambiguous case. Once those are
+     *       adjudicated and a unique index on lower(pub_doi) is in place, this returns a single
+     *       Publication and that branch goes away.</li>
+     * </ul>
+     *
+     * <p>The whole method then collapses to:</p>
+     * <pre>
+     *   return HibernateUtil.currentSession()
+     *       .createQuery("from Publication where lower(doi) = :doi", Publication.class)
+     *       .setParameter("doi", PublicationService.normalizeDoi(doi))
+     *       .list();
+     * </pre>
+     *
+     * <p>lower() survives that simplification because the column deliberately preserves the
+     * publisher's registered case (10.1091/mbc.E22-01-0015); the unique index is functional on
+     * lower(pub_doi) for the same reason.</p>
+     */
     public List<Publication> getPublicationByDoi(String doi) {
         String normalized = PublicationService.normalizeDoi(doi);
         if (normalized == null) {
             return List.of();
         }
-        // pub_doi is free text: most rows hold a bare "10.x/..." DOI, but a few hundred were
-        // entered as resolver URLs ("https://doi.org/10.x/...", "doi.org/10.x/...", "doi:10.x/...").
-        // DOIs are also case-insensitive by spec, so both sides are folded before comparing.
+        // Two queries rather than one: the prefix-stripping has to happen in SQL, and expressing
+        // it in HQL is not possible, so resolve to zdbIDs natively and then load the entities.
         List<String> zdbIDs = HibernateUtil.currentSession().createNativeQuery("""
                 select zdb_id from publication
                 where pub_doi is not null
