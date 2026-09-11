@@ -51,6 +51,14 @@ public class GafErrorSummary {
         if (message.startsWith("No pub found for pmid:")) {
             return "Publication not found for PMID";
         }
+        // Normalize: strip the specific DOI so every unmatched DOI lands in one bucket rather
+        // than creating a separate one-row category per DOI (ZFIN-10358).
+        if (message.startsWith("No pub found for DOI:")) {
+            return "Publication not found for DOI";
+        }
+        if (message.startsWith("Multiple pubs found for DOI:")) {
+            return "Multiple publications share the cited DOI";
+        }
         // Normalize: strip the specific GO_REF so all unknown-goref errors land in one bucket.
         if (message.startsWith("Goref ID is not known or loaded")) {
             return "Goref ID is not known or loaded";

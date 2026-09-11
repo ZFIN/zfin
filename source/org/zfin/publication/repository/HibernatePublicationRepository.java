@@ -866,9 +866,26 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public List<Publication> getPublicationByDoi(String doi) {
-        String hql = "from Publication where doi = :doi";
+        String normalized = PublicationService.normalizeDoi(doi);
+        if (normalized == null) {
+            return List.of();
+        }
+        // pub_doi is free text: most rows hold a bare "10.x/..." DOI, but a few hundred were
+        // entered as resolver URLs ("https://doi.org/10.x/...", "doi.org/10.x/...", "doi:10.x/...").
+        // DOIs are also case-insensitive by spec, so both sides are folded before comparing.
+        List<String> zdbIDs = HibernateUtil.currentSession().createNativeQuery("""
+                select zdb_id from publication
+                where pub_doi is not null
+                  and regexp_replace(lower(btrim(pub_doi)), '^(https?://)?(dx[.])?doi[.]org/|^doi:', '') = :doi
+                """, String.class)
+            .setParameter("doi", normalized)
+            .list();
+        if (zdbIDs.isEmpty()) {
+            return List.of();
+        }
+        String hql = "from Publication where zdbID in (:zdbIDs)";
         Query<Publication> query = HibernateUtil.currentSession().createQuery(hql, Publication.class);
-        query.setParameter("doi", doi);
+        query.setParameterList("zdbIDs", zdbIDs);
         return query.list();
     }
 
