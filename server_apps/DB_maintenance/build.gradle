@@ -181,9 +181,13 @@ task solrIndex(type: JavaExec) {
 // release Lucene state. Replaces the prior `curl dataimport?full-import`
 // invocation from buildfiles/solr-ant.xml.
 //
+// Builds into <core>_staging and publishes with an atomic CoreAdmin SWAP
+// once a per-category check passes, so the live index stays complete for
+// the whole run (ZFIN-10497).
+//
 //   gradle solrReindex
 //   gradle solrReindex -PsolrResumeFrom=construct   # skip until 'construct'
-//   gradle solrReindex -PsolrNoClean=true           # skip initial wipe
+//   gradle solrReindex -PsolrNoClean=true           # reuse the staging core
 task solrReindex(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     mainClass = 'org.zfin.solr.indexer.SolrReindexOrchestrator'
