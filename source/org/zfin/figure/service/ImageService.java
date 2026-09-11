@@ -54,6 +54,9 @@ public class ImageService {
     private final static String CONVERTED_EXTENSION = "jpg";
     // ImageIO's ~0.75 default is visibly lossy on confocal fluorescence detail.
     private final static float JPEG_QUALITY = 0.9f;
+    // An uploaded filename is curator-supplied, so its extension is only pasted into a
+    // path when it looks like a plain word.
+    private final static Pattern SAFE_EXTENSION = Pattern.compile("\\w{1,10}");
 
 
     public static Image processImage(Figure figure, MultipartFile file, Person owner, String publicationZdbId) throws IOException {
@@ -147,9 +150,11 @@ public class ImageService {
             "create new record", image.getZdbID(), null);
 
         // Re-encode rather than copy when the source format is not web-safe, so the
-        // stored bytes always match the .jpg extension recorded above.
+        // stored bytes always match the .jpg extension recorded above. The upload itself
+        // is kept alongside the JPEG: re-encoding is lossy, and for a TIFF the original is
+        // the only full-resolution copy that will ever exist.
         if (convertToJpeg) {
-            copyAsJpeg(imageStream, destinationFile);
+            copyAsJpeg(imageStream, destinationFile, archivalDestination(destinationBasename, sourceExtension));
         } else {
             Files.copy(imageStream, destinationFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
         }
@@ -163,6 +168,36 @@ public class ImageService {
         }
 
         return image;
+    }
+
+    /**
+     * Whether a stored filename names a format a browser refuses to render, and so needs
+     * re-encoding. Drives both the upload path and {@link ImageFormatConversionTask}'s
+     * selection of legacy rows, so the two can never disagree about what counts as broken.
+     */
+    public static boolean needsJpegConversion(String filename) {
+        String extension = FilenameUtils.getExtension(filename);
+        return !WEB_SAFE_EXTENSIONS.contains(extension == null ? "" : extension.toLowerCase());
+    }
+
+    /**
+     * The same name with a lowercase .jpg extension -- what a converted row's three
+     * filename columns become.
+     */
+    public static String jpegFilename(String filename) {
+        return FilenameUtils.removeExtension(filename) + FilenameUtils.EXTENSION_SEPARATOR + CONVERTED_EXTENSION;
+    }
+
+    /**
+     * Re-encode an existing file as JPEG at full size. The source is left untouched: for
+     * the legacy TIFFs this is the only archival copy, and re-encoding is lossy.
+     */
+    public static void convertImageToJpeg(File sourceFile, File destinationFile) throws IOException {
+        BufferedImage source = readImage(sourceFile);
+        if (source == null) {
+            throw new IOException("Unable to read image for JPEG conversion: " + sourceFile.getAbsolutePath());
+        }
+        writeJpeg(toRgb(source), destinationFile);
     }
 
     public static String convertImageToMedium(String imageFilename, String mediumFilename, boolean previewCommandOnly) throws IOException {
@@ -281,14 +316,33 @@ public class ImageService {
     }
 
     /**
-     * Decode the incoming stream and store it as JPEG. The stream is spooled to a temp
-     * file first because {@link #readImage} needs a File to retry alternate ImageIO
-     * readers with, which a one-shot InputStream cannot support.
+     * Where the untouched upload is kept when we re-encode it: the same folder and
+     * basename as the derivatives, distinguished only by the source extension. That is
+     * already how the legacy TIFFs sit on disk next to their derivatives, so the repair
+     * task and the upload path end up with identical layouts. Null when the extension
+     * isn't safe to paste into a path, in which case nothing is archived.
      */
-    private static void copyAsJpeg(InputStream imageStream, File destinationFile) throws IOException {
+    private static File archivalDestination(String destinationBasename, String sourceExtension) {
+        if (sourceExtension == null || !SAFE_EXTENSION.matcher(sourceExtension).matches()) {
+            return null;
+        }
+        return new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(),
+            destinationBasename + FilenameUtils.EXTENSION_SEPARATOR + sourceExtension);
+    }
+
+    /**
+     * Decode the incoming stream and store it as JPEG, keeping the original bytes at
+     * archivalFile. The stream is spooled to a temp file first because {@link #readImage}
+     * needs a File to retry alternate ImageIO readers with, which a one-shot InputStream
+     * cannot support -- and having it on disk is what makes archiving the original
+     * possible at all. The archival copy is written before the conversion so that an
+     * undecodable upload still leaves its bytes behind rather than being discarded.
+     */
+    private static void copyAsJpeg(InputStream imageStream, File destinationFile, File archivalFile) throws IOException {
         File sourceCopy = Files.createTempFile("zfin-image-", ".tmp").toFile();
         try {
             Files.copy(imageStream, sourceCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            archiveOriginal(sourceCopy, archivalFile);
             BufferedImage source = readImage(sourceCopy);
             if (source == null) {
                 throw new IOException("Unable to read image for JPEG conversion: " + destinationFile.getName());
@@ -296,6 +350,23 @@ public class ImageService {
             writeJpeg(toRgb(source), destinationFile);
         } finally {
             FileUtils.deleteQuietly(sourceCopy);
+        }
+    }
+
+    /**
+     * Keep the pre-conversion bytes. A failure here is logged rather than thrown: the
+     * JPEG the pages actually render is what the upload owes the curator, and losing the
+     * archival copy should not fail the upload or roll back the image record.
+     */
+    private static void archiveOriginal(File sourceCopy, File archivalFile) {
+        if (archivalFile == null) {
+            return;
+        }
+        try {
+            FileUtils.copyFile(sourceCopy, archivalFile);
+            log.info("Archived pre-conversion original: " + archivalFile.getAbsolutePath());
+        } catch (IOException e) {
+            log.error("Could not archive pre-conversion original: " + archivalFile.getAbsolutePath(), e);
         }
     }
 
