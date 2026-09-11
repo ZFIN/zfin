@@ -99,6 +99,35 @@ class ImageServiceSpec extends AbstractZfinIntegrationSpec {
     }
 
 
+    def "A TIFF upload is stored as JPEG, with the original TIFF kept alongside it"() {
+        when: "a TIFF image is uploaded"
+        def zdbId = "ZDB-PUB-110609-15"
+        def source = new File("test/resources/540x1130.tif")
+        Image image = ImageService.processImage(figure, source.path, false, Image.NOT_SPECIFIED, zdbId)
+
+        File imageFile = new File(imageLoadUp, image.imageFilename)
+        File thumbnailFile = new File(imageLoadUp, image.thumbnail)
+        File mediumFile = new File(imageLoadUp, image.medium)
+        File archivedOriginal = new File(imageLoadUp, image.imageFilename.replaceFirst(/\.jpg$/, ".tif"))
+        waitFor(thumbnailFile::exists, 5000) && waitFor(mediumFile::exists, 5000)
+
+        imageFile.deleteOnExit()
+        thumbnailFile.deleteOnExit()
+        mediumFile.deleteOnExit()
+        archivedOriginal.deleteOnExit()
+
+        then: "all three stored files are JPEGs a browser can render"
+        image.imageFilename.endsWith(".jpg")
+        image.thumbnail.endsWith(".jpg")
+        image.medium.endsWith(".jpg")
+        imageFile.exists() && thumbnailFile.exists() && mediumFile.exists()
+
+        and: "the untouched TIFF is kept for its full resolution"
+        archivedOriginal.exists()
+        archivedOriginal.bytes == source.bytes
+    }
+
+
     /* Usage: waitFor(time) { condition }
     Loops over the condition, waiting for it to be true. If the condition becomes true before the timeout (in milliseconds)
     expires, the function quits immediately and returns true. If the condition is still false as the timeout expires, the

@@ -24,10 +24,17 @@
 
 <c:choose>
     <c:when test="${image.videoStill}">
-        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/${filename}">
+        <%-- A still whose img_image names the movie has no picture to poster with and no
+             video row to hang a source off, so fall back to the thumbnail and serve the
+             movie out of the image load-up area. --%>
+        <c:set var="poster" value="${image.inlineVideo ? image.thumbnail : filename}"/>
+        <video controls ${autoplay} loop height="500" poster="/imageLoadUp/${poster}">
             <c:forEach var="video" items="${image.videos}">
                 <source src="/videoLoadUp/${video.videoFilename}"/>
             </c:forEach>
+            <c:if test="${image.inlineVideo}">
+                <source src="/imageLoadUp/${image.imageFilename}"/>
+            </c:if>
             This browser does not support embedded videos.
         </video>
     </c:when>

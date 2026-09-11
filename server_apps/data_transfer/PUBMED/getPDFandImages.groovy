@@ -252,12 +252,36 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
                 return
             }
             println (image)
-            String fileNameNoExtension = FilenameUtils.removeExtension(image)
-            makeThumbnailAndMediumImage(image, fileNameNoExtension, zdbId, pubYear)
-            String extension = FilenameUtils.getExtension(image)
+
+            // DOWNLOADABLE_EXTENSIONS accepts tif/tiff, so this script can put a figure
+            // on disk in a format no browser will render. Sampled PMC packages ship
+            // figures as .jpg/.webp and no TIFF has been observed arriving this way, so
+            // this is a guard on a reachable path rather than a fix for something seen in
+            // the wild: re-encode to JPEG and load the JPEG, so we can never record a
+            // filename the site cannot display. The download stays on disk beside it --
+            // it carries resolution the JPEG does not, and it is cheap to keep.
+            //
+            // Anything ImageIO cannot decode is loaded exactly as before. Video stills
+            // reach this table too (see load_figs_and_images.sql), and they are not images
+            // to re-encode -- falling back rather than skipping keeps them loading.
+            String storedImage = image
+            if (ImageService.needsJpegConversion(image)) {
+                try {
+                    String convertedImage = ImageService.jpegFilename(image)
+                    ImageService.convertImageToJpeg(imageFile, new File(imageFilePath, convertedImage))
+                    storedImage = convertedImage
+                    println("  converted to $storedImage (keeping $image)")
+                } catch (IOException e) {
+                    println("  not a convertible image, loading '$image' as-is: " + e.getMessage())
+                }
+            }
+
+            String fileNameNoExtension = FilenameUtils.removeExtension(storedImage)
+            makeThumbnailAndMediumImage(storedImage, fileNameNoExtension, zdbId, pubYear)
+            String extension = FilenameUtils.getExtension(storedImage)
             String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
             String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
-            FIGS_TO_LOAD.add([zdbId, pmcId, image, label, caption, pubYear + "/" + zdbId + "/" + image,
+            FIGS_TO_LOAD.add([zdbId, pmcId, storedImage, label, caption, pubYear + "/" + zdbId + "/" + storedImage,
                                  pubYear + "/" + zdbId + "/" + thumbnailFilename,
                                  pubYear + "/" + zdbId + "/" + mediumFileName].join('|'))
         }

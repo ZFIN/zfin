@@ -170,6 +170,19 @@ public class Image implements Serializable {
         return zdbID.hashCode();
     }
 
+    /**
+     * Whether the movie for this still is img_image itself rather than a row in the video
+     * table. Two images from 2000 predate that table: their img_image names an .mp4 that
+     * sits in the image load-up area beside the still, and nothing hangs a video row off
+     * them. Left unhandled, the rendered element points its poster at the movie and
+     * carries no source at all, so it neither draws nor plays.
+     */
+    public boolean isInlineVideo() {
+        return Boolean.TRUE.equals(videoStill)
+            && (videos == null || videos.isEmpty())
+            && Video.isVideoFilename(imageFilename);
+    }
+
     public String getDisplayedImageFilename() {
         if (imageWithAnnotationsFilename != null && !imageWithAnnotationsFilename.equals("")) {
             return imageWithAnnotationsFilename;
