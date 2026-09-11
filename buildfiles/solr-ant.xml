@@ -44,9 +44,17 @@
          issues a core RELOAD between heavy/medium/light batches to release
          Lucene state, and commits once at the end. Replaces the prior
          single-shot curl to DIH's full-import — that approach OOM'd around
-         1.9M docs on Solr 9 (ZFIN-10171). For per-entity invocation,
-         resumeFrom recovery, or no-clean appending, invoke gradle solrReindex
-         directly; see reference/solr-reindex.md. -->
+         1.9M docs on Solr 9 (ZFIN-10171).
+
+         The work happens in a <core>_staging core and goes live via an
+         atomic CoreAdmin SWAP, gated on a per-category comparison against
+         the index it would replace (ZFIN-10497). Note that check-indexer
+         and backup-solr-index, which build-solr-index-jenkins runs after
+         this target, therefore see the already-published index.
+
+         For per-entity invocation, resumeFrom recovery, or continuing into
+         an existing staging core, invoke gradle solrReindex directly; see
+         reference/solr-reindex.md. -->
     <target name="build-solr-index">
         <exec executable="${SOURCEROOT}/gradlew" failonerror="true" dir="${SOURCEROOT}">
             <arg value="solrReindex"/>
