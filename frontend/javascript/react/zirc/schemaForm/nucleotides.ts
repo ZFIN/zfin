@@ -74,3 +74,44 @@ export function caretAfterNormalize(
 export function baseCount(raw: string, alphabet: string = DEFAULT_ALPHABET): number {
     return normalizeSequence(raw, alphabet).length;
 }
+/**
+ * Characters that `normalizeSequence` drops on purpose and which should not
+ * be reported as mistakes.
+ *
+ * Whitespace and digits are how sequence arrives from the outside world —
+ * space-grouped in tens, wrapped across lines, numbered in the left margin —
+ * so dropping them is the feature, not a typo being swallowed. FASTA
+ * description lines are handled a level up, by line, for the same reason.
+ */
+const FORMATTING = /[\s\d]/;
+
+/**
+ * The distinct out-of-alphabet characters in `raw`, in the order they first
+ * appear, ignoring the formatting `normalizeSequence` is meant to discard.
+ *
+ * This is what separates "your paste was tidied up" from "the key you just
+ * pressed did nothing". The renderer's value is already normalized, so on a
+ * keystroke `raw` is a clean sequence plus whatever was just typed, and
+ * anything this returns came from that keystroke.
+ */
+export function invalidCharacters(raw: string, alphabet: string = DEFAULT_ALPHABET): string[] {
+    const accepted = alphabet.toUpperCase();
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const line of raw.split(/\r?\n/)) {
+        if (/^\s*[>;]/.test(line)) {continue;}
+        for (const ch of line) {
+            if (FORMATTING.test(ch)) {continue;}
+            if (accepted.indexOf(ch.toUpperCase()) !== -1) {continue;}
+            if (seen.has(ch)) {continue;}
+            seen.add(ch);
+            out.push(ch);
+        }
+    }
+    return out;
+}
+
+/** The message shown under a field when someone types outside its alphabet. */
+export function invalidCharacterMessage(alphabet: string = DEFAULT_ALPHABET): string {
+    return `${alphabet.toUpperCase()} only allowed characters`;
+}

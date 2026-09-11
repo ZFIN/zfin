@@ -88,6 +88,77 @@ describe('nucleotideSequence widget', () => {
         });
         h.cleanupFetch();
     });
+
+    it('says why a typed character vanished, and names the alphabet', async () => {
+        const h = renderForm({
+            schema: stringSchema('deletedSequence'),
+            uischema: control('nucleotideSequence', 'deletedSequence'),
+            data: { deletedSequence: 'ACG' },
+        });
+        fireEvent.change(screen.getByLabelText('deletedSequence'), { target: { value: 'ACGX' } });
+
+        await waitFor(() => {
+            assert.ok(screen.getByRole('alert'), 'expected an out-of-alphabet warning');
+        });
+        assert.match(screen.getByRole('alert').textContent ?? '', /ACGT only allowed characters/);
+        h.cleanupFetch();
+    });
+
+    it('names the widened alphabet when the Control declares one', async () => {
+        const h = renderForm({
+            schema: stringSchema('crisprSequence'),
+            uischema: control('nucleotideSequence', 'crisprSequence', { alphabet: 'ACGTN' }),
+            data: { crisprSequence: '' },
+        });
+        fireEvent.change(screen.getByLabelText('crisprSequence'), { target: { value: 'ACGTNX' } });
+
+        await waitFor(() => {
+            assert.match(screen.getByRole('alert').textContent ?? '',
+                /ACGTN only allowed characters/);
+        });
+        h.cleanupFetch();
+    });
+
+    it('stays quiet when a paste only loses formatting', async () => {
+        const h = renderForm({
+            schema: stringSchema('deletedSequence'),
+            uischema: control('nucleotideSequence', 'deletedSequence', { multi: true }),
+            data: { deletedSequence: '' },
+        });
+        fireEvent.change(screen.getByLabelText('deletedSequence'),
+            { target: { value: '>seq1 header\n   1  acgt acgt\n   9  ggtt aacc' } });
+
+        await waitFor(() => {
+            assert.equal(h.latest().deletedSequence, 'ACGTACGTGGTTAACC');
+        });
+        assert.equal(screen.queryAllByRole('alert').length, 0,
+            'tidying up a pasted FASTA is not a user error');
+        h.cleanupFetch();
+    });
+
+    // Real timers: the renderer's dismissal is a plain setTimeout, and
+    // node:test's mock timers replace the global setTimeout that waitFor
+    // itself polls on, so faking them here deadlocks the test.
+    it('withdraws the warning on its own after a few seconds', async () => {
+        const h = renderForm({
+            schema: stringSchema('deletedSequence'),
+            uischema: control('nucleotideSequence', 'deletedSequence'),
+            data: { deletedSequence: '' },
+        });
+        fireEvent.change(screen.getByLabelText('deletedSequence'), { target: { value: 'X' } });
+        await waitFor(() => {
+            assert.ok(screen.getByRole('alert'));
+        });
+
+        // Count, not the node itself: a failing assert.equal(node, null)
+        // makes node:assert deep-inspect a jsdom element — which reaches
+        // ownerDocument and defaultView — and waitFor would do that on
+        // every poll until the timer fired, which exhausts memory.
+        await waitFor(() => {
+            assert.equal(screen.queryAllByRole('alert').length, 0);
+        }, { timeout: 8000, interval: 250 });
+        h.cleanupFetch();
+    });
 });
 
 describe('vocabularySelect widget', () => {

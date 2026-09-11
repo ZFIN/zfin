@@ -4,6 +4,8 @@ import {
     DEFAULT_ALPHABET,
     baseCount,
     caretAfterNormalize,
+    invalidCharacterMessage,
+    invalidCharacters,
     normalizeSequence,
 } from '../schemaForm/nucleotides';
 
@@ -89,5 +91,35 @@ describe('baseCount', () => {
     it('defaults to the ACGT alphabet', () => {
         assert.equal(DEFAULT_ALPHABET, 'ACGT');
         assert.equal(baseCount('ACGTN'), 4);
+    });
+});
+
+describe('invalidCharacters', () => {
+    it('reports out-of-alphabet characters once each, in order', () => {
+        assert.deepEqual(invalidCharacters('ACXGTZX'), ['X', 'Z']);
+    });
+
+    it('stays quiet on the formatting normalizeSequence drops by design', () => {
+        assert.deepEqual(invalidCharacters('   1  acgt acgt\n  9  ggtt aacc'), []);
+    });
+
+    it('ignores FASTA description lines', () => {
+        assert.deepEqual(invalidCharacters('>seq1 description here\nACGT'), []);
+    });
+
+    it('accepts lowercase, since normalization uppercases it', () => {
+        assert.deepEqual(invalidCharacters('acgt'), []);
+    });
+
+    it('honours a wider alphabet', () => {
+        assert.deepEqual(invalidCharacters('ACGTN', 'ACGTN'), []);
+        assert.deepEqual(invalidCharacters('ACGTN'), ['N']);
+    });
+});
+
+describe('invalidCharacterMessage', () => {
+    it('names the alphabet it is enforcing', () => {
+        assert.equal(invalidCharacterMessage(), 'ACGT only allowed characters');
+        assert.equal(invalidCharacterMessage('acgtn'), 'ACGTN only allowed characters');
     });
 });

@@ -31,6 +31,11 @@ public record MutationDTO(
         // Mutagenesis
         String mutagenesisStage,
         String mutagenesisProtocol,
+        // ZFIN-10475 — the reagent sequences, asked beside the protocol that
+        // names the mechanism rather than per lesion.
+        String crisprSequence,
+        String talenSequence1,
+        String talenSequence2,
         Boolean molecularlyCharacterized,
         // ZFIN-10450. Free text: the picklist has an Other escape, and the
         // widget writes that answer into this same field.
@@ -111,6 +116,9 @@ public record MutationDTO(
                 m.getMutationInstitution(),
                 m.getMutagenesisStage(),
                 m.getMutagenesisProtocol(),
+                m.getCrisprSequence(),
+                m.getTalenSequence1(),
+                m.getTalenSequence2(),
                 m.getMolecularlyCharacterized(),
                 m.getInducedBackground(),
                 m.getHomozygousLethal(),

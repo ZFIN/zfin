@@ -86,27 +86,6 @@ public final class ZircLesionFormSchema {
     // the amino-acid section and the protein-consequence list too.
     private static final List<String> PROTEIN_TYPES =
             List.of("point_mutation", "deletion");
-    // ZFIN-10400. One checklist for both types that can carry an insertion.
-    // The separate mutagenesis / construct questions are gone: unifying them
-    // into one picker means one option list, shared by insertion and indel.
-    private static final List<String> INSERTION_ORIGIN_TYPES =
-            List.of("insertion", "indel");
-
-    // Stable tokens, not mdcv term ids: this list has no Sequence Ontology
-    // counterpart and is specific to the submission form.
-    //
-    // ZFIN-10403b narrows it back to the two mutagenesis mechanisms the
-    // mockup asked for. "Construct or other species DNA", "Other" and
-    // "Unknown" are not wanted: the first two only ever collected a name that
-    // nothing downstream reads, and "unknown" duplicates leaving the list
-    // blank closely enough that curators do not need both. Anything outside
-    // CRISPR/TALEN belongs in Additional Info until a ticket asks for it as a
-    // field.
-    private static final List<String> INSERTION_ORIGINS = List.of(
-            "crispr", "talen");
-    private static final List<String> INSERTION_ORIGIN_LABELS = List.of(
-            "CRISPR", "TALEN");
-
     /**
      * Bases accepted in sequence fields. Declared here and emitted onto every
      * nucleotideSequence Control, so the widget and the server-side
@@ -147,16 +126,6 @@ public final class ZircLesionFormSchema {
         properties.put("fivePrimeFlank",        StringSchema.of("5′ flanking sequence", 5000));
         properties.put("threePrimeFlank",       StringSchema.of("3′ flanking sequence", 5000));
         properties.put("hasLargeVariant",       BooleanSchema.nullable("Has large variant"));
-        // Insertion origin (ZFIN-10400)
-        properties.put("insertionOrigins", new ArraySchema(
-                "The insertion is a consequence of",
-                new StringSchema(null, null, null, null, null),
-                null, null));
-        properties.put("crisprSequence",         StringSchema.of("CRISPR sequence", 5000));
-        // A TALEN is a pair — both arms are asked for, always. See
-        // Lesion#talenSequence1.
-        properties.put("talenSequence1",         StringSchema.of("TALEN sequence 1", 5000));
-        properties.put("talenSequence2",         StringSchema.of("TALEN sequence 2", 5000));
         // Protein-level
         properties.put("mutatedAminoAcidsHgvs", StringSchema.of("Mutated amino acids (HGVS)", 2000));
         // Structured amino-acid change (ZFIN-10379). from/to are
@@ -214,49 +183,6 @@ public final class ZircLesionFormSchema {
                                 Options.of().withWidget("autoSize").withConstantValue(1).withSuffix("bp"),
                                 null)
                 )),
-                // ZFIN-10400 — where the insertion came from. Placed here so it
-                // falls after the lesion-type picker and before the inserted
-                // sequence box, as the ticket specifies.
-                //
-                // One "check all that apply" list, each box revealing only its
-                // own follow-up. Every follow-up is gated on BOTH the lesion
-                // type and the box, because the tokens survive a later change
-                // of lesion type — without the type leg a CRISPR box would
-                // reappear under a deletion. See Rule#showWhenAll.
-                groupRevealedFor(INSERTION_ORIGIN_TYPES, List.of(
-                        new Control("#/properties/insertionOrigins",
-                                Options.of()
-                                        .withWidget("checkboxGroup")
-                                        .withStandardValues(INSERTION_ORIGINS)
-                                        .withStandardLabels(INSERTION_ORIGIN_LABELS)
-                                        .withHelpText("Check all that apply."),
-                                null)
-                )),
-                originFollowUp("crispr", List.of(
-                        new Control("#/properties/crisprSequence",
-                                Options.of()
-                                        .withWidget("nucleotideSequence")
-                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withMulti(true),
-                                null))),
-                // Both arms are revealed by the one TALEN box: a TALEN
-                // always cuts as a pair, so a single sequence field would be
-                // asking for half an answer. Two Controls in one follow-up
-                // group rather than a repeatable list — the count is fixed
-                // at two and each half is labelled.
-                originFollowUp("talen", List.of(
-                        new Control("#/properties/talenSequence1",
-                                Options.of()
-                                        .withWidget("nucleotideSequence")
-                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withMulti(true),
-                                null),
-                        new Control("#/properties/talenSequence2",
-                                Options.of()
-                                        .withWidget("nucleotideSequence")
-                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withMulti(true),
-                                null))),
                 // Deletion / indel: the deleted sequence, with its length
                 // named inline. There is no separate read-only size row —
                 // the box already counts what it holds, and a second field
@@ -372,17 +298,6 @@ public final class ZircLesionFormSchema {
      * in [...]" pattern. Mirrors the assay-form's groupRevealedFor. Groups
      * are headless so children render as bare rows under the editor card.
      */
-    /**
-     * A follow-up cluster for one ticked origin: visible only when the lesion
-     * type can carry an insertion AND that token is in the list.
-     */
-    private static Group originFollowUp(String token, List<UiSchemaElement> elements) {
-        return new Group(null, elements, null,
-                Rule.showWhenAll(
-                        Rule.in("#/properties/lesionType", INSERTION_ORIGIN_TYPES),
-                        Rule.arrayContains("#/properties/insertionOrigins", token)));
-    }
-
     private static Group groupRevealedFor(
             List<String> lesionTypes, List<UiSchemaElement> elements) {
         return new Group(null, elements, null,
@@ -402,13 +317,6 @@ public final class ZircLesionFormSchema {
             field("/fivePrimeFlank",        Lesion::getFivePrimeFlank,         (l, v) -> l.setFivePrimeFlank(nucleotides(v))),
             field("/threePrimeFlank",       Lesion::getThreePrimeFlank,        (l, v) -> l.setThreePrimeFlank(nucleotides(v))),
             field("/hasLargeVariant",       Lesion::getHasLargeVariant,        (l, v) -> l.setHasLargeVariant(boolNullable(v))),
-            field("/insertionOrigins",
-                    l -> l.getInsertionOrigins() == null
-                            ? new String[0] : l.getInsertionOrigins(),
-                    (l, v) -> l.setInsertionOrigins(stringArray(v))),
-            field("/crisprSequence",        Lesion::getCrisprSequence,         (l, v) -> l.setCrisprSequence(nucleotides(v))),
-            field("/talenSequence1",        Lesion::getTalenSequence1,         (l, v) -> l.setTalenSequence1(nucleotides(v))),
-            field("/talenSequence2",        Lesion::getTalenSequence2,         (l, v) -> l.setTalenSequence2(nucleotides(v))),
             field("/mutatedAminoAcidsHgvs", Lesion::getMutatedAminoAcidsHgvs,  (l, v) -> l.setMutatedAminoAcidsHgvs(text(v))),
             field("/aaChangeFrom",          Lesion::getAaChangeFrom,           (l, v) -> l.setAaChangeFrom(text(v))),
             field("/aaChangeTo",            Lesion::getAaChangeTo,             (l, v) -> l.setAaChangeTo(text(v))),
