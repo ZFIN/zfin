@@ -56,7 +56,7 @@
       },
       "expectedMutDigest" : {
         "maxLength" : 2000,
-        "title" : "Expected MUT product after digest",
+        "title" : "Expected MUT product(s) after digest",
         "type" : [ "string", "null" ]
       },
       "expectedMutPcr" : {
@@ -66,7 +66,7 @@
       },
       "expectedWtDigest" : {
         "maxLength" : 2000,
-        "title" : "Expected WT product after digest",
+        "title" : "Expected WT product(s) after digest",
         "type" : [ "string", "null" ]
       },
       "expectedWtPcr" : {
@@ -378,19 +378,20 @@
         "type" : "Control"
       }, {
         "options" : {
-          "widget" : "checkbox"
+          "widget" : "yesNoRadio"
         },
         "scope" : "#/properties/enzymeCleavesWt",
         "type" : "Control"
       }, {
         "options" : {
-          "widget" : "checkbox"
+          "widget" : "yesNoRadio"
         },
         "scope" : "#/properties/enzymeCleavesMut",
         "type" : "Control"
       }, {
         "options" : {
           "boxSize" : "short",
+          "helpText" : "Enter every expected fragment size, comma-separated (e.g. 300, 150).",
           "suffix" : "bp"
         },
         "scope" : "#/properties/expectedWtDigest",
@@ -398,6 +399,7 @@
       }, {
         "options" : {
           "boxSize" : "short",
+          "helpText" : "Enter every expected fragment size, comma-separated (e.g. 300, 150).",
           "suffix" : "bp"
         },
         "scope" : "#/properties/expectedMutDigest",
