@@ -15,7 +15,7 @@ import java.util.Map;
  * where the accession points now. That decision is pure - it needs no database - so it lives
  * here, away from the load that applies it, and is unit tested directly.
  *
- * @see NCBIDirectPort#reconcileNcbiGenomeLocations()
+ * @see NcbiGenomeLocationReconciler
  */
 public final class GenomeLocationDrift {
 

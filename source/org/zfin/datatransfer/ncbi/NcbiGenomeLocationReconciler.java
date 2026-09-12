@@ -6,11 +6,6 @@ import org.zfin.datatransfer.report.model.LoadReportSummaryTable;
 import org.zfin.mapping.GenomeLocation;
 
 import java.io.BufferedWriter;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Savepoint;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,9 +14,9 @@ import java.util.Map;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_NCBI_GENE_ID;
 import static org.zfin.datatransfer.ncbi.port.PortHelper.print;
 import static org.zfin.framework.HibernateUtil.createTransaction;
-import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.framework.HibernateUtil.flushAndCommitCurrentSession;
 import static org.zfin.framework.HibernateUtil.rollbackTransaction;
+import static org.zfin.repository.RepositoryFactory.getLinkageRepository;
 
 /**
  * Re-aligns the NCBI genome locations with the gene mappings a load run has just written.
@@ -37,6 +32,13 @@ class NcbiGenomeLocationReconciler {
 
     NcbiGenomeLocationReconciler(BufferedWriter log) {
         this.log = log;
+    }
+
+    /** Where each reconciled row lands. The report is built from these three buckets. */
+    private static final class Outcomes {
+        private final List<GenomeLocationDrift.ReportRow> repointed = new ArrayList<>();
+        private final List<GenomeLocationDrift.ReportRow> deleted = new ArrayList<>();
+        private final List<GenomeLocationDrift.ReportRow> failed = new ArrayList<>();
     }
 
     /**
@@ -70,65 +72,16 @@ class NcbiGenomeLocationReconciler {
      * rebuilt from current db_link on every run of that load (loadNCBIStartEnd.sql deletes
      * the whole source before re-inserting), so they self-correct and need no reconciling.
      */
-    /** Every NCBILoader location whose (accession, gene) pair db_link no longer carries. */
-    private static final String DRIFT_SQL = """
-            with drifted as (
-              select l.*,
-                     (select string_agg(distinct d.dblink_linked_recid, ',' order by d.dblink_linked_recid)
-                        from db_link d
-                       where d.dblink_acc_num = l.sfclg_acc_num
-                         and d.dblink_fdbcont_zdb_id = :fdbcont) as current_genes
-                from sequence_feature_chromosome_location_generated l
-               where l.sfclg_location_source = :source
-                 and not exists (select 1 from db_link d
-                                  where d.dblink_acc_num = l.sfclg_acc_num
-                                    and d.dblink_fdbcont_zdb_id = :fdbcont
-                                    and d.dblink_linked_recid = l.sfclg_data_zdb_id)
-            )
-            select d.sfclg_pk_id, d.sfclg_data_zdb_id, d.sfclg_acc_num,
-                   d.sfclg_chromosome, d.sfclg_start, d.sfclg_end, d.current_genes,
-                   -- Would moving this row onto d.current_genes be refused? Mirrors
-                   -- uq_sfclg_unique_location, the constraint that binds for these rows:
-                   -- every one of its columns, with IS NOT DISTINCT FROM for its
-                   -- NULLS NOT DISTINCT semantics. Only meaningful when current_genes names
-                   -- exactly one gene; for the orphaned and ambiguous rows it reads false and
-                   -- is not consulted.
-                   exists (select 1
-                             from sequence_feature_chromosome_location_generated t
-                            where t.sfclg_data_zdb_id = d.current_genes
-                              and t.sfclg_pk_id <> d.sfclg_pk_id
-                              and t.sfclg_acc_num           is not distinct from d.sfclg_acc_num
-                              and t.sfclg_chromosome        is not distinct from d.sfclg_chromosome
-                              and t.sfclg_start             is not distinct from d.sfclg_start
-                              and t.sfclg_end               is not distinct from d.sfclg_end
-                              and t.sfclg_location_source   is not distinct from d.sfclg_location_source
-                              and t.sfclg_location_subsource is not distinct from d.sfclg_location_subsource
-                              and t.sfclg_fdb_db_id         is not distinct from d.sfclg_fdb_db_id
-                              and t.sfclg_pub_zdb_id        is not distinct from d.sfclg_pub_zdb_id
-                              and t.sfclg_assembly          is not distinct from d.sfclg_assembly
-                              and t.sfclg_gbrowse_track     is not distinct from d.sfclg_gbrowse_track
-                              and t.sfclg_evidence_code     is not distinct from d.sfclg_evidence_code
-                              and t.sfclg_strand            is not distinct from d.sfclg_strand) as would_collide
-              from drifted d
-             order by d.sfclg_data_zdb_id, d.sfclg_acc_num
-            """;
-
-    /** Where each reconciled row lands. The report is built from these three buckets. */
-    private static final class Outcomes {
-        private final List<GenomeLocationDrift.ReportRow> repointed = new ArrayList<>();
-        private final List<GenomeLocationDrift.ReportRow> deleted = new ArrayList<>();
-        private final List<GenomeLocationDrift.ReportRow> failed = new ArrayList<>();
-    }
-
     List<LoadReportAction> reconcile() {
         String source = GenomeLocation.Source.NCBI_LOADER.getName();
         Outcomes outcomes = new Outcomes();
 
         try {
             createTransaction();
-            List<Tuple> drift = findDriftedLocations(source);
+            List<Tuple> drift = getLinkageRepository()
+                    .getDriftedGenomeLocations(source, FDCONT_NCBI_GENE_ID);
             print(log, "Found " + drift.size() + " " + source + " genome locations out of step with the new gene mappings.\n");
-            currentSession().doWork(connection -> applyDecisions(connection, drift, outcomes));
+            drift.forEach(tuple -> apply(DriftedRow.from(tuple), outcomes));
             flushAndCommitCurrentSession();
         } catch (RuntimeException e) {
             rollbackTransaction();
@@ -140,35 +93,6 @@ class NcbiGenomeLocationReconciler {
         print(log, "Genome location reconciliation: " + outcomes.repointed.size() + " re-pointed, "
                 + outcomes.deleted.size() + " deleted, " + outcomes.failed.size() + " could not be reconciled.\n");
         return reportActions(outcomes);
-    }
-
-    /** Read the drifted rows, and what db_link maps each accession to now. */
-    private List<Tuple> findDriftedLocations(String source) {
-        return currentSession().createNativeQuery(DRIFT_SQL, Tuple.class)
-                .setParameter("fdbcont", FDCONT_NCBI_GENE_ID)
-                .setParameter("source", source)
-                .list();
-    }
-
-    /**
-     * Work through the drifted rows, applying each decision and recording what happened.
-     *
-     * <p>Raw JDBC with a savepoint per row: the failure we have to survive is a
-     * unique-constraint violation, and two overlapping unique constraints cover this table
-     * with different NULL semantics. Letting Postgres decide and rolling back just that row is
-     * more trustworthy than re-deriving both keys here, and it keeps a violation from
-     * poisoning the Hibernate session.
-     */
-    private void applyDecisions(Connection connection, List<Tuple> drift,
-                                Outcomes outcomes) throws SQLException {
-        try (PreparedStatement repoint = connection.prepareStatement(
-                     "update sequence_feature_chromosome_location_generated set sfclg_data_zdb_id = ? where sfclg_pk_id = ?");
-             PreparedStatement remove = connection.prepareStatement(
-                     "delete from sequence_feature_chromosome_location_generated where sfclg_pk_id = ?")) {
-            for (Tuple tuple : drift) {
-                apply(DriftedRow.from(tuple), repoint, remove, outcomes);
-            }
-        }
     }
 
     /** One drifted row, in the shape the decision and the report both want. */
@@ -199,19 +123,18 @@ class NcbiGenomeLocationReconciler {
      * <p>Nothing is attempted speculatively: the drift query has already worked out whether a
      * re-point would collide, so the category is known before any write.
      */
-    private void apply(DriftedRow row, PreparedStatement repoint, PreparedStatement remove,
-                       Outcomes outcomes) throws SQLException {
+    private void apply(DriftedRow row, Outcomes outcomes) {
         switch (GenomeLocationDrift.categorize(row.currentGenes(), row.wouldCollide())) {
             case ORPHANED -> {
-                delete(remove, row);
+                delete(row);
                 outcomes.deleted.add(row.reported("Deleted - accession has no NCBI Gene ID link", "(none)"));
             }
             case REMAPPED -> {
-                rePoint(repoint, row);
+                rePoint(row);
                 outcomes.repointed.add(row.reported("Re-pointed to " + row.currentGenes(), row.currentGenes()));
             }
             case REMAPPED_DUPLICATE -> {
-                delete(remove, row);
+                delete(row);
                 outcomes.deleted.add(row.reported(
                         "Deleted - duplicate of the identical location already on " + row.currentGenes(),
                         row.currentGenes()));
@@ -221,34 +144,33 @@ class NcbiGenomeLocationReconciler {
         }
     }
 
-    private void delete(PreparedStatement remove, DriftedRow row) throws SQLException {
-        remove.setLong(1, row.pkId());
-        remove.executeUpdate();
+    private void delete(DriftedRow row) {
+        getLinkageRepository().deleteMarkerGenomeLocation(row.pkId());
     }
 
     /**
      * Move the row to the gene its accession now belongs to.
      *
-     * <p>No savepoint: the drift query predicted this write would be accepted, so a refusal
-     * means the prediction is wrong rather than that this row is special. That can only happen
-     * if the unique constraints on the table no longer match the predicate in
-     * {@link #DRIFT_SQL}, so it aborts the whole reconciliation with that said plainly, rather
-     * than carrying on against a model of the schema that has stopped being true.
+     * <p>Nothing is caught and skipped: the drift query predicted this write would be
+     * accepted, so a refusal means the prediction is wrong rather than that this row is
+     * special. That can only happen if the unique constraints on the table no longer match the
+     * would_collide predicate the drift query applies, so it aborts the whole reconciliation
+     * with that said plainly, rather than carrying on against a model of the schema that has
+     * stopped being true.
      */
-    private void rePoint(PreparedStatement repoint, DriftedRow row) throws SQLException {
-        repoint.setString(1, row.currentGenes());
-        repoint.setLong(2, row.pkId());
+    private void rePoint(DriftedRow row) {
         try {
-            repoint.executeUpdate();
-        } catch (SQLException e) {
+            getLinkageRepository().reassignMarkerGenomeLocation(row.pkId(), row.currentGenes());
+        } catch (RuntimeException e) {
             throw new IllegalStateException(
                     "Re-pointing genome location " + row.pkId() + " (" + row.accession() + ") to "
                     + row.currentGenes() + " was refused, but the drift query predicted it would"
                     + " be accepted. The unique constraints on"
                     + " sequence_feature_chromosome_location_generated no longer match the"
-                    + " would_collide predicate in DRIFT_SQL - it mirrors"
-                    + " uq_sfclg_unique_location, so check whether that constraint has changed."
-                    + " Aborting rather than reconciling against a stale model of the schema.", e);
+                    + " would_collide predicate in LinkageRepository.getDriftedGenomeLocations -"
+                    + " it mirrors uq_sfclg_unique_location, so check whether that constraint has"
+                    + " changed. Aborting rather than reconciling against a stale model of the"
+                    + " schema.", e);
         }
     }
 
