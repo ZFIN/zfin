@@ -244,33 +244,83 @@ public class SolrReindexOrchestrator extends AbstractValidateDataReportTask {
      * is needed and the live index is never touched. A resumed run keeps
      * whatever the failed run left there, which is the point of resuming.
      *
-     * <p>The staging core is built from the shared configset, so it runs
-     * exactly the schema, solrconfig, DIH config and jars the live core does.
-     * See {@link #DEFAULT_CONFIGSET} for why that is a constant rather than
-     * the live core's name.
+     * <p>The directory is computed, never derived from the name. A SWAP
+     * exchanges core names and leaves the directories where they are, so after
+     * one publish the core named {@code site_index} occupies the directory
+     * {@code site_index_staging}. CoreAdmin CREATE defaults instanceDir to
+     * {@code $SOLR_HOME/<name>}, which at that point is the live index's own
+     * directory -- the second nightly run would have tried to build on top of
+     * production. It failed only because the live core held Lucene's write
+     * lock. So the run asks Solr where the live core actually is and builds in
+     * the other of the two directories, refusing outright if those turn out to
+     * be the same place.
      */
     private void prepareStagingCore(String stagingCore) throws Exception {
-        boolean exists = staging.coreExists(stagingCore);
+        String liveDir = live.instanceDir(live.core());
+        String stagingDir = siblingDir(liveDir, live.core(), stagingCore);
+        String existingStagingDir = staging.instanceDir(stagingCore);
         boolean reuse = resumeFrom != null || noClean;
 
+        // The guard that matters. Everything below either deletes a directory
+        // or opens an IndexWriter on one; doing either to the live index would
+        // destroy the thing this whole staging scheme exists to protect.
+        if (stagingDir != null && stagingDir.equals(liveDir)) {
+            throw new IllegalStateException(
+                "Refusing to build: the staging directory resolved to the live core's own directory ("
+                + liveDir + "). Solr's core layout is not what this expects; inspect "
+                + "admin/cores?action=STATUS before rerunning.");
+        }
+        if (!existingStagingDir.isBlank() && existingStagingDir.equals(liveDir)) {
+            throw new IllegalStateException(
+                "Refusing to build: a core named '" + stagingCore + "' is serving the live core's "
+                + "directory (" + liveDir + "). Unloading it would delete the live index.");
+        }
+
         if (reuse) {
-            if (!exists) {
+            if (existingStagingDir.isBlank()) {
                 throw new IllegalStateException(
                     "resumeFrom/noClean asked to continue into '" + stagingCore + "', but no such core exists. "
                     + "There is nothing to resume; rerun without those flags to build from scratch.");
             }
-            logger.info("Continuing into existing staging core '{}' (resumeFrom={}, noClean={})",
-                stagingCore, resumeFrom, noClean);
+            logger.info("Continuing into existing staging core '{}' at {} (resumeFrom={}, noClean={})",
+                stagingCore, existingStagingDir, resumeFrom, noClean);
             return;
         }
 
-        if (exists) {
-            // Left behind by the previous run -- either its pre-swap staging
-            // core, or the index that run displaced. Both are spent.
-            staging.unloadCore(stagingCore, true);
-        }
-        staging.createCore(stagingCore, configSet());
-        logger.info("Staging core '{}' ready (empty)", stagingCore);
+        // Unload whether or not STATUS admitted to the core existing. A CREATE
+        // that failed partway registers under initFailures instead of status,
+        // so it is invisible to instanceDir() yet still holds the name -- that
+        // is exactly the state a previously failed run leaves behind.
+        staging.unloadCoreQuietly(stagingCore, true);
+        staging.createCore(stagingCore, configSet(), stagingDir);
+        // Belt and braces: the directory can outlive the core (an unload that
+        // only deregistered, a directory Solr never owned), and CREATE happily
+        // adopts an existing index. The run must start from nothing, and this
+        // is provably not the live core.
+        staging.deleteAll();
+        logger.info("Staging core '{}' ready (empty) at {}", stagingCore, stagingDir);
+    }
+
+    /**
+     * The other of the two directories the live/staging pair alternates
+     * between, given where the live core currently is.
+     *
+     * <p>Null when Solr reports no live core at all -- the bootstrap case,
+     * where letting CREATE pick its own default is right and there is no
+     * index to endanger.
+     */
+    static String siblingDir(String liveDir, String liveCore, String stagingCore) {
+        if (liveDir == null || liveDir.isBlank()) {return null;}
+        String dir = liveDir;
+        while (dir.endsWith("/")) {dir = dir.substring(0, dir.length() - 1);}
+        int cut = dir.lastIndexOf('/');
+        String parent = cut < 0 ? "" : dir.substring(0, cut);
+        String base = dir.substring(cut + 1);
+        // Anything that is not the staging name is treated as the live side,
+        // so an unrecognised directory still yields the staging name rather
+        // than handing back the directory we were given.
+        String other = base.equals(stagingCore) ? liveCore : stagingCore;
+        return parent.isEmpty() ? other : parent + "/" + other;
     }
 
     /** {@code SOLR_CONFIGSET} wins, else {@link #DEFAULT_CONFIGSET}. */
