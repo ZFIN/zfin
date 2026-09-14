@@ -227,13 +227,46 @@ public final class SolrAdminClient {
      * having contents (an {@code instanceDir}), not on the HTTP code.
      */
     public boolean coreExists(String name) throws Exception {
+        return !instanceDir(name).isBlank();
+    }
+
+    /**
+     * The directory a loaded core occupies, or "" if no core of that name is
+     * loaded. Trailing slash stripped so two paths for the same directory
+     * compare equal.
+     *
+     * <p>The reindex needs this because a core's name and its directory stop
+     * corresponding the moment a SWAP happens: the swap exchanges names, not
+     * contents, so after one publish the core named {@code site_index} sits in
+     * the directory named {@code site_index_staging}. Anything that derives a
+     * directory from a name -- which is what CoreAdmin CREATE does by default
+     * -- is then pointing at the wrong index, and in the worst case at the
+     * live one.
+     */
+    public String instanceDir(String name) throws Exception {
         URI uri = new URIBuilder(adminBaseUrl + "cores")
             .addParameter("action", "STATUS")
             .addParameter("core", name)
             .addParameter("wt", "json")
             .build();
-        JsonNode status = mapper.readTree(get(uri, GET_TIMEOUT)).path("status").path(name);
-        return !status.path("instanceDir").asText("").isBlank();
+        String dir = mapper.readTree(get(uri, GET_TIMEOUT))
+            .path("status").path(name).path("instanceDir").asText("");
+        while (dir.endsWith("/")) {dir = dir.substring(0, dir.length() - 1);}
+        return dir;
+    }
+
+    /**
+     * Unload a core, swallowing "no such core". Used to clear a registration
+     * left behind by a CREATE that failed partway -- Solr reports those under
+     * {@code initFailures} rather than {@code status}, so they are invisible
+     * to {@link #coreExists} but still block the name.
+     */
+    public void unloadCoreQuietly(String name, boolean deleteIndex) {
+        try {
+            unloadCore(name, deleteIndex);
+        } catch (Exception e) {
+            logger.info("  ... no core '{}' to unload ({})", name, e.getMessage());
+        }
     }
 
     /**
@@ -242,15 +275,19 @@ public final class SolrAdminClient {
      * DIH jar and the JDBC driver in its {@code lib}, so a core created this
      * way can run the same imports as the live one.
      */
-    public void createCore(String name, String configSet) throws Exception {
-        logger.info("  ... creating core '{}' from configset '{}'", name, configSet);
-        URI uri = new URIBuilder(adminBaseUrl + "cores")
+    public void createCore(String name, String configSet, String instanceDir) throws Exception {
+        logger.info("  ... creating core '{}' from configset '{}'{}", name, configSet,
+            instanceDir == null ? "" : " at " + instanceDir);
+        URIBuilder b = new URIBuilder(adminBaseUrl + "cores")
             .addParameter("action", "CREATE")
             .addParameter("name", name)
-            .addParameter("configSet", configSet)
-            .addParameter("wt", "json")
-            .build();
-        get(uri, RELOAD_TIMEOUT);
+            .addParameter("configSet", configSet);
+        // Without this Solr derives the directory from the name, which is only
+        // correct until the first SWAP. See instanceDir(String).
+        if (instanceDir != null && !instanceDir.isBlank()) {
+            b.addParameter("instanceDir", instanceDir);
+        }
+        get(b.addParameter("wt", "json").build(), RELOAD_TIMEOUT);
     }
 
     /**
