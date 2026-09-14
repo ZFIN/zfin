@@ -77,27 +77,9 @@ public class Lesion implements Serializable {
     @Column(name = "l_has_large_variant")
     private Boolean hasLargeVariant;
 
-    /**
-     * ZFIN-10400 — where an insertion came from, as a check-all-that-apply
-     * list of stable tokens (crispr / talen / construct / other / unknown).
-     * Origins combine: a CRISPR knock-in of a construct is both. Empty means
-     * unanswered, which is distinct from the "unknown" token.
-     */
-    @Column(name = "l_insertion_origins", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] insertionOrigins = new String[0];
-
-    @Column(name = "l_insertion_origin_other")
-    private String insertionOriginOther;
-
-    @Column(name = "l_crispr_sequence")
-    private String crisprSequence;
-
-    @Column(name = "l_talen_sequence")
-    private String talenSequence;
-
-    @Column(name = "l_construct_name")
-    private String constructName;
+    // ZFIN-10475 moved the insertion-origin checklist and the CRISPR / TALEN
+    // sequences it revealed onto Mutation, beside the mutagenesis protocol
+    // that already names the mechanism. See Mutation#crisprSequence.
 
     /**
      * Legacy free-text amino-acid box, replaced by the from/to/position

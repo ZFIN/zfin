@@ -26,7 +26,7 @@ public record AssayDTO(
         // Sequencing
         String sequencingPrimer,
         // dCAPS
-        String dcapsMismatchPrimer,
+        String dcapsMismatchPrimerChoice,
         // Allele-specific PCR
         String wtSpecificPrimer,
         String mutSpecificPrimer,
@@ -36,6 +36,7 @@ public record AssayDTO(
         // RFLP / dCAPS
         String restrictionEnzymeName,
         String restrictionEnzymeCatalog,
+        String restrictionEnzymeVendor,
         Boolean enzymeCleavesWt,
         Boolean enzymeCleavesMut,
         String expectedWtDigest,
@@ -72,13 +73,14 @@ public record AssayDTO(
                 a.getExpectedWtPcr(),
                 a.getExpectedMutPcr(),
                 a.getSequencingPrimer(),
-                a.getDcapsMismatchPrimer(),
+                a.getDcapsMismatchPrimerChoice(),
                 a.getWtSpecificPrimer(),
                 a.getMutSpecificPrimer(),
                 a.getCommonPrimer(),
                 a.getKaspGenomicSequence(),
                 a.getRestrictionEnzymeName(),
                 a.getRestrictionEnzymeCatalog(),
+                a.getRestrictionEnzymeVendor(),
                 a.getEnzymeCleavesWt(),
                 a.getEnzymeCleavesMut(),
                 a.getExpectedWtDigest(),

@@ -239,6 +239,12 @@ task imageThumbnailAndMediumSwapTask(type: JavaExec) {
     main = 'org.zfin.figure.service.ImageThumbnailAndMediumSwapTask'
 }
 
+task imageFormatConversionTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.figure.service.ImageFormatConversionTask'
+    systemProperty "runImageFixes", System.getProperty("runImageFixes", null)
+}
+
 task validateSolrDihConfigTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.task.ValidateSolrDihConfigTask'

@@ -29,6 +29,11 @@
         "title" : "Genotyping Assays",
         "type" : "array"
       },
+      "crisprSequence" : {
+        "maxLength" : 5000,
+        "title" : "CRISPR sequence",
+        "type" : [ "string", "null" ]
+      },
       "genes" : {
         "items" : {
           "properties" : {
@@ -54,6 +59,11 @@
       "homozygousLethal" : {
         "title" : "Homozygous Lethal",
         "type" : [ "boolean", "null" ]
+      },
+      "inducedBackground" : {
+        "maxLength" : 255,
+        "title" : "Background on which the mutation was induced",
+        "type" : [ "string", "null" ]
       },
       "lesions" : {
         "items" : {
@@ -153,6 +163,16 @@
         },
         "title" : "Publications",
         "type" : "array"
+      },
+      "talenSequence1" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence 1",
+        "type" : [ "string", "null" ]
+      },
+      "talenSequence2" : {
+        "maxLength" : 5000,
+        "title" : "TALEN sequence 2",
+        "type" : [ "string", "null" ]
       }
     },
     "required" : [ "alleleDesignation", "mutagenesisStage", "mutagenesisProtocol", "mutationType" ],
@@ -240,9 +260,67 @@
         "type" : "Control"
       }, {
         "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "CRISPR", "DNA and CRISPR" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/crisprSequence",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "TALEN", "DNA and TALEN" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/talenSequence1",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "alphabet" : "ACGT",
+          "multi" : true,
+          "widget" : "nucleotideSequence"
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "enum" : [ "TALEN", "DNA and TALEN" ]
+            },
+            "scope" : "#/properties/mutagenesisProtocol"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/talenSequence2",
+        "type" : "Control"
+      }, {
+        "options" : {
           "widget" : "yesNoRadio"
         },
         "scope" : "#/properties/molecularlyCharacterized",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "standardValues" : [ "AB", "TU", "WIK", "AB/TU", "unknown" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/inducedBackground",
         "type" : "Control"
       } ],
       "label" : "Mutagenesis",

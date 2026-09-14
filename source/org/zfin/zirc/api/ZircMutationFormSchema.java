@@ -65,6 +65,20 @@ public final class ZircMutationFormSchema {
             "oocyte", "sperm", "embryo", "larva", "adult", "unknown");
 
     /**
+     * Strain backgrounds offered for "Background on which the mutation was
+     * induced" (ZFIN-10450), in the mockup's order. Not a closed list: the
+     * widget keeps its Other escape, because a submitter may well have used a
+     * background outside these five and the mockup shows Other as the last
+     * entry.
+     *
+     * <p>"unknown" is a standard value rather than an Other answer, matching
+     * MUTAGENESIS_STAGES, so that "we do not know" is one click and reads the
+     * same way everywhere.
+     */
+    private static final List<String> INDUCED_BACKGROUNDS = List.of(
+            "AB", "TU", "WIK", "AB/TU", "unknown");
+
+    /**
      * Submitter-facing mutagenesis-protocol picklist (ZFIN-10402): the whole
      * {@link Mutagen} vocabulary, in the order curators asked for, minus
      * {@link Mutagen#NOT_SPECIFIED} — a submitter always knows which protocol
@@ -93,6 +107,31 @@ public final class ZircMutationFormSchema {
     private static final List<String> MUTAGENESIS_PROTOCOLS =
             MUTAGENESIS_PROTOCOL_ORDER.stream().map(Mutagen::toString).toList();
 
+    /**
+     * Protocols that use a CRISPR guide, and those that use a TALEN pair
+     * (ZFIN-10475). The reagent sequence boxes below reveal on these, which
+     * is why the question is asked once per mutation: the protocol picklist
+     * already names the mechanism, so a second per-lesion checklist asking
+     * the same thing was answering it twice.
+     *
+     * <p>Derived from {@link Mutagen} rather than spelled as strings so a
+     * label change on the enum cannot silently stop matching. The DNA_AND_*
+     * variants belong in both senses that matter here — a DNA-and-CRISPR
+     * mutagenesis still used a guide.
+     */
+    private static final List<String> CRISPR_PROTOCOLS = List.of(
+            Mutagen.CRISPR.toString(), Mutagen.DNA_AND_CRISPR.toString());
+    private static final List<String> TALEN_PROTOCOLS = List.of(
+            Mutagen.TALEN.toString(), Mutagen.DNA_AND_TALEN.toString());
+
+    /**
+     * Bases accepted in the reagent sequence fields, emitted onto the
+     * nucleotideSequence Controls so the widget and {@link #nucleotides}
+     * are driven by one value. Mirrors ZircLesionFormSchema's constant of
+     * the same name.
+     */
+    private static final String NUCLEOTIDE_ALPHABET = "ACGT";
+
     private static final List<String> LETHALITY_STAGES = List.of(
             "embryonic", "larval", "juvenile", "adult", "unknown");
 
@@ -107,7 +146,14 @@ public final class ZircMutationFormSchema {
         // Mutagenesis
         properties.put("mutagenesisStage",           StringSchema.of("Mutagenesis Stage", 255));
         properties.put("mutagenesisProtocol",        StringSchema.of("Mutagenesis Protocol", 255));
+        // ZFIN-10475 — reagent sequences, revealed by the protocol above.
+        properties.put("crisprSequence",             StringSchema.of("CRISPR sequence", 5000));
+        // A TALEN is a pair; both arms are asked for. See Mutation#talenSequence1.
+        properties.put("talenSequence1",             StringSchema.of("TALEN sequence 1", 5000));
+        properties.put("talenSequence2",             StringSchema.of("TALEN sequence 2", 5000));
         properties.put("molecularlyCharacterized",   BooleanSchema.nullable("Molecularly Characterized"));
+        properties.put("inducedBackground",          StringSchema.of(
+                "Background on which the mutation was induced", 255));
         // Lethality
         properties.put("homozygousLethal",           BooleanSchema.nullable("Homozygous Lethal"));
         properties.put("lethalityStageTypical",      StringSchema.of("Typical Lethality Stage", 255));
@@ -191,8 +237,41 @@ public final class ZircMutationFormSchema {
                         new Control("#/properties/mutagenesisProtocol",
                                 Options.of().withWidget("selectWithOther").withStandardValues(MUTAGENESIS_PROTOCOLS),
                                 null),
+                        // ZFIN-10475 — directly under the protocol that
+                        // reveals them, so the answer sits with the question.
+                        new Control("#/properties/crisprSequence",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                Rule.showWhenIn("#/properties/mutagenesisProtocol",
+                                        CRISPR_PROTOCOLS)),
+                        // Both arms appear together: a TALEN cuts as a pair,
+                        // so one box would be asking for half an answer.
+                        new Control("#/properties/talenSequence1",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                Rule.showWhenIn("#/properties/mutagenesisProtocol",
+                                        TALEN_PROTOCOLS)),
+                        new Control("#/properties/talenSequence2",
+                                Options.of()
+                                        .withWidget("nucleotideSequence")
+                                        .withAlphabet(NUCLEOTIDE_ALPHABET)
+                                        .withMulti(true),
+                                Rule.showWhenIn("#/properties/mutagenesisProtocol",
+                                        TALEN_PROTOCOLS)),
                         new Control("#/properties/molecularlyCharacterized",
-                                Options.of().withWidget("yesNoRadio"), null)
+                                Options.of().withWidget("yesNoRadio"), null),
+                        // ZFIN-10450 — last row of the section, per the mockup,
+                        // below Molecularly Characterized. Other stays enabled:
+                        // the widget writes a free-text answer into this same
+                        // field, so there is no companion column.
+                        new Control("#/properties/inducedBackground",
+                                Options.of().withWidget("selectWithOther")
+                                        .withStandardValues(INDUCED_BACKGROUNDS),
+                                null)
                 )),
                 // Genes: same inline-expand pattern as assays.
                 new Group("Genes",
@@ -271,8 +350,16 @@ public final class ZircMutationFormSchema {
                     Mutation::getMutagenesisStage,          (m, v) -> m.setMutagenesisStage(text(v))),
             field("/mutagenesisProtocol",
                     Mutation::getMutagenesisProtocol,       (m, v) -> m.setMutagenesisProtocol(text(v))),
+            field("/crisprSequence",
+                    Mutation::getCrisprSequence,            (m, v) -> m.setCrisprSequence(nucleotides(v))),
+            field("/talenSequence1",
+                    Mutation::getTalenSequence1,            (m, v) -> m.setTalenSequence1(nucleotides(v))),
+            field("/talenSequence2",
+                    Mutation::getTalenSequence2,            (m, v) -> m.setTalenSequence2(nucleotides(v))),
             field("/molecularlyCharacterized",
                     Mutation::getMolecularlyCharacterized,  (m, v) -> m.setMolecularlyCharacterized(boolNullable(v))),
+            field("/inducedBackground",
+                    Mutation::getInducedBackground,         (m, v) -> m.setInducedBackground(text(v))),
             // Lethality
             field("/homozygousLethal",
                     Mutation::getHomozygousLethal,          (m, v) -> m.setHomozygousLethal(boolNullable(v))),
@@ -389,6 +476,24 @@ public final class ZircMutationFormSchema {
         if (v == null || v.isNull()) {return null;}
         String s = v.asText();
         return s.isBlank() ? null : s.trim();
+    }
+
+    /**
+     * Sequence fields: uppercase and drop anything that is not a base.
+     *
+     * The nucleotideSequence widget applies the same rule as the submitter
+     * types, but a PATCH can be made straight at the field path, so the
+     * constraint has to live here too or it is decorative. Mirrors
+     * ZircLesionFormSchema#nucleotides.
+     */
+    private static String nucleotides(JsonNode v) {
+        String s = text(v);
+        if (s == null) {return null;}
+        StringBuilder out = new StringBuilder(s.length());
+        for (char c : s.toUpperCase().toCharArray()) {
+            if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
+        }
+        return out.isEmpty() ? null : out.toString();
     }
 
     private static Boolean boolNullable(JsonNode v) {

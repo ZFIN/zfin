@@ -17,7 +17,7 @@ The orchestrator is the cutover vehicle for migrating entities off DIH. Each ent
 
 Mixing the two engines requires shared state:
 
-- One initial wipe (DIH's `clean=true` only wipes once on its first caller; not safe to rely on when Java steps mix in).
+- One staging core for the whole run (DIH's `clean=true` only wipes once on its first caller; not safe to rely on when Java steps mix in, and wiping the *live* core is what ZFIN-10497 was).
 - One ordering pass — heavy entities first so memory-pressure failures surface fast.
 - One core RELOAD cadence between batches to release Lucene's `IndexWriter` buffers (the dominant heap-growth source on a multi-GB rebuild; see ZFIN-10171 for the trajectory).
 - One commit at the end.
@@ -93,10 +93,12 @@ gradle solrDiag -PdiagArgs="dump ./out/current.ndjson"
 ## Invocation
 
 ```bash
-# Nightly full reindex (initial wipe → heavy → reload → medium → reload → light → commit)
+# Nightly full reindex (create staging core → heavy → reload → medium → reload
+# → light → commit → check → SWAP staging into live)
 gradle solrReindex
 
-# Skip the initial wipe — additive run, useful for repairing a partial rebuild
+# Continue into the existing staging core instead of recreating it — additive
+# run, useful for repairing a partial rebuild. Still swaps at the end.
 gradle solrReindex -PsolrNoClean=true
 
 # Resume from a specific entity after a failure. Skips all earlier batches and
@@ -104,7 +106,8 @@ gradle solrReindex -PsolrNoClean=true
 # preserving inter-batch RELOAD semantics.
 gradle solrReindex -PsolrResumeFrom=construct
 
-# Ad-hoc run of just the migrated Java indexers (no DIH, no wipe).
+# Ad-hoc run of just the migrated Java indexers (no DIH, no staging, no swap —
+# these write straight to the live core).
 gradle solrIndex                                  # all registered indexers
 gradle solrIndex -PsolrEntities=lab,company       # a subset
 
@@ -113,6 +116,46 @@ gradle solrIndex -PsolrEntities=lab,company       # a subset
 # but reachable without a deployed classpath).
 gradle checkIndexer
 ```
+
+## Staging and publish (ZFIN-10497)
+
+The run never touches the live core until the very end. It builds into
+`<core>_staging` — `site_index_staging` on stage/prod, `site_index_local_staging`
+on a local instance, and so on, so instances sharing a Solr server can't collide.
+The staging core is created fresh from the `site_index` configset (a constant:
+the image ships one configset, while the core name is per-instance — override
+with `SOLR_CONFIGSET`). It publishes with a single atomic `CoreAdmin SWAP`, so
+the site serves the previous index, complete, for the whole rebuild.
+
+Before this, the run deleted `*:*` from the live core up front and refilled it
+entity by entity, so every category was empty until its own step ran — for the
+length of a full rebuild, search returned nothing for most of the site.
+
+**Why the whole core and not per category**, which is what ZFIN-10497 asks for
+literally: `category` is not 1:1 with a step. `person`, `company` and `lab` all
+emit `Community`; `fish` emits both `Fish` and `Reporter Line`; `antibody`
+derives its category from the database (`mrkrtype_type_display as category`), so
+its values can't be known from config at all. A per-category delete would
+destroy documents belonging to steps that hadn't run yet. Swapping the core is
+both safe and strictly better — nothing is ever partially visible.
+
+**The publish gate.** Because the swap is atomic and unattended, a half-built
+index would go live as cleanly as a good one. So before swapping, the run facets
+`category` on both cores and refuses to publish if the new index is empty, if a
+category the live index had is gone, or if one shrank by more than 20%. A
+refusal leaves the live core untouched and the staging core in place to inspect.
+The threshold tolerates ordinary churn; see `SolrReindexPublishGateTest`.
+
+**Rollback.** After a swap the previous index is parked under the staging name.
+Swapping the two names back restores it:
+
+```bash
+curl "http://$SOLR_HOST:$SOLR_PORT/solr/admin/cores?action=SWAP&core=$SOLR_CORE&other=${SOLR_CORE}_staging"
+```
+
+One generation is kept — the next run recycles the staging core.
+
+**Disk.** Two full indexes coexist for the length of a run.
 
 ## Failure recovery
 
@@ -126,7 +169,7 @@ gradle solrReindex -PsolrResumeFrom=gene
 Resume semantics:
 
 - Entities before the resume target are skipped.
-- The initial wipe is skipped (the prior partial index is what we're appending to).
+- The staging core is reused rather than recreated (the prior partial index is what we're appending to). If it no longer exists the run fails fast rather than silently starting over.
 - The batch containing the resume target starts at that entity. Earlier entities in the same batch are not re-run.
 - The RELOAD between batches still runs after the (now-shorter) resume batch completes.
 
@@ -134,7 +177,7 @@ If the failure is DIH-side, `dataimport?command=status` on the running Solr will
 
 ## Snapshot / restore
 
-The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm/` under the **backing-up instance's own** subdir, `<base>/${INSTANCE}/v9/` (where `<base>` is the container mount `/opt/zfin/unloads/solr`). Restore is the mirror: `loadsolr`/`getsolr` read the shared production snapshot from `<base>/zfindb/v9/` by default (override with `-PsolrSourceInstance=<name>`). Backing up per-instance means a stage/dev index build never clobbers the `zfindb` snapshot everyone restores from. The `v9/` segment segregates Solr 9 snapshots from the legacy pre-9 full-SOLR_HOME dumps (which can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`).
+The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm/` under the **backing-up instance's own** subdir, `<base>/${INSTANCE}/` (where `<base>` is the container mount `/opt/zfin/unloads/solr`). Restore is the mirror: `loadsolr`/`getsolr` read the shared production snapshot from `<base>/zfindb/` by default (override with `-PsolrSourceInstance=<name>`). Backing up per-instance means a stage/dev index build never clobbers the `zfindb` snapshot everyone restores from. Snapshots sit directly in the instance dir, alongside any legacy pre-9 full-SOLR_HOME dumps; the two are told apart by the `snapshot.` prefix, since the legacy dumps can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`.
 
 ### GoCD deployment pipeline
 
