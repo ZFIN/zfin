@@ -15,6 +15,7 @@ import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.GenotypingAssay;
+import org.zfin.zirc.entity.GenotypingAssayFile;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -42,6 +43,7 @@ import java.util.function.Function;
  *   <li><b>Allele-specific PCR</b> — AS-PCR</li>
  *   <li><b>KASP genomic sequence</b> — KASP</li>
  *   <li><b>SSLP</b> — SSLP</li>
+ *   <li><b>Protocol documentation</b> — every type (ZFIN-10415)</li>
  * </ul>
  *
  * <p>Canonical assay-type list is a starter — curators should review.
@@ -60,7 +62,9 @@ public final class ZircAssayFormSchema {
 
     // Stable enum tokens stored on the wire (and in ga_assay_type). Display
     // labels for the dropdown live in ASSAY_TYPE_LABELS, parallel by index.
-    private static final List<String> ASSAY_TYPES = List.of(
+    // Package-private rather than private: ZircAttachmentKindTest reads it to
+    // assert every assay type has exactly one attachment bucket.
+    static final List<String> ASSAY_TYPES = List.of(
             "pcr_gel", "pcr_sequencing", "rflp", "dcaps", "asa", "kasp", "hrma", "sslp");
     /**
      * Answers "which primer carries the introduced mismatch?" (ZFIN-10438).
@@ -137,16 +141,9 @@ public final class ZircAssayFormSchema {
             List.of("rflp", "dcaps");
     private static final List<String> SSLP_TYPES =
             List.of("sslp");
-    // Per-type attachment-bucket labels — each visibility rule shows the
-    // attachments Control with the matching heading for that workflow.
-    private static final List<String> GEL_IMAGE_TYPES =
-            List.of("pcr_gel", "rflp", "dcaps", "sslp");
-    private static final List<String> CHROMATOGRAM_TYPES =
-            List.of("pcr_sequencing");
-    private static final List<String> RESULT_IMAGE_TYPES =
-            List.of("asa", "kasp");
-    private static final List<String> MELT_CURVE_TYPES =
-            List.of("hrma");
+    // Per-type attachment buckets — heading, revealing assay types and
+    // accepted file extensions all live on ZircAttachmentKind, which the
+    // upload endpoint validates against too (ZFIN-10413, ZFIN-10417).
 
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
@@ -189,9 +186,12 @@ public final class ZircAssayFormSchema {
         // Catch-all
         properties.put("additionalInfo",             StringSchema.of("Additional info", 5000));
         // Attachments — summary rows; uploads happen through a dedicated
-        // multipart endpoint, not the field-path PATCH (AssayEdit's diff
-        // filter must skip /attachments).
-        properties.put("attachments",                attachmentsArrayProp());
+        // multipart endpoint, not the field-path PATCH, so the editor's diff
+        // filter must skip both of these paths (it does, off the Controls'
+        // managesOwnPersistence flag).
+        properties.put("attachments",                attachmentsArrayProp("Attachments"));
+        properties.put("protocolDocuments",
+                attachmentsArrayProp(ZircAttachmentKind.PROTOCOL_DOC.getLabel()));
         return ObjectSchema.of(null, properties, List.of("assayType"));
     }
 
@@ -368,10 +368,16 @@ public final class ZircAssayFormSchema {
                 // Attachment buckets — same underlying `attachments` field,
                 // labeled per-workflow via four parallel Controls with
                 // visibility rules.
-                attachmentBucketFor(GEL_IMAGE_TYPES,    "Annotated gel images"),
-                attachmentBucketFor(CHROMATOGRAM_TYPES, "Chromatograms"),
-                attachmentBucketFor(RESULT_IMAGE_TYPES, "Annotated result images"),
-                attachmentBucketFor(MELT_CURVE_TYPES,   "Annotated melt curve files"),
+                attachmentBucketFor(ZircAttachmentKind.GEL_IMAGE),
+                attachmentBucketFor(ZircAttachmentKind.CHROMATOGRAM),
+                attachmentBucketFor(ZircAttachmentKind.RESULT_IMAGE),
+                attachmentBucketFor(ZircAttachmentKind.MELT_CURVE),
+                // Protocol documentation (ZFIN-10415) — a second,
+                // separately-backed bucket directly below whichever results
+                // bucket is showing. Same helper as the four above: being
+                // ungated is a property of the kind, not a different shape of
+                // Control.
+                attachmentBucketFor(ZircAttachmentKind.PROTOCOL_DOC),
                 // Additional info — last row in every variant.
                 Group.of(null, List.of(
                         new Control("#/properties/additionalInfo",
@@ -385,17 +391,31 @@ public final class ZircAssayFormSchema {
      * group, labeled with the per-workflow bucket heading. All four buckets
      * share the same backing {@code attachments} array on the entity; the
      * label changes are UI-only.
+     *
+     * <p>{@code acceptedExtensions} is published only for buckets that
+     * restrict file types — the unrestricted melt-curve bucket omits the key
+     * entirely rather than sending an empty array, so the renderer's
+     * "any extension" branch is the plain absent-option case.
      */
-    private static Group attachmentBucketFor(List<String> assayTypes, String label) {
+    private static Group attachmentBucketFor(ZircAttachmentKind kind) {
+        Options options = Options.of()
+                .withWidget("attachmentsList")
+                .withManagesOwnPersistence(true)
+                .withAttachmentKind(kind.getAfKind())
+                .withLabel(kind.getLabel());
+        if (!kind.acceptsAnyExtension()) {
+            options = options.withAcceptedExtensions(kind.getAcceptedExtensions());
+        }
+        // An ungated kind (PROTOCOL_DOC) gets no rule at all rather than a
+        // rule over an empty enum, which would match nothing and hide the
+        // bucket on every assay type.
+        Rule rule = kind.isUngated()
+                ? null
+                : Rule.showWhenIn("#/properties/assayType", kind.getAssayTypes());
         return new Group(null,
-                List.of(new Control("#/properties/attachments",
-                        Options.of()
-                                .withWidget("attachmentsList")
-                                .withManagesOwnPersistence(true)
-                                .withLabel(label),
-                        null)),
+                List.of(new Control("#/properties/" + kind.getProperty(), options, null)),
                 Options.of().withLayout("plain"),
-                Rule.showWhenIn("#/properties/assayType", assayTypes));
+                rule);
     }
 
     /**
@@ -449,7 +469,11 @@ public final class ZircAssayFormSchema {
     // (Schema records live in org.zfin.zirc.api.jsonschema; helpers below
     //  return the typed records directly.)
 
-    /** Hard cap on attachments per assay; same MAX_CHILD_ROWS_PER_MUTATION shape from the alt branch. */
+    /**
+     * Hard cap on attachments per assay; same MAX_CHILD_ROWS_PER_MUTATION shape
+     * from the alt branch. Applied per bucket, so a full results bucket does
+     * not block a protocol document.
+     */
     public static final int MAX_ATTACHMENTS_PER_ASSAY = 10;
 
     /**
@@ -457,14 +481,14 @@ public final class ZircAssayFormSchema {
      * the summary fields. File content is fetched via the streaming
      * endpoint, not as part of the form data.
      */
-    private static ArraySchema attachmentsArrayProp() {
+    private static ArraySchema attachmentsArrayProp(String title) {
         Map<String, JsonSchema> itemProps = new LinkedHashMap<>();
         itemProps.put("id",               NumberSchema.of());
         itemProps.put("originalFilename", new StringSchema(null, null, null, null, null));
         itemProps.put("contentType",      StringSchema.nullable());
         itemProps.put("fileSize",         new NumberSchema(null, Boolean.TRUE));
         itemProps.put("uploadedAt",       StringSchema.nullable());
-        return new ArraySchema("Attachments", ObjectSchema.of(itemProps),
+        return new ArraySchema(title, ObjectSchema.of(itemProps),
                 MAX_ATTACHMENTS_PER_ASSAY, null);
     }
 
