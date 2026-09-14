@@ -1524,6 +1524,7 @@ test {
                 includeTestsMatching "org.zfin." + testSuite
             } else if (includeNcbiLoadTests) {
                 includeTestsMatching "org.zfin.datatransfer.ncbi.NCBILoadIntegrationTest"
+                includeTestsMatching "org.zfin.datatransfer.ncbi.NcbiGenomeLocationReconcilerTest"
             }
             if (includeNcbiCharacterizationTest) {
                 //Can be run with: SKIP_DANGER_WARNING=1 gradle -PincludeNcbiCharacterizationTest test --info  --tests org.zfin.datatransfer.ncbi.NCBILoadCharacterizationTest.testPointInTimeCharacterization

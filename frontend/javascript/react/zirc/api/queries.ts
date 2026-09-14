@@ -165,10 +165,14 @@ export function attachmentContentUrl(owner: AttachmentOwner, fileId: number): st
 export function useUploadAttachment() {
     const qc = useQueryClient();
     return useMutation({
-        mutationFn: ({ owner, ownerId, file }:
-        { owner: AttachmentOwner; ownerId: number; file: File }) => {
+        mutationFn: ({ owner, ownerId, file, kind }:
+        { owner: AttachmentOwner; ownerId: number; file: File; kind?: string }) => {
             const form = new FormData();
             form.append('file', file);
+            // Which bucket the file lands in (af_kind). Omitted by callers
+            // that predate the protocol-documentation bucket; the server
+            // then defaults to the results bucket.
+            if (kind) {form.append('kind', kind);}
             return api.upload<unknown>(
                 `${ATTACHMENT_OWNERS[owner].base}/${ownerId}/attachments`, form);
         },

@@ -1,7 +1,7 @@
 How to Characterize NCBI LOAD
 ===
 
-This is a temporary structure. We should delete later if it ever makes it into main branch (which it shouldn't).
+This is a temporary structure. We should delete later.
 
 The goal of this folder is to provide inputs for running a reproducible version of our ncbi load so we can
 characterize different versions of it.
@@ -33,12 +33,7 @@ docker compose build ncbiload
 
 ### Next steps:
 
-Run the perl version of ncbi load:
-```
-docker compose run --build --rm -it ncbiload bash -lc 'cd $SOURCEROOT/server_apps/data_transfer/NCBIGENE; cp /tmp/inputs/set1/* .; EARLY_EXIT=1 OVERRIDE_JAVA_HOME=$JAVA_HOME EMAIL_TO_FILE=true NO_SLEEP=1 SKIP_DOWNLOADS=1 LOAD_NCBI_ONE_WAY_GENES=true DB_NAME=zfindb TARGETROOT=$SOURCEROOT ROOT_PATH=$SOURCEROOT perl NCBI_gene_load.pl'
-```
-
-Run the java version of ncbi load:
+Run the ncbi load:
 ```
 docker compose run --build --rm -it ncbiload bash -lc 'export WORKING_DIR=$SOURCEROOT/server_apps/data_transfer/NCBIGENE; cp /tmp/inputs/set1/* $WORKING_DIR ; EARLY_EXIT=1 EMAIL_TO_FILE=true NO_SLEEP=1 SKIP_DOWNLOADS=1 LOAD_NCBI_ONE_WAY_GENES=true DB_NAME=zfindb TARGETROOT=$SOURCEROOT ROOT_PATH=$SOURCEROOT gradle ncbiLoadPort'
 ```
