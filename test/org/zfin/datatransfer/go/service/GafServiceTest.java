@@ -5,7 +5,9 @@ import org.zfin.AbstractDatabaseTest;
 import org.zfin.datatransfer.go.FpInferenceGafParser;
 import org.zfin.datatransfer.go.GafEntry;
 import org.zfin.datatransfer.go.GafOrganization;
+import org.zfin.datatransfer.go.GafValidationError;
 import org.zfin.datatransfer.go.GoaGafParser;
+import org.zfin.publication.presentation.PublicationService;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.mutant.MarkerGoTermAnnotationExtnGroup;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -26,6 +28,58 @@ public class GafServiceTest extends AbstractDatabaseTest {
     private GafService gafService = new GafService(GafOrganization.OrganizationEnum.GOA);
     private final String GOA_DIRECTORY = "test/gaf/goa/";
     private FpInferenceGafParser gafParser = new GoaGafParser();
+
+    /**
+     * ZFIN-10358: a "DOI:" citation resolves to the ZFIN publication carrying that DOI.
+     */
+    @Test
+    public void getPublicationByPlainDoi() throws Exception {
+        GafEntry gafEntry = new GafEntry();
+        gafEntry.setPubmedId("DOI:10.1093/icb/40.2.246");
+        assertThat(gafService.getPublication(gafEntry).getZdbID(), is("ZDB-PUB-041015-1"));
+    }
+
+    /**
+     * ZFIN-10358 follow-up: a few hundred pub_doi values were entered as resolver URLs rather
+     * than bare DOIs. ZDB-PUB-040611-2 is stored as "doi.org/10.2331/fishsci.68.sup1_765" and
+     * was the reason some DANRE-mod GPAD rows still failed to load after the first fix.
+     */
+    @Test
+    public void getPublicationByDoiStoredAsResolverUrl() throws Exception {
+        GafEntry gafEntry = new GafEntry();
+        gafEntry.setPubmedId("DOI:10.2331/fishsci.68.sup1_765");
+        assertThat(gafService.getPublication(gafEntry).getZdbID(), is("ZDB-PUB-040611-2"));
+    }
+
+    /**
+     * DOIs are case-insensitive by the DOI Handbook, and ~3000 pub_doi values contain uppercase.
+     */
+    @Test
+    public void getPublicationByDoiIgnoresCase() throws Exception {
+        GafEntry gafEntry = new GafEntry();
+        gafEntry.setPubmedId("doi:10.1023/b:fish.0000030466.23085.9");
+        assertThat(gafService.getPublication(gafEntry).getZdbID(), is("ZDB-PUB-060309-3"));
+    }
+
+    @Test
+    public void getPublicationByUnknownDoiIsRejected() {
+        GafEntry gafEntry = new GafEntry();
+        gafEntry.setPubmedId("DOI:10.9999/does-not-exist-in-zfin");
+        GafValidationError error = assertThrows(GafValidationError.class, () -> gafService.getPublication(gafEntry));
+        assertThat(error.getMessage().contains("No pub found for DOI"), is(true));
+    }
+
+    @Test
+    public void normalizeDoiStripsResolverPrefixes() {
+        assertThat(PublicationService.normalizeDoi("10.1093/icb/40.2.246"), is("10.1093/icb/40.2.246"));
+        assertThat(PublicationService.normalizeDoi("doi.org/10.1093/icb/40.2.246"), is("10.1093/icb/40.2.246"));
+        assertThat(PublicationService.normalizeDoi("https://doi.org/10.1093/icb/40.2.246"), is("10.1093/icb/40.2.246"));
+        assertThat(PublicationService.normalizeDoi("http://dx.doi.org/10.1093/icb/40.2.246"), is("10.1093/icb/40.2.246"));
+        assertThat(PublicationService.normalizeDoi("DOI:10.1093/ICB/40.2.246"), is("10.1093/icb/40.2.246"));
+        assertThat(PublicationService.normalizeDoi("  10.1093/icb/40.2.246  "), is("10.1093/icb/40.2.246"));
+        assertNull(PublicationService.normalizeDoi(null));
+        assertNull(PublicationService.normalizeDoi("   "));
+    }
 
     @Test
     public void replaceAttribute() throws Exception {

@@ -128,7 +128,7 @@ public enum GoDefaultPublication implements PubEnum {
             ieaPubs.add(EC);
             ieaPubs.add(GOREF_UNIPROTKB_SUBCELL2);
             ieaPubs.add(GOREF_UNIPATHWAY);
-            goRefPubs.add(GOREF_UNIRULE);
+            ieaPubs.add(GOREF_UNIRULE);
             ieaPubs.add(GOREF_ENSEMBL);
         }
         return ieaPubs;

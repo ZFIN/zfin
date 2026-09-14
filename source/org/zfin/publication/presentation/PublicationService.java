@@ -49,6 +49,26 @@ import java.util.stream.Collectors;
 @Service
 public class PublicationService {
 
+    /**
+     * DOIs reach us in several shapes: bare ("10.1093/icb/40.2.246"), with the CrossRef
+     * "doi:" scheme, or as a resolver URL ("https://doi.org/...", "http://dx.doi.org/...",
+     * "doi.org/..."). The pub_doi column holds all of these, and GO/Noctua citations use the
+     * "DOI:" prefix form. Reduce any of them to the bare, lower-cased DOI so the two sides can
+     * be compared. DOIs are case-insensitive by the DOI Handbook, so folding case is safe.
+     *
+     * @return the normalized DOI, or null if the input has no DOI in it
+     */
+    public static String normalizeDoi(String doi) {
+        if (StringUtils.isBlank(doi)) {
+            return null;
+        }
+        String normalized = doi.trim();
+        normalized = normalized.replaceFirst("(?i)^(https?://)?(dx\\.)?doi\\.org/", "");
+        normalized = normalized.replaceFirst("(?i)^doi:\\s*", "");
+        normalized = normalized.trim().toLowerCase();
+        return normalized.isEmpty() ? null : normalized;
+    }
+
     @Autowired
     private BeanCompareService beanCompareService;
 
