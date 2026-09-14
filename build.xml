@@ -43,8 +43,6 @@
         </and>
     </condition>
 
-    <property name="classes.dir.target" value="${env.TARGETROOT}/home/WEB-INF/classes"/>
-    <property name="lib.dir.target" value="${env.TARGETROOT}/home/WEB-INF/lib"/>
     <!--If the INSTANCE variable is not already set (this code gets run for every target, I believe)-->
     <!--the we check if it is defined in the system as OVERRIDE_INSTANCE-->
     <if>
@@ -219,38 +217,6 @@
         <tempfile property="classpathFile2" suffix=".txt" createfile="true" prefix="unittest.classpath." destdir="/tmp"/>
         <echo file="${classpathFile2}">${classpathProp2}</echo>
         <echo>unittest.classpath is written to ${classpathFile2}</echo>
-    </target>
-
-    <target name="instrument" depends="compile">
-        <taskdef name="instrument" classname="org.hibernate.tool.instrument.javassist.InstrumentTask">
-            <classpath refid="extended.classpath"/>
-            <classpath path="${classbin.dir}"/>
-        </taskdef>
-
-        <instrument verbose="true">
-            <fileset dir="${TARGETROOT}/home/WEB-INF/classes">
-                <include name="org/zfin/ontology/GenericTerm.class"/>
-                <include name="org/zfin/profile/Person.class"/>
-                <include name="org/zfin/expression/Figure.class"/>
-                <include name="org/zfin/expression/TextOnlyFigure.class"/>
-                <include name="org/zfin/expression/FigureFigure.class"/>
-                <include name="org/zfin/ontology/**Term.class"/>
-                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
-                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
-                <include name="org/zfin/publication/Publication.class"/>
-            </fileset>
-            <fileset dir="${SOURCEROOT}/home/WEB-INF/classes">
-                <include name="org/zfin/ontology/GenericTerm.class"/>
-                <include name="org/zfin/profile/Person.class"/>
-                <include name="org/zfin/expression/Figure.class"/>
-                <include name="org/zfin/expression/TextOnlyFigure.class"/>
-                <include name="org/zfin/expression/FigureFigure.class"/>
-                <include name="org/zfin/ontology/**Term.class"/>
-                <include name="org/zfin/publication/CorrespondenceComposedMessage.class"/>
-                <include name="org/zfin/publication/CorrespondenceSentMessage.class"/>
-                <include name="org/zfin/publication/Publication.class"/>
-            </fileset>
-        </instrument>
     </target>
 
     <target name="compile" depends="prepare"
