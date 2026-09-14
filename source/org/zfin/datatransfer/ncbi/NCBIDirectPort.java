@@ -19,6 +19,7 @@ import org.zfin.datatransfer.report.model.LoadReportSummaryTable;
 import org.zfin.datatransfer.util.CSVDiff;
 import org.zfin.datatransfer.util.CSVToXLSXConverter;
 import org.zfin.datatransfer.webservice.BatchNCBIFastaFetchTask;
+import org.zfin.mapping.GenomeLocation;
 import org.zfin.datatransfer.webservice.NCBIEfetch;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.framework.exec.ExecProcess;
@@ -32,7 +33,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Savepoint;
 import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.regex.Matcher;
@@ -68,6 +73,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public File workingDir;
 
     private Boolean debug = true;
+
 
     public static final String PUB_MAPPED_BASED_ON_RNA = "ZDB-PUB-020723-3";
     public static final String PUB_MAPPED_BASED_ON_VEGA = "ZDB-PUB-130725-2";
@@ -142,6 +148,24 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numUnlinkedGenesAfter;
 
     private Map<String, String> NCBIidsGeneSymbols = new HashMap<>(); // Value is String, not List<String> based on Perl
+
+    /** fdbcont_zdb_id -> foreign DB display name, read from foreign_db on first use. */
+    private Map<String, String> foreignDbDisplayNames;
+
+    // Per-strategy match tallies, surfaced in the report's "gene matching strategies"
+    // summary table. A collapse in any one of these is the signal that a run went wrong:
+    // the Ensembl-supplement strategy silently falling from 1,973 matches to 423 deleted
+    // 1,550 NCBI Gene IDs, and nothing in the report said so.
+    private long ctEnsemblSupplementCandidates;
+    private long ctEnsemblSupplementSkippedDuplicate;
+    private long ctEnsemblSupplementSkippedExistingLink;
+    private long ctEnsemblSupplementSkippedMalformed;
+    private long ctEnsemblSupplementLoaded;
+
+    // How many legacy Vega links survived validation and were actually re-asserted. The
+    // strategy table reports what the run loaded, so it has to be this and not the captured
+    // total - those differ by however many NCBI has stopped standing behind.
+    private int ctLegacyVegaReasserted;
 
 
     // used in eg. initializeSetsOfZfinRecords
@@ -246,6 +270,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
 
     // Store the actions for changes that are made to the DB (really should be cudActions for create, update, delete)
+    private List<LoadReportAction> genomeLocationActions = new ArrayList<>();
+    private List<LoadReportAction> legacyVegaActions = new ArrayList<>();
     private List<LoadReportAction> crudActions = new ArrayList<>();
 
     public static void main(String[] args) {
@@ -292,9 +318,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         // otherwise SQL may delete them first causing StaleStateException
         removeLegacyVegaMatchesFromDB();
         printTimingInformation(60);
-
-        runTemporaryVegaRemoveSQL();
-        printTimingInformation(70);
 
         prepareNCBIgeneLoadDatabaseQuery();
         printTimingInformation(80);
@@ -447,6 +470,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         executeDeleteAndLoadSQLFile();
         printTimingInformation(480);
 
+        // Before the marker-assembly update on purpose: clearing a stale location here lets
+        // markerAssemblyUpdate.sql write the correct one in the same run.
+        genomeLocationActions = new NcbiGenomeLocationReconciler(LOG).reconcile();
+        printTimingInformation(485);
+
         executeMarkerAssemblyUpdate();
         printTimingInformation(490);
 
@@ -468,6 +496,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         recordUpdatesHistory();
         printTimingInformation(540);
 
+        flushLoadWriters();
+
         emailLoadReports();
         printTimingInformation(550);
 
@@ -480,6 +510,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 "prepareLog2.txt");
 
         outputDate(); // Corresponds to system("/bin/date");
+
+        // Again: outputDate() and the sort above have written since the last flush, and
+        // cleanupForJenkins() zips these files and then deletes them.
+        flushLoadWriters();
 
         cleanupForJenkins();
         printTimingInformation(560);
@@ -974,6 +1008,19 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      * - record_attribution
      * - marker_assembly
      * - marker_annotation_status
+     *
+     * <p>marker_assembly and marker_annotation_status are keyed by <em>marker</em>, not by
+     * db_link, so joining them onto every one of a gene's db_link rows makes a single
+     * gene-level change look like a change to each of that gene's ~17 accessions. In one
+     * run 1,550 genes losing their annotation status were reported as 27,056 updated
+     * db_link records, nearly all of them on foreign DBs (InterPro, Pfam, PROSITE,
+     * Ensembl, ...) that have no relationship to annotation status at all.
+     *
+     * <p>Both columns are therefore attributed to the gene's NCBI Gene db_link only, and
+     * left null on every other row. That is the row the load actually derives them from:
+     * loadNCBIgeneAccs.sql rebuilds marker_annotation_status purely from NCBI Gene
+     * db_links, and its marker_assembly delete is keyed off them too. A gene-level change
+     * now shows up exactly once, on the record responsible for it.
      * @param outputFile
      */
     private void captureState(File outputFile) {
@@ -981,8 +1028,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             String sqlQuery = "\\copy (" +
                     """
                     select d.*, string_agg(distinct r.recattrib_source_zdb_id, '|' order by r.recattrib_source_zdb_id) as recattrib_source_zdb_id,
-                        string_agg(distinct a_name, '|' order by a_name) as marker_assemblies,
-                        string_agg(distinct vt_name, '|' order by vt_name) as marker_annotation_status
+                        case when d.dblink_fdbcont_zdb_id = '%s'
+                             then string_agg(distinct a_name, '|' order by a_name) end as marker_assemblies,
+                        case when d.dblink_fdbcont_zdb_id = '%s'
+                             then string_agg(distinct vt_name, '|' order by vt_name) end as marker_annotation_status
                     from db_link d
                         left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
                         left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
@@ -991,7 +1040,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         left join vocabulary_term on mas_vt_pk_id = vt_id
                     group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
                     order by dblink_linked_recid, dblink_acc_num
-                    """ +
+                    """.formatted(FDCONT_NCBI_GENE_ID, FDCONT_NCBI_GENE_ID) +
                     ") to  '" + outputFile.getAbsolutePath() + "'  with csv header ";
 
             //remove newlines from sqlQuery
@@ -1051,10 +1100,6 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         legacyVegaDblinkIds = dblinkIds;
 
         print(LOG, "Captured " + legacyVegaMatches.size() + " legacy Vega matches for potential reintroduction.\n");
-    }
-
-    private void runTemporaryVegaRemoveSQL() {
-        runSqlFile("temporaryVegaRemove.sql", "vega-remove-output.txt", "vega-remove-err.txt");
     }
 
     private void removeLegacyVegaMatchesFromDB() {
@@ -1296,6 +1341,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String symbol = fields[2];
 
                 NCBIidsGeneSymbols.put(ncbiGeneId, symbol);
+
             }
         } catch (IOException e) {
             reportErrAndExit("Cannot open or read zf_gene_info.gz: " + e.getMessage());
@@ -2143,8 +2189,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
             HashSet toDeleteAccessions = new HashSet(toDelete.values());
             while ((line = reader.readLine()) != null) {
+                ctEnsemblSupplementCandidates++;
                 String[] parts = line.split(",", -1); // Use -1 limit to include trailing empty strings
                 if (parts.length < 7) {
+                    ctEnsemblSupplementSkippedMalformed++;
                     debugBuffer.append("Skip Malformed line: ").append(line).append("\n");
                     continue;
                 }
@@ -2158,6 +2206,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 String rnaAccessionsColumn = parts[6].trim(); // not used in this logic directly
 
                 if (mapped.containsValue(ncbiId) || mapped.containsKey(zdbId)) {
+                    ctEnsemblSupplementSkippedDuplicate++;
                     debugBuffer.append("Skip Duplicate: ").append(line).append("\n");
                     continue;
                 }
@@ -2181,6 +2230,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 Long existingLinkCount = checkQuery.uniqueResult();
 
                 if (existingLinkCount != null && existingLinkCount > 0) {
+                    ctEnsemblSupplementSkippedExistingLink++;
                     debugBuffer.append("Skip Gene with existing NCBI link: ").append(line).append("\n");
                     continue;
                 }
@@ -2195,6 +2245,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             return;
         }
 
+        ctEnsemblSupplementLoaded = ncbiSupplementMapCount;
         print(LOG, "ncbiSupplementMapCount = " + ncbiSupplementMapCount + "\n");
         debugBuffer.append("ncbiSupplementMapCount = ").append(ncbiSupplementMapCount).append("\n");
 
@@ -2277,11 +2328,101 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    /**
+     * Re-assert the legacy Vega matches, dropping only those this run's own matching
+     * contradicts.
+     *
+     * <p>Vega matching itself is retired - {@code buildVegaIDMappings()} is commented out -
+     * so these links survive only because they are captured before the load deletes them and
+     * put back afterwards. They are legacy ZFIN mappings and the default is to keep them: a
+     * link is not wrong merely because NCBI has stopped mentioning the accession.
+     *
+     * <p>The one thing that does override them is this load's own conclusion. If the GenBank
+     * RNA or Ensembl supplement strategy mapped the gene to a different NCBI Gene ID, or
+     * mapped that accession to a different ZFIN gene, the stronger evidence wins and the Vega
+     * link is dropped and reported. Where a strategy found the very same pair the Vega row is
+     * simply redundant - the load-file dedup would discard it on pub priority anyway - so it
+     * is not counted as re-asserted, which keeps a count of {@code ZDB-PUB-130725-2} links
+     * meaning "Vega and nothing else has found this".
+     */
     private void reintroduceLegacyVegaLinks() {
-        legacyVegaMatches.forEach(dblink -> {
-            // Add back the legacy Vega links to NCBI Gene IDs (won't overwrite existing links if they have higher priority)
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(dblink.getDataZdbID(), dblink.getAccession(), null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
-        });
+        List<GenomeLocationDrift.ReportRow> droppedVegaLinks = new ArrayList<>();
+        ctLegacyVegaReasserted = 0;
+        int supersededVegaLinks = 0;
+
+        // What this run's own matching concluded, from the rows already staged for load.
+        // reintroduceLegacyVegaLinks() runs after both strategies have added theirs.
+        Map<String, Set<String>> loadedAccessionsByGene = new HashMap<>();
+        Map<String, Set<String>> loadedGenesByAccession = new HashMap<>();
+        for (NCBIOutputFileToLoad.LoadFileRow row : recordsToLoad.getRows()) {
+            if (!FDCONT_NCBI_GENE_ID.equals(row.fdb())) {
+                continue;
+            }
+            loadedAccessionsByGene.computeIfAbsent(row.geneID(), k -> new HashSet<>()).add(row.accession());
+            loadedGenesByAccession.computeIfAbsent(row.accession(), k -> new HashSet<>()).add(row.geneID());
+        }
+
+        for (DBLinkSlimDTO dblink : legacyVegaMatches) {
+            String geneZdbId = dblink.getDataZdbID();
+            String accession = dblink.getAccession();
+            Set<String> accessionsForGene = loadedAccessionsByGene.getOrDefault(geneZdbId, Collections.emptySet());
+            Set<String> genesForAccession = loadedGenesByAccession.getOrDefault(accession, Collections.emptySet());
+
+            if (accessionsForGene.contains(accession)) {
+                // A stronger strategy found the same pair this run. Leave it to that strategy:
+                // the load-file dedup would drop the Vega row on priority anyway, and counting
+                // it here would break what a ZDB-PUB-130725-2 count means.
+                supersededVegaLinks++;
+            } else if (!accessionsForGene.isEmpty()) {
+                droppedVegaLinks.add(new GenomeLocationDrift.ReportRow(geneZdbId, accession,
+                        "Dropped - this run matched the gene to a different NCBI Gene ID",
+                        String.join(", ", new TreeSet<>(accessionsForGene))));
+            } else if (!genesForAccession.isEmpty()) {
+                droppedVegaLinks.add(new GenomeLocationDrift.ReportRow(geneZdbId, accession,
+                        "Dropped - this run matched the accession to a different ZFIN gene",
+                        String.join(", ", new TreeSet<>(genesForAccession))));
+            } else {
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(
+                        geneZdbId, accession, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+                ctLegacyVegaReasserted++;
+            }
+        }
+
+        print(LOG, "Legacy Vega links: " + ctLegacyVegaReasserted + " re-asserted, "
+                + supersededVegaLinks + " superseded by a stronger strategy, "
+                + droppedVegaLinks.size() + " dropped as contradicted by this run.\n");
+
+        if (!droppedVegaLinks.isEmpty()) {
+            LoadReportAction action = new LoadReportAction();
+            action.setType(LoadReportAction.Type.DELETE);
+            action.setSubType("Dropped Legacy Vega NCBI GeneID");
+            action.setId("dropped-legacy-vega");
+            action.setGeneZdbID("N/A");
+            action.setAccession("N/A");
+            action.setDetails("Legacy Vega matches are re-asserted each run because Vega matching "
+                    + "itself is retired, and they are kept unless this run's own matching "
+                    + "contradicts them. These were contradicted: the GenBank RNA or Ensembl "
+                    + "supplement strategy mapped the gene to a different NCBI Gene ID, or that "
+                    + "accession to a different gene, and the stronger evidence wins.");
+            action.setRelatedEntityFields(Map.of("Report Title", "Dropped Legacy Vega NCBI GeneID"));
+            LoadReportSummaryTable table = new LoadReportSummaryTable();
+            table.setDescription(droppedVegaLinks.size() + " legacy Vega link(s) dropped");
+            Map<String, String> headers = new LinkedHashMap<>();
+            headers.put("Gene ZDB ID", "Gene ZDB ID");
+            headers.put("NCBI Gene ID", "NCBI Gene ID");
+            headers.put("Outcome", "Outcome");
+            headers.put("Accession now maps to", "NCBI now cross-references");
+            table.setTableHeadersByMap(headers);
+            table.setRows(droppedVegaLinks.stream()
+                    .map(row -> Map.<String, Object>of(
+                            "Gene ZDB ID", row.geneZdbId(),
+                            "NCBI Gene ID", row.accession(),
+                            "Outcome", row.outcome(),
+                            "Accession now maps to", row.nowMapsTo()))
+                    .toList());
+            action.setTables(List.of(table));
+            legacyVegaActions.add(action);
+        }
     }
 
     private List<LoadReportAction> getOneToNNCBItoZFINgeneIds() {
@@ -3237,6 +3378,35 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         print(LOG, "\nDone with the update of marker-assembly association!\n\n");
     }
 
+    /**
+     * Push every buffered writer to disk before anything emails or archives what they wrote.
+     *
+     * <p>These are BufferedWriters with the default 8K buffer, and their only flush used to be
+     * the close() at the very end of run(). emailLoadReports() and cleanupForJenkins() both run
+     * before that, and cleanupForJenkins() deletes each file once it has zipped it - so the
+     * close() flushed the tail of every log into a path that had already been archived and
+     * removed. Whatever sat in the buffer at that moment simply never reached anyone.
+     *
+     * <p>It is not much - at most one buffer per writer - but it is the tail, which is where a
+     * load says how it went. The first full run of the genome-location reconciliation lost
+     * exactly this way: logNCBIgeneLoad.txt was archived at 2,457,600 bytes, precisely
+     * 300 * 8192, and the "Genome location reconciliation: ... re-pointed, ... deleted" summary
+     * was in the part still in memory.
+     */
+    private void flushLoadWriters() {
+        for (BufferedWriter writer : Arrays.asList(LOG, STATS_PRIORITY1, STATS_PRIORITY2, STATS)) {
+            if (writer == null) {
+                continue;
+            }
+            try {
+                writer.flush();
+            } catch (IOException e) {
+                // Deliberately to stderr: LOG may be the writer that just failed.
+                System.err.println("WARNING: could not flush a load writer before archiving: " + e.getMessage());
+            }
+        }
+    }
+
     private void sendLoadLogs() {
         String subject = "Notify : NCBI gene load :: loadLog1 file";
         // The Perl script attached "loadLog1". We might have "loadLog1.txt" and "loadLog2.txt".
@@ -3591,10 +3761,47 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 ))
                 .toList();
 
+        // Annotation status is only meaningful for a gene that has an NCBI Gene ID, and
+        // loadNCBIgeneAccs.sql derives the whole table from NCBI Gene db_links, so this
+        // should always come back empty. It is here as a guard: if some other writer ever
+        // leaves a status behind on a gene with no NCBI Gene ID, the report says so rather
+        // than the stale row quietly riding along in every downstream snapshot.
+        sql = """
+                SELECT
+                    mas_mrkr_zdb_id, mrkr_abbrev, vt_name as status,
+                    string_agg(distinct a_name, ', ' order by a_name) as assembly_name
+                FROM
+                    marker_annotation_status
+                        LEFT JOIN marker ON mas_mrkr_zdb_id = mrkr_zdb_id
+                        LEFT JOIN vocabulary_term ON mas_vt_pk_id = vt_id
+                        LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
+                        LEFT JOIN assembly ON ma_a_pk_id = a_pk_id
+                WHERE
+                    NOT EXISTS (
+                        SELECT 1 FROM db_link
+                        WHERE dblink_linked_recid = mas_mrkr_zdb_id
+                          AND dblink_fdbcont_zdb_id = '%s')
+                GROUP BY mas_mrkr_zdb_id, mrkr_abbrev, vt_name
+                ;
+        """.formatted(FDCONT_NCBI_GENE_ID);
+
+        List<AnnotationStatusWarningRow> statusWithoutNcbiGeneIdRecords = currentSession().createNativeQuery(sql, Tuple.class)
+                .list()
+                .stream()
+                .map(row -> new AnnotationStatusWarningRow(
+                        row.get("mas_mrkr_zdb_id", String.class),
+                        row.get("mrkr_abbrev", String.class),
+                        row.get("status", String.class),
+                        row.get("assembly_name", String.class),
+                        ""
+                ))
+                .toList();
+
         return Map.of(
                 "Current Annotation Status without GRCz12tu Assembly", currentStatusWithoutZ12Records,
                 "Not Current Annotation Status with GRCz12tu Assembly", notCurrentWithZ12Records,
-                "Unknown Status", unknownStatusRecords
+                "Unknown Status", unknownStatusRecords,
+                "Annotation Status without NCBI Gene ID", statusWithoutNcbiGeneIdRecords
         );
 
     }
@@ -3667,6 +3874,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         table2.addBeforeAfterCountSummaryRow("with GenBank", numGenesGenBankBefore, numGenesGenBankAfter);
         table2.addBeforeAfterCountSummaryRow("without NCBI Gene ID", numUnlinkedGenesBefore, numUnlinkedGenesAfter);
 
+        addMatchingStrategySummaryTables(builder);
+        addGenomeLocationCoverageSummary(builder);
+
         if (beforeAfterSummary != null) {
             NCBIReportBuilder.SummaryTableBuilder table3 = builder.addSummaryTable("totals before and after load");
             table3.setHeaders(List.of("Category", "Count"));
@@ -3684,6 +3894,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         builder.addActions(manyToManyWarningActions);
         builder.addActions(oneToManyWarningActions);
         builder.addActions(manyToOneWarningActions);
+        builder.addActions(genomeLocationActions);
+        builder.addActions(legacyVegaActions);
 
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
@@ -3694,6 +3906,134 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         writeOutputReportFile(builder.buildZfinReport());
         beforeAfterComparison.clear();
+    }
+
+    /**
+     * Summarise how many NCBI Gene IDs each matching strategy produced, plus the funnel
+     * that narrows the Ensembl-supplement candidate list down to what actually loads.
+     *
+     * <p>The load rebuilds each strategy from scratch every run — the supplement links are
+     * deleted outright by {@code removeEnsemblMatchesFromDB()} before being re-derived —
+     * so a strategy that quietly under-produces silently drops thousands of links, and
+     * with them the marker_annotation_status rows derived from them. Putting the per-run
+     * tallies next to each other makes that visible in the report instead of only in
+     * logNCBIgeneLoad.txt and debug15.
+     */
+    /**
+     * How many genes carrying an NCBI Gene ID actually end up with a GRCz12tu location, and
+     * why the rest do not.
+     *
+     * <p>A gene with an NCBI Gene ID and no genome location looks like a load failure and is
+     * usually not one: markerAssemblyUpdate.sql can only place a gene whose accession appears
+     * as a gene or pseudogene in gff3_ncbi, and NCBI's GRCz12tu annotation simply does not
+     * carry every accession ZFIN links to. Without this table a curator has no way to tell
+     * that apart from a bug.
+     *
+     * <p>The row worth watching is the last one. An accession that <em>is</em> in the staged
+     * GFF3 and still has no location means the placement did not happen - a real problem -
+     * where the row above it is just the shape of NCBI's annotation. It reads 0 on healthy
+     * data.
+     */
+    private void addGenomeLocationCoverageSummary(NCBIReportBuilder builder) {
+        String sql = """
+                -- Collect the GFF3's GeneIDs once. Testing each accession with a
+                -- correlated LIKE over gff3_ncbi_attribute instead runs for minutes:
+                -- that is ~24k probes across 12.6M rows.
+                with gff_ids as (
+                  select distinct substring(a.gna_value from 'GeneID:([0-9]+)') as acc
+                    from gff3_ncbi_attribute a
+                    join gff3_ncbi g on g.gff_pk_id = a.gna_gff_pk_id
+                   where a.gna_key = 'Dbxref'
+                     and g.gff_feature in ('gene', 'pseudogene')
+                     and a.gna_value like 'GeneID:%'),
+                located as (
+                  select distinct s.sfclg_data_zdb_id as gene
+                    from sequence_feature_chromosome_location_generated s
+                   where s.sfclg_location_source = :source),
+                linked as (
+                  select distinct d.dblink_linked_recid as gene, d.dblink_acc_num as acc
+                    from db_link d
+                   where d.dblink_fdbcont_zdb_id = :fdbcont)
+                select count(*) filter (where lo.gene is not null)
+                         as with_location,
+                       count(*) filter (where lo.gene is null and gi.acc is null)
+                         as no_location_not_in_gff3,
+                       count(*) filter (where lo.gene is null and gi.acc is not null)
+                         as no_location_but_in_gff3
+                  from linked l
+                  left join located lo on lo.gene = l.gene
+                  left join gff_ids gi on gi.acc = l.acc
+                """;
+        try {
+            createTransaction();
+            Tuple row = currentSession().createNativeQuery(sql, Tuple.class)
+                    .setParameter("fdbcont", FDCONT_NCBI_GENE_ID)
+                    .setParameter("source", GenomeLocation.Source.NCBI_LOADER.getName())
+                    .getSingleResult();
+            flushAndCommitCurrentSession();
+
+            long withLocation = ((Number) row.get("with_location")).longValue();
+            long notInGff3 = ((Number) row.get("no_location_not_in_gff3")).longValue();
+            long inGff3 = ((Number) row.get("no_location_but_in_gff3")).longValue();
+
+            NCBIReportBuilder.SummaryTableBuilder coverage =
+                    builder.addSummaryTable("GRCz12tu genome location coverage");
+            coverage.setHeaders(List.of("Genes with an NCBI Gene ID", "Count"));
+            coverage.addSummaryRow(List.of("with a GRCz12tu location", Long.toString(withLocation)));
+            coverage.addSummaryRow(List.of(
+                    "without one - accession not in the GFF3, so it cannot be placed",
+                    Long.toString(notInGff3)));
+            coverage.addSummaryRow(List.of(
+                    "without one - accession IS in the GFF3, so placement was missed",
+                    Long.toString(inGff3)));
+        } catch (RuntimeException e) {
+            rollbackTransaction();
+            print(LOG, "WARNING: could not build the genome location coverage summary: "
+                    + e.getMessage() + "\n");
+        }
+    }
+
+    private void addMatchingStrategySummaryTables(NCBIReportBuilder builder) {
+        boolean supplementEnabled = envTrue("LOAD_NCBI_ONE_WAY_GENES");
+
+        NCBIReportBuilder.SummaryTableBuilder strategies =
+                builder.addSummaryTable("NCBI Gene ID matches by strategy");
+        strategies.setHeaders(List.of("Strategy", "Attribution Pub", "Matches"));
+        strategies.addSummaryRow(List.of(
+                "1:1 via GenBank RNA",
+                PUB_MAPPED_BASED_ON_RNA,
+                Long.toString(ctOneToOneNCBI)));
+        strategies.addSummaryRow(List.of(
+                "Shared Ensembl ID (NCBI supplement)" + (supplementEnabled ? "" : " — DISABLED"),
+                PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT,
+                supplementEnabled ? Long.toString(ctEnsemblSupplementLoaded) : "n/a"));
+        strategies.addSummaryRow(List.of(
+                "Legacy Vega (re-asserted, no new matching)",
+                PUB_MAPPED_BASED_ON_VEGA,
+                Integer.toString(ctLegacyVegaReasserted)));
+        strategies.addSummaryRow(List.of(
+                "Total",
+                "",
+                Long.toString(ctOneToOneNCBI
+                        + (supplementEnabled ? ctEnsemblSupplementLoaded : 0)
+                        + ctLegacyVegaReasserted)));
+
+        if (!supplementEnabled) {
+            return;
+        }
+
+        NCBIReportBuilder.SummaryTableBuilder funnel =
+                builder.addSummaryTable("Ensembl-supplement candidates (how the list narrows)");
+        funnel.setHeaders(List.of("Category", "Count"));
+        funnel.addSummaryRow(List.of("Candidate rows in ncbi_matches_through_ensembl.csv",
+                Long.toString(ctEnsemblSupplementCandidates)));
+        funnel.addSummaryRow(List.of("Skipped - already matched via GenBank RNA",
+                Long.toString(ctEnsemblSupplementSkippedDuplicate)));
+        funnel.addSummaryRow(List.of("Skipped - gene already has an NCBI Gene ID",
+                Long.toString(ctEnsemblSupplementSkippedExistingLink)));
+        funnel.addSummaryRow(List.of("Skipped - malformed row",
+                Long.toString(ctEnsemblSupplementSkippedMalformed)));
+        funnel.addSummaryRow(List.of("Loaded", Long.toString(ctEnsemblSupplementLoaded)));
     }
 
     private List<LoadReportAction> getUnlinkedGeneReportActions() {
@@ -3951,6 +4291,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             CSVRecord record2 = iterator2.next();
             assertRecordsMatch(record1, record2);
             LoadReportAction action = csvRecordToAction(record1, LoadReportAction.Type.UPDATE);
+            // The reader collapses "x -> x" to a single unchanged value and flags only the
+            // sides that differ, so every field can be listed without the whole table
+            // reading as changed. Blank sides go through noneIfEmpty so a lost value shows
+            // as "Current -> (none)" rather than trailing off into an empty cell.
             String details = """
                     ZDB ID          : %s
                     Accession or ID : %s
@@ -3962,15 +4306,24 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     """.formatted(
                     record1.get("dblink_linked_recid"),
                     record1.get("dblink_acc_num"),
-                    record1.get("dblink_zdb_id"), record2.get("dblink_zdb_id"),
-                    record1.get("dblink_length"), record2.get("dblink_length"),
-                    record1.get("recattrib_source_zdb_id"), record2.get("recattrib_source_zdb_id"),
-                    record1.get("marker_assemblies"), record2.get("marker_assemblies"),
-                    record1.get("marker_annotation_status"), record2.get("marker_annotation_status"));
+                    noneIfEmpty(record1.get("dblink_zdb_id")), noneIfEmpty(record2.get("dblink_zdb_id")),
+                    noneIfEmpty(record1.get("dblink_length")), noneIfEmpty(record2.get("dblink_length")),
+                    noneIfEmpty(record1.get("recattrib_source_zdb_id")), noneIfEmpty(record2.get("recattrib_source_zdb_id")),
+                    noneIfEmpty(record1.get("marker_assemblies")), noneIfEmpty(record2.get("marker_assemblies")),
+                    noneIfEmpty(record1.get("marker_annotation_status")), noneIfEmpty(record2.get("marker_annotation_status")));
             action.setDetails(details);
             actions.add(action);
         }
         return actions;
+    }
+
+    /**
+     * A marker-level column is null on every db_link row it does not belong to, and an
+     * accession genuinely can have no length or no attribution. Naming that absence keeps
+     * a before/after line from rendering as a value trailing into an empty cell.
+     */
+    private static String noneIfEmpty(String value) {
+        return StringUtils.isBlank(value) ? "(none)" : value;
     }
 
     private void assertRecordsMatch(CSVRecord record1, CSVRecord record2) {
@@ -3984,6 +4337,48 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    /**
+     * Display name for a foreign DB container, e.g. "InterPro" for ZDB-FDBCONT-040412-48.
+     *
+     * <p>The load touches NCBI Gene, RefSeq and GenBank directly, but the before/after
+     * db_link diff sees every container a gene has an accession in. Those all used to
+     * collapse into a single "Unknown Foreign DB" report group — 24,050 records in one
+     * run — because {@link DBName#getDisplayNameForForeignDB} only knows the eight
+     * containers the load writes to. foreign_db already carries the real names, so read
+     * them from there and keep the hardcoded switch as the fallback for a container that
+     * has somehow gone missing from the table.
+     */
+    private String displayNameForForeignDB(String fdbcontZdbId) {
+        if (foreignDbDisplayNames == null) {
+            loadForeignDbDisplayNames();
+        }
+        String name = foreignDbDisplayNames.get(fdbcontZdbId);
+        return name != null ? name : DBName.getDisplayNameForForeignDB(fdbcontZdbId);
+    }
+
+    private void loadForeignDbDisplayNames() {
+        foreignDbDisplayNames = new HashMap<>();
+        String sql = """
+                select fdbcont_zdb_id, fdb_db_name
+                from foreign_db_contains
+                    join foreign_db on fdbcont_fdb_db_id = fdb_db_pk_id
+                """;
+        try {
+            for (Tuple row : currentSession().createNativeQuery(sql, Tuple.class).<Tuple>list()) {
+                String id = row.get("fdbcont_zdb_id", String.class);
+                String name = row.get("fdb_db_name", String.class);
+                if (id != null && StringUtils.isNotBlank(name)) {
+                    foreignDbDisplayNames.put(id, name);
+                }
+            }
+            print(LOG, "Loaded " + foreignDbDisplayNames.size() + " foreign DB display names.\n");
+        } catch (RuntimeException e) {
+            // Report labelling only — never fail the load over it.
+            print(LOG, "WARN: Could not load foreign DB display names, falling back to the "
+                    + "built-in list: " + e.getMessage() + "\n");
+        }
+    }
+
     private LoadReportAction csvRecordToAction(CSVRecord record, LoadReportAction.Type type) {
         String zdbId = record.get("dblink_linked_recid");
         String accNum = record.get("dblink_acc_num");
@@ -3992,7 +4387,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         LoadReportAction action = new LoadReportAction();
         action.setType(type);
 
-        String dbName = DBName.getDisplayNameForForeignDB(fdbcontZdbId);
+        String dbName = displayNameForForeignDB(fdbcontZdbId);
         action.setDbName(dbName);
         action.setRelatedEntityFields(Map.of("Database", dbName, "Pub", record.get("recattrib_source_zdb_id")));
 

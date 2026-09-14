@@ -61,6 +61,12 @@ update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
 -- If there are any duplicates in the load file but with different load_pub_zdb_id, we want to keep the one with the highest priority load pub
 -- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87
+--
+-- Dropping the losing row, and with it its attribution, is the point rather than a side
+-- effect: once a stronger strategy finds a link, it is no longer a Vega-based mapping and
+-- should stop being attributed to the Vega pub. That is why a count of ZDB-PUB-130725-2
+-- links means "Vega and nothing else has found this" - do not "preserve" the losing pubs
+-- as extra attributions, it would silently change what that count means.
 create temporary table ncbi_gene_load_dedup as
  select distinct on (mapped_zdb_gene_id, ncbi_accession) *
    from ncbi_gene_load

@@ -5,11 +5,18 @@ create temp table temp_new_gene as
 select db.dblink_linked_recid as gene_zdb_id, db.dblink_acc_num as accession
 from db_link as db
 where db.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
+  -- Select on the fact we actually care about - the gene has no NCBI genome location -
+  -- rather than on marker_assembly, which was standing in for it. The two are not the
+  -- same: reconcileNcbiGenomeLocations() deletes a location whose gene attribution has
+  -- gone stale but leaves the assembly row alone, so a gene can hold the GRCz12tu row
+  -- while having no GRCz12tu location. Gated on the assembly row, such a gene was
+  -- invisible here forever, and restoring its NCBI Gene ID could never restore its
+  -- location. Gated on the location, it comes back on the next run.
   and not exists(
-        select *
-        from marker_assembly
-        where db.dblink_linked_recid = ma_mrkr_zdb_id
-          and ma_a_pk_id = 1
+        select 1
+        from sequence_feature_chromosome_location_generated
+        where sfclg_data_zdb_id = db.dblink_linked_recid
+          and sfclg_location_source = 'NCBILoader'
     )
   and exists(
         select *
@@ -100,8 +107,13 @@ where gna_key = 'Dbxref'
 
 -- insert gene_id into gff3_ncbi_attribute
 
-insert into gff3_ncbi_attribute (gna_gff_pk_id,gna_key, gna_value)
-select gff_pk_id,
+-- Name the key explicitly rather than leaning on the column default. 1185/0020 repoints
+-- that default at this same sequence, but this load also runs against databases restored
+-- from a dump before liquibase has been applied, where the old default would still hand
+-- out keys that are already taken.
+insert into gff3_ncbi_attribute (gna_pk_id, gna_gff_pk_id, gna_key, gna_value)
+select nextval('gff3_ncbi_attribute_seq'),
+       gff_pk_id,
        'gene_id',
        gene_zdb_id
 from temp_new_gene,
@@ -111,7 +123,17 @@ where gna_key = 'Dbxref'
   and regexp_like(gna_value, 'GeneID:' || accession || '(,|$)')
   and gna_gff_pk_id = gff_pk_id
   and gff_feature in ('gene', 'pseudogene')
-  ON CONFLICT (gna_pk_id) DO NOTHING; 
+  -- Guards against writing a pair that is already there. This replaces an
+  -- ON CONFLICT (gna_pk_id) DO NOTHING, which guarded the wrong thing: it swallowed the
+  -- primary-key collisions described above, so the statement quietly inserted nothing
+  -- whenever the ids it generated were already taken.
+  and not exists(
+        select 1
+        from gff3_ncbi_attribute existing
+        where existing.gna_gff_pk_id = gff3_ncbi.gff_pk_id
+          and existing.gna_key = 'gene_id'
+          and existing.gna_value = temp_new_gene.gene_zdb_id
+    );
 
 -- marker gene as GRCz11 if they do not have a z12 association but have a sequence_feature_chromosome_location_generated record for ZFIN with GRCz11
 insert into marker_assembly

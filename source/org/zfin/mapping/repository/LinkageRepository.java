@@ -9,6 +9,8 @@ import org.zfin.marker.Marker;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.gff.Assembly;
 
+import jakarta.persistence.Tuple;
+
 import java.util.List;
 import java.util.TreeSet;
 
@@ -224,4 +226,30 @@ public interface LinkageRepository {
     boolean hasGenomeLocation(Marker gene, GenomeLocation.Source source);
 
     List<EntityZdbID> getMappedEntitiesByPub(Publication publication);
+
+    /**
+     * Every genome location from the given source whose (accession, entity) pairing db_link
+     * no longer carries, together with the entity or entities the accession maps to now.
+     *
+     * <p>Each tuple carries the location's columns plus two derived ones:
+     * {@code current_genes}, a comma-separated list of the ZDB IDs the accession maps to now
+     * (empty when it maps to none), and {@code would_collide}, whether moving the row onto
+     * {@code current_genes} would be refused by uq_sfclg_unique_location. The second is only
+     * meaningful when {@code current_genes} names exactly one gene.
+     *
+     * @param source          value of sfclg_location_source to examine, e.g. NCBILoader
+     * @param foreignDbContainerID the db_link container the accessions belong to
+     */
+    List<Tuple> getDriftedGenomeLocations(String source, String foreignDbContainerID);
+
+    /**
+     * Move one marker genome location onto a different gene, by primary key.
+     *
+     * <p>Throws if the move is refused by a unique constraint; the caller is expected to have
+     * established that it would be accepted.
+     */
+    void reassignMarkerGenomeLocation(long locationID, String geneZdbID);
+
+    /** Delete one marker genome location by primary key. */
+    void deleteMarkerGenomeLocation(long locationID);
 }

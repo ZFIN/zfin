@@ -202,6 +202,9 @@
             min-height: 24px;
         }
         .report-table-header h4 { margin: 0; }
+        /* ChildrenList reuses this header so its Items table gets the same CSV
+           button; its heading is an h3 and carries a bottom margin on its own. */
+        .report-table-header h3 { margin: 0; }
         .table-description { color: #666; font-size: 13px; margin: 0 0 6px; }
         .csv-download-btn {
             background: none;
@@ -596,9 +599,35 @@
         const tagDefs = (definitions && definitions.tags) || {};
         const catDefs = (definitions && definitions.categories) || {};
 
+        // The same CSV export ReportTable offers, over the columns this listing
+        // actually renders. Exports every item rather than the current filter, to
+        // match ReportTable. Tag and count keys are prefixed so they cannot collide
+        // with a field named "tags" or "items".
+        const csvColumns = [{ key: 'title', title: 'Title' }]
+            .concat(fieldKeys.map(k => ({ key: k, title: (fieldDefs[k] || {}).label || k })))
+            .concat(anyTags ? [{ key: '__tags', title: 'Tags' }] : [])
+            .concat(anyChildCounts ? [{ key: '__items', title: 'Items' }] : []);
+        const csvRows = children.map(child => {
+            const row = { title: child.title || child.id };
+            fieldKeys.forEach(k => { row[k] = child.fields ? child.fields[k] : ''; });
+            if (anyTags) row.__tags = (child.tags || []).join(' ');
+            if (anyChildCounts) {
+                const cnt = displayCount(child);
+                row.__items = cnt != null ? cnt : '';
+            }
+            return row;
+        });
+        const csvFilename = ((node.title || 'items')
+            .replace(/[^a-z0-9]+/gi, '_')
+            .toLowerCase()) + '.csv';
+
         return html`
             <div className="children-list">
-                <h3>Items (${filtered.length.toLocaleString()})</h3>
+                <div className="report-table-header">
+                    <h3>Items (${filtered.length.toLocaleString()})</h3>
+                    <button className="csv-download-btn" title="Download as CSV"
+                            onClick=${() => downloadCsv(csvColumns, csvRows, csvFilename)}>${downloadIcon}</button>
+                </div>
                 <input type="text" className="search" placeholder="Search..."
                        onInput=${(e) => setSearch(e.target.value)} />
                 <table className="data-table">
