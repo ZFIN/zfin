@@ -1,5 +1,6 @@
 package org.zfin.mapping.repository;
 
+import jakarta.persistence.Tuple;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -539,4 +540,74 @@ public class HibernateLinkageRepository implements LinkageRepository {
         }
     }
 
+    /**
+     * Every NCBILoader-style genome location whose (accession, entity) pair db_link no longer
+     * carries. Native SQL: the two derived columns are set-oriented work the database does far
+     * better than a walk over entities, and nothing here needs the rows as objects.
+     */
+    private static final String DRIFTED_GENOME_LOCATIONS_SQL = """
+            with drifted as (
+              select l.*,
+                     (select string_agg(distinct d.dblink_linked_recid, ',' order by d.dblink_linked_recid)
+                        from db_link d
+                       where d.dblink_acc_num = l.sfclg_acc_num
+                         and d.dblink_fdbcont_zdb_id = :fdbcont) as current_genes
+                from sequence_feature_chromosome_location_generated l
+               where l.sfclg_location_source = :source
+                 and not exists (select 1 from db_link d
+                                  where d.dblink_acc_num = l.sfclg_acc_num
+                                    and d.dblink_fdbcont_zdb_id = :fdbcont
+                                    and d.dblink_linked_recid = l.sfclg_data_zdb_id)
+            )
+            select d.sfclg_pk_id, d.sfclg_data_zdb_id, d.sfclg_acc_num,
+                   d.sfclg_chromosome, d.sfclg_start, d.sfclg_end, d.current_genes,
+                   -- Would moving this row onto d.current_genes be refused? Mirrors
+                   -- uq_sfclg_unique_location, the constraint that binds for these rows:
+                   -- every one of its columns, with IS NOT DISTINCT FROM for its
+                   -- NULLS NOT DISTINCT semantics.
+                   exists (select 1
+                             from sequence_feature_chromosome_location_generated t
+                            where t.sfclg_data_zdb_id = d.current_genes
+                              and t.sfclg_pk_id <> d.sfclg_pk_id
+                              and t.sfclg_acc_num           is not distinct from d.sfclg_acc_num
+                              and t.sfclg_chromosome        is not distinct from d.sfclg_chromosome
+                              and t.sfclg_start             is not distinct from d.sfclg_start
+                              and t.sfclg_end               is not distinct from d.sfclg_end
+                              and t.sfclg_location_source   is not distinct from d.sfclg_location_source
+                              and t.sfclg_location_subsource is not distinct from d.sfclg_location_subsource
+                              and t.sfclg_fdb_db_id         is not distinct from d.sfclg_fdb_db_id
+                              and t.sfclg_pub_zdb_id        is not distinct from d.sfclg_pub_zdb_id
+                              and t.sfclg_assembly          is not distinct from d.sfclg_assembly
+                              and t.sfclg_gbrowse_track     is not distinct from d.sfclg_gbrowse_track
+                              and t.sfclg_evidence_code     is not distinct from d.sfclg_evidence_code
+                              and t.sfclg_strand            is not distinct from d.sfclg_strand) as would_collide
+              from drifted d
+             order by d.sfclg_data_zdb_id, d.sfclg_acc_num
+            """;
+
+    @Override
+    public List<Tuple> getDriftedGenomeLocations(String source, String foreignDbContainerID) {
+        return currentSession().createNativeQuery(DRIFTED_GENOME_LOCATIONS_SQL, Tuple.class)
+            .setParameter("fdbcont", foreignDbContainerID)
+            .setParameter("source", source)
+            .list();
+    }
+
+    @Override
+    public void reassignMarkerGenomeLocation(long locationID, String geneZdbID) {
+        // entityID, not marker: the marker association maps the same column read-only.
+        currentSession().createMutationQuery(
+                "update MarkerGenomeLocation set entityID = :gene where ID = :pk")
+            .setParameter("gene", geneZdbID)
+            .setParameter("pk", locationID)
+            .executeUpdate();
+    }
+
+    @Override
+    public void deleteMarkerGenomeLocation(long locationID) {
+        currentSession().createMutationQuery(
+                "delete from MarkerGenomeLocation where ID = :pk")
+            .setParameter("pk", locationID)
+            .executeUpdate();
+    }
 }
