@@ -100,7 +100,9 @@ public class FormSchemaInvariantsTest {
                 ZircAssayFormSchema.FIELDS.keySet(),
                 AssayDTO.class,
                 Set.of("id", "mutationId", "sortOrder"),
-                Set.of("/attachments")));
+                // Both upload buckets are managed by the multipart
+                // upload/delete endpoints, not by field-path PATCH.
+                Set.of("/attachments", "/protocolDocuments")));
     }
 
     @Test

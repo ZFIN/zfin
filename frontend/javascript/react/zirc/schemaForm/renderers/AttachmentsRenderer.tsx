@@ -12,15 +12,51 @@ import { AssayFileDTO } from '../../api/types';
 import { useUploadAttachment, useDeleteAttachment } from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 
+interface AttachmentsOptions {
+    label?: string;
+    /** Lowercase, dot-less; empty or absent means any extension. */
+    acceptedExtensions?: string[];
+    /** af_kind to file the upload under; see GenotypingAssayFile.KINDS. */
+    attachmentKind?: string;
+}
+
 /**
- * Per-assay attachments. Single "Attachments" section regardless of
- * assayType — the original four-kind matrix (chromatogram / gel_image /
- * result_image / melt_curve) is collapsed to a generic uploader for now.
+ * Per-assay attachments. One widget serves every bucket on the form: the
+ * four per-assayType results buckets bound to `attachments` (gel images,
+ * chromatograms, result images, melt curves) and Protocol Documentation
+ * bound to `protocolDocuments` (ZFIN-10415).
+ *
+ * Everything that distinguishes a bucket arrives from the uischema:
+ * `options.label` is the heading, `options.attachmentKind` is the af_kind
+ * sent with the upload so the server files it in the right bucket, and
+ * `options.acceptedExtensions` drives both the picker's accept filter and
+ * the "Accepted file types" line under it. Deriving the filter and the text
+ * from one list is what keeps them from disagreeing. Server-side source of
+ * truth for all of it is ZircAttachmentKind, which the upload endpoint
+ * validates against.
+ *
  * Uploads go through a dedicated multipart endpoint, not the field-path
- * PATCH; AssayEdit's diff filter skips /attachments.
+ * PATCH; the editor's diff filter skips both managesOwnPersistence paths.
  *
  * assayId arrives via JsonForms' config prop.
  */
+
+/**
+ * Lowercase extension without the dot, or null when the name has none.
+ * Mirrors ZircAttachmentKind.extensionOf — reads the last dot so
+ * "trace.raw.ab1" resolves to "ab1".
+ */
+function extensionOf(filename: string): string | null {
+    const dot = filename.lastIndexOf('.');
+    if (dot < 0 || dot === filename.length - 1) {return null;}
+    return filename.slice(dot + 1).toLowerCase();
+}
+
+function hasAcceptedExtension(filename: string, accepted: string[]): boolean {
+    const ext = extensionOf(filename);
+    return ext != null && accepted.includes(ext);
+}
+
 function AttachmentsRenderer({ data, schema, config, uischema, visible }: ControlProps) {
     if (visible === false) {return null;}
     const files = (data as AssayFileDTO[] | undefined) ?? [];
@@ -29,10 +65,23 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const view = viewConfigFrom(config);
-    // Per-assay-type bucket label (e.g. "Annotated gel images", "Chromatograms")
-    // — set via uischema options.label so the same Attachments widget can
-    // appear under different headings depending on the assay type.
-    const bucketLabel = ((uischema as { options?: { label?: string } } | undefined)?.options)?.label;
+    // Bucket heading, af_kind, picker filter and helper text all ride on the
+    // uischema options so one widget can serve every bucket.
+    const opts = ((uischema as { options?: AttachmentsOptions } | undefined)?.options) ?? {};
+    const bucketLabel = opts.label;
+    // Extensions this bucket accepts, lowercase and dot-less. Absent means
+    // the bucket takes any extension (the melt-curve case), so the accept
+    // attribute and the helper text are both omitted rather than empty.
+    const acceptedExtensions = opts.acceptedExtensions;
+    // ".abi,.ab1,.scf" for the file picker's filter, and the same list
+    // spelled out for the helper text below it. Tested through the optional
+    // chain rather than a precomputed boolean so the array narrows.
+    const acceptAttr = acceptedExtensions?.length
+        ? acceptedExtensions.map((e) => `.${e}`).join(',')
+        : undefined;
+    const acceptedDisplay = acceptedExtensions?.length
+        ? acceptedExtensions.map((e) => `.${e}`).join(', ')
+        : undefined;
 
     if (view.readonly) {
         return (
@@ -64,8 +113,18 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
         const file = e.target.files?.[0];
         if (!file || !assayId) {return;}
         setErrorMsg(null);
+        // The accept attribute only filters the picker's default view — a
+        // curator can still choose "All files", and drag-and-drop bypasses
+        // it entirely. Check here so the rejection is immediate and names
+        // the allowed types; the endpoint enforces the same rule regardless.
+        if (acceptedExtensions?.length
+            && !hasAcceptedExtension(file.name, acceptedExtensions)) {
+            setErrorMsg(`${file.name} is not an accepted file type. Accepted: ${acceptedDisplay}`);
+            if (inputRef.current) {inputRef.current.value = '';}
+            return;
+        }
         upload.mutate(
-            { assayId, file },
+            { assayId, file, kind: opts.attachmentKind },
             {
                 onError: (err) => {
                     setErrorMsg(err instanceof Error ? err.message : 'Upload failed');
@@ -132,6 +191,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                 <input
                     ref={inputRef}
                     type='file'
+                    accept={acceptAttr}
                     onChange={handlePick}
                     disabled={!assayId || upload.isPending || atCapacity}
                     title={capTitle}
@@ -140,6 +200,11 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                     <span className='text-muted small ml-2'>Uploading…</span>
                 )}
             </div>
+            {acceptedDisplay && (
+                <small className='form-text text-muted'>
+                    Accepted file types: {acceptedDisplay}
+                </small>
+            )}
             {errorMsg && (
                 <div className='alert alert-danger mt-2 mb-0' role='alert'>
                     {errorMsg}

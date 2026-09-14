@@ -85,6 +85,9 @@ describe('assay field order', () => {
             'sslpInducedPcr',
             'sslpOutcrossedPcr',
             'attachments',
+            // ZFIN-10415 adds a second bucket below the results one, on
+            // every assay type, so it lands here on SSLP too.
+            'protocolDocuments',
             'additionalInfo',
         ]);
     });

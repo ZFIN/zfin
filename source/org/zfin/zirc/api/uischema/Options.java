@@ -123,6 +123,21 @@ public record Options(
         // For the aminoAcidChange widget — the end of the position range.
         // Optional: omit it and the widget renders a single position box.
         String positionEndField,
+        // For the attachmentsList widget — the file extensions this bucket
+        // accepts, lowercase and without the leading dot (e.g. ["abi",
+        // "scf"]). The renderer turns them into the file input's `accept`
+        // attribute and the "Accepted file types: …" helper text; the upload
+        // endpoint enforces the same list. Omit (or leave empty) to accept
+        // any extension. Source of truth is ZircAttachmentKind.
+        //
+        // No companion `accept` / `helpText` key: both are derived from this
+        // one list, so a bucket cannot advertise a filter that disagrees with
+        // the text under it or with what the server will take.
+        List<String> acceptedExtensions,
+        // For the attachmentsList widget — the af_kind this bucket uploads
+        // as. The buckets bind two different arrays on the same assay, and
+        // the upload endpoint needs to know which one it is writing to.
+        String attachmentKind,
 
         // Named box width for a scalar Control: "short" for a value only a few
         // characters wide, such as a base-pair count. Omitted means the
