@@ -173,8 +173,8 @@ public final class ZircAssayFormSchema {
         properties.put("restrictionEnzymeVendor",    StringSchema.of("Restriction enzyme vendor", 255));
         properties.put("enzymeCleavesWt",            BooleanSchema.nullable("Enzyme cleaves WT template"));
         properties.put("enzymeCleavesMut",           BooleanSchema.nullable("Enzyme cleaves MUT template"));
-        properties.put("expectedWtDigest",           StringSchema.of("Expected WT product after digest", 2000));
-        properties.put("expectedMutDigest",          StringSchema.of("Expected MUT product after digest", 2000));
+        properties.put("expectedWtDigest",           StringSchema.of("Expected WT product(s) after digest", 2000));
+        properties.put("expectedMutDigest",          StringSchema.of("Expected MUT product(s) after digest", 2000));
         // SSLP
         // Labels are the curators' wording from ZFIN-10442's mockup. The
         // "(Z Marker)" parenthetical is what tells a submitter which
@@ -231,6 +231,18 @@ public final class ZircAssayFormSchema {
         // is narrow, not restrictive. Whether they should become numeric-only
         // is the open half of the ticket, pending a curator meeting.
         Options productSize = Options.of().withSuffix("bp").withBoxSize("short");
+        // ZFIN-10420 — the digest pair additionally tells submitters that more
+        // than one number is expected. An RFLP/dCAPS digest usually yields two
+        // fragments, and the box narrowed by ZFIN-10408 reads as if it wants a
+        // single value; the label's "(s)" says the same thing but is easy to
+        // miss at a glance.
+        //
+        // Digest-only, and derived from productSize so the width and the "bp"
+        // suffix cannot drift from the other four boxes. The ticket names these
+        // two lines specifically -- a PCR or SSLP product is one amplicon,
+        // where "enter every fragment" would be wrong advice.
+        Options digestProductSize = productSize
+                .withHelpText("Enter every expected fragment size, comma-separated (e.g. 300, 150).");
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
                         new Control("#/properties/assayType",
@@ -331,12 +343,20 @@ public final class ZircAssayFormSchema {
                                         .withWidget("vendorCatalog")
                                         .withVendorField("restrictionEnzymeVendor"),
                                 null),
+                        // ZFIN-10420 — Yes/No radios, not checkboxes. Both columns
+                        // are nullable booleans, i.e. three states, but a
+                        // checkbox renders only two: unchecked meant both "not
+                        // answered yet" and "no, it does not cleave". Which of
+                        // those a blank means is exactly what a curator needs
+                        // off this field, so the unanswered state has to stay
+                        // visible. yesNoRadio leaves both radios clear until
+                        // the submitter picks one.
                         new Control("#/properties/enzymeCleavesWt",
-                                Options.of().withWidget("checkbox"), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/enzymeCleavesMut",
-                                Options.of().withWidget("checkbox"), null),
-                        new Control("#/properties/expectedWtDigest",  productSize, null),
-                        new Control("#/properties/expectedMutDigest", productSize, null)
+                                Options.of().withWidget("yesNoRadio"), null),
+                        new Control("#/properties/expectedWtDigest",  digestProductSize, null),
+                        new Control("#/properties/expectedMutDigest", digestProductSize, null)
                 )),
                 // SSLP's own two PCR products — below the primer pair and above
                 // the gel-image bucket, per the mockup. Not part of the

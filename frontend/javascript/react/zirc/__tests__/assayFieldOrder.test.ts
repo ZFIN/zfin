@@ -35,7 +35,10 @@ type Elem = {
 };
 
 function snapshot() {
-    return JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8')) as { uiSchema: Elem };
+    return JSON.parse(fs.readFileSync(SNAPSHOT, 'utf8')) as {
+        uiSchema: Elem;
+        schema: { properties?: Record<string, { title?: string }> };
+    };
 }
 
 /**
@@ -157,6 +160,41 @@ describe('assay field order', () => {
         for (const field of sized) {
             assert.equal(control(field).options?.suffix, 'bp',
                 `${field} should carry the bp suffix outside the box`);
+        }
+    });
+
+    it('asks the enzyme-cleaves questions as Yes/No radios (ZFIN-10420)', () => {
+        // Not a checkbox. Both columns are nullable booleans, so an unanswered
+        // question and an explicit "no" are different answers, and a checkbox
+        // collapses them into one unchecked box. Asserting the widget rather
+        // than the rendering is what keeps them from quietly reverting.
+        for (const field of ['enzymeCleavesWt', 'enzymeCleavesMut']) {
+            assert.equal(control(field).options?.widget, 'yesNoRadio',
+                `${field} must be a Yes/No radio, not a checkbox`);
+        }
+    });
+
+    it('tells submitters the digest boxes take several numbers (ZFIN-10420)', () => {
+        // Digest only: an RFLP digest usually yields two fragments, while a
+        // PCR or SSLP product is a single amplicon, where the same hint would
+        // be wrong advice. Pinning both halves -- present here, absent there --
+        // because widening the shared constant is the easy mistake.
+        const digest = ['expectedWtDigest', 'expectedMutDigest'];
+        for (const field of digest) {
+            assert.match(String(control(field).options?.helpText), /comma-separated/,
+                `${field} should say more than one number is expected`);
+        }
+        for (const field of ['expectedWtPcr', 'expectedMutPcr',
+            'sslpInducedPcr', 'sslpOutcrossedPcr']) {
+            assert.equal(control(field).options?.helpText, undefined,
+                `${field} reports one amplicon and should carry no fragment hint`);
+        }
+
+        // ...and the label says it too, for anyone who skips the hint.
+        const props = snapshot().schema.properties ?? {};
+        for (const field of digest) {
+            assert.match(String(props[field]?.title), /product\(s\) after digest/,
+                `${field} title should pluralise product`);
         }
     });
 });
