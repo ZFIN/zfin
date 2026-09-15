@@ -2,6 +2,10 @@ package org.zfin.zirc.dto;
 
 import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Phenotype;
+import org.zfin.zirc.entity.PhenotypeFile;
+
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * Full per-phenotype payload returned by GET /api/zirc/phenotypes/{id}.
@@ -30,9 +34,23 @@ public record PhenotypeDTO(
         String nonMendelianComment,
         // Single-valued scalar text columns
         String segregation,
-        String type) {
+        String type,
+        // Background dependence (ZFIN-10449). Nullable boolean: null is
+        // "unanswered", distinct from an explicit false.
+        Boolean backgroundDependent,
+        String backgroundComment,
+        // Phenotype images (ZFIN-10449) — summary rows; the bytes come from
+        // GET /api/zirc/phenotypes/attachments/{id}/content
+        List<PhenotypeFileDTO> attachments) {
 
     public static PhenotypeDTO of(Phenotype p) {
+        List<PhenotypeFileDTO> files = p.getFiles() == null ? List.of() :
+                p.getFiles().stream()
+                        .sorted(Comparator.comparing(
+                                PhenotypeFile::getUploadedAt,
+                                Comparator.nullsLast(Comparator.naturalOrder())))
+                        .map(PhenotypeFileDTO::of)
+                        .toList();
         return new PhenotypeDTO(
                 p.getId(),
                 p.getMutation() == null ? null : p.getMutation().getId(),
@@ -46,6 +64,9 @@ public record PhenotypeDTO(
                 p.getNonMendelianPercentage(),
                 p.getNonMendelianComment(),
                 p.getSegregation(),
-                p.getType());
+                p.getType(),
+                p.getBackgroundDependent(),
+                p.getBackgroundComment(),
+                files);
     }
 }

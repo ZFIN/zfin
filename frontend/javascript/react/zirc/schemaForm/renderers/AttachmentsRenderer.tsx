@@ -8,8 +8,12 @@ import {
     rankWith,
 } from '@jsonforms/core';
 import { withJsonFormsControlProps } from '@jsonforms/react';
-import { AssayFileDTO } from '../../api/types';
-import { useUploadAttachment, useDeleteAttachment } from '../../api/queries';
+import {
+    AttachmentOwner,
+    attachmentContentUrl,
+    useUploadAttachment,
+    useDeleteAttachment,
+} from '../../api/queries';
 import { viewConfigFrom } from '../useViewConfig';
 
 interface AttachmentsOptions {
@@ -21,25 +25,48 @@ interface AttachmentsOptions {
 }
 
 /**
- * Per-assay attachments. One widget serves every bucket on the form: the
+ * Uploaded files on one aggregate, in one bucket. Two dimensions ride on the
+ * uischema options, and they are independent:
+ *
+ * <p><b>Owner</b> — `options.owner` decides which endpoints are called, which
+ * config key holds the id, and which React Query cache entry is invalidated.
+ * Attachments were assay-only until ZFIN-10449 added phenotype images.
+ *
+ * <p><b>Bucket</b> — one widget serves every bucket on the assay form: the
  * four per-assayType results buckets bound to `attachments` (gel images,
  * chromatograms, result images, melt curves) and Protocol Documentation
- * bound to `protocolDocuments` (ZFIN-10415).
- *
- * Everything that distinguishes a bucket arrives from the uischema:
- * `options.label` is the heading, `options.attachmentKind` is the af_kind
- * sent with the upload so the server files it in the right bucket, and
- * `options.acceptedExtensions` drives both the picker's accept filter and
- * the "Accepted file types" line under it. Deriving the filter and the text
- * from one list is what keeps them from disagreeing. Server-side source of
- * truth for all of it is ZircAttachmentKind, which the upload endpoint
- * validates against.
+ * bound to `protocolDocuments` (ZFIN-10415). `options.label` is the heading,
+ * `options.attachmentKind` is the af_kind sent with the upload so the server
+ * files it in the right bucket, and `options.acceptedExtensions` drives both
+ * the picker's accept filter and the "Accepted file types" line under it.
+ * Deriving the filter and the text from one list is what keeps them from
+ * disagreeing. Server-side source of truth is ZircAttachmentKind, which the
+ * upload endpoint validates against.
  *
  * Uploads go through a dedicated multipart endpoint, not the field-path
  * PATCH; the editor's diff filter skips both managesOwnPersistence paths.
  *
- * assayId arrives via JsonForms' config prop.
+ * <p>Assays show a single section regardless of assayType — the original
+ * four-kind matrix (chromatogram / gel_image / result_image / melt_curve) is
+ * collapsed to a generic uploader. Phenotypes have one bucket by definition.
+ *
+ * <p>Uploads go through a dedicated multipart endpoint, not the field-path
+ * PATCH: the Control declares managesOwnPersistence, which keeps the array out
+ * of the autosave diff and mirror-syncs it from the entity instead.
+ *
+ * <p>The owner's id arrives via JsonForms' config prop under `<owner>Id`.
+ *
+ * <p>AttachmentFile is the structural shape common to AssayFileDTO and
+ * PhenotypeFileDTO, and deliberately neither of them: both are generated from
+ * their own Java DTO, and naming one here would make the renderer lie about
+ * the other.
  */
+type AttachmentFile = {
+    id: number;
+    originalFilename: string;
+    contentType: string | null;
+    fileSize: number | null;
+};
 
 /**
  * Lowercase extension without the dot, or null when the name has none.
@@ -59,19 +86,30 @@ function hasAcceptedExtension(filename: string, accepted: string[]): boolean {
 
 function AttachmentsRenderer({ data, schema, config, uischema, visible }: ControlProps) {
     if (visible === false) {return null;}
-    const files = (data as AssayFileDTO[] | undefined) ?? [];
-    const assayId = (config as { assayId?: number } | undefined)?.assayId;
+    const files = (data as AttachmentFile[] | undefined) ?? [];
+    const options = ((uischema as { options?: Record<string, unknown> } | undefined)?.options)
+        ?? {};
+    // Absent means assay: attachments were assay-only before ZFIN-10449, and
+    // the assay uiSchema does not set the key.
+    const owner = ((options.owner as AttachmentOwner | undefined) ?? 'assay');
+    const ownerId = (config as Record<string, number | undefined> | undefined)
+        ?.[`${owner}Id`];
     const upload = useUploadAttachment();
     const remove = useDeleteAttachment();
     const inputRef = React.useRef<HTMLInputElement | null>(null);
     const view = viewConfigFrom(config);
     // Bucket heading, af_kind, picker filter and helper text all ride on the
-    // uischema options so one widget can serve every bucket.
+    // uischema options so one widget can serve every bucket. Read through the
+    // typed view of the same object `options` above is read from untyped for
+    // the owner key.
     const opts = ((uischema as { options?: AttachmentsOptions } | undefined)?.options) ?? {};
+    // Section heading: per-assay-type buckets ("Annotated gel images",
+    // "Chromatograms") for assays, "Phenotype images" for a phenotype.
     const bucketLabel = opts.label;
     // Extensions this bucket accepts, lowercase and dot-less. Absent means
-    // the bucket takes any extension (the melt-curve case), so the accept
-    // attribute and the helper text are both omitted rather than empty.
+    // the bucket takes any extension (the melt-curve case, and every
+    // phenotype bucket), so the accept attribute and the helper text are
+    // both omitted rather than empty.
     const acceptedExtensions = opts.acceptedExtensions;
     // ".abi,.ab1,.scf" for the file picker's filter, and the same list
     // spelled out for the helper text below it. Tested through the optional
@@ -102,16 +140,17 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
 
     const [errorMsg, setErrorMsg] = React.useState<string | null>(null);
 
-    // Server-published MAX_ATTACHMENTS_PER_ASSAY via JSON Schema maxItems.
+    // The owner's server-side cap, published as the array's maxItems, so the
+    // disabled input and the server's rejection cannot disagree.
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;
     const atCapacity = maxItems != null && files.length >= maxItems;
     const capTitle = atCapacity
-        ? `Maximum ${maxItems} attachments per assay.`
+        ? `Maximum ${maxItems} ${owner === 'phenotype' ? 'images' : 'attachments'} per ${owner}.`
         : undefined;
 
     const handlePick = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (!file || !assayId) {return;}
+        if (!file || !ownerId) {return;}
         setErrorMsg(null);
         // The accept attribute only filters the picker's default view — a
         // curator can still choose "All files", and drag-and-drop bypasses
@@ -124,7 +163,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
             return;
         }
         upload.mutate(
-            { assayId, file, kind: opts.attachmentKind },
+            { owner, ownerId, file, kind: opts.attachmentKind },
             {
                 onError: (err) => {
                     setErrorMsg(err instanceof Error ? err.message : 'Upload failed');
@@ -138,10 +177,10 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
     };
 
     const handleDelete = (fileId: number) => {
-        if (!assayId) {return;}
+        if (!ownerId) {return;}
         // eslint-disable-next-line no-alert
         if (!window.confirm('Delete this attachment? This action cannot be undone.')) {return;}
-        remove.mutate({ assayId, fileId });
+        remove.mutate({ owner, ownerId, fileId });
     };
 
     const fmtSize = (bytes: number | null) => {
@@ -165,7 +204,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                         >
                             <div>
                                 <a
-                                    href={`/action/api/zirc/assays/attachments/${f.id}/content`}
+                                    href={attachmentContentUrl(owner, f.id)}
                                     target='_blank'
                                     rel='noopener noreferrer'
                                 >
@@ -193,7 +232,7 @@ function AttachmentsRenderer({ data, schema, config, uischema, visible }: Contro
                     type='file'
                     accept={acceptAttr}
                     onChange={handlePick}
-                    disabled={!assayId || upload.isPending || atCapacity}
+                    disabled={!ownerId || upload.isPending || atCapacity}
                     title={capTitle}
                 />
                 {upload.isPending && (

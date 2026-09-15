@@ -46,6 +46,12 @@ public class HibernateZircSubmissionRepository implements ZircSubmissionReposito
     }
 
     @Override
+    public org.zfin.zirc.entity.PhenotypeFile getPhenotypeFile(Long fileId) {
+        return HibernateUtil.currentSession()
+                .get(org.zfin.zirc.entity.PhenotypeFile.class, fileId);
+    }
+
+    @Override
     public LinkedFeature getLinkedFeature(String submissionId, Long mutationAId, Long mutationBId) {
         return HibernateUtil.currentSession().get(LinkedFeature.class,
                 new LinkedFeatureId(submissionId, mutationAId, mutationBId));
