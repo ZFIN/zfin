@@ -59,6 +59,7 @@ public final class GenerateTypeScript {
             AssayFileDTO.class,
             PhenotypeSummaryDTO.class,
             PhenotypeDTO.class,
+            PhenotypeFileDTO.class,
             AutocompleteItemDTO.class,
             VocabularyTermDTO.class);
 

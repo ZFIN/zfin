@@ -139,6 +139,10 @@ public record Options(
         // the upload endpoint needs to know which one it is writing to.
         String attachmentKind,
 
+        // For the attachmentsList widget — which aggregate owns the files,
+        // and therefore which upload / delete / content endpoints to call.
+        // Omitted means "assay", the original and still most common owner.
+        String owner,
         // Named box width for a scalar Control: "short" for a value only a few
         // characters wide, such as a base-pair count. Omitted means the
         // default full width.

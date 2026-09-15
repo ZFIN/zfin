@@ -64,6 +64,25 @@ public final class ZircPhenotypeFormSchema {
      * dropdown with an "Other" free-text entry for values outside the list.
      * One type per phenotype.
      */
+    /**
+     * Cap on uploaded images per phenotype (ZFIN-10449). Published to the
+     * client as the attachments array's maxItems, so the widget's disabled
+     * state and the server's rejection agree. Same value as the assay cap;
+     * separate constant because it is a per-owner policy, not a shared one.
+     */
+    public static final int MAX_ATTACHMENTS_PER_PHENOTYPE = 10;
+
+    /** Heading over the upload section, per ZFIN-10449's mockup. */
+    private static final String IMAGES_LABEL = "Phenotype images";
+
+    /**
+     * Label for the timing row (ZFIN-10449). Curators asked for the question
+     * spelled out rather than "Timing": the row asks when to look, not when
+     * the phenotype exists.
+     */
+    private static final String TIMING_LABEL =
+            "Optimal temporal window to detect/observe the phenotype";
+
     private static final List<String> PHENOTYPE_TYPE_OPTIONS = List.of(
             "Zygotic (Z)",
             "Maternal (M)",
@@ -73,7 +92,10 @@ public final class ZircPhenotypeFormSchema {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("description",             StringSchema.of("Description", 5000));
         // Timing — wire is always hpf integer; unit toggle is UI-only.
-        properties.put("hpfStart",                new NumberSchema("Start (hpf)", Boolean.TRUE));
+        // The label belongs to hpfStart because the phenotypeTiming widget
+        // draws the whole row (unit toggle, Start, End) from this one Control,
+        // so this string is the row's label (ZFIN-10449).
+        properties.put("hpfStart",                new NumberSchema(TIMING_LABEL, Boolean.TRUE));
         properties.put("hpfEnd",                  new NumberSchema("End (hpf)", Boolean.TRUE));
         properties.put("stage",                   StringSchema.of("Stage", 255));
         // Image permissions
@@ -85,6 +107,15 @@ public final class ZircPhenotypeFormSchema {
         // Single-valued scalar text columns.
         properties.put("segregation",            StringSchema.of("Segregation", 255));
         properties.put("type",                   StringSchema.of("Phenotype type", 255));
+        // Background dependence (ZFIN-10449) — last row on the form.
+        properties.put("backgroundDependent",    BooleanSchema.nullable(
+                "Is phenotype background dependent"));
+        properties.put("backgroundComment",      StringSchema.of("Background comment", 5000));
+        // Phenotype images (ZFIN-10449) — summary rows only. Uploads go
+        // through a dedicated multipart endpoint rather than the field-path
+        // PATCH, which is what managesOwnPersistence on the Control declares.
+        properties.put("attachments",            ZircAttachmentSchema.attachmentsArrayProp(
+                IMAGES_LABEL, MAX_ATTACHMENTS_PER_PHENOTYPE));
         return ObjectSchema.of(null, properties, List.of("description"));
     }
 
@@ -96,6 +127,10 @@ public final class ZircPhenotypeFormSchema {
         // "Non-Mendelian" (ZFIN-10348).
         Rule showWhenNonMendelian =
                 Rule.showWhenIn("#/properties/segregation", NON_MENDELIAN);
+        // showWhenTrue, not an enum test: "no" and "unanswered" must both
+        // keep the comment box hidden, and const:true fails closed on null.
+        Rule showWhenBackgroundDependent =
+                Rule.showWhenTrue("#/properties/backgroundDependent");
 
         return new VerticalLayout(List.of(
                 Group.of(null, List.of(
@@ -110,6 +145,24 @@ public final class ZircPhenotypeFormSchema {
                         new Control("#/properties/hpfStart",
                                 Options.of().withWidget("phenotypeTiming"), null)
                 )),
+                // Phenotype images (ZFIN-10449) — above the two permission
+                // questions, per the mockup: upload the images, then answer
+                // who may use them.
+                //
+                // managesOwnPersistence keeps this Control out of the autosave
+                // diff (the array is not PATCHable) and instead mirror-syncs it
+                // from the entity after every upload or delete. layout "plain"
+                // drops the table wrapper so the uploader is not squeezed into
+                // a label/value row.
+                new Group(null, List.of(
+                        new Control("#/properties/attachments",
+                                Options.of()
+                                        .withWidget("attachmentsList")
+                                        .withManagesOwnPersistence(true)
+                                        .withLabel(IMAGES_LABEL)
+                                        .withOwner("phenotype"),
+                                null)),
+                        Options.of().withLayout("plain"), null),
                 Group.of(null, List.of(
                         new Control("#/properties/zfinImagePermission",
                                 Options.of().withWidget("yesNoRadio"), null),
@@ -137,6 +190,15 @@ public final class ZircPhenotypeFormSchema {
                                         .withWidget("selectWithOther")
                                         .withStandardValues(PHENOTYPE_TYPE_OPTIONS),
                                 null)
+                )),
+                // Background dependence (ZFIN-10449) — last row, with the
+                // comment box revealed only on "yes". Same shape as the
+                // Non-Mendelian reveal above, but keyed on a boolean.
+                Group.of(null, List.of(
+                        new Control("#/properties/backgroundDependent",
+                                Options.of().withWidget("yesNoRadio"), null),
+                        new Control("#/properties/backgroundComment",
+                                Options.of().withMulti(true), showWhenBackgroundDependent)
                 ))
         ));
     }
@@ -151,7 +213,9 @@ public final class ZircPhenotypeFormSchema {
             field("/nonMendelianPercentage",  Phenotype::getNonMendelianPercentage,  (p, v) -> p.setNonMendelianPercentage(doubleNullable(v))),
             field("/nonMendelianComment",     Phenotype::getNonMendelianComment,     (p, v) -> p.setNonMendelianComment(text(v))),
             field("/segregation",             Phenotype::getSegregation,             (p, v) -> p.setSegregation(text(v))),
-            field("/type",                    Phenotype::getType,                    (p, v) -> p.setType(text(v)))
+            field("/type",                    Phenotype::getType,                    (p, v) -> p.setType(text(v))),
+            field("/backgroundDependent",     Phenotype::getBackgroundDependent,     (p, v) -> p.setBackgroundDependent(boolNullable(v))),
+            field("/backgroundComment",       Phenotype::getBackgroundComment,       (p, v) -> p.setBackgroundComment(text(v)))
     );
 
     private static Map.Entry<String, FieldDescriptor> field(

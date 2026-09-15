@@ -34,7 +34,9 @@ public final class PhenotypeStatusComputer {
         NON_MENDELIAN_PERCENTAGE ("nonMendelianPercentage"),
         NON_MENDELIAN_COMMENT    ("nonMendelianComment"),
         SEGREGATION              ("segregation"),
-        TYPE                     ("type");
+        TYPE                     ("type"),
+        BACKGROUND_DEPENDENT     ("backgroundDependent"),
+        BACKGROUND_COMMENT       ("backgroundComment");
 
         private final String path;
 

@@ -1,6 +1,40 @@
 {
   "schema" : {
     "properties" : {
+      "attachments" : {
+        "items" : {
+          "properties" : {
+            "contentType" : {
+              "type" : [ "string", "null" ]
+            },
+            "fileSize" : {
+              "type" : [ "number", "null" ]
+            },
+            "id" : {
+              "type" : "number"
+            },
+            "originalFilename" : {
+              "type" : "string"
+            },
+            "uploadedAt" : {
+              "type" : [ "string", "null" ]
+            }
+          },
+          "type" : "object"
+        },
+        "maxItems" : 10,
+        "title" : "Phenotype images",
+        "type" : "array"
+      },
+      "backgroundComment" : {
+        "maxLength" : 5000,
+        "title" : "Background comment",
+        "type" : [ "string", "null" ]
+      },
+      "backgroundDependent" : {
+        "title" : "Is phenotype background dependent",
+        "type" : [ "boolean", "null" ]
+      },
       "description" : {
         "maxLength" : 5000,
         "title" : "Description",
@@ -11,7 +45,7 @@
         "type" : [ "number", "null" ]
       },
       "hpfStart" : {
-        "title" : "Start (hpf)",
+        "title" : "Optimal temporal window to detect/observe the phenotype",
         "type" : [ "number", "null" ]
       },
       "nonMendelianComment" : {
@@ -69,6 +103,21 @@
         "scope" : "#/properties/hpfStart",
         "type" : "Control"
       } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "label" : "Phenotype images",
+          "managesOwnPersistence" : true,
+          "owner" : "phenotype",
+          "widget" : "attachmentsList"
+        },
+        "scope" : "#/properties/attachments",
+        "type" : "Control"
+      } ],
+      "options" : {
+        "layout" : "plain"
+      },
       "type" : "Group"
     }, {
       "elements" : [ {
@@ -133,6 +182,30 @@
           "widget" : "selectWithOther"
         },
         "scope" : "#/properties/type",
+        "type" : "Control"
+      } ],
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
+          "widget" : "yesNoRadio"
+        },
+        "scope" : "#/properties/backgroundDependent",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "multi" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/backgroundDependent"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/backgroundComment",
         "type" : "Control"
       } ],
       "type" : "Group"

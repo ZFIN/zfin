@@ -29,6 +29,7 @@ import org.zfin.zirc.entity.LineSubmissionPerson;
 import org.zfin.zirc.entity.LinkedFeature;
 import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.entity.Phenotype;
+import org.zfin.zirc.entity.PhenotypeFile;
 import org.zfin.zirc.repository.ZircSubmissionRepository;
 
 import java.io.File;
@@ -458,6 +459,25 @@ public class ZircSubmissionService {
         return assay;
     }
 
+    /**
+     * Shared gate for every attachment upload: non-empty, within the size
+     * limit, and of an allowed content type. Returns the validated content
+     * type so callers do not re-read it.
+     *
+     * <p>Extracted when phenotypes gained uploads (ZFIN-10449) — the limits
+     * are a property of the upload endpoint, not of the owning aggregate, and
+     * two copies would have drifted the moment either changed.
+     */
+    private static void validateUpload(MultipartFile upload) {
+        if (upload == null || upload.isEmpty()) {
+            throw new IllegalArgumentException("No file uploaded");
+        }
+        if (upload.getSize() > MAX_ATTACHMENT_BYTES) {
+            throw new IllegalArgumentException(
+                    "Attachment exceeds size limit (" + MAX_ATTACHMENT_BYTES + " bytes)");
+        }
+    }
+
     public void deleteAttachment(Long fileId) {
         GenotypingAssayFile file = getRequiredAssayFile(fileId);
         Long assayId = file.getAssay() == null ? null : file.getAssay().getId();
@@ -538,6 +558,127 @@ public class ZircSubmissionService {
     }
 
     public File resolveAttachmentPath(GenotypingAssayFile file) {
+        return new File(file.getStoredPath());
+    }
+
+    // ─── Phenotype images (ZFIN-10449) ──────────────────────────────────────
+    //
+    // The assay equivalents above are the model. Kept as parallel methods
+    // rather than one generic path: the two owners differ in their id column,
+    // their per-owner cap, their on-disk filename prefix and their audit
+    // entity name, which is most of the body. What they genuinely share --
+    // the upload gate and filename sanitizing -- is shared.
+
+    public PhenotypeFile getRequiredPhenotypeFile(Long fileId) {
+        PhenotypeFile file = repository.getPhenotypeFile(fileId);
+        if (file == null) {
+            throw new ZircEntityNotFoundException("Phenotype file " + fileId + " not found");
+        }
+        return file;
+    }
+
+    /**
+     * Persist an uploaded image against a phenotype. Same storage layout as
+     * assay attachments, distinguished by the filename prefix:
+     * {@code $TARGETROOT/server_apps/data_transfer/ZIRC/<submission zdb id>/
+     *  phenotype-<phenotype id>-<file id>-<sanitized filename>}.
+     *
+     * <p>Returns the parent phenotype so the controller can hand back a
+     * refreshed PhenotypeDTO in one round trip — the form mirrors its
+     * attachments list straight out of that response.
+     */
+    public Phenotype storePhenotypeAttachment(Long phenotypeId, MultipartFile upload)
+            throws IOException {
+        validateUpload(upload);
+        // Derived from the extension, never taken from the upload -- the
+        // download endpoint serves this back inline, so a caller-supplied
+        // type is a stored-XSS vector. Same rule as the assay path; the
+        // browser-supplied content type is no longer trusted anywhere.
+        String contentType = ZircAttachmentKind.contentTypeFor(upload.getOriginalFilename());
+
+        Phenotype phenotype = getRequiredPhenotypeById(phenotypeId);
+        int existing = phenotype.getFiles() == null ? 0 : phenotype.getFiles().size();
+        if (existing >= ZircPhenotypeFormSchema.MAX_ATTACHMENTS_PER_PHENOTYPE) {
+            throw new IllegalArgumentException(
+                    "Maximum " + ZircPhenotypeFormSchema.MAX_ATTACHMENTS_PER_PHENOTYPE
+                            + " images per phenotype.");
+        }
+        String submissionId = phenotype.getMutation().getLineSubmission().getZdbID();
+        String safeName = sanitizeFilename(upload.getOriginalFilename());
+
+        HibernateUtil.createTransaction();
+
+        // Insert first to get the generated id, so the on-disk name can carry
+        // it; storedPath is a placeholder until the bytes are written below.
+        PhenotypeFile file = new PhenotypeFile();
+        file.setPhenotype(phenotype);
+        file.setOriginalFilename(upload.getOriginalFilename());
+        file.setContentType(contentType);
+        file.setFileSize(upload.getSize());
+        file.setStoredPath("__pending__");
+        repository.save(file);
+        HibernateUtil.currentSession().flush();
+
+        Path dir = Paths.get(
+                ZfinPropertiesEnum.TARGETROOT.value(),
+                "server_apps", "data_transfer", "ZIRC", submissionId);
+        Files.createDirectories(dir);
+
+        String storedName = "phenotype-" + phenotypeId + "-" + file.getId() + "-" + safeName;
+        Path stored = dir.resolve(storedName);
+        upload.transferTo(stored.toFile());
+        file.setStoredPath(stored.toString());
+
+        // Add to the parent's in-memory collection as well as inserting the
+        // row. The cap check above initialized that collection, and
+        // repository.save() does not touch it, so without this the
+        // PhenotypeDTO built from the return value serializes the pre-upload
+        // list -- the response would claim the file it just accepted does not
+        // exist. The client survives it (the mutation invalidates the query and
+        // refetches) but the endpoint would be lying, and the mirror-sync reads
+        // this response first.
+        phenotype.getFiles().add(file);
+
+        JsonNode meta = AUDIT_MAPPER.valueToTree(java.util.Map.of(
+                "fileId", file.getId(),
+                "originalFilename", upload.getOriginalFilename(),
+                "bytes", upload.getSize()));
+        writeAudit("phenotype", String.valueOf(phenotypeId), "upload", null, null, meta);
+
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return phenotype;
+    }
+
+    public void deletePhenotypeAttachment(Long fileId) {
+        PhenotypeFile file = getRequiredPhenotypeFile(fileId);
+        Long phenotypeId = file.getPhenotype() == null ? null : file.getPhenotype().getId();
+        String storedPath = file.getStoredPath();
+        String originalFilename = file.getOriginalFilename();
+
+        HibernateUtil.createTransaction();
+        repository.delete(file);
+        JsonNode meta = AUDIT_MAPPER.valueToTree(java.util.Map.of(
+                "fileId", fileId,
+                "originalFilename", originalFilename == null ? "" : originalFilename,
+                "storedPath", storedPath == null ? "" : storedPath));
+        writeAudit("phenotype", phenotypeId == null ? "?" : String.valueOf(phenotypeId),
+                "delete-file", null, meta, null);
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        // Best-effort unlink, after the DB delete is committed: a file already
+        // gone from disk is not an error.
+        if (storedPath != null) {
+            try {
+                Files.deleteIfExists(Paths.get(storedPath));
+            } catch (IOException e) {
+                log.warn("ZIRC phenotype image delete: failed to remove file on disk: {}",
+                        storedPath, e);
+            }
+        }
+    }
+
+    public File resolveAttachmentPath(PhenotypeFile file) {
         return new File(file.getStoredPath());
     }
 

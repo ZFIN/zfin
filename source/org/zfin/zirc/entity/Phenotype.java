@@ -1,6 +1,7 @@
 package org.zfin.zirc.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -9,12 +10,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Per-mutation phenotype description. {@code p_segregation} and {@code p_type} are
@@ -72,5 +77,29 @@ public class Phenotype implements Serializable {
 
     @Column(name = "p_type")
     private String type;
+
+    /**
+     * Nullable on purpose (ZFIN-10449): NULL means unanswered, which the
+     * status badge must distinguish from an explicit "no".
+     */
+    @Column(name = "p_background_dependent")
+    private Boolean backgroundDependent;
+
+    /** Only shown by the form when {@link #backgroundDependent} is true. */
+    @Column(name = "p_background_comment")
+    private String backgroundComment;
+
+    /**
+     * Uploaded phenotype images (ZFIN-10449). Mirrors the assay mapping:
+     * cascade + orphanRemoval so deleting a phenotype takes its file rows with
+     * it, ordered by upload time so the form lists them oldest-first.
+     */
+    @JsonIgnore
+    @OneToMany(mappedBy = "phenotype",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @OrderBy("uploadedAt")
+    private Set<PhenotypeFile> files = new HashSet<>();
 
 }
