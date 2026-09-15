@@ -20,10 +20,9 @@
     <hudson.tasks.Shell>
       <command>cd $SOURCEROOT</command>
     </hudson.tasks.Shell>
-    <hudson.tasks.Ant plugin="ant@1.2">
-      <targets>cleanup-solr-backup-files</targets>
-      <buildFile>$SOURCEROOT/build.xml</buildFile>
-    </hudson.tasks.Ant>
+    <hudson.tasks.Shell>
+      <command>$TARGETROOT/utilities/bin/zfin-util solr-cleanup-snapshots</command>
+    </hudson.tasks.Shell>
     <hudson.tasks.Shell>
       <command>cd $TARGETROOT/server_apps/DB_maintenance/warehouse &amp;&amp; ./regenPhenotypeMartCleanup.sh</command>
     </hudson.tasks.Shell>
