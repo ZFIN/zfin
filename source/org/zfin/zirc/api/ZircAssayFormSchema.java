@@ -287,9 +287,23 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/forwardPrimer", primerSequenceWithMin, null),
                         new Control("#/properties/reversePrimer", primerSequenceWithMin, null)
                 )),
+                // KASP's genomic-sequence textarea, above the primer trio.
+                // ZFIN-10440 asks for it "right after assay type; next all of
+                // the primers", and for KASP nothing else renders in between,
+                // so this position is that.
+                //
+                // Safe to place ahead of the shared trio because KASP_TYPES has
+                // a single member: ASA sees this group not at all and keeps the
+                // order ZFIN-10439 gave it. The same reasoning as the SSLP
+                // brackets above -- a one-type group can be moved freely, a
+                // shared one cannot.
+                groupRevealedFor(KASP_TYPES, List.of(
+                        new Control("#/properties/kaspGenomicSequence",
+                                Options.of().withMulti(true), null)
+                )),
                 // ASA + KASP — WT/mut/common primer trio, in place of the
                 // forward / reverse pair above. KASP adds the genomic-sequence
-                // textarea in its own group below.
+                // textarea in its own group, immediately above this one.
                 //
                 // Sits above the expected-PCR-product group because ZFIN-10439
                 // asks for the ASA primer boxes "right after assay type". Group
@@ -324,10 +338,6 @@ public final class ZircAssayFormSchema {
                                         .withStandardValues(DCAPS_MISMATCH_PRIMER_CHOICES)
                                         .withNoOther(true),
                                 null)
-                )),
-                groupRevealedFor(KASP_TYPES, List.of(
-                        new Control("#/properties/kaspGenomicSequence",
-                                Options.of().withMulti(true), null)
                 )),
                 // RFLP + dCAPS digest block — same fields for both types.
                 groupRevealedFor(DIGEST_TYPES, List.of(
