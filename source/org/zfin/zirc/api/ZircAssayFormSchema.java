@@ -87,12 +87,17 @@ public final class ZircAssayFormSchema {
     private static final String STRAIN_EXAMPLES = "e.g. AB, TU, …";
 
     private static final List<String> ASSAY_TYPE_LABELS = List.of(
+            // The two PCR entries keep their plain wording: they name a
+            // technique pairing rather than an acronym, so there is nothing to
+            // put in the parentheses. Left alone deliberately -- Ryan raised
+            // them on ZFIN-10438 and said he was unsure; the rest of the list
+            // is what the template applies to.
             "PCR + gel electrophoresis",
             "PCR + sequencing",
-            "RFLP",
-            "derived Cleaved Amplified Polymorphic Sequences dCAPS",
+            "Restriction Fragment Length Polymorphism (RFLP)",
+            "derived Cleaved Amplified Polymorphic Sequences (dCAPS)",
             "Allele Specific Amplification (ASA)",
-            "KASP",
+            "Kompetitive Allele Specific PCR (KASP)",
             "High-Resolution Melting Analysis (HRMA)",
             "Simple Sequence Length Polymorphism (SSLP)");
 
