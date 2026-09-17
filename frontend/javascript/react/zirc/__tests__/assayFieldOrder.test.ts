@@ -14,6 +14,8 @@ import * as path from 'node:path';
  *   ZFIN-10439  ASA's primer trio must precede the expected-PCR products
  *   ZFIN-10442  SSLP's metadata precedes the shared forward/reverse pair,
  *               and its own two PCR products follow it
+ *   ZFIN-10440  KASP's genomic sequence precedes the primer trio, without
+ *               moving the trio itself -- it is shared with ASA
  *
  * SSLP is the reason this file exists: satisfying it took splitting one group
  * into two that bracket the shared primer group, and nothing about the
@@ -98,6 +100,35 @@ describe('assay field order', () => {
             `trio should precede the products, got ${order.join(', ')}`);
         // ASA shows the trio instead of the shared pair, never both.
         assert.equal(order.includes('forwardPrimer'), false);
+    });
+
+    it('puts KASP\'s genomic sequence right after the assay type (ZFIN-10440)', () => {
+        // "right after assay type; next all of the primers". The genomic
+        // sequence used to render last, below the PCR products, so the
+        // submitter met the primer boxes before the sequence they are
+        // designed against.
+        const order = fieldOrderFor('kasp');
+        assert.deepEqual(order.slice(0, 5), [
+            'assayType',
+            'kaspGenomicSequence',
+            'wtSpecificPrimer',
+            'mutSpecificPrimer',
+            'commonPrimer',
+        ], `got ${order.join(', ')}`);
+        assert.ok(order.indexOf('commonPrimer') < order.indexOf('expectedWtPcr'),
+            'the primer trio should still precede the products');
+    });
+
+    it('leaves ASA\'s order untouched by the KASP move (ZFIN-10440)', () => {
+        // The genomic-sequence group is KASP-only, so moving it above the
+        // shared primer trio must not shift ASA. Asserted because the trio's
+        // group is shared and the obvious way to satisfy ZFIN-10440 -- moving
+        // that group -- would have dragged ASA with it, undoing ZFIN-10439.
+        const order = fieldOrderFor('asa');
+        assert.equal(order.includes('kaspGenomicSequence'), false,
+            'kaspGenomicSequence must not appear on ASA');
+        assert.equal(order[1], 'wtSpecificPrimer',
+            `ASA should still open with the trio, got ${order.join(', ')}`);
     });
 
     it('leaves the SSLP-only fields off every other assay type', () => {

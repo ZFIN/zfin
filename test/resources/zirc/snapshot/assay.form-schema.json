@@ -267,6 +267,24 @@
     }, {
       "elements" : [ {
         "options" : {
+          "multi" : true
+        },
+        "scope" : "#/properties/kaspGenomicSequence",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "kasp" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
           "alphabet" : "ACGT",
           "helpText" : "ACGT only.",
           "minBases" : 10,
@@ -363,24 +381,6 @@
         "condition" : {
           "schema" : {
             "enum" : [ "dcaps" ]
-          },
-          "scope" : "#/properties/assayType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "multi" : true
-        },
-        "scope" : "#/properties/kaspGenomicSequence",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "kasp" ]
           },
           "scope" : "#/properties/assayType"
         },
