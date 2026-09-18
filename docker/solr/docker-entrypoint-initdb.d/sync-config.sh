@@ -59,21 +59,58 @@ if [ -d "$STAGING" ]; then
   cp -a "$TEMPLATE/lib"/.  "$STAGING/lib/"
 fi
 
-# The configset the reindex creates its staging core from. conf/ and lib/ both:
-# solrconfig.xml declares no <lib> directive, so the DIH jar and the JDBC
-# driver are picked up from the core's own lib/, and a core created from a
+# The configset the reindex creates its staging core from. conf/, lib/ AND
+# data/: solrconfig.xml declares no <lib> directive, so the DIH jar and the
+# JDBC driver are picked up from the core's own lib/, and a core created from a
 # configset only gets what the configset carries.
 echo "[zfin-init] Materialising configset at $CONFIGSET"
-mkdir -p "$CONFIGSET/conf" "$CONFIGSET/lib"
+mkdir -p "$CONFIGSET/conf" "$CONFIGSET/lib" "$CONFIGSET/data"
 cp -a "$TEMPLATE/conf"/. "$CONFIGSET/conf/"
 cp -a "$TEMPLATE/lib"/.  "$CONFIGSET/lib/"
 
-# external_popularity.txt is an image-owned ExternalFileField asset that
-# happens to live under data/ alongside the index. Refresh it; the three
-# index subdirs (index/, tlog/, snapshot_metadata/) are skipped because we
-# only touch this one file explicitly.
+# external_popularity.txt is an image-owned ExternalFileField asset that lives
+# under data/ alongside the index, keyed by document id.
+#
+# It matters more than its size suggests. The /name-autocomplete handler ranks
+# on "bf=recip(complexity,1,1,1)^10 sqrt(popularity)^20", and popularity is a
+# solr.ExternalFileField read from this file. With the file missing every
+# document falls back to defVal=1, the dominant boost goes flat, and the
+# ranking collapses onto complexity plus raw field matches -- an exact gene
+# match then loses to Fish records (ZFIN-10514).
+#
+# Placed in three spots, because the reindex's staging/swap means no single
+# directory is reliably the live core:
+#
+#  1. The configset, so a core the reindex CREATEs inherits it. This is the
+#     only one that can survive mid-run: prepareStagingCore unloads the parked
+#     core with deleteInstanceDir=true and CREATEs a fresh one, all long after
+#     this script has run, so a copy placed only in a core directory is
+#     destroyed on every publish. See the caveat below.
+#  2. and 3. Both conventional core directories, when they exist. A SWAP
+#     exchanges names and leaves directories in place, so after one publish the
+#     live core is the directory named site_index_staging. Copying into both
+#     costs 11MB and removes the guesswork.
+#
+# CAVEAT, not yet verified on a running instance: whether Solr's CoreAdmin
+# CREATE copies a configset's data/ into the new instanceDir, or only resolves
+# its conf/. If it only resolves conf/, item 1 does nothing and a core created
+# mid-run still starts without the file. Check after the next reindex with
+#   ls -l /var/solr/data/*/data/external_popularity.txt
+# and if the freshly created staging core lacks it, this needs solving in the
+# orchestrator instead -- it cannot write into the Solr container over HTTP, so
+# the likely answer is to stop deleting the parked instance directory.
 if [ -f "$TEMPLATE/data/external_popularity.txt" ]; then
-  cp -a "$TEMPLATE/data/external_popularity.txt" "$CORE/data/"
+  cp -a "$TEMPLATE/data/external_popularity.txt" "$CONFIGSET/data/"
+  for d in "$CORE" "$STAGING"; do
+    if [ -d "$d" ]; then
+      mkdir -p "$d/data"
+      cp -a "$TEMPLATE/data/external_popularity.txt" "$d/data/"
+      echo "[zfin-init] Placed external_popularity.txt in $d/data"
+    fi
+  done
+else
+  echo "[zfin-init] WARNING: no external_popularity.txt in the image template;" \
+       "autocomplete ranking will be flat (see ZFIN-10514)"
 fi
 
 # log4j2.xml lives at SOLR_HOME's parent, not inside the core.
