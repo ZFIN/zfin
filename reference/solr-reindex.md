@@ -155,6 +155,21 @@ curl "http://$SOLR_HOST:$SOLR_PORT/solr/admin/cores?action=SWAP&core=$SOLR_CORE&
 
 One generation is kept — the next run recycles the staging core.
 
+**The popularity file.** `external_popularity.txt` is an ExternalFileField
+asset in each core's `data/` directory, and the `/name-autocomplete` handler
+ranks on it with the dominant boost (`sqrt(popularity)^20`). Missing, every
+document scores `defVal=1`, the boost goes flat, and an exact gene match loses
+to Fish records — ZFIN-10514.
+
+Generation recycling destroys it: the parked core is unloaded with
+`deleteInstanceDir=true`, and that directory is where the file lived. It is now
+shipped in the configset and placed in both core directories by
+`sync-config.sh`, but whether a `CREATE`d core inherits a configset's `data/`
+is unverified — check `ls -l /var/solr/data/*/data/external_popularity.txt`
+after a reindex. Note also that `solrconfig.xml` has no
+`ExternalFileFieldReloader` listener, so the file is cached per core lifetime:
+dropping it in requires a core `RELOAD`, not a commit.
+
 **Disk.** Two full indexes coexist for the length of a run.
 
 ## Failure recovery
