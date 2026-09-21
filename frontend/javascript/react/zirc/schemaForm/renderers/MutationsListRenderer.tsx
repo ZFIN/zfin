@@ -21,6 +21,28 @@ import { FieldHistory } from '../../components/FieldHistory';
 type FormSchemaDTO = { schema: JsonSchema; uiSchema: UISchemaElement };
 
 /**
+ * How a mutation's allele is labelled wherever it is named as a whole
+ * (ZFIN-10488): the symbol with the ZDB-ALT ID in parentheses.
+ *
+ *   b700 (ZDB-ALT-040701-2)
+ *
+ * Note which field holds which, because the names invite the opposite
+ * reading: alleleDesignation holds the ZDB-ALT ID once a curator has picked an
+ * existing ZFIN feature, and alleleName is the abbreviation the server
+ * resolved for it. Showing only the designation made the table and the card
+ * header say less than the General section directly below them, which already
+ * renders the symbol via displayLabels.
+ *
+ * Falls back to the bare designation when nothing was resolved -- a submission
+ * whose allele is not yet a ZFIN record keeps a free-text symbol there, and
+ * "b700 (b700)" would be worse than "b700".
+ */
+export function alleleLabel(m: MutationDTO): string | null {
+    if (!m.alleleDesignation) {return null;}
+    return m.alleleName ? `${m.alleleName} (${m.alleleDesignation})` : m.alleleDesignation;
+}
+
+/**
  * Renders the read-only summary of mutations on the submission page.
  *
  * Each row is a card with the mutation's summary fields + Edit and Delete
@@ -92,9 +114,9 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                         <div className='card-header py-2'>
                             <StatusBadge status={outerCfg.mutationOverallStatus?.[String(m.id)]}/>
                             <strong>Mutation {i + 1}</strong>
-                            {m.alleleDesignation && (
+                            {alleleLabel(m) && (
                                 <span className='ml-2 text-muted'>
-                                    — {m.alleleDesignation}
+                                    — {alleleLabel(m)}
                                 </span>
                             )}
                             <FieldHistory
@@ -209,7 +231,7 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                     {mutations.map((m, i) => (
                         <tr key={m.id}>
                             <td>{i + 1}</td>
-                            <td>{m.alleleDesignation || <span className='text-muted'>—</span>}</td>
+                            <td>{alleleLabel(m) || <span className='text-muted'>—</span>}</td>
                             <td>{m.mutagenesisProtocol || <span className='text-muted'>—</span>}</td>
                             <td>{m.mutationType || <span className='text-muted'>—</span>}</td>
                             <td>{m.mutationDiscoverer || <span className='text-muted'>—</span>}</td>
