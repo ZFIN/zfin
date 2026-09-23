@@ -41,21 +41,25 @@ main() {
 }
 
 # Read the FMS token from TokenStorage ($TARGETROOT/server_apps/tokens), which
-# is outside the git tree. It used to be sourced from authorization.txt in this
-# directory -- i.e. a live credential inside the checkout, one `git add -A` away
-# from being published.
+# is outside the git tree.
 #
-# Still honours an existing authorization.txt if one is present, so an instance
-# that has not migrated keeps working; the token file wins when both exist.
+# The old authorization.txt path is gone deliberately. It sat in this directory
+# -- a live credential inside the checkout, one `git add -A` away from being
+# published -- and it was sourced rather than read, so its contents had to be
+# shell syntax (AUTHORIZATION=<token>) while this file holds the bare token.
+# Keeping both would have meant two formats for one secret and no pressure to
+# migrate. An instance that still has authorization.txt needs the token written
+# once with:
+#
+#   gradle tokenStorage --args="write ALLIANCE_API_TOKEN <token>"
 readToken() {
   local tokenFile="${TARGETROOT}/server_apps/tokens/alliance-api-token.txt"
   if [ -n "$TARGETROOT" ] && [ -f "$tokenFile" ]; then
+    # tr strips a trailing newline and any CRLF: the value goes straight into an
+    # HTTP header, where a stray newline is a malformed request rather than a
+    # clean 401.
     AUTHORIZATION=$(tr -d '\r\n' < "$tokenFile")
     echo "token: read from $tokenFile"
-  elif [ -f "authorization.txt" ]; then
-    # Legacy location. Shell syntax (AUTHORIZATION=<token>) because it is sourced.
-    source authorization.txt
-    echo "token: read from ./authorization.txt (legacy -- migrate to TokenStorage)"
   else
     echo "token: NOT FOUND"
   fi
@@ -97,6 +101,7 @@ loadConfig() {
   if [ -z "$AUTHORIZATION" ]; then
     echo "ERROR: no Alliance FMS token available." >&2
     echo "       Expected \$TARGETROOT/server_apps/tokens/alliance-api-token.txt" >&2
+    echo "       (TARGETROOT is currently: $TARGETROOT)" >&2
     echo "       containing the bare token (no AUTHORIZATION= prefix)." >&2
     echo "       Write it with: gradle tokenStorage --args=\"write ALLIANCE_API_TOKEN <token>\"" >&2
     exit 1
