@@ -346,6 +346,26 @@ public class NCBILoadIntegrationTestHelper {
                 .uniqueResult();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<String> getDbLinkAssemblyNames(String geneZdbID, String accessionNumber, String fdcontID) {
+        String sql = """
+            SELECT a.a_name FROM db_link dl
+            JOIN db_link_assembly dla ON dla.dbla_dblink_zdb_id = dl.dblink_zdb_id
+            JOIN assembly a ON a.a_pk_id = dla.dbla_a_pk_id
+            WHERE dl.dblink_linked_recid = ?
+            AND dl.dblink_fdbcont_zdb_id = ?
+            AND dl.dblink_acc_num = ?
+            ORDER BY a.a_order
+            """;
+
+        return HibernateUtil.currentSession()
+                .createNativeQuery(sql)
+                .setParameter(1, geneZdbID)
+                .setParameter(2, fdcontID)
+                .setParameter(3, accessionNumber)
+                .list();
+    }
+
 
     public int getAttributionCount(String geneId) {
         String sql = """
@@ -453,13 +473,17 @@ public class NCBILoadIntegrationTestHelper {
 
         public BeforeStateBuilder withGene2AccessionFile(String ncbiGeneId, String status, String rnaAccVersion) {
             return withGene2AccessionFile(
-                    DANIO_RERIO_TAX_ID, ncbiGeneId, status, rnaAccVersion, "-", "-"
+                    DANIO_RERIO_TAX_ID, ncbiGeneId, status, rnaAccVersion, "-", "-", "-"
             );
         }
 
         public BeforeStateBuilder withGene2AccessionFile(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion) {
+            return withGene2AccessionFile(taxId, ncbiGeneId, status, rnaAccVersion, proteinAccVersion, dnaAccVersion, "-");
+        }
+
+        public BeforeStateBuilder withGene2AccessionFile(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion, String assembly) {
             return withGene2AccessionFile(new Gene2AccessionData(
-                    taxId, ncbiGeneId, status, rnaAccVersion, proteinAccVersion, dnaAccVersion
+                    taxId, ncbiGeneId, status, rnaAccVersion, proteinAccVersion, dnaAccVersion, assembly
             ));
         }
 
@@ -471,6 +495,7 @@ public class NCBILoadIntegrationTestHelper {
             //                String rnaAccVersion = fields[3];
             //                String proteinAccVersion = fields[5];
             //                String dnaAccVersion = fields[7];
+            //                String assembly = fields[12];
             String line = String.join("\t",
                     data.taxId,
                     data.ncbiGeneId,
@@ -484,7 +509,7 @@ public class NCBILoadIntegrationTestHelper {
                     "-", // start pos
                     "-", // end pos
                     "-", // orientation
-                    "-", // assembly
+                    data.assembly,
                     "-", // mature peptide acc
                     "-", // mature peptide gi
                     "-"  // symbol
@@ -597,7 +622,7 @@ public class NCBILoadIntegrationTestHelper {
                 String proteinAccVersion = fields[5];
                 String dnaAccVersion = fields[7];
          */
-        private record Gene2AccessionData(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion) {}
+        private record Gene2AccessionData(String taxId, String ncbiGeneId, String status, String rnaAccVersion, String proteinAccVersion, String dnaAccVersion, String assembly) {}
     }
 
     public static class AfterState {

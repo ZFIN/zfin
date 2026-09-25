@@ -9,6 +9,7 @@ import org.zfin.marker.Marker;
 import org.zfin.sequence.gff.Assembly;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 @Setter
 @Getter
@@ -93,13 +94,21 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
 
     @JsonView(View.SequenceAPI.class)
     public String getLatestAssembly() {
-        if (getAccessionNumber().startsWith("NM_")) {
-            return null;
-        }
         if (!getReferenceDatabase().isRefSeq()) {
             return null;
         }
+        // getAssemblies() is null (not just empty) for MarkerDBLink instances built directly via
+        // `new MarkerDBLink()` rather than loaded through Hibernate - several callers do this for
+        // synthetic/lightweight display rows.
+        Assembly ownLatest = getAssemblies() == null ? null :
+                getAssemblies().stream().min(Comparator.comparing(Assembly::getOrder)).orElse(null);
+        if (ownLatest != null) {
+            return ownLatest.getName();
+        }
+        if (getAccessionNumber().startsWith("NM_")) {
+            return null;
+        }
         Assembly latestAssembly = marker.getLatestAssembly();
-        return latestAssembly == null ? null : latestAssembly.getName();     
+        return latestAssembly == null ? null : latestAssembly.getName();
     }
 }

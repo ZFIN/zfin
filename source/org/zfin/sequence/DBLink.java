@@ -15,6 +15,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.publication.Publication;
 import org.zfin.sequence.blast.Database;
 import org.zfin.sequence.blast.Origination;
+import org.zfin.sequence.gff.Assembly;
 
 import java.text.NumberFormat;
 import java.util.HashSet;
@@ -91,6 +92,16 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     @JsonView(View.SequenceAPI.class)
     @Transient
     private Sequence sequence;
+
+    // Not @JsonView-annotated: Assembly.marker (mappedBy="assemblies") has no @JsonView of its
+    // own, so with Jackson's default view inclusion, serializing this collection directly would
+    // pull in full Marker object graphs through that back-reference. getLatestAssembly() below
+    // exposes what the API needs as a plain String instead.
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "db_link_assembly",
+            joinColumns = @JoinColumn(name = "dbla_dblink_zdb_id"),
+            inverseJoinColumns = @JoinColumn(name = "dbla_a_pk_id"))
+    private Set<Assembly> assemblies;
 
     @JsonView(View.SequenceAPI.class)
     @JsonProperty("type")

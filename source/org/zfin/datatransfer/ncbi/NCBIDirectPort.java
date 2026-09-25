@@ -187,6 +187,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private Map<String, String>  RefPeptNCBIgeneIds;
     private Map<String, String>  RefSeqDNAncbiGeneIds;
     private Map<String, String>  RefSeqRNAncbiGeneIds;
+    private Map<String, Set<Long>>  refSeqAccessionAssemblyIds;
     private Map<String, String>  noLength;
     private Map<String, Set<String>>  supportedGeneNCBI;
     private Map<String, Set<String>>  supportingAccNCBI;
@@ -1598,6 +1599,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         RefSeqRNAncbiGeneIds = new HashMap<>();
         RefPeptNCBIgeneIds = new HashMap<>();
         RefSeqDNAncbiGeneIds = new HashMap<>();
+        refSeqAccessionAssemblyIds = new HashMap<>();
         noLength = new HashMap<>();
 
         ctNoLength = 0;
@@ -1678,21 +1680,32 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         checkAndStoreNoLength.accept(dnaAcc, ncbiGeneId);
                     }
                 } else {
+                    Long assemblyId = NcbiAssemblyResolver.resolveAssemblyId(fields.length > 12 ? fields[12] : null);
+
                     if (stringStartsWithLetter(rnaAccVersion)) {
                         String rnaAcc = rnaAccVersion.replaceFirst("\\.\\d+$", "");
                         if (rnaAcc.matches("^(NM_|XM_|NR_|XR_).*")) {
                             RefSeqRNAncbiGeneIds.put(rnaAcc, ncbiGeneId);
+                        }
+                        if (assemblyId != null) {
+                            refSeqAccessionAssemblyIds.computeIfAbsent(rnaAcc, k -> new LinkedHashSet<>()).add(assemblyId);
                         }
                         checkAndStoreNoLengthRefSeq.accept(rnaAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(proteinAccVersion)) {
                         String proteinAcc = proteinAccVersion.replaceFirst("\\.\\d+$", "");
                         RefPeptNCBIgeneIds.put(proteinAcc, ncbiGeneId);
+                        if (assemblyId != null) {
+                            refSeqAccessionAssemblyIds.computeIfAbsent(proteinAcc, k -> new LinkedHashSet<>()).add(assemblyId);
+                        }
                         checkAndStoreNoLengthRefSeq.accept(proteinAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(dnaAccVersion)) {
                         String dnaAcc = dnaAccVersion.replaceFirst("\\.\\d+$", "");
                         RefSeqDNAncbiGeneIds.put(dnaAcc, ncbiGeneId);
+                        if (assemblyId != null) {
+                            refSeqAccessionAssemblyIds.computeIfAbsent(dnaAcc, k -> new LinkedHashSet<>()).add(assemblyId);
+                        }
                         checkAndStoreNoLengthRefSeq.accept(dnaAcc, ncbiGeneId);
                     }
                 }
@@ -3260,8 +3273,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (geneAccFdbcont.containsKey(hashKey)) continue;
 
             Integer lengthVal = sequenceLength.get(refSeqRNA);
+            Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refSeqRNA, Set.of());
 
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub));
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub, assemblyIds));
             geneAccFdbcont.put(hashKey, "1");
         }
     }
@@ -3281,8 +3295,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (geneAccFdbcont.containsKey(hashKey)) continue;
 
             Integer lengthVal = sequenceLength.get(refPept);
+            Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refPept, Set.of());
 
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub));
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub, assemblyIds));
             geneAccFdbcont.put(hashKey, "1");
         }
     }
@@ -3306,9 +3321,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
 
                 Integer lengthVal = sequenceLength.get(refSeqDNA);
+                Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refSeqDNA, Set.of());
 
-                // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub
-                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub));
+                // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub|assemblyIds
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub, assemblyIds));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding in this run for other types if logic allows
             }
     }
