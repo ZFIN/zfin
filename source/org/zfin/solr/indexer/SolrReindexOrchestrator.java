@@ -291,7 +291,21 @@ public class SolrReindexOrchestrator extends AbstractValidateDataReportTask {
         // that failed partway registers under initFailures instead of status,
         // so it is invisible to instanceDir() yet still holds the name -- that
         // is exactly the state a previously failed run leaves behind.
-        staging.unloadCoreQuietly(stagingCore, true);
+        //
+        // deleteIndex only. Reclaiming the previous generation's segments is
+        // the point; taking the whole instance directory with them was
+        // collateral damage, and it cost site search twice on production
+        // (ZFIN-10514). That directory holds image-owned assets nothing
+        // recreates -- above all data/external_popularity.txt, the
+        // ExternalFileField behind the dominant autocomplete boost. Shipping
+        // it in the configset does not help: Solr's CREATE resolves a
+        // configset's conf/ and does not copy its data/, verified on TEST
+        // after #2005 deployed and autocomplete stayed flat.
+        //
+        // Keeping the directory also means conf/ and lib/ survive, so the
+        // recreated core reuses what sync-config.sh maintains there rather
+        // than depending on CREATE to reproduce it.
+        staging.unloadCoreQuietly(stagingCore, true, false, false);
         staging.createCore(stagingCore, configSet(), stagingDir);
         // Belt and braces: the directory can outlive the core (an unload that
         // only deregistered, a directory Solr never owned), and CREATE happily
