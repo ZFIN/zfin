@@ -184,6 +184,34 @@ export function useAutosavedSchemaForm<TDto extends object>(
     const [status, setStatus] = React.useState<SaveStatus>('idle');
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
+    // The seed above is one-shot: it is gated on formData being null and its
+    // deps are the entity's id, not its contents. That is not enough once a
+    // card can be reopened. Clicking "edit" remounts this hook while the
+    // entity's query is still cached, so React Query hands back the previous
+    // response synchronously and refetches only in the background -- the form
+    // seeds from the pre-edit copy, and when the fresh data lands the seed
+    // effect early-returns because formData is no longer null. Invalidating
+    // the query (ZFIN-10413) makes the cache correct but changes nothing on
+    // screen, so the boxes stay empty until the default 5-minute gcTime
+    // evicts the entry entirely and a mount finally has to wait on the
+    // network -- ZFIN-10408: "about 5 min later ... now I can see numbers".
+    //
+    // So adopt a later server response too, but only while the status is
+    // still 'idle', meaning this mount has saved nothing. Any edit made here
+    // moves the status to saving/saved/error and locks re-seeding out for the
+    // rest of the mount, which is what stops a refetch that was already in
+    // flight before that write from reverting it on screen. With nothing
+    // saved locally the server copy is authoritative by definition.
+    const serverSeed = entity == null ? null : JSON.stringify(seedFromDto(entity));
+    React.useEffect(() => {
+        if (!entity || formData == null || lastSavedRef.current == null) {return;}
+        if (status !== 'idle') {return;}
+        const seed = seedFromDto(entity);
+        if (JSON.stringify(seed) === JSON.stringify(lastSavedRef.current)) {return;}
+        setFormData(seed);
+        lastSavedRef.current = seed;
+    }, [serverSeed]);
+
     const formDataKey = formData == null ? 'null' : JSON.stringify(formData);
 
     // Latest-value refs for the unmount-flush effect below, which (by
