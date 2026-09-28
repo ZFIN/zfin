@@ -261,9 +261,10 @@ public final class SolrAdminClient {
      * {@code initFailures} rather than {@code status}, so they are invisible
      * to {@link #coreExists} but still block the name.
      */
-    public void unloadCoreQuietly(String name, boolean deleteIndex) {
+    public void unloadCoreQuietly(String name, boolean deleteIndex, boolean deleteDataDir,
+                                  boolean deleteInstanceDir) {
         try {
-            unloadCore(name, deleteIndex);
+            unloadCore(name, deleteIndex, deleteDataDir, deleteInstanceDir);
         } catch (Exception e) {
             logger.info("  ... no core '{}' to unload ({})", name, e.getMessage());
         }
@@ -291,18 +292,31 @@ public final class SolrAdminClient {
     }
 
     /**
-     * Unload a core, optionally deleting its data directory. Deleting is the
-     * point when recycling a staging core — without it the next run would
-     * index on top of the previous run's documents.
+     * Unload a core, choosing independently how much of it to delete.
+     *
+     * <p>Solr's three flags are not a gradient and the difference matters:
+     * {@code deleteIndex} removes only {@code data/index}, {@code deleteDataDir}
+     * takes all of {@code data/} with it, and {@code deleteInstanceDir} removes
+     * the directory entirely -- {@code conf/}, {@code lib/} and anything else
+     * living beside the index.
+     *
+     * <p>Recycling a staging core wants the first and not the third. The
+     * instance directory holds image-owned assets that nothing recreates:
+     * {@code data/external_popularity.txt} is an ExternalFileField carrying the
+     * dominant autocomplete boost, and deleting it flattens site search
+     * (ZFIN-10514). Reclaiming the segments is the actual goal; removing the
+     * directory was collateral.
      */
-    public void unloadCore(String name, boolean deleteIndex) throws Exception {
-        logger.info("  ... unloading core '{}' (deleteIndex={})", name, deleteIndex);
+    public void unloadCore(String name, boolean deleteIndex, boolean deleteDataDir,
+                           boolean deleteInstanceDir) throws Exception {
+        logger.info("  ... unloading core '{}' (deleteIndex={}, deleteDataDir={}, deleteInstanceDir={})",
+            name, deleteIndex, deleteDataDir, deleteInstanceDir);
         URI uri = new URIBuilder(adminBaseUrl + "cores")
             .addParameter("action", "UNLOAD")
             .addParameter("core", name)
             .addParameter("deleteIndex", String.valueOf(deleteIndex))
-            .addParameter("deleteDataDir", String.valueOf(deleteIndex))
-            .addParameter("deleteInstanceDir", String.valueOf(deleteIndex))
+            .addParameter("deleteDataDir", String.valueOf(deleteDataDir))
+            .addParameter("deleteInstanceDir", String.valueOf(deleteInstanceDir))
             .addParameter("wt", "json")
             .build();
         get(uri, RELOAD_TIMEOUT);
