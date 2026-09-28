@@ -51,6 +51,13 @@ export type UseAutosavedSchemaFormOptions<TDto extends object> = {
      * parent-query invalidation (refresh the parent's collapsed card).
      */
     onRefreshParent?: () => void;
+    /**
+     * Called after every successful autosave, regardless of which paths
+     * changed. The seam for invalidating this entity's own cached GET so a
+     * later remount (e.g. reopening a collapsed card) re-fetches instead of
+     * reseeding from the pre-edit cached response.
+     */
+    onSaved?: () => void;
 };
 
 export type UseAutosavedSchemaFormResult<TDto extends object> = {
@@ -124,6 +131,7 @@ export function useAutosavedSchemaForm<TDto extends object>(
         schemaEndpoint,
         patchEndpointFor,
         onRefreshParent,
+        onSaved,
     } = opts;
 
     const schemaQuery = useQuery<FormSchemaDTO>({
@@ -178,6 +186,21 @@ export function useAutosavedSchemaForm<TDto extends object>(
 
     const formDataKey = formData == null ? 'null' : JSON.stringify(formData);
 
+    // Latest-value refs for the unmount-flush effect below, which (by
+    // design) never re-runs and so can't close over fresh state directly.
+    const entityIdRef = React.useRef(entityId);
+    entityIdRef.current = entityId;
+    const formDataRef = React.useRef(formData);
+    formDataRef.current = formData;
+    const flagsRef = React.useRef(flags);
+    flagsRef.current = flags;
+    const patchEndpointForRef = React.useRef(patchEndpointFor);
+    patchEndpointForRef.current = patchEndpointFor;
+    const onSavedRef = React.useRef(onSaved);
+    onSavedRef.current = onSaved;
+    const onRefreshParentRef = React.useRef(onRefreshParent);
+    onRefreshParentRef.current = onRefreshParent;
+
     React.useEffect(() => {
         // No autosave until the seed has applied and the schema (and thus the
         // skip-set) has loaded — guarantees any diff is between two real
@@ -198,6 +221,7 @@ export function useAutosavedSchemaForm<TDto extends object>(
                 }
                 lastSavedRef.current = formData;
                 setStatus('saved');
+                onSaved?.();
                 if (changes.some(([p]) => flags.refreshPaths.has(p))) {
                     onRefreshParent?.();
                 }
@@ -209,6 +233,43 @@ export function useAutosavedSchemaForm<TDto extends object>(
 
         return () => window.clearTimeout(handle);
     }, [formDataKey]);
+
+    // Collapsing a card (e.g. the "Done" button) unmounts this hook's owner
+    // immediately, which runs the effect above's cleanup and cancels the
+    // pending debounced PATCH — silently discarding an edit made in the
+    // last AUTOSAVE_DEBOUNCE_MS. This effect's cleanup runs exactly once,
+    // on that unmount (its deps never change), and fires the outstanding
+    // save itself instead of letting it evaporate. It can't drive component
+    // state — the component is gone — so it only updates the shared query
+    // cache via onSaved/onRefreshParent.
+    React.useEffect(() => {
+        return () => {
+            const id = entityIdRef.current;
+            const data = formDataRef.current;
+            const savedRef = lastSavedRef.current;
+            if (id == null || data == null || savedRef == null) {return;}
+            const changes = diffLeaves(savedRef, data)
+                .filter(([path]) => !flagsRef.current.skipPaths.has(path));
+            if (changes.length === 0) {return;}
+
+            void (async () => {
+                try {
+                    for (const [path, value] of changes) {
+                        await api.patch(patchEndpointForRef.current(id), { path, value });
+                    }
+                    lastSavedRef.current = data;
+                    onSavedRef.current?.();
+                    if (changes.some(([p]) => flagsRef.current.refreshPaths.has(p))) {
+                        onRefreshParentRef.current?.();
+                    }
+                } catch {
+                    // Best-effort: the editor is already unmounted and has no
+                    // UI left to surface an error on. Reopening the card
+                    // re-seeds from the server, so the user can retry.
+                }
+            })();
+        };
+    }, []);
 
     return { formData, setFormData, status, errorMessage, schemaQuery };
 }

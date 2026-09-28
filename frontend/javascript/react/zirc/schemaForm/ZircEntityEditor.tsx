@@ -50,12 +50,18 @@ export function ZircEntityEditor<TDto extends object>({
     const cfg = AGGREGATES[kind];
     const qc = useQueryClient();
 
-    const onRefreshParent = React.useCallback(() => {
+    // Every successful save invalidates this entity's own cached GET, so a
+    // later remount (e.g. reopening a collapsed card) re-fetches instead of
+    // reseeding the form from the pre-edit cached response.
+    const onSaved = React.useCallback(() => {
         qc.invalidateQueries({ queryKey: cfg.selfCacheKey(entityId) });
+    }, [qc, cfg, entityId]);
+
+    const onRefreshParent = React.useCallback(() => {
         if (parentId != null) {
             qc.invalidateQueries({ queryKey: cfg.parentCacheKey(parentId) });
         }
-    }, [qc, cfg, entityId, parentId]);
+    }, [qc, cfg, parentId]);
 
     const { formData, setFormData, status, errorMessage, schemaQuery } =
         useAutosavedSchemaForm<TDto>({
@@ -64,6 +70,7 @@ export function ZircEntityEditor<TDto extends object>({
             schemaQueryKey: cfg.schemaQueryKey,
             schemaEndpoint: cfg.schemaEndpoint,
             patchEndpointFor: cfg.patchEndpointFor,
+            onSaved,
             onRefreshParent,
         });
 
