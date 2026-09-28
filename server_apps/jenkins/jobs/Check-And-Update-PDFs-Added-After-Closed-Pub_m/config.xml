@@ -85,7 +85,7 @@
                 </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                 <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
                     <email>
-                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@ @SUCCESS-RECIPIENT-LIST@</recipientList>
                         <subject>$PROJECT_DEFAULT_SUBJECT</subject>
                         <body>
                             ${FILE,path=&quot;server_apps/DB_maintenance/validatedata/Check-And-Update-PDFs-Added-After-Closed-Pub_m/Check-And-Update-PDFs-Added-After-Closed-Pub_m.html&quot;}

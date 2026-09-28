@@ -22,6 +22,11 @@ WHERE
   AND pts_status_display = 'Closed, No PDF'
   AND pf_date_entered > pth_status_insert_date
   AND NOT pub_is_indexed
+  AND NOT EXISTS (
+      SELECT 1 FROM curation cur
+      WHERE cur.cur_pub_zdb_id = pth_pub_zdb_id
+        AND cur.cur_data_found
+  )
 ORDER BY
     pth_pub_zdb_id DESC, 2, 3, 4, 5, 6, 7, 8, 9;
 
@@ -40,6 +45,11 @@ WHERE pf_file_type_id = (SELECT pft_pk_id FROM publication_file_type WHERE pft_t
       AND pts_status_display = 'Closed, No PDF'
       AND pf_date_entered > pth_status_insert_date
       AND NOT pub_is_indexed
+      AND NOT EXISTS (
+          SELECT 1 FROM curation cur
+          WHERE cur.cur_pub_zdb_id = pth_pub_zdb_id
+            AND cur.cur_data_found
+      )
 );
 
 -- Reset curation topics to blank for journal publications about to be reopened
@@ -58,6 +68,11 @@ WHERE cur_pub_zdb_id IN (
       AND pts_status_display = 'Closed, No PDF'
       AND pf_date_entered > pth_status_insert_date
       AND NOT pub_is_indexed
+      AND NOT EXISTS (
+          SELECT 1 FROM curation cur
+          WHERE cur.cur_pub_zdb_id = pth_pub_zdb_id
+            AND cur.cur_data_found
+      )
       AND pub.jtype = 'Journal'
 );
 
@@ -76,6 +91,11 @@ WHERE pth_status_is_current
   AND pts_status_display = 'Closed, No PDF'
   AND pf_date_entered > pth_status_insert_date
   AND NOT pub_is_indexed
+  AND NOT EXISTS (
+      SELECT 1 FROM curation cur
+      WHERE cur.cur_pub_zdb_id = pth_pub_zdb_id
+        AND cur.cur_data_found
+  )
   AND pub.jtype = 'Journal';
 
 -- Transition non-journal publications to 'Closed, No data'
@@ -93,6 +113,11 @@ WHERE pth_status_is_current
   AND pts_status_display = 'Closed, No PDF'
   AND pf_date_entered > pth_status_insert_date
   AND NOT pub_is_indexed
+  AND NOT EXISTS (
+      SELECT 1 FROM curation cur
+      WHERE cur.cur_pub_zdb_id = pth_pub_zdb_id
+        AND cur.cur_data_found
+  )
   AND pub.jtype != 'Journal';
 
 -- One-time historical cleanup A: rewrite submitter on rows produced by an earlier run
