@@ -161,14 +161,21 @@ ranks on it with the dominant boost (`sqrt(popularity)^20`). Missing, every
 document scores `defVal=1`, the boost goes flat, and an exact gene match loses
 to Fish records — ZFIN-10514.
 
-Generation recycling destroys it: the parked core is unloaded with
-`deleteInstanceDir=true`, and that directory is where the file lived. It is now
-shipped in the configset and placed in both core directories by
-`sync-config.sh`, but whether a `CREATE`d core inherits a configset's `data/`
-is unverified — check `ls -l /var/solr/data/*/data/external_popularity.txt`
-after a reindex. Note also that `solrconfig.xml` has no
-`ExternalFileFieldReloader` listener, so the file is cached per core lifetime:
-dropping it in requires a core `RELOAD`, not a commit.
+Generation recycling used to destroy it: the parked core was unloaded with
+`deleteInstanceDir=true`, and that directory is where the file lived. The
+recycling now passes `deleteIndex=true` alone, so the segments are reclaimed
+while `conf/`, `lib/` and `data/external_popularity.txt` stay put.
+
+Shipping the file in the configset (#2005) does **not** cover this on its own.
+Solr's `CREATE` resolves a configset's `conf/` and does not copy its `data/` —
+verified on TEST, where autocomplete stayed flat after #2005 deployed and the
+freshly created core had no copy while the configset did. The configset copy is
+kept as belt-and-braces, but the instance directory surviving is what actually
+guarantees the file.
+
+Note also that `solrconfig.xml` has no `ExternalFileFieldReloader` listener, so
+the file is cached per core lifetime: dropping it in by hand requires a core
+`RELOAD`, not a commit.
 
 **Disk.** Two full indexes coexist for the length of a run.
 
