@@ -16,6 +16,8 @@ import * as path from 'node:path';
  *               and its own two PCR products follow it
  *   ZFIN-10440  KASP's genomic sequence precedes the primer trio, without
  *               moving the trio itself -- it is shared with ASA
+ *   ZFIN-10438  dCAPS's mismatch-primer choice precedes the PCR products,
+ *               without moving RFLP, which shares the digest block
  *
  * SSLP is the reason this file exists: satisfying it took splitting one group
  * into two that bracket the shared primer group, and nothing about the
@@ -129,6 +131,38 @@ describe('assay field order', () => {
             'kaspGenomicSequence must not appear on ASA');
         assert.equal(order[1], 'wtSpecificPrimer',
             `ASA should still open with the trio, got ${order.join(', ')}`);
+    });
+
+    it('puts the dCAPS mismatch primer right after the reverse primer (ZFIN-10438)', () => {
+        // It used to render below the two PCR product boxes, because its group
+        // sat after EXPECTED_PCR_TYPES -- while a code comment claimed it was
+        // "after the reverse primer", which was true only in the sense of
+        // "somewhere below". The mockup puts it immediately after.
+        const order = fieldOrderFor('dcaps');
+        assert.deepEqual(order.slice(0, 4), [
+            'assayType',
+            'forwardPrimer',
+            'reversePrimer',
+            'dcapsMismatchPrimerChoice',
+        ], `got ${order.join(', ')}`);
+        assert.ok(order.indexOf('dcapsMismatchPrimerChoice') < order.indexOf('expectedWtPcr'),
+            'the mismatch primer should precede the PCR products');
+    });
+
+    it('leaves RFLP untouched by the dCAPS move (ZFIN-10438)', () => {
+        // The digest block is shared between rflp and dcaps, but the mismatch
+        // primer group is dcaps-only -- which is why moving it was safe. RFLP
+        // must not gain the field, nor have its own order shifted.
+        const order = fieldOrderFor('rflp');
+        assert.equal(order.includes('dcapsMismatchPrimerChoice'), false,
+            'dcapsMismatchPrimerChoice must not appear on rflp');
+        assert.deepEqual(order.slice(0, 5), [
+            'assayType',
+            'forwardPrimer',
+            'reversePrimer',
+            'expectedWtPcr',
+            'expectedMutPcr',
+        ], `got ${order.join(', ')}`);
     });
 
     it('leaves the SSLP-only fields off every other assay type', () => {
