@@ -321,6 +321,30 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/mutSpecificPrimer", primerSequenceWithMin, null),
                         new Control("#/properties/commonPrimer",      primerSequenceWithMin, null)
                 )),
+                // dCAPS — which primer carries the introduced mismatch.
+                //
+                // ZFIN-10438 replaced a free-text box for the mismatch primer's
+                // sequence with this closed choice, and the comment here used to
+                // claim it kept the same position "after the reverse primer".
+                // It did not: this group sat after EXPECTED_PCR_TYPES, so the
+                // field rendered below the two PCR product boxes. Yvonne caught
+                // it against the mockup, which puts it directly after the
+                // reverse primer.
+                //
+                // Moved above the expected-PCR group rather than reordering
+                // that group, because DCAPS_TYPES has a single member: no other
+                // assay type sees this group, so it can be placed freely. The
+                // same reasoning as the KASP genomic-sequence group below and
+                // the SSLP brackets above -- a one-type group moves, a shared
+                // one cannot.
+                groupRevealedFor(DCAPS_TYPES, List.of(
+                        new Control("#/properties/dcapsMismatchPrimerChoice",
+                                Options.of()
+                                        .withWidget("selectWithOther")
+                                        .withStandardValues(DCAPS_MISMATCH_PRIMER_CHOICES)
+                                        .withNoOther(true),
+                                null)
+                )),
                 // Expected WT/MUT PCR product — shown for every type that
                 // produces a PCR amplicon (everything except sslp).
                 groupRevealedFor(EXPECTED_PCR_TYPES, List.of(
@@ -333,17 +357,6 @@ public final class ZircAssayFormSchema {
                         new Control("#/properties/sequencingPrimer", primerSequence, null)
                 )),
                 // dCAPS — one extra primer field, before the digest block.
-                groupRevealedFor(DCAPS_TYPES, List.of(
-                        // ZFIN-10438: was a free-text box for the mismatch primer's
-                        // sequence; now asks which primer carries the mismatch. Same
-                        // label and same position, after the reverse primer.
-                        new Control("#/properties/dcapsMismatchPrimerChoice",
-                                Options.of()
-                                        .withWidget("selectWithOther")
-                                        .withStandardValues(DCAPS_MISMATCH_PRIMER_CHOICES)
-                                        .withNoOther(true),
-                                null)
-                )),
                 // RFLP + dCAPS digest block — same fields for both types.
                 groupRevealedFor(DIGEST_TYPES, List.of(
                         new Control("#/properties/restrictionEnzymeName",

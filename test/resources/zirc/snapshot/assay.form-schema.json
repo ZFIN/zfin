@@ -324,6 +324,26 @@
     }, {
       "elements" : [ {
         "options" : {
+          "noOther" : true,
+          "standardValues" : [ "Forward", "Reverse" ],
+          "widget" : "selectWithOther"
+        },
+        "scope" : "#/properties/dcapsMismatchPrimerChoice",
+        "type" : "Control"
+      } ],
+      "rule" : {
+        "condition" : {
+          "schema" : {
+            "enum" : [ "dcaps" ]
+          },
+          "scope" : "#/properties/assayType"
+        },
+        "effect" : "SHOW"
+      },
+      "type" : "Group"
+    }, {
+      "elements" : [ {
+        "options" : {
           "boxSize" : "short",
           "suffix" : "bp"
         },
@@ -361,26 +381,6 @@
         "condition" : {
           "schema" : {
             "enum" : [ "pcr_sequencing" ]
-          },
-          "scope" : "#/properties/assayType"
-        },
-        "effect" : "SHOW"
-      },
-      "type" : "Group"
-    }, {
-      "elements" : [ {
-        "options" : {
-          "noOther" : true,
-          "standardValues" : [ "Forward", "Reverse" ],
-          "widget" : "selectWithOther"
-        },
-        "scope" : "#/properties/dcapsMismatchPrimerChoice",
-        "type" : "Control"
-      } ],
-      "rule" : {
-        "condition" : {
-          "schema" : {
-            "enum" : [ "dcaps" ]
           },
           "scope" : "#/properties/assayType"
         },
