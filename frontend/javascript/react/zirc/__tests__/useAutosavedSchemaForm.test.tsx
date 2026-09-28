@@ -50,8 +50,12 @@ function installFetchStub(patches: PatchCall[]): () => void {
     return () => { globalThis.fetch = original; };
 }
 
-/** Exposes the hook's setFormData/status to the test outside of React render. */
-type Handle = { setFormData: React.Dispatch<React.SetStateAction<FormFor<Entity> | null>> | null; status: string };
+/** Exposes the hook's formData/setFormData/status to the test outside of React render. */
+type Handle = {
+    setFormData: React.Dispatch<React.SetStateAction<FormFor<Entity> | null>> | null;
+    formData: FormFor<Entity> | null;
+    status: string;
+};
 
 function Harness(props: { entity: Entity; onSaved: () => void; onRefreshParent: () => void; handle: Handle }) {
     const { formData, setFormData, status } = useAutosavedSchemaForm<Entity>({
@@ -64,19 +68,24 @@ function Harness(props: { entity: Entity; onSaved: () => void; onRefreshParent: 
         onRefreshParent: props.onRefreshParent,
     });
     props.handle.setFormData = formData == null ? null : setFormData;
+    props.handle.formData = formData;
     props.handle.status = status;
     return null;
 }
 
 function renderHarness(entity: Entity, onSaved: () => void, onRefreshParent: () => void) {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
-    const handle: Handle = { setFormData: null, status: 'idle' };
-    const result = render(
+    const handle: Handle = { setFormData: null, formData: null, status: 'idle' };
+    const tree = (e: Entity) => (
         <QueryClientProvider client={queryClient}>
-            <Harness entity={entity} onSaved={onSaved} onRefreshParent={onRefreshParent} handle={handle} />
-        </QueryClientProvider>,
+            <Harness entity={e} onSaved={onSaved} onRefreshParent={onRefreshParent} handle={handle} />
+        </QueryClientProvider>
     );
-    return { ...result, handle };
+    const result = render(tree(entity));
+    // Stands in for a background refetch landing with a newer (or staler)
+    // server copy while this editor stays mounted.
+    const serverResponds = (e: Entity) => act(() => { result.rerender(tree(e)); });
+    return { ...result, handle, serverResponds };
 }
 
 describe('useAutosavedSchemaForm unmount flush', () => {
@@ -150,6 +159,76 @@ describe('useAutosavedSchemaForm unmount flush', () => {
         // timers here would deadlock waitFor's own polling.
         await waitFor(() => assert.equal(patches.length, 1), { timeout: 4000, interval: 100 });
         await waitFor(() => assert.equal(savedCalls, 1), { timeout: 4000, interval: 100 });
+
+        restoreFetch();
+    });
+});
+
+/**
+ * Regression coverage for ZFIN-10408. Invalidating the entity's query (the
+ * ZFIN-10413 half) makes the cache correct but does not repaint the form:
+ * reopening a card remounts the hook, React Query replays the cached
+ * pre-edit response synchronously, and the one-shot seed effect refuses to
+ * run again because formData is already non-null. Amy Singer's report is the
+ * observable shape of that — the expected-product boxes looked empty until
+ * the default 5-minute gcTime dropped the entry and a mount finally had to
+ * wait on the network.
+ */
+describe('useAutosavedSchemaForm re-seed from a later server response', () => {
+    it('adopts a newer server copy when this mount has saved nothing', async () => {
+        const patches: PatchCall[] = [];
+        const restoreFetch = installFetchStub(patches);
+
+        const { handle, serverResponds } = renderHarness(
+            // What the stale cache replays on reopening the card.
+            { id: 4, additionalInfo: '' },
+            () => { throw new Error('onSaved should not fire; nothing is saved in this test'); },
+            () => { throw new Error('onRefreshParent should not fire'); },
+        );
+
+        await waitFor(() => assert.ok(handle.setFormData, 'expected the seed effect to populate formData'));
+        assert.equal((handle.formData as Entity).additionalInfo, '', 'seeded from the stale copy');
+
+        // The background refetch lands with what was actually persisted.
+        serverResponds({ id: 4, additionalInfo: '300' });
+
+        await waitFor(() => assert.equal(
+            (handle.formData as Entity).additionalInfo, '300',
+            'expected the form to re-seed from the newer server response',
+        ));
+
+        // Re-seeding must not look like a user edit, or it would PATCH back.
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        assert.equal(patches.length, 0, 'a re-seed must not trigger an autosave');
+
+        restoreFetch();
+    });
+
+    it('does not revert an edit already saved in this mount', async () => {
+        const patches: PatchCall[] = [];
+        const restoreFetch = installFetchStub(patches);
+
+        const { handle, serverResponds } = renderHarness(
+            { id: 5, additionalInfo: 'old value' },
+            () => {},
+            () => { throw new Error('onRefreshParent should not fire'); },
+        );
+
+        await waitFor(() => assert.ok(handle.setFormData));
+        act(() => {
+            handle.setFormData!((prev) => ({ ...(prev as FormFor<Entity>), additionalInfo: 'typed by curator' }));
+        });
+        await waitFor(() => assert.equal(patches.length, 1), { timeout: 4000, interval: 100 });
+
+        // A refetch issued before that PATCH now lands carrying the pre-edit
+        // value. Adopting it would wipe the curator's saved text on screen.
+        serverResponds({ id: 5, additionalInfo: 'old value' });
+
+        await new Promise((resolve) => setTimeout(resolve, 200));
+        assert.equal(
+            (handle.formData as Entity).additionalInfo, 'typed by curator',
+            'a stale refetch must not revert an edit saved in this mount',
+        );
 
         restoreFetch();
     });
