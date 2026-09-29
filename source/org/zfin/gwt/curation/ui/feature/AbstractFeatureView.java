@@ -39,8 +39,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     @UiField
     StringListBox mutagenBox;
     @UiField
-    StringTextBox assemblyInfoDate;
-    @UiField
     StringTextBox featureChromosome;
     @UiField
     StringListBox featureAssembly;
@@ -176,16 +174,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
 
     @UiHandler("lineNumberBox")
     void onKeyUpLineNumber(@SuppressWarnings("unused") KeyUpEvent event) {
-        handleChanges();
-    }
-
-    @UiHandler("assemblyInfoDate")
-    void onKeyUpDate(@SuppressWarnings("unused") KeyUpEvent event) {
-        // Toggle the auto-calculated fields between read-only and manual entry. When switching
-        // back to auto (date cleared) re-run the calculations from the current location.
-        presenter.updateAutoCalcEditability();
-        presenter.autoCalcDeletionLength();
-        presenter.fetchReferenceSequenceIfReady();
         handleChanges();
     }
 
@@ -419,7 +407,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         }
 
         presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
-        presenter.updateAutoCalcEditability();
         presenter.autoCalcDeletionLength();
     }
 
@@ -443,7 +430,6 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         featureChromosome.setDirty(false);
         featureChromosome.clear();
         featureAssembly.setSelectedIndex(0);
-        assemblyInfoDate.clear();
         featureAssembly.setDirty(false);
         featureStartLoc.setDirty(false);
         featureStartLoc.clear();

@@ -154,7 +154,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.lineNumberBox.isDirty(dto.getLineNumber()));
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
         col.addBoolean(view.featureNameBox.isDirty(dto.getOptionalName()));
-        col.addBoolean(view.assemblyInfoDate.isDirty(dto.getAssemblyInfoDate()));
         col.addBoolean(mutationDetailPresenter.isDirty());
         return col.arrivedValue();
     }
@@ -204,7 +203,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.featureEvidenceCode.setIndexForText(dto.getEvidence());
         view.featureAssembly.setIndexForText(dto.getAssembly());
         view.featureAssembly.setIndexForText(dto.getFeatureAssembly());
-        view.assemblyInfoDate.setText(dto.getAssemblyInfoDate());
         featureNotesPresenter.setFeatureDTO(dto);
         featureNotesPresenter.rebuildGUI();
         String nameForBox = FeatureValidationService.getNameFromFullName(dto);
@@ -227,10 +225,6 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
         view.genomicMutationDetailView.populateFields(dto.getFgmdChangeDTO(),dto.getFeatureType(),dto.getKnownInsertionSite());
-
-        // The assembly-info date is set above, so now reconcile whether the auto-calculated
-        // fields should be read-only (assembly known) or hand-editable (assembly not known).
-        updateAutoCalcEditability();
 
         // Recalculate dirty state after all fields are populated
         handleDirty();

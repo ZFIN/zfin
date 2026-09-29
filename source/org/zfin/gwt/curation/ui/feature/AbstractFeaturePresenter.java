@@ -190,27 +190,6 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     }
 
-    /**
-     * True when the curator has recorded that the genome assembly location is not (yet) known,
-     * i.e. the "Assembly information not known as of" date is filled in. In that case the
-     * normally auto-calculated fields (reference sequence, deletion length) are entered by hand
-     * and must not be overwritten or cleared by the auto-calc routines.
-     */
-    protected boolean isAssemblyInfoNotKnown() {
-        String date = view.assemblyInfoDate.getText();
-        return date != null && !date.trim().isEmpty();
-    }
-
-    /**
-     * Auto-calculated fields are read-only while the assembly location is known and editable once
-     * the assembly location is marked as not known, so a curator can supply the values by hand.
-     */
-    public void updateAutoCalcEditability() {
-        boolean manualEntry = isAssemblyInfoNotKnown();
-        view.mutationDetailDnaView.setDeletionLengthEditable(manualEntry);
-        view.genomicMutationDetailView.setReferenceSequenceEditable(manualEntry);
-    }
-
     public void fetchReferenceSequenceIfReady() {
         String featureType = view.featureTypeBox.getSelected();
         if (featureType == null) return;
@@ -220,12 +199,6 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.INDEL.getName())
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!needsRefSeq) return;
-
-        // Assembly location not known: the reference sequence is entered by hand, so a fetched value
-        // must not be written into the field. The call still goes out, because it is also what checks
-        // the coordinates against the chromosome -- returning here outright left a curator typing an
-        // impossible position with no feedback at all until they tried to save.
-        final boolean refSeqEnteredByHand = isAssemblyInfoNotKnown();
 
         String chromosome = view.featureChromosome.getText();
         String assembly = view.featureAssembly.getSelectedItemText();
@@ -243,31 +216,23 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 && startLoc != null && endLoc != null
                 && (assembly.equals("GRCz11") || assembly.equals("GRCz12tu"));
         if (!locationComplete) {
-            if (!refSeqEnteredByHand) {
-                view.genomicMutationDetailView.setReferenceSequence("");
-            }
+            view.genomicMutationDetailView.setReferenceSequence("");
             return;
         }
 
-        if (!refSeqEnteredByHand) {
-            view.genomicMutationDetailView.setReferenceSequenceLoading();
-        }
+        view.genomicMutationDetailView.setReferenceSequenceLoading();
 
         FeatureRPCService.App.getInstance().getReferenceSequence(assembly, chromosome, startLoc, endLoc,
                 new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
                     @Override
                     public void onSuccess(String result) {
                         lastLocationError = null;
-                        if (!refSeqEnteredByHand) {
-                            view.genomicMutationDetailView.setReferenceSequence(result);
-                        }
+                        view.genomicMutationDetailView.setReferenceSequence(result);
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        if (!refSeqEnteredByHand) {
-                            view.genomicMutationDetailView.setReferenceSequence("");
-                        }
+                        view.genomicMutationDetailView.setReferenceSequence("");
                         if (throwable instanceof ValidationException) {
                             reportLocationError(throwable.getMessage());
                             return;
@@ -307,18 +272,19 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!hasDeletionLength) return;
 
-        // Assembly location not known: the deletion length is entered manually - leave it be.
-        if (isAssemblyInfoNotKnown()) return;
-
         Integer start = view.featureStartLoc.getBoxValue();
         Integer end = view.featureEndLoc.getBoxValue();
-        // Location incomplete: clear any previously auto-calculated value rather than keeping it stale.
-        if (start == null || end == null || end < start) {
-            view.mutationDetailDnaView.setDeletionLength(null);
-            return;
-        }
+        // Location incomplete or invalid: nothing to compute against. The field is directly
+        // editable now, so leave whatever the curator has already typed in alone.
+        if (start == null || end == null || end < start) return;
 
-        view.mutationDetailDnaView.setDeletionLength(end - start + 1);
+        // Only fill in the computed value when the field is still empty -- once the curator has
+        // entered (or overridden) a deletion size, further location edits must not silently stomp
+        // it. A save-time mismatch between this value and the start/end location is caught by
+        // FeatureRPCServiceImpl.validateDeletionLength().
+        if (view.mutationDetailDnaView.getDeletionLength() == null) {
+            view.mutationDetailDnaView.setDeletionLength(end - start + 1);
+        }
     }
 
     public FeatureDTO createDTOFromGUI(AbstractFeatureView view) {
@@ -347,7 +313,8 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setPublicationZdbID(dto.getPublicationZdbID());
         featureDTO.setTransgenicSuffix(view.featureSuffixBox.getSelectedText());
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
-        featureDTO.setAssemblyInfoDate(view.assemblyInfoDate.getText());
+        // Assembly info date is no longer entered manually -- the server derives it from whether
+        // a location is present at all (FeatureRPCServiceImpl.editFeatureDTO / DTOConversionService).
         // genome Location
         featureDTO.setEvidence(view.featureEvidenceCode.getSelectedItemText());
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());
