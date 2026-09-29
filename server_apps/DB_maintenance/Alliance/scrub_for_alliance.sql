@@ -1,0 +1,155 @@
+-- ZFIN-10509 -- strip confidential data from a zfindb copy destined for the Alliance.
+--
+-- Run this against a SCRATCH database restored from a production dump, never
+-- against a live one. pg_dump can exclude tables but not columns, so a single
+-- dump invocation cannot produce this file; the sequence is
+--
+--   createdb zfindb_alliance
+--   pg_restore -d zfindb_alliance <production dump>
+--   psql -v ON_ERROR_STOP=1 -d zfindb_alliance -f scrub_for_alliance.sql
+--   ./verify_no_pii.sh <dump of zfindb_alliance>      <-- the gate
+--   pg_dump zfindb_alliance > ZFIN_alliance_<date>.sql
+--
+-- The verify step is not a formality. The column list below is necessary but
+-- NOT sufficient: addresses also sit in free-text columns that no column name
+-- advertises. Measured on a recent copy, before scrubbing:
+--
+--   updates.new_value   20,688 rows matching an email pattern
+--   updates.old_value    8,807
+--   updates.comments        66
+--   person.pers_bio          7
+--   person.address           4
+--
+-- Nulling person.email would have left all eleven person rows exposed. Treat
+-- verify_no_pii.sh's exit code as the release criterion, not this file.
+
+\set ON_ERROR_STOP on
+
+BEGIN;
+
+-- Guard. This script nulls every password and login in zdb_submitters; running
+-- it on the live database would lock every user out of ZFIN. Refuse by name.
+-- A scratch restore gets its own database name, so this costs nothing there.
+DO $$
+BEGIN
+    IF current_database() = 'zfindb' THEN
+        RAISE EXCEPTION
+            'refusing to scrub a database named zfindb (this looks like the live one). '
+            'Restore the dump into a scratch database first, e.g. zfindb_alliance.';
+    END IF;
+END $$;
+
+
+-- ---------------------------------------------------------------------------
+-- 1. The curation audit log.
+--
+-- 2.18M rows and by far the largest concentration of addresses in the schema
+-- (~29,500 rows carry one in old_value/new_value/comments, because curators
+-- edit person.email and the log records both sides of every edit). It is
+-- internal curation history with no value to the Alliance, so it goes whole
+-- rather than being cleaned field by field.
+-- ---------------------------------------------------------------------------
+TRUNCATE TABLE updates;
+
+
+-- ---------------------------------------------------------------------------
+-- 2. Author correspondence.
+--
+-- pub_correspondence_sent_email.pubcse_text is the message BODY -- free prose
+-- written to authors, containing addresses, names and whatever else was said.
+-- The recipient and received-email tables hold addresses outright.
+--
+-- Deliberately NOT truncated: pub_correspondence_need, _need_reason,
+-- _need_resolution, _need_resolution_type and _subject. Those are controlled
+-- vocabularies and per-publication workflow state (ids, ordering, template
+-- text) with no personal data in them.
+--
+-- No CASCADE: the tables below are listed exhaustively, so a foreign key error
+-- here means something outside this set references correspondence and the
+-- omission should be looked at, not silently truncated away.
+-- ---------------------------------------------------------------------------
+TRUNCATE TABLE
+    pub_correspondence_sent_email_contains_subject,
+    pub_correspondence_sent_tracker,
+    pub_correspondence_recipient,
+    pub_correspondence_received_email,
+    pub_correspondence_sent_email,
+    publication_correspondence;
+
+
+-- ---------------------------------------------------------------------------
+-- 3. Credentials.
+--
+-- cookie and is_curator are NOT NULL, so they take placeholder values rather
+-- than NULL -- a plain nulling pass fails on every row.
+--
+-- is_curator / is_student are flattened because ZFIN-10509 names them, but
+-- they are access flags rather than secrets. If anything downstream of this
+-- dump distinguishes curated from submitted records, flattening them will
+-- change its behaviour; drop the last two assignments in that case.
+-- ---------------------------------------------------------------------------
+UPDATE zdb_submitters
+   SET login                 = NULL,
+       password              = NULL,
+       password_reset_key    = NULL,
+       password_reset_date   = NULL,
+       password_last_updated = NULL,
+       previous_login        = NULL,
+       access                = NULL,
+       cookie                = '',
+       is_curator            = false,
+       is_student            = false;
+
+
+-- ---------------------------------------------------------------------------
+-- 4. Address columns.
+--
+-- person.email is the one ZFIN-10509 names. The other four came out of a
+-- schema-wide search for columns whose name implies an address, and are just
+-- as exposed. submission_log is empty today but is scrubbed anyway, so the
+-- script stays correct if it starts being written to.
+-- ---------------------------------------------------------------------------
+UPDATE person                         SET email               = NULL WHERE email               IS NOT NULL;
+UPDATE company                        SET email               = NULL WHERE email               IS NOT NULL;
+UPDATE lab                            SET email               = NULL WHERE email               IS NOT NULL;
+UPDATE submission_log                 SET sublog_email        = NULL WHERE sublog_email        IS NOT NULL;
+UPDATE zebrashare_submission_metadata SET zsm_submitter_email = NULL WHERE zsm_submitter_email IS NOT NULL;
+
+
+-- ---------------------------------------------------------------------------
+-- 5. Addresses embedded in free text.
+--
+-- pers_bio is legitimate public content on the person page and address is a
+-- postal address, so these are redacted in place rather than nulled: only the
+-- matched address is replaced, the surrounding text survives.
+-- ---------------------------------------------------------------------------
+UPDATE person
+   SET pers_bio = regexp_replace(pers_bio,
+                                 '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',
+                                 '[email removed]', 'gi')
+ WHERE pers_bio ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}';
+
+UPDATE person
+   SET address = regexp_replace(address,
+                                '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}',
+                                '[email removed]', 'gi')
+ WHERE address ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}';
+
+
+COMMIT;
+
+-- A last look before the dump is taken. Every count here must be zero;
+-- verify_no_pii.sh re-checks the same thing against the dump file itself,
+-- which is what actually leaves the building.
+\echo ''
+\echo 'post-scrub residue (all counts must be 0):'
+SELECT 'zdb_submitters.password'  AS check, count(*) FROM zdb_submitters WHERE password IS NOT NULL
+UNION ALL SELECT 'zdb_submitters.login',    count(*) FROM zdb_submitters WHERE login IS NOT NULL
+UNION ALL SELECT 'person.email',            count(*) FROM person  WHERE email IS NOT NULL
+UNION ALL SELECT 'company.email',           count(*) FROM company WHERE email IS NOT NULL
+UNION ALL SELECT 'lab.email',               count(*) FROM lab     WHERE email IS NOT NULL
+UNION ALL SELECT 'person.pers_bio',         count(*) FROM person  WHERE pers_bio ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+UNION ALL SELECT 'person.address',          count(*) FROM person  WHERE address  ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+UNION ALL SELECT 'updates',                 count(*) FROM updates
+UNION ALL SELECT 'pub_correspondence_sent_email', count(*) FROM pub_correspondence_sent_email
+ORDER BY 1;
