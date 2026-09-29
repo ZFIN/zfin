@@ -11,7 +11,7 @@ then
   validateFile ZFIN_1.0.1.4_phenotype.json.gz PHENOTYPE
   validateFile ZFIN_1.0.1.4_expression.json.gz EXPRESSION
   validateFile ZFIN_1.0.1.4_variant.json.gz VARIATION
-  validateFile zfin_genes.grcz12.gff3 GFF
+  validateFile zfin_genes.grcz12.gff3.gz GFF
   validateFile ZFIN_1.0.1.4_Reference.json.gz REFERENCE
   validateFile ZFIN_1.0.1.4_Resource.json.gz RESOURCE
   validateFile ZFIN_1.0.1.4_ReferenceExchange.json.gz REF-EXCHANGE

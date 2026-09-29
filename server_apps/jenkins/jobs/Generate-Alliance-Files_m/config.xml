@@ -43,12 +43,12 @@
     <hudson.tasks.Shell>
       <command><![CDATA[
 set -e
-# Prerequisite check, before the 30+ minutes of file generation below. zfin_genes.gff3 is not
+# Prerequisite check, before the 30+ minutes of file generation below. zfin_genes.grcz12.gff3.gz is not
 # produced by this job -- Download-Files_d runs generateGff3.sh, which writes it into
 # $TARGETROOT/home/data_transfer/Downloads -- and nothing expresses that dependency, so a stale or
 # never-populated Downloads directory used to surface as a bare "cp: cannot stat" after the whole
 # generation had already run and left its artifacts in the checkout.
-GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3
+GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.grcz12.gff3.gz
 if [ -f "$GFF3_SOURCE" ]; then
     echo "Found $GFF3_SOURCE"
 elif [ -n "$ALLIANCE_RELEASE_VERSION" ]; then
@@ -72,13 +72,13 @@ fi
     <hudson.tasks.Shell>
       <command><![CDATA[
 set -e
-cd $SOURCEROOT/server_apps/DB_maintenance/Alliance && rm -f ZFIN*.json* zfin_genes.gff3 && cp $SOURCEROOT/ZFIN*.json . && gzip ZFIN*.json
+cd $SOURCEROOT/server_apps/DB_maintenance/Alliance && rm -f ZFIN*.json* zfin_genes.grcz12.gff3.gz && cp $SOURCEROOT/ZFIN*.json . && gzip ZFIN*.json
 
-# zfin_genes.gff3 comes from Download-Files_d, not from this job (see the prerequisite check in the
+# zfin_genes.grcz12.gff3.gz comes from Download-Files_d, not from this job (see the prerequisite check in the
 # first build step). Copy it when it is there; only insist on it when a release version means
 # validateAllianceFiles.sh is actually going to submit or validate a GFF file. Copying it
 # unconditionally failed generation-only runs on a file they were never going to read.
-GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.gff3
+GFF3_SOURCE=$TARGETROOT/home/data_transfer/Downloads/zfin_genes.grcz12.gff3.gz
 if [ -f "$GFF3_SOURCE" ]; then
     cp "$GFF3_SOURCE" .
 elif [ -n "$ALLIANCE_RELEASE_VERSION" ]; then
@@ -109,7 +109,7 @@ mv $SOURCEROOT/zfin_wt_expression.json $DOWNLOAD_DIRECTORY/current
 # skips this builder and keeps the artifacts for debugging; the rm at the top of the
 # previous builder clears them on the next run.
 rm -f $SOURCEROOT/server_apps/DB_maintenance/Alliance/ZFIN*.json.gz
-rm -f $SOURCEROOT/server_apps/DB_maintenance/Alliance/zfin_genes.gff3</command>
+rm -f $SOURCEROOT/server_apps/DB_maintenance/Alliance/zfin_genes.grcz12.gff3.gz</command>
     </hudson.tasks.Shell>
   </builders>
   <buildWrappers>
