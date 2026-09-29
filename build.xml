@@ -43,8 +43,6 @@
         </and>
     </condition>
 
-    <property name="classes.dir.target" value="${env.TARGETROOT}/home/WEB-INF/classes"/>
-    <property name="lib.dir.target" value="${env.TARGETROOT}/home/WEB-INF/lib"/>
     <!--If the INSTANCE variable is not already set (this code gets run for every target, I believe)-->
     <!--the we check if it is defined in the system as OVERRIDE_INSTANCE-->
     <if>
