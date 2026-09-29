@@ -6,8 +6,32 @@
 # Set NO_SCREEN=1 or NO_SCRIPT=1 to opt out of either wrapper
 # (e.g. on macOS where `script` flags differ).
 
+# The docker compose steps need an ssh agent socket to hand to the containers.
+# Check before doing anything else.
+if [ -z "$SSH_AUTH_SOCK" ]; then
+    echo "SSH_AUTH_SOCK is not set; docker compose needs it." >&2
+    echo "  Start an agent with:   eval \`ssh-agent -s\`" >&2
+    echo "  or, if you don't need ssh inside the container, a bogus value will do:" >&2
+    echo "    export SSH_AUTH_SOCK=/tmp/auth.txt" >&2
+    exit 1
+fi
+
 cmprun() {
     docker compose run --rm compile bash -lc "$1"
+}
+
+# Reminders for things that have to be done by hand. Waits for Enter so the
+# step can't scroll past unread.
+manual() {
+    echo
+    echo "  >> MANUAL: $1"
+    read -rp "  Press Enter once done (or if not needed)... " _
+}
+
+# Drops tomcat's open connections before the build touches the database.
+# DBNAME comes from the container's login environment, hence the escaped \$.
+kill_web_connections() {
+    cmprun "psql -d \"\$DBNAME\" -c \"select pg_terminate_backend(pid) from pg_stat_activity where application_name = 'PostgreSQL JDBC Driver';\""
 }
 
 # `gradle loaddb` drops and reloads the database, so it must never run
@@ -88,7 +112,7 @@ loaddb() {
 # Matched on the commands[] entry, so reordering steps can't misalign this.
 step_defaults_to_no() {
     case "$1" in
-        loaddb|"cmprun 'ant create-views'") return 0 ;;
+        loaddb|kill_web_connections|"cmprun 'ant create-views'") return 0 ;;
         *) return 1 ;;
     esac
 }
@@ -107,6 +131,9 @@ if [ -z "$STY" ] && [ -z "$RELEASE_PROMPTS_RECORDING" ]; then
             ZFIN Release Deployment Driver
 ================================================================
 
+Deployment wiki page:
+  https://zfin.atlassian.net/wiki/spaces/systems/pages/6101467137
+
 Steps through the release deployment one action at a time. At
 each step you choose:
 
@@ -120,6 +147,16 @@ type Y to run them.
 The run auto-wraps in a `screen` session (detach: Ctrl-A d) and
 is recorded with `script` under:
   /research/zusers/informix/release-logs/
+
+These logs can be replayed via (for example):
+  scriptreplay -d 3 -t ./1178.timing ./1178
+The -d flag is the divisor that determines playback speed.
+
+If you run into git permission issues, they are likely caused by
+git commands running inside a container, leaving files owned by
+the zfin user outside the container (gradle user inside) with
+user id of 1000. This adds group write permission to those files:
+  sudo find . -user zfin \! -perm -g=w -exec chmod g+w {} +
 
 Environment knobs (all optional):
 
@@ -230,7 +267,9 @@ if [ -z "$RELEASE_PROMPTS_RECORDING" ] && [ -z "$NO_SCRIPT" ]; then
 fi
 
 labels=(
+    "MANUAL: make sure this is the most up-to-date version of this script"
     "cd $DEPLOY_DIR"
+    "MANUAL: set Jenkins URL to franklin.zfin.org/jobs (if needed)"
     "docker compose down jenkins"
     "cmprun 'git status'"
     "cmprun 'git fetch'"
@@ -239,6 +278,7 @@ labels=(
     "sed -i 's/RELEASE=[0-9]*/RELEASE=$RELEASE/' .env"
     "docker compose pull"
     "cmprun 'gradle liquibasePreBuild'"
+    "kill existing web connections (defaults to NO)"
     "cmprun 'gradle make'"
     "cmprun 'gradle loaddb' (optional, DESTRUCTIVE -- defaults to NO)"
     "cmprun 'gradle liquibasePostBuild'"
@@ -257,10 +297,14 @@ labels=(
     "docker compose down solr"
     "docker compose up -d solr"
     "cmprun 'ant test' (deferred DB tests + smoke; rolls back, slow)"
+    "MANUAL: revert Jenkins URL to zfin.org/jobs"
+    "MANUAL: after IP switching, restart nginx-proxy + arping (if needed)"
 )
 
 commands=(
+    "manual \"Make sure this is the most up-to-date version of this script. If you haven't already, quit (Ctrl-C), run 'git fetch && git checkout release-$RELEASE' in this checkout, then start this script again\""
     "cd \"$DEPLOY_DIR\""
+    "manual \"Temporarily set the Jenkins URL (Manage Jenkins > System) to 'https://franklin.zfin.org/jobs' instead of 'https://zfin.org/jobs', if needed\""
     "docker compose down jenkins"
     "cmprun 'git status'"
     "cmprun 'git fetch'"
@@ -269,6 +313,7 @@ commands=(
     "sed -i 's/RELEASE=[0-9]*/RELEASE=$RELEASE/' .env"
     "docker compose pull"
     "cmprun 'gradle liquibasePreBuild'"
+    "kill_web_connections"
     "cmprun 'gradle make'"
     "loaddb"
     "cmprun 'gradle liquibasePostBuild'"
@@ -287,6 +332,8 @@ commands=(
     "docker compose down solr"
     "docker compose up -d solr"
     "cmprun 'ant test'"
+    "manual \"Revert the Jenkins URL (Manage Jenkins > System) to 'https://zfin.org/jobs' if you changed it at the start\""
+    "manual \"After IP switching you may need to run: sudo systemctl restart nginx-proxy && sudo arping -s 184.171.92.30 184.171.92.1\""
 )
 
 total=${#labels[@]}
