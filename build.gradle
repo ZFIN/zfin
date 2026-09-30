@@ -47,8 +47,8 @@ String targetroot = env['TARGETROOT']
 // extracts it into the Apache DocumentRoot instead of copying a local static/ tree.
 //
 // App-owned root files (robots.txt, favicon.ico, analytics.js) are NOT in that
-// release -- they live in this repo under docroot/ and deploy via the
-// `docroot;deployFiles` task below. See docroot/README.md for the split.
+// release -- they live in this repo under webroot/ and deploy via the
+// `webroot;deployFiles` task below. See webroot/README.md for the split.
 //
 // zfinStaticRepo is the "owner/name" GitHub slug. The default is the repo's
 // eventual home under the ZFIN org; while the content still lives on the
@@ -468,7 +468,7 @@ public enum ZfinPropertiesEnum {
 //
 // The release deliberately does NOT contain the app-owned root files
 // (robots.txt, favicon.ico, analytics.js) -- those are copied out of this repo's
-// docroot/ by `docroot;deployFiles`, so no docroot name is owned by both tasks.
+// webroot/ by `webroot;deployFiles`, so no docroot name is owned by both tasks.
 //
 // Because the static volume is exclusively static-repo-owned, the extract is
 // WIPE-FIRST: the release-owned entries in zfinStaticDir are cleared before
@@ -555,16 +555,16 @@ task "home;static;deployFromRelease" {
 // home;static;deployFromRelease above.)
 
 // ----------------------------------------------------------------------------
-// App-owned root files served verbatim by Apache: docroot/ -> $TARGETROOT/home,
-// i.e. path on disk = path in the URL (docroot/robots.txt -> /robots.txt).
+// App-owned root files served verbatim by Apache: webroot/ -> $TARGETROOT/home,
+// i.e. path on disk = path in the URL (webroot/robots.txt -> /robots.txt).
 //
 // These are the site's own root files (robots.txt, favicon.ico, analytics.js),
 // not archival content, so they live in this repo and ship on the app's deploy
 // cadence rather than requiring a tagged zfin-static release. Nothing here is
-// compiled or templated -- see docroot/README.md for what belongs where.
+// compiled or templated -- see webroot/README.md for what belongs where.
 // ----------------------------------------------------------------------------
-task "docroot;deployFiles" (type: SimpleDirectoryCopyTask) {
-    sourcePath = 'docroot'
+task "webroot;deployFiles" (type: SimpleDirectoryCopyTask) {
+    sourcePath = 'webroot'
     targetPath = 'home'                     // $TARGETROOT/home == Apache DocumentRoot
     excludes = ['README.md']                // developer doc; not web-served
 }
@@ -651,7 +651,7 @@ task make(type: GradleBuild) {
              'deployPostgresTriggers',
              'createEmptyDirsIfNotExists',
              'home;static;deployFromRelease',
-             'docroot;deployFiles',
+             'webroot;deployFiles',
              'server_apps;apache;deployFiles',
              'server_apps;DB_maintenance;deployFiles',
              'server_apps;data_transfer;deployFiles',
@@ -1975,9 +1975,9 @@ task npmInstall(type: Exec) {
     outputs.dir 'node_modules'
 }
 
-// analytics.js is a static file (docroot/analytics.js, alongside robots.txt and
+// analytics.js is a static file (webroot/analytics.js, alongside robots.txt and
 // favicon.ico) that selects the GA4 id by hostname at runtime; it deploys into
-// $TARGETROOT/home via the `docroot;deployFiles` task. Not a webpack entry and
+// $TARGETROOT/home via the `webroot;deployFiles` task. Not a webpack entry and
 // not bundled -- it is served as-is at /analytics.js, with no per-instance
 // generation step.
 
