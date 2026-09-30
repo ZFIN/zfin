@@ -1,10 +1,10 @@
-# docroot/
+# webroot/
 
 Files served verbatim by Apache from the site root. Path on disk = path in the
-URL: `docroot/robots.txt` is served as `/robots.txt`.
+URL: `webroot/robots.txt` is served as `/robots.txt`.
 
 `make` copies this tree into the Apache DocumentRoot (`$TARGETROOT/home`) via the
-`docroot;deployFiles` Gradle task. Nothing here is compiled, bundled, hashed, or
+`webroot;deployFiles` Gradle task. Nothing here is compiled, bundled, hashed, or
 templated — if a file needs any of that, it belongs somewhere else:
 
 | If the file is…                                  | It goes in…                        |
