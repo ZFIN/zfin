@@ -83,6 +83,15 @@ TRUNCATE TABLE
 -- cookie and is_curator are NOT NULL, so they take placeholder values rather
 -- than NULL -- a plain nulling pass fails on every row.
 --
+-- cookie is also UNIQUE, so every row needs a DIFFERENT placeholder: a blanket
+-- '' fails on the second row with
+--   duplicate key value violates unique constraint "zdb_submitters_cookie_index"
+-- Deriving it from zdb_id (the primary key) is unique by construction, is not a
+-- credential, and is obviously not a real session cookie to anyone reading it.
+--
+-- login is unique too but nullable, and Postgres permits many NULLs in a unique
+-- index, so nulling it wholesale is fine.
+--
 -- is_curator / is_student are flattened because ZFIN-10509 names them, but
 -- they are access flags rather than secrets. If anything downstream of this
 -- dump distinguishes curated from submitted records, flattening them will
@@ -96,7 +105,7 @@ UPDATE zdb_submitters
        password_last_updated = NULL,
        previous_login        = NULL,
        access                = NULL,
-       cookie                = '',
+       cookie                = 'scrubbed-' || zdb_id,
        is_curator            = false,
        is_student            = false;
 
@@ -136,6 +145,72 @@ UPDATE person
  WHERE address ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}';
 
 
+-- ---------------------------------------------------------------------------
+-- 6. Addresses anywhere else in the schema.
+--
+-- Sections 4 and 5 work from a list somebody wrote down, and the first run
+-- against a production copy proved that is not enough. After every column
+-- ZFIN-10509 names had been scrubbed, 4,370 rows still carried an address:
+--
+--   publication_note.pnote_text            4192
+--   publication.pub_abstract                111
+--   data_note.dnote_text                     22
+--   marker_history.mhist_comments            12
+--   publication_file.pf_original_file_name   10   (PDFs named after the sender)
+--   publication_file.pf_file_name             9
+--   publication.pub_errata_and_notes          4
+--   term.term_comment                         3
+--   probe_lib.pl_description                  2
+--   person.url                                2
+--   marker.mrkr_comments                      1
+--   lab.url                                   1
+--   source_url.srcurl_url                     1
+--
+-- Curator notes on publications are where correspondence with authors gets
+-- pasted, so that is where the bulk sits -- and pf_file_name shows how little
+-- the column name tells you, because people name PDFs after whoever sent them.
+--
+-- So this pass is driven by the schema instead of by a list: every text column
+-- of every base table, redacted in place. Only the matched address is replaced,
+-- so abstracts and notes keep their prose. Over-redaction is the safe direction
+-- for a file that leaves the building.
+--
+-- Safe with respect to section 1: none of the triggers on these tables write to
+-- `updates`, so redacting them cannot repopulate the audit log truncated there.
+-- ---------------------------------------------------------------------------
+DO $$
+DECLARE
+    r        record;
+    n        bigint;
+    total    bigint := 0;
+    re       constant text := '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}';
+BEGIN
+    FOR r IN
+        SELECT c.table_name, c.column_name
+          FROM information_schema.columns c
+          JOIN information_schema.tables t
+            ON t.table_schema = c.table_schema
+           AND t.table_name   = c.table_name
+           AND t.table_type   = 'BASE TABLE'
+         WHERE c.table_schema = 'public'
+           AND c.data_type IN ('text', 'character varying')
+         ORDER BY c.table_name, c.column_name
+    LOOP
+        EXECUTE format(
+            'UPDATE public.%I SET %I = regexp_replace(%I, %L, %L, %L) WHERE %I ~* %L',
+            r.table_name, r.column_name, r.column_name,
+            re, '[email removed]', 'gi',
+            r.column_name, re);
+        GET DIAGNOSTICS n = ROW_COUNT;
+        IF n > 0 THEN
+            RAISE NOTICE 'redacted % row(s) in %.%', n, r.table_name, r.column_name;
+            total := total + n;
+        END IF;
+    END LOOP;
+    RAISE NOTICE 'redacted % row(s) in total', total;
+END $$;
+
+
 COMMIT;
 
 -- A last look before the dump is taken. Every count here must be zero;
@@ -150,6 +225,8 @@ UNION ALL SELECT 'company.email',           count(*) FROM company WHERE email IS
 UNION ALL SELECT 'lab.email',               count(*) FROM lab     WHERE email IS NOT NULL
 UNION ALL SELECT 'person.pers_bio',         count(*) FROM person  WHERE pers_bio ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
 UNION ALL SELECT 'person.address',          count(*) FROM person  WHERE address  ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+UNION ALL SELECT 'publication_note.pnote_text', count(*) FROM publication_note WHERE pnote_text  ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
+UNION ALL SELECT 'publication.pub_abstract',    count(*) FROM publication      WHERE pub_abstract ~* '[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}'
 UNION ALL SELECT 'updates',                 count(*) FROM updates
 UNION ALL SELECT 'pub_correspondence_sent_email', count(*) FROM pub_correspondence_sent_email
 ORDER BY 1;
