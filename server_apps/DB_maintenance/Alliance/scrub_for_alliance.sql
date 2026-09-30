@@ -97,8 +97,23 @@ TRUNCATE TABLE
 -- dump distinguishes curated from submitted records, flattening them will
 -- change its behaviour; drop the last two assignments in that case.
 -- ---------------------------------------------------------------------------
+-- login is replaced rather than nulled: a distinct placeholder keeps accounts
+-- distinguishable and keeps anything that renders a submitter showing
+-- something, at no cost to privacy. Derived from zdb_id, so it is unique by
+-- construction (zdb_id is the primary key) which the unique index requires.
+--
+-- Deliberately NOT md5(login) or any hash of the real value. ZFIN logins are
+-- low-entropy and formulaic -- first initial plus surname -- and person still
+-- carries full_name/first_name/last_name in this same dump, so a hash of
+-- ~11,000 such logins falls to a dictionary attack immediately. A value
+-- derived from zdb_id is not derived from the secret at all.
+--
+-- Note this is relabeling, not anonymisation: zdb_id stays (the foreign keys
+-- need it), so rows remain linkable to an account. What it removes is the
+-- credential -- the string someone would type into a login form -- which is
+-- what ZFIN-10509 names.
 UPDATE zdb_submitters
-   SET login                 = NULL,
+   SET login                 = 'user-' || zdb_id,
        password              = NULL,
        password_reset_key    = NULL,
        password_reset_date   = NULL,
@@ -211,6 +226,32 @@ BEGIN
 END $$;
 
 
+-- ---------------------------------------------------------------------------
+-- 7. Routines that embed credentials.
+--
+-- Everything above scrubs table DATA. pg_dump also emits routine bodies as
+-- DDL, and those are not covered by any amount of UPDATE -- which is how a
+-- dump that passed every check still shipped eight ZFIN logins:
+--
+--   CREATE FUNCTION public.add_users() ...
+--     userlist text[] := ARRAY['rtaylor','staylor','ryanm','cmpich', ...];
+--     EXECUTE format('CREATE user %s WITH superuser', username);
+--
+-- Worse than the names, it states which accounts are superusers. add_users()
+-- is an environment-bootstrap helper for standing up a fresh database; it has
+-- no purpose in a dump for the Alliance, so it goes rather than being
+-- rewritten.
+--
+-- Checked when this was written: add_users is the ONLY routine in the database
+-- whose source mentions any of those logins. If that changes, this needs to
+-- become a scan of pg_proc.prosrc rather than a named drop -- the query is
+--   SELECT proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+--    WHERE n.nspname NOT IN ('pg_catalog','information_schema')
+--      AND p.prosrc ~* '<login>|<login>|...';
+-- ---------------------------------------------------------------------------
+DROP FUNCTION IF EXISTS public.add_users();
+
+
 COMMIT;
 
 -- A last look before the dump is taken. Every count here must be zero;
@@ -219,7 +260,11 @@ COMMIT;
 \echo ''
 \echo 'post-scrub residue (all counts must be 0):'
 SELECT 'zdb_submitters.password'  AS check, count(*) FROM zdb_submitters WHERE password IS NOT NULL
-UNION ALL SELECT 'zdb_submitters.login',    count(*) FROM zdb_submitters WHERE login IS NOT NULL
+-- login is now a placeholder rather than NULL, so the check is that every row
+-- holds exactly the derived value: anything else is a surviving real login.
+UNION ALL SELECT 'zdb_submitters.login',    count(*) FROM zdb_submitters WHERE login IS DISTINCT FROM 'user-' || zdb_id
+UNION ALL SELECT 'add_users() routine',     count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'public' AND p.proname = 'add_users'
+UNION ALL SELECT 'logins in any routine',   count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname NOT IN ('pg_catalog','information_schema') AND p.prosrc ~* '(rtaylor|staylor|ryanm|cmpich|zfishweb|zfinner)'
 UNION ALL SELECT 'person.email',            count(*) FROM person  WHERE email IS NOT NULL
 UNION ALL SELECT 'company.email',           count(*) FROM company WHERE email IS NOT NULL
 UNION ALL SELECT 'lab.email',               count(*) FROM lab     WHERE email IS NOT NULL
