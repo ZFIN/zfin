@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="utilities" basedir=".">
 
-    <property name="indexerDir" value="${TARGETROOT}/home/WEB-INF/unload-index"/>
-
-    <target name="remove-index-files" description="Tests to make sure that the system is alive and working properly.">
-        <echo message="Remove Index Files in ${indexerDir}"/>
-        <delete dir="${indexerDir}"/>
-    </target>
-
     <target name="move-crick-to-watson" description="Synchronize Jenkins on crick with watson" if="watson">
         <echo message="Synchronizing Jenkins jobs: copy Crick files onto Watson"/>
         <exec executable="rsync" failifexecutionfails="true">
