@@ -234,11 +234,31 @@ select gff_seqname, gff_name, gff_start, gff_end, 'ZfinGbrowseStartEndLoader', '
 from gff3
 where gff_source = 'ZFIN_knockdown_reagent';
 
+-- The GRCz12tu file is the only gff3 source whose gff_name is inserted here as
+-- a ZDB ID while containing ids that are no longer active, so this is the only
+-- insert in the script that needs the guard. It failed the whole job on
+--
+--   violates foreign key constraint "sfclg_zdb_active_data_fk"
+--   Key (sfclg_data_zdb_id)=(ZDB-CRISPR-160128-195) is not present in zdb_active_data
+--
+-- 1,649 of its 46,394 rows name a non-active id, against 0 of the 41,988 rows
+-- in the plain ZFIN_knockdown_reagent source above -- so the GRCz12tu file was
+-- generated before a round of merges and has not been regenerated since. The
+-- real fix is upstream, in whatever produces E_zfin_knockdown_reagents_grcz12tu.gff3;
+-- this stops one stale id aborting the entire refresh.
+--
+-- Skipping loses nothing. Of the 1,649, 429 were merged into a replacement that
+-- is active AND already present in this same file under its new id, so those
+-- rows are duplicates of work the load is doing anyway. The other 1,220 name
+-- records that no longer exist in any form. Re-mapping the 429 through
+-- zdb_replaced_data would therefore insert a second copy of each, which is why
+-- this filters rather than remaps.
 insert into sequence_feature_chromosome_location_generated (sfclg_chromosome, sfclg_data_zdb_id,
   sfclg_start, sfclg_end, sfclg_location_source, sfclg_location_subsource, sfclg_assembly)
 select gff_seqname, gff_name, gff_start, gff_end, 'ZfinGbrowseStartEndLoader', 'KnockdownReagentLoader', 'GRCz12tu'
 from gff3
-where gff_source = 'ZFIN_knockdown_reagent_GRCz12tu';
+where gff_source = 'ZFIN_knockdown_reagent_GRCz12tu'
+  and exists (select 1 from zdb_active_data where zactvd_zdb_id = gff_name);
 
 
 -- §K. AB / U / 0 chromosome cleanup deletes. -------------------------------
