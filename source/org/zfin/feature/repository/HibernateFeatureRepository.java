@@ -24,6 +24,7 @@ import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.mapping.GenomicLocationService;
 import org.zfin.mapping.VariantSequence;
 import org.zfin.marker.Marker;
 import org.zfin.marker.presentation.PreviousNameLight;
@@ -36,6 +37,7 @@ import org.zfin.profile.service.ProfileService;
 import org.zfin.publication.Publication;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.DBLink;
+import org.zfin.sequence.gff.Assembly;
 import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.text.SimpleDateFormat;
@@ -204,20 +206,46 @@ public class HibernateFeatureRepository implements FeatureRepository {
      */
     @Override
     public List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureID) {
+        return getNonSaFeaturesWithGenomicMutDets(startDate, featureID, false);
+    }
+
+    /**
+     * Same as {@link #getNonSaFeaturesWithGenomicMutDets(Date, String)}, but includeSanger=true
+     * drops the "sa" (Sanger-allele) name exclusion. That exclusion is purely about the
+     * recurring job's runtime -- "sa" features are ~36k of the ~42k rows -- so a one-time
+     * backfill (ZFIN-10486's INCLUDE_SANGER flag) can opt into them.
+     *
+     * Independently of that flag, features whose flanking sequence was *submitted* rather
+     * than computed are always excluded: those rows are attributed to the ZMP data-submission
+     * publication rather than to the computed-display pub this code stamps on its own output
+     * ({@link org.zfin.mapping.GenomicLocationService#COMPUTED_FLANK_SEQ_PUB}), and
+     * recomputing them would overwrite submitter data. Provenance, not the feature's name, is
+     * what makes a row unsafe to touch.
+     */
+    @Override
+    public List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureID, boolean includeSanger) {
         Boolean startDateIsNull = startDate == null;
         Boolean featureIDIsNull = featureID == null || featureID.isEmpty();
         String hql = """
             select distinct fs.feature
             from FeatureGenomicMutationDetail fs
-            where fs.feature.abbreviation not like 'sa%'
+            where (:includeSanger = true OR fs.feature.abbreviation not like 'sa%')
             and (:startDateIsNull = true OR fs.fgmdModifiedAt >= :startDate)
             and (:featureIDIsNull = true OR fs.feature.zdbID = :featureID)
+            and not exists (
+                select 1 from VariantSequence vs, RecordAttribution ra
+                where vs.vseqDataZDB = fs.feature.zdbID
+                and ra.dataZdbID = vs.zdbID
+                and ra.sourceZdbID = :submittedFlankSeqPub
+            )
             """;
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         query.setParameter("startDate", startDate);
         query.setParameter("startDateIsNull", startDateIsNull);
         query.setParameter("featureID", featureID);
         query.setParameter("featureIDIsNull", featureIDIsNull);
+        query.setParameter("includeSanger", includeSanger);
+        query.setParameter("submittedFlankSeqPub", GenomicLocationService.SUBMITTED_FLANK_SEQ_PUB);
 
         return query.list().stream().sorted(Comparator.comparing(Feature::getAbbreviation)).collect(Collectors.toList());
     }
@@ -525,25 +553,31 @@ public class HibernateFeatureRepository implements FeatureRepository {
             .uniqueResult() > 0;
     }
 
+    /**
+     * The feature's location on whichever assembly currently ranks highest (lowest
+     * assembly.a_order), e.g. GRCz12tu over GRCz11 over GRCz10 over Zv9. Backed by the
+     * assembly table's own ranking rather than a hardcoded/string-sorted guess, so a
+     * newly-added, more-current assembly (e.g. a future GRCz12ab row with a lower
+     * a_order than GRCz12tu) is picked up automatically with no code change here.
+     */
     public FeatureLocation getLocationByFeature(Feature ftr) {
-        Session session = HibernateUtil.currentSession();
-        String hql = "select fs  from  FeatureLocation fs " +
-                     "     where fs.feature = :feature and fs.assembly like '%z1%' order by fs.assembly desc  ";
-
-        Query<FeatureLocation> query = session.createQuery(hql, FeatureLocation.class);
-        query.setParameter("feature", ftr);
-        query.setMaxResults(1);
-        FeatureLocation fl = query.uniqueResult();
-
-        if (fl == null) {
-            String hql1 = "select fs  from  FeatureLocation fs " +
-                          "     where fs.feature = :feature and fs.assembly like '%9%' order by fs.assembly desc ";
-
-            Query<FeatureLocation> query1 = session.createQuery(hql1, FeatureLocation.class);
-            query1.setParameter("feature", ftr);
-            return query1.uniqueResult();
-        }
-        return fl;
+        // sfcl_zdb_id breaks ties: 177 features have more than one location row on the same
+        // assembly, with genuinely different coordinates (sometimes different chromosomes).
+        // Without it, which one wins varies by query plan, so the curation form, the
+        // flanking-sequence recalculation and the drift report could each pick a different
+        // position for the same feature. getAllFeatureLocationsForAssembly() orders the same
+        // way so they agree. Picking the lowest id is arbitrary but at least stable --
+        // CheckFlankingSequenceDriftTask reports these separately as ambiguous.
+        String hql = """
+            select fl from FeatureLocation fl
+            join Assembly a on fl.assembly = a.name
+            where fl.feature = :feature
+            order by a.order asc, fl.zdbID asc
+            """;
+        return HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class)
+            .setParameter("feature", ftr)
+            .setMaxResults(1)
+            .uniqueResult();
     }
 
 
@@ -768,25 +802,15 @@ public class HibernateFeatureRepository implements FeatureRepository {
     }
 
 
-    public FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature) {
-        String hql = """
-            select fl from FeatureLocation fl
-            where fl.assembly = :assembly
-            AND fl.feature = :feature
-            """;
-        Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
-        query.setMaxResults(1);
-        query.setParameter("assembly", "GRCz11");
-        query.setParameter("feature", feature);
-        return query.getResultList().stream().findFirst().orElse(null);
-    }
-
     @Override
     public FeatureLocation getAllFeatureLocationsForAssembly(AssemblyEnum assembly, Feature feature) {
+        // Ordered so a feature with several rows on this assembly resolves to the same one
+        // getLocationByFeature() picks -- see the note there.
         String hql = """
             select fl from FeatureLocation fl
             where fl.assembly = :assembly
             AND fl.feature = :feature
+            order by fl.zdbID asc
             """;
         Query<FeatureLocation> query = HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class);
         query.setMaxResults(1);

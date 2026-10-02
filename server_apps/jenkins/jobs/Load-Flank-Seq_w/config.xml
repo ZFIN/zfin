@@ -2,9 +2,24 @@
 <project>
   <actions/>
   <description>Load Flank Seq
+
+MANUAL ONLY (ZFIN-10486): this job no longer runs on a schedule -- its cron entry in
+trigger.production.properties is commented out. It recomputes flanking sequence in place,
+and an unattended nightly run is how a stale GRCz11-derived value silently overwrote a
+correct GRCz12tu one. Run it by hand to act on what Check-Flanking-Sequence-Drift_w reports.
+
 Set environment variable FORCE_FULL_UPDATE to true to force a full update of the flank seq data.
 Set FEATURE_ZDBID to a feature ID to run for a single feature only.
-Otherwise, it will update only the new data each day.  Once per week, the job will run the full update.
+Without FORCE_FULL_UPDATE it only processes data modified in the last 48 hours, which is of
+limited use now that the job is triggered by hand rather than nightly.
+
+INCLUDE_SANGER (ZFIN-10486): "sa" (Sanger allele) features are excluded by default --
+they are ~36,000 of the ~42,000 rows, so including them makes a full run roughly 6.6x
+bigger (6,362 features vs 41,914). Check this box together with FORCE_FULL_UPDATE to also
+recompute them against their current-assembly location, which is what a backfill of the
+Check-Flanking-Sequence-Drift_w report needs. Flanking sequence that was submitted rather
+than computed (the Sanger ZMP data submission) is skipped either way and cannot be
+overwritten by any combination of these options.
   </description>
   <keepDependencies>false</keepDependencies>
   <properties>
@@ -18,6 +33,12 @@ Otherwise, it will update only the new data each day.  Once per week, the job wi
               <hudson.model.BooleanParameterDefinition>
                   <name>FORCE_FULL_UPDATE</name>
                   <description>Check this option to run a full update. Otherwise, it only runs through changes from the last 48 hours.</description>
+                  <defaultValue>false</defaultValue>
+                  <trim>true</trim>
+              </hudson.model.BooleanParameterDefinition>
+              <hudson.model.BooleanParameterDefinition>
+                  <name>INCLUDE_SANGER</name>
+                  <description>Check this option (with FORCE_FULL_UPDATE) to also recompute "sa" (Sanger allele) features. Leave unchecked for normal runs.</description>
                   <defaultValue>false</defaultValue>
                   <trim>true</trim>
               </hudson.model.BooleanParameterDefinition>
