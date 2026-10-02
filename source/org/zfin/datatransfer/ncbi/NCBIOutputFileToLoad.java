@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_NCBI_GENE_ID;
@@ -16,7 +17,11 @@ import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_VEGA
 @Log4j2
 public class NCBIOutputFileToLoad {
 
-    public record LoadFileRow(String geneID, String accession, Integer length, String fdb, String pub){}
+    public record LoadFileRow(String geneID, String accession, Integer length, String fdb, String pub, Set<Long> assemblyIds){
+        public LoadFileRow(String geneID, String accession, Integer length, String fdb, String pub) {
+            this(geneID, accession, length, fdb, pub, Set.of());
+        }
+    }
 
     // Based on our historical data load process (toLoad.unl which is loaded into temp ncbi_gene table by loadNCBIGeneAccs.sql)
     //This is the substance of the toLoad.unl file. Organized as a map for easy access by ZFIN Gene ID.
@@ -44,12 +49,16 @@ public class NCBIOutputFileToLoad {
         for (String geneID : toLoadNcbiGenes.keySet().stream().sorted().toList()) {
             for (LoadFileRow row : toLoadNcbiGenes.get(geneID).stream().sorted((r1, r2) -> r1.accession.compareTo(r2.accession)).toList()) {
                 String lengthStr = row.length == null ? "" : row.length.toString();
+                String assemblyIdsStr = row.assemblyIds == null || row.assemblyIds.isEmpty()
+                        ? ""
+                        : row.assemblyIds.stream().map(String::valueOf).sorted().collect(Collectors.joining(","));
                 sb.append(row.geneID).append(separator)
                         .append(row.accession).append(separator)
                         .append(separator) //placeholder for ZDB ID that is only used after the data is loaded into the DB
                         .append(lengthStr).append(separator)
                         .append(row.fdb).append(separator)
-                        .append(row.pub).append("\n");
+                        .append(row.pub).append(separator)
+                        .append(assemblyIdsStr).append("\n");
             }
         }
         return sb.toString();

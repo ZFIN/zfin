@@ -96,6 +96,31 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
     }
 
     /**
+     * ZFIN-10510: a newly-loaded RefSeq accession should be linked to the genome assembly(ies)
+     * named in gene2accession's "assembly" column, with GRCz12ab taking precedence over
+     * GRCz12tu when a curated accession is annotated against both.
+     */
+    @Test
+    public void testLoadGeneLinksRefSeqToAssembly() throws IOException {
+        helper.beforeStateBuilder()
+                .withGene("ZDB-GENE-030131-1239", "gmpr3")
+                .withDBLink("ZDB-GENE-030131-1239", "GFIL01011601", FDCONT_GENBANK_RNA, "ZDB-PUB-020723-5")
+                .withGene2AccessionFile("678546", "-", "GFIL01011601.1")
+                .withGene2AccessionFile("678546", "VALIDATED", "NM_001040305.2", "-", "-", "Reference GRCz12tu Primary Assembly")
+                .withGene2AccessionFile("678546", "VALIDATED", "NM_001040305.2", "-", "-", "Reference GRCz12ab Primary Assembly")
+                .withZfGeneInfoFile("678546", "gmpr3", List.of("ZFIN:ZDB-GENE-030131-1239"))
+                .withRefSeqCatalogFile("NM_001040305.2", "2135")
+                .build();
+
+        helper.runNCBILoad();
+
+        assertDBLinkExists("ZDB-GENE-030131-1239", "NM_001040305", FDCONT_REFSEQ_RNA, PUB_MAPPED_BASED_ON_RNA);
+
+        List<String> assemblies = helper.getDbLinkAssemblyNames("ZDB-GENE-030131-1239", "NM_001040305", FDCONT_REFSEQ_RNA);
+        assertEquals(List.of("GRCz12ab", "GRCz12tu"), assemblies);
+    }
+
+    /**
      * Test the case where a gene has an existing NCBI Gene ID link, but NCBI has replaced that ID with a new one.
      * After the load, the old NCBI Gene ID link should be replaced with the new one, and the GenBank
      * accession should also be linked to the new NCBI Gene ID.

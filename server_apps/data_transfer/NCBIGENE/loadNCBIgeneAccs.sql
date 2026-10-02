@@ -43,9 +43,10 @@ create temporary table ncbi_gene_load (
   mapped_zdb_gene_id    text not null,
   ncbi_accession        varchar(50),
   zdb_id                text,
-  sequence_length        text,      
+  sequence_length        text,
   fdbcont_zdb_id        text not null,
-  load_pub_zdb_id       text not null
+  load_pub_zdb_id       text not null,
+  assembly_a_pk_ids     text
 );
 
 \copy ncbi_gene_load from 'toLoad.unl' (delimiter '|');
@@ -248,10 +249,17 @@ DELETE FROM ncbi_gene_load WHERE fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'
 
 \echo 'Skipping duplicate entries in db_link table for the new records that would violate key:';
 \echo 'Insert the new records into db_link table';
-insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id) 
-select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id 
+insert into db_link (dblink_linked_recid, dblink_acc_num, dblink_acc_num_display, dblink_info, dblink_zdb_id, dblink_length, dblink_fdbcont_zdb_id)
+select mapped_zdb_gene_id, ncbi_accession, ncbi_accession, 'uncurated: NCBI gene load ' || now(), zdb_id, sequence_length, fdbcont_zdb_id
   from ncbi_gene_load
     ON CONFLICT (dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id) DO NOTHING;
+
+\echo 'Link newly-loaded RefSeq accessions to the NCBI genome assembly(ies) they were annotated against';
+insert into db_link_assembly (dbla_dblink_zdb_id, dbla_a_pk_id)
+select zdb_id, unnest(string_to_array(assembly_a_pk_ids, ','))::bigint
+  from ncbi_gene_load
+ where assembly_a_pk_ids is not null and assembly_a_pk_ids <> ''
+on conflict (dbla_dblink_zdb_id, dbla_a_pk_id) do nothing;
 
 --! echo "Attribute the new db_link records to one of the 2 load publications, depending on what kind of mapping"
 
