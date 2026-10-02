@@ -123,21 +123,12 @@ if (! system ("/bin/mv $accfile nc_zf_acc.unl")) {
     &writeReport("Failed to rename the daily accession file.");
 }
 
-
-&sendReport();
-
 ###########################################################
 #
 
 sub downloadDailyUpdateFile() {
     print "Running: wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;\n";
     system("wget -q ftp://ftp.ncbi.nlm.nih.gov/genbank/daily-nc/$newfile;");
-}
-
-sub emailError() {
-    &writeReport($_[0]);
-    &sendReport();
-    exit;
 }
 
 sub writeReport() {
