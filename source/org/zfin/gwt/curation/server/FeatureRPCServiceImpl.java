@@ -47,7 +47,6 @@ import org.zfin.sequence.repository.SequenceRepository;
 import org.zfin.zebrashare.repository.ZebrashareRepository;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -223,8 +222,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
      */
     public FeatureDTO editFeatureDTO(FeatureDTO featureDTO) throws DuplicateEntryException, ValidationException {
         DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-        dateFormat.setLenient(false);
-        Date entryDate;
 
         checkDupes(featureDTO);
         validateUnspecified(featureDTO);
@@ -281,14 +278,19 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             featureAssay.setMutagee(Mutagee.getType(featureDTO.getMutagee()));
         }
 
-        if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
-            try {
-                entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
-            } catch (ParseException e) {
-                throw new ValidationException("Incorrect date format, please check");
+        // Assembly info date is no longer entered manually -- infer it from whether a location is
+        // present at all, and log the transition to the updates table for auditability.
+        Date previousAssemblyInfoDate = feature.getFtrAssemblyInfoDate();
+        if (isLocationRemoved(featureDTO)) {
+            if (previousAssemblyInfoDate == null) {
+                Date now = new Date();
+                feature.setFtrAssemblyInfoDate(now);
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Assembly information not known as of",
+                        null, dateFormat.format(now), featureDTO.getPublicationZdbID());
             }
-            feature.setFtrAssemblyInfoDate(entryDate);
-        } else {
+        } else if (previousAssemblyInfoDate != null) {
+            infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Assembly information not known as of",
+                    dateFormat.format(previousAssemblyInfoDate), null, featureDTO.getPublicationZdbID());
             feature.setFtrAssemblyInfoDate(null);
         }
 
@@ -324,17 +326,23 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureGenomicMutationDetail(fgmd);
             }
 
+            String oldFgmdSeqRef = fgmd.getFgmdSeqRef();
             DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, featureDTO.getFgmdChangeDTO());
-            // When the curator removes all location info (marking "Assembly information
-            // not known as of <date>"), the calculated Sequence of Reference no longer
-            // has a source. Drop both sequence fields before the validate step so we
-            // don't compare the stale GUI value against a no-longer-applicable
-            // assembly, and so the persisted FGMD reflects the empty-location state.
+            // When the curator removes all location info (assembly information becomes not
+            // known), the calculated Sequence of Reference no longer has a source. Drop both
+            // sequence fields before the validate step so we don't compare the stale GUI value
+            // against a no-longer-applicable assembly, and so the persisted FGMD reflects the
+            // empty-location state.
             if (locationDeleted) {
                 fgmd.setFgmdSeqRef(null);
                 fgmd.setFgmdSeqVar(null);
             }
             validateReferenceSequence(fgmd, fgl);
+
+            if (!Objects.equals(oldFgmdSeqRef, fgmd.getFgmdSeqRef())) {
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Sequence of Reference",
+                        oldFgmdSeqRef, fgmd.getFgmdSeqRef(), featureDTO.getPublicationZdbID());
+            }
 
             if (fgmd.getZdbID() == null) {
                 HibernateUtil.currentSession().save(fgmd);
@@ -394,6 +402,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 feature.setFeatureDnaMutationDetail(detail);
             }
             FeatureDnaMutationDetail oldDetail = detail.clone();
+            Integer oldRemovedBasePair = detail.getNumberRemovedBasePair();
             String accessionNumber = featureDTO.getDnaChangeDTO().getSequenceReferenceAccessionNumber();
             if (StringUtils.isNotEmpty(accessionNumber)) {
                 /*if (isValidAccession(accessionNumber, "DNA") == null) {
@@ -415,6 +424,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 detail.setNumberRemovedBasePair(null);
             }
             validateDeletionLength(detail, fgl, feature.getType());
+            if (!Objects.equals(oldRemovedBasePair, detail.getNumberRemovedBasePair())) {
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), "Deletion size (bp)",
+                        oldRemovedBasePair == null ? null : oldRemovedBasePair.toString(),
+                        detail.getNumberRemovedBasePair() == null ? null : detail.getNumberRemovedBasePair().toString(),
+                        featureDTO.getPublicationZdbID());
+            }
             if (feature.getType().equals(FeatureTypeEnum.INDEL)) {
                 if (detail.getNumberRemovedBasePair() == detail.getNumberAddedBasePair()) {
                     if (detail.getNumberRemovedBasePair() > 1) {
@@ -1321,7 +1336,9 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         int expected = fgl.getEndLocation() - fgl.getStartLocation() + 1;
         if (detail.getNumberRemovedBasePair() != expected) {
-            throw new ValidationException("Deletion size does not match the auto-calculated value from the start/end locations");
+            throw new ValidationException("Deletion size (" + detail.getNumberRemovedBasePair() + " bp) does not match "
+                    + "the start/end location (expected " + expected + " bp). Change the deletion size, or change "
+                    + "the start/end location so they agree.");
         }
     }
 
