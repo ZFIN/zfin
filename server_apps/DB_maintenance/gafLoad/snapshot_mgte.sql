@@ -9,6 +9,14 @@
 --   * noctua_model                                     <- noctua_model_annotation
 -- protein_acc is only meaningful for GOA (empty '-' otherwise).
 --
+-- qualifier_flag (mrkrgoev_gflag_name: 'not' / 'contributes to' / 'colocalizes with' / null,
+-- read out as '-') gets the same treatment as protein_acc below -- compared but not matched on.
+-- Without it, a `NOT` annotation and its positive twin agree on every other column and collapse
+-- onto the same key, so a NOT<->positive flip was invisible in every workbook (README: "the NOT
+-- qualifier is invisible to every diff"). Landing it as a plain compared column, rather than
+-- adding it to KEY/ALL_KEY in mgte_csvdiff.sh, makes a flip surface as an UPDATE without
+-- changing what counts as a delete/add -- so existing figures stay comparable.
+--
 -- The owning organization also rides along as the `org` column. In a per-org snapshot it is a
 -- constant, so it cannot produce a spurious update; it is there to make the file self-describing
 -- and because all-orgs mode (below) depends on it.
@@ -119,6 +127,7 @@ SELECT e.mrkrgoev_zdb_id                              AS zdb_id,
        e.mrkrgoev_annotation_organization_created_by  AS created_by,
        COALESCE(e.mrkrgoev_contributed_by, '-')       AS contributed_by,
        COALESCE(e.mrkrgoev_protein_accession, '-')    AS protein_acc,
+       COALESCE(e.mrkrgoev_gflag_name, '-')           AS qualifier_flag,
        COALESCE(i.inferred_from, '')                  AS inferred_from,
        COALESCE(x.annotation_extensions, '')          AS annotation_extensions,
        COALESCE(n.noctua_model, '')                   AS noctua_model

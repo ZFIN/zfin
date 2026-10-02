@@ -28,7 +28,7 @@ import java.util.Set;
  *       non-ZFIN sources (UniProt, InterPro, RHEA, IntAct, …).</li>
  * </ul>
  *
- * <p><b>Why phylo gets its own org (ZFIN-10025 open decision 9, settled).</b> The legacy
+ * <p><b>Why phylo gets its own org (ZFIN-10025 open decision 6, settled).</b> The legacy
  * FP-Inference load owned {@code zfin-prediction.gaf} under the {@code FP Inferences} org, and
  * those rows sit on {@code ZDB-PUB-110330-1} — the <i>same</i> publication as the unified file's
  * {@code GO_REF:0000033} rows. They are the same kind of annotation, differing only in

@@ -32,7 +32,7 @@
 -- The FP Inferences org (1,623 rows on the same publication). Moving those into PAINT would place
 -- them in the new load's removal scope, and 1,144 of them are not in the GPAD file, so the next
 -- run would delete them. Their disposition -- freeze in the dead FP Inferences org, or delete
--- explicitly -- is a separate decision (README open decision 9).
+-- explicitly -- is a separate decision (README open decision 6).
 --
 -- Idempotent: re-running moves nothing.
 

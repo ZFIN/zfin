@@ -301,6 +301,16 @@ task csv2xlsx(type: JavaExec) {
     // gradle csv2xlsx --args="output.xlsx input1.csv input2.csv input3.csv..."
 }
 
+task gafCutoverImpactSummary(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.go.service.GafCutoverImpactSummary'
+
+    // gradle gafCutoverImpactSummary --args="<report.html> <dbdiff-dir>"
+    // Splices a per-org before/after + subsumption-bucket summary into the top of an
+    // already-generated GafLoadJob HTML report. See the class javadoc for why this has to be a
+    // separate post-processing step rather than built into the load's own report.
+}
+
 task createGff3Files(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.gff.Gff3Writer'

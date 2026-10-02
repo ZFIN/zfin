@@ -37,7 +37,7 @@
 -- ⚠️ WHAT THIS DOES NOT TOUCH: kw2go (UniProtKB-Keyword, ZDB-PUB-020723-1, 41,027 rows).
 -- That stream has NO successor -- GO retired GO_REF:0000004 and neither GPAD file carries it --
 -- so purging it would delete the annotations outright with nothing replacing them. It is a
--- separate open decision (README open decision 4). Do not widen the pub list below without
+-- separate open decision (README open decision 3). Do not widen the pub list below without
 -- that decision being made and recorded.
 --
 -- Idempotent: re-running finds nothing to delete.
