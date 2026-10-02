@@ -133,6 +133,12 @@ reads `home/WEB-INF/zfin.properties` and exports the variables listed in
 `NODE_ENV`, `WIKI_HOST`, and `ZFIN_ADMIN`. Webpack's `EnvironmentPlugin` requires the latter
 three; gradle deployment tasks rely on `TARGETROOT` and `CATALINA_BASE`.
 
+The Jenkins container starts the same way (`bash -l`), and this is the only place Jenkins jobs
+get their environment from: a property a job config references, for example as `${VAR}` in an
+email recipient list, must be listed in `env-exports.properties`. Do not add a global EnvInject
+node property to load `zfin.properties` instead: on Java 21 it fails Jenkins startup when the file
+has keys the environment lacks.
+
 **This means every invocation must use a login shell** so `.profile` runs. Two equivalent
 patterns:
 
