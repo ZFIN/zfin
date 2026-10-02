@@ -226,6 +226,27 @@
         }
         .filter-info { color: #678; font-size: 12px; }
 
+        .render-limit-note {
+            color: #678;
+            font-size: 12px;
+            margin: 8px 0 2px;
+            padding: 6px 10px;
+            background: #f6fafa;
+            border: 1px solid #ddeded;
+            border-radius: 3px;
+        }
+        .show-more-btn {
+            background: #fff;
+            border: 1px solid #99bcbc;
+            color: #345;
+            border-radius: 3px;
+            padding: 2px 10px;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .show-more-btn:hover { background: #eef4f4; }
+
         .data-table {
             border-collapse: collapse;
             border: 1px solid #ccc;
@@ -237,6 +258,13 @@
             padding: 5px 10px;
             border: 1px solid #ddd;
             vertical-align: top;
+            /* Bound any single cell (a long GO term name, a raw unparsed message with no
+               natural break points) so one wide value can't drag the whole table -- and with
+               it #right-content's min-width: min-content -- past the viewport. Wraps instead
+               of truncating: unlike the tree-row ellipsis, these values are the actual data a
+               curator needs to read, not a label. */
+            max-width: 480px;
+            overflow-wrap: anywhere;
         }
         .data-table th { background: #c9e0e0; }
         .data-table tr:nth-child(even) { background: #f6fafa; }
@@ -440,9 +468,17 @@
     }
 
     const TABLE_SEARCH_THRESHOLD = 10;
+    // A producer's `rows` array can legitimately run into the hundreds of thousands (a raw
+    // per-annotation dump) -- holding all of them in memory is cheap (the JSON is already
+    // decompressed to get here), but PAINTING that many <tr>s is not, and is what actually makes
+    // the tab hang. Rendering is capped independently of the data itself: filtering/searching and
+    // the CSV download both still operate over every row, always -- only the DOM is bounded.
+    const INITIAL_RENDER_LIMIT = 200;
+    const RENDER_STEP = 500;
 
     function ReportTable({ table, definitions }) {
         const [search, setSearch] = useState('');
+        const [renderLimit, setRenderLimit] = useState(INITIAL_RENDER_LIMIT);
 
         let columns = table.columns;
         let description = table.description;
@@ -471,6 +507,13 @@
             : table.rows;
         const showSearch = table.rows.length > TABLE_SEARCH_THRESHOLD;
 
+        // Narrowing the filter should show all of the (now smaller) match set again rather than
+        // staying stuck at whatever limit an earlier, larger set had reached.
+        useEffect(() => { setRenderLimit(INITIAL_RENDER_LIMIT); }, [q]);
+
+        const visibleRows = filteredRows.slice(0, renderLimit);
+        const hiddenCount = filteredRows.length - visibleRows.length;
+
         return html`
             <div className="report-table">
                 <div className="report-table-header">
@@ -493,7 +536,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredRows.map((row, idx) => html`
+                        ${visibleRows.map((row, idx) => html`
                             <tr key=${idx}>
                                 ${columns.map(col => html`
                                     <td>${formatField(row[col.key], col.fieldRef ? fieldDefs[col.fieldRef] : null)}</td>
@@ -502,6 +545,16 @@
                         `)}
                     </tbody>
                 </table>
+                ${hiddenCount > 0 && html`
+                    <div className="render-limit-note">
+                        Showing ${visibleRows.length.toLocaleString()} of ${filteredRows.length.toLocaleString()} rows.
+                        <button className="show-more-btn"
+                                onClick=${() => setRenderLimit(renderLimit + RENDER_STEP)}>
+                            Show ${Math.min(RENDER_STEP, hiddenCount).toLocaleString()} more
+                        </button>
+                        or use the CSV download above to browse the full table.
+                    </div>
+                `}
             </div>
         `;
     }
@@ -569,6 +622,7 @@
 
     function ChildrenList({ node, definitions, onSelect }) {
         const [search, setSearch] = useState('');
+        const [renderLimit, setRenderLimit] = useState(INITIAL_RENDER_LIMIT);
         const children = sortByCategory(node.children || [],
             definitions && definitions.categories);
         if (children.length === 0) return null;
@@ -594,6 +648,9 @@
 
         const q = search.toLowerCase();
         const filtered = q ? children.filter(c => nodeText(c).toLowerCase().includes(q)) : children;
+        useEffect(() => { setRenderLimit(INITIAL_RENDER_LIMIT); }, [q]);
+        const visible = filtered.slice(0, renderLimit);
+        const hiddenCount = filtered.length - visible.length;
 
         const fieldDefs = (definitions && definitions.fields) || {};
         const tagDefs = (definitions && definitions.tags) || {};
@@ -643,7 +700,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filtered.map(child => {
+                        ${visible.map(child => {
                             const cat = child.categoryRef && catDefs[child.categoryRef];
                             const cnt = displayCount(child);
                             return html`
@@ -668,6 +725,16 @@
                         })}
                     </tbody>
                 </table>
+                ${hiddenCount > 0 && html`
+                    <div className="render-limit-note">
+                        Showing ${visible.length.toLocaleString()} of ${filtered.length.toLocaleString()} items.
+                        <button className="show-more-btn"
+                                onClick=${() => setRenderLimit(renderLimit + RENDER_STEP)}>
+                            Show ${Math.min(RENDER_STEP, hiddenCount).toLocaleString()} more
+                        </button>
+                        or use the CSV download above.
+                    </div>
+                `}
             </div>
         `;
     }

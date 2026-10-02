@@ -74,6 +74,12 @@ public class GafService {
     protected boolean perSourceOrganization = false;
     private final Map<GafOrganization.OrganizationEnum, GafOrganization> gafOrganizationCache = new HashMap<>();
 
+    // Lazily populated once per run by staleRootTermAnnotations() -- see addAnnotation. Keyed by
+    // aspectKey (marker + ontology), and entries are consumed (removed) as they are handled, so a
+    // second non-root row landing on the same aspect in the same run does not re-report the same
+    // stale annotation twice.
+    private Map<String, MarkerGoTermEvidence> rootTermAnnotationsByAspectKey;
+
 
     protected DateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
     protected Map<String, Publication> goRefPubMap = new HashMap<>();
@@ -122,6 +128,8 @@ public class GafService {
             logger.error("no entries to process!");
             return;
         }
+
+        dropRedundantRootTermEntries(gafEntries);
 
         int countPipes = 0;
         gafJobData.markStartTime();
@@ -208,6 +216,8 @@ public class GafService {
                 logger.debug("Validation error: " + gafValidationError.getMessage() + " for " + gafEntry);
                 if (!gafValidationError.getMessage().contains("GO_REF:0000043"))
                     gafJobData.addError(gafValidationError);
+                // Keep the row itself: findOutdatedEntries needs to know we failed to evaluate it.
+                gafJobData.addRejectedEntry(gafEntry);
             }
 
             ++count;
@@ -221,6 +231,66 @@ public class GafService {
         dropRootTermsSupersededInThisRun(gafJobData);
 
         gafJobData.markStopTime();
+    }
+
+    /**
+     * Drop incoming ND (root-term) entries whose gene+aspect this SAME incoming file also
+     * supplies a non-root (real) annotation for.
+     *
+     * <p>Without this, the file-level half of the ND precedence rule falls to isValidMarkerGoTerm
+     * and addAnnotation instead: correct, but noisier over time. GO round-trips ZFIN's own Noctua
+     * ND placeholders back through DANRE-mod on every run (README decision 9), so once a gene's
+     * real annotation supersedes its stored ND row (addAnnotation), the file keeps re-supplying
+     * that same now-redundant ND row -- and without this filter, it would be freshly REJECTED by
+     * isValidMarkerGoTerm as an error, every single future run, forever, since nothing is left in
+     * the database for it to match as existing. Dropping it here instead means it is quietly
+     * absent from the load, not a recurring rejected-row error.
+     *
+     * <p>ND is identified by the TERM being root, not by evidence code, matching the DB triggers'
+     * own logic (p_marker_has_goterm / p_check_drop_go_root_term) -- true today that ND
+     * annotations are always made to a root term, but root-vs-non-root is the invariant that
+     * actually matters, and checking that directly is what keeps this correct if that assumption
+     * ever stops holding.
+     *
+     * <p>Matched on the bare entryId (gene) and the term's resolved aspect, not a resolved Marker:
+     * GafLoadJob has already stripped the source prefix off entryId by the time this runs, and
+     * every row in DANRE-mod carries a direct ZFIN gene id as its subject (README finding 10), so
+     * no gene resolution is needed to compare "same gene" at this stage.
+     *
+     * <p>Applies to every GO load, not only the GPAD one, same as isSameAnnotation and
+     * dropRootTermsSupersededInThisRun: they all reach this method through GafLoadJob.
+     */
+    private void dropRedundantRootTermEntries(List<GafEntry> gafEntries) {
+        Map<GafEntry, GenericTerm> termByEntry = new HashMap<>(gafEntries.size());
+        Set<String> aspectsWithRealEntry = new HashSet<>();
+
+        for (GafEntry gafEntry : gafEntries) {
+            GenericTerm term = ontologyRepository.getTermByOboID(gafEntry.getGoTermId());
+            if (term == null) {
+                continue; // unresolved term: processEntries' own loop reports it properly
+            }
+            termByEntry.put(gafEntry, term);
+            if (!term.isRoot()) {
+                aspectsWithRealEntry.add(gafEntry.getEntryId() + "|" + term.getOntology());
+            }
+        }
+        if (aspectsWithRealEntry.isEmpty()) {
+            return;
+        }
+
+        int before = gafEntries.size();
+        gafEntries.removeIf(entry -> {
+            GenericTerm term = termByEntry.get(entry);
+            return term != null && term.isRoot()
+                && aspectsWithRealEntry.contains(entry.getEntryId() + "|" + term.getOntology());
+        });
+        int dropped = before - gafEntries.size();
+        if (dropped > 0) {
+            String message = "Dropped " + dropped + " incoming root-term (ND) entrie(s): this "
+                + "file also supplies a non-root annotation for the same gene and aspect.";
+            logger.info(message);
+            System.out.println(message);
+        }
     }
 
     /**
@@ -245,6 +315,18 @@ public class GafService {
      * the ND row is dropped -- makes the insert consistent with the invariant instead of relaxing
      * it. Only newEntries are considered: a real annotation already committed would have been
      * caught by isValidMarkerGoTerm.
+     *
+     * <p>This is a narrower fix than it looks: it only helps when BOTH the ND row and its
+     * real-annotation counterpart are new in this same run -- e.g. a brand-new gene, or the first
+     * cutover run. An ND row identical to one already stored matches as an existing/unchanged
+     * entry (see processEntries) and never reaches newEntries, so it is invisible here. That
+     * steady-state case -- a real annotation newly added while the matching stale ND row is
+     * already sitting in the database -- is handled in addAnnotation instead, against the
+     * database's actual current state, with its own report entry. And dropRedundantRootTermEntries
+     * (called at the top of processEntries, before this) handles the common case going forward:
+     * once addAnnotation has superseded a gene's ND row, DANRE-mod keeps re-supplying that same
+     * now-redundant ND row on every future run, and it drops those before they ever become a
+     * rejected-row error.
      */
     private void dropRootTermsSupersededInThisRun(GafJobData gafJobData) {
         Set<MarkerGoTermEvidence> newEntries = gafJobData.getNewEntries();
@@ -280,8 +362,41 @@ public class GafService {
         }
     }
 
+    /**
+     * Lazily-loaded, run-scoped index of every currently-stored root-term (ND) annotation, keyed
+     * by aspectKey. Backs the addAnnotation check below: p_check_drop_go_root_term already
+     * deletes a stale stored ND row the instant a real annotation is inserted for that marker and
+     * aspect, silently. This gives the load a chance to notice and report it before that happens,
+     * rather than trusting a trigger neither this code nor its report can see.
+     *
+     * <p>One query for the whole run rather than one per row: ND is a placeholder, not a common
+     * annotation (a few thousand rows at most across the whole database), so loading all of them
+     * once is cheap next to the alternative of a lookup per non-root row added -- hundreds of
+     * thousands of them in a full DANRE-mod run.
+     */
+    private Map<String, MarkerGoTermEvidence> rootTermAnnotationsByAspectKey() {
+        if (rootTermAnnotationsByAspectKey == null) {
+            rootTermAnnotationsByAspectKey = new HashMap<>();
+            for (MarkerGoTermEvidence root : markerGoTermEvidenceRepository.getAllRootTermAnnotations()) {
+                rootTermAnnotationsByAspectKey.put(aspectKey(root), root);
+            }
+        }
+        return rootTermAnnotationsByAspectKey;
+    }
+
     private static String aspectKey(MarkerGoTermEvidence entry) {
         return entry.getMarker().getZdbID() + "|" + entry.getGoTerm().getOntology();
+    }
+
+    /**
+     * The org that owns/removes this row (GOA/Noctua/PAINT/...), for tagging a removal recorded
+     * outside a per-org removal pass (the ND-supersession paths in {@link #addAnnotation}, which
+     * used to leave this untagged entirely -- see {@code GafJobData}'s removed history). The
+     * stored entity's own {@code gafOrganization} is a required FK, so this is only null if the
+     * entity itself wasn't fully loaded.
+     */
+    private static String owningOrganizationOf(MarkerGoTermEvidence entry) {
+        return entry.getGafOrganization() != null ? entry.getGafOrganization().getOrganization() : null;
     }
 
 
@@ -353,13 +468,15 @@ public class GafService {
     }
 
 
-    public void generateRemovedEntriesReport(GafJobData gafJobData, Collection<String> zdbIdsToDrop) {
+    public void generateRemovedEntriesReport(GafJobData gafJobData, Collection<String> zdbIdsToDrop,
+                                             GafOrganization gafOrganization) {
 
+        String owningOrganization = gafOrganization == null ? null : gafOrganization.getOrganization();
         if (CollectionUtils.isNotEmpty(zdbIdsToDrop)) {
             for (String zdbIdToDrop : zdbIdsToDrop) {
                 MarkerGoTermEvidence markerGoTermEvidence = markerGoTermEvidenceRepository.getMarkerGoTermEvidenceByZdbID(zdbIdToDrop);
 
-                gafJobData.addRemoved(markerGoTermEvidence);
+                gafJobData.addRemoved(markerGoTermEvidence, owningOrganization);
             }
         }
     }
@@ -400,7 +517,113 @@ public class GafService {
         Collection<String> zdbIdsOutdated = findOutdatedEntries(gafJobData, gafOrganization);
 
         if (zdbIdsOutdated != null)
-            generateRemovedEntriesReport(gafJobData, zdbIdsOutdated);
+            generateRemovedEntriesReport(gafJobData, zdbIdsOutdated, gafOrganization);
+    }
+
+    /**
+     * How many rows we failed to evaluate would have been owned by this organization.
+     *
+     * <p>findOutdatedEntries subtracts what the file produced from what the organization owns, so
+     * a row that threw during validation looks exactly like a row the file never mentioned -- and
+     * its database counterpart is deleted. That turns any parsing or lookup bug into silent data
+     * loss (ZFIN-10358: an unresolvable DOI removed the annotation a previous load had created).
+     *
+     * <p>A rejected row still carries its {@code assigned_by} and its raw reference string, which
+     * is all {@link DanreModSourceOrganization#resolve} needs, so rejections can be attributed to
+     * an owning organization even when the lookup that failed was the publication itself.</p>
+     */
+    public long countRejectedEntriesForOrganization(GafJobData gafJobData, GafOrganization gafOrganization) {
+        return rejectedEntriesForOrganization(gafJobData, gafOrganization).size();
+    }
+
+    public List<GafEntry> rejectedEntriesForOrganization(GafJobData gafJobData, GafOrganization gafOrganization) {
+        List<GafEntry> rejected = gafJobData.getRejectedEntries();
+        if (CollectionUtils.isEmpty(rejected)) {
+            return List.of();
+        }
+        if (!perSourceOrganization) {
+            // Single-org load: every rejected row belongs to the one organization being pruned.
+            return rejected;
+        }
+        GafOrganization.OrganizationEnum target =
+            GafOrganization.OrganizationEnum.getType(gafOrganization.getOrganization());
+        return rejected.stream()
+            .filter(entry -> DanreModSourceOrganization.resolve(entry.getCreatedBy(), entry.getPubmedId()) == target)
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * The removals this organization's pass produced that a rejected row could account for,
+     * matched on (marker, GO term).
+     *
+     * <p>Matching ignores the evidence code: a row rejected because its ECO term had no mapping
+     * still carries the raw ECO id rather than a three-letter code, so keying on evidence would
+     * miss the rejections most likely to cause a spurious delete. Over-matching is the safe
+     * direction.
+     */
+    public Set<String> findRemovalKeysAttributableToRejections(GafJobData gafJobData,
+                                                               GafOrganization gafOrganization) {
+        return attributionKeys(rejectedEntriesForOrganization(gafJobData, gafOrganization));
+    }
+
+    /** Pure form of the above, free of any repository so it is testable without a database. */
+    public static Set<String> attributionKeys(Collection<GafEntry> rejectedEntries) {
+        Set<String> keys = new HashSet<>();
+        if (rejectedEntries == null) {
+            return keys;
+        }
+        for (GafEntry rejected : rejectedEntries) {
+            String marker = markerZdbIdOf(rejected);
+            if (marker == null || rejected.getGoTermId() == null) {
+                // A rejection that never resolved a gene cannot be tied to a particular removal.
+                continue;
+            }
+            keys.add(attributionKey(marker, rejected.getGoTermId()));
+        }
+        return keys;
+    }
+
+    /**
+     * The removals belonging to {@code owningOrganization} that one of {@code suspectKeys} covers.
+     *
+     * <p>Organization membership comes from the tag the removal pass set on the entry, never from
+     * {@code organizationCreatedBy} -- that column carries the GPAD {@code assigned_by} value,
+     * which shares no namespace with the organization names this load prunes.
+     */
+    public static List<GafJobEntry> removalsAttributableTo(Collection<GafJobEntry> removals,
+                                                           String owningOrganization,
+                                                           Set<String> suspectKeys) {
+        if (removals == null || suspectKeys == null || suspectKeys.isEmpty()) {
+            return List.of();
+        }
+        return removals.stream()
+            .filter(entry -> owningOrganization != null
+                          && owningOrganization.equals(entry.getOwningOrganization()))
+            .filter(entry -> entry.getMarkerZdbID() != null && entry.getGoTermID() != null)
+            .filter(entry -> suspectKeys.contains(
+                attributionKey(entry.getMarkerZdbID(), entry.getGoTermID())))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * The gene a raw file row refers to, as a ZDB id, or null when it does not carry one. GPAD
+     * entity ids are prefixed ("ZFIN:ZDB-GENE-..."); a GAF-path UniProtKB accession yields null.
+     */
+    private static String markerZdbIdOf(GafEntry gafEntry) {
+        String entryId = gafEntry.getEntryId();
+        if (entryId == null) {
+            return null;
+        }
+        String bare = entryId.startsWith("ZFIN:") ? entryId.substring("ZFIN:".length()) : entryId;
+        return bare.startsWith("ZDB-") ? bare : null;
+    }
+
+    public static String attributionKey(String markerZdbID, String goTermID) {
+        return markerZdbID + "|" + goTermID;
+    }
+
+    public int countEvidencesForOrganization(GafOrganization gafOrganization) {
+        return markerGoTermEvidenceRepository.getEvidencesForGafOrganization(gafOrganization).size();
     }
 
     public void removeEntries(GafJobData gafJobData) {
@@ -481,7 +704,7 @@ public class GafService {
          */
 
         for (MarkerGoTermEvidence existingMarkerGoTermEvidence : existingEvidenceList) {
-            if (isMoreSpecificAnnotation(existingMarkerGoTermEvidence, markerGoTermEvidenceToAdd)) {
+            if (isSameAnnotation(existingMarkerGoTermEvidence, markerGoTermEvidenceToAdd)) {
                 throw new GafAnnotationExistsError(gafEntry, existingMarkerGoTermEvidence);
             }
         }
@@ -871,11 +1094,23 @@ public class GafService {
         return null;
     }
 
-    protected boolean isMoreSpecificAnnotation(MarkerGoTermEvidence existingMarkerGoTermEvidence, MarkerGoTermEvidence markerGoTermEvidenceToAdd)
-        throws GafValidationError {
-
-        return existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd) &&
-            ontologyRepository.isParentChildRelationshipExist(markerGoTermEvidenceToAdd.getGoTerm(), existingMarkerGoTermEvidence.getGoTerm());
+    /**
+     * Is this annotation already stored?
+     *
+     * <p>Descendant filtering was removed deliberately (ZFIN-10518): ZFIN is a consumer of GO
+     * annotations, including its own Noctua curation, so the incoming file is authoritative about
+     * which terms a gene carries. What remains is a plain identity test, and it has to stay --
+     * the old ancestry check doubled as exact-match detection, because all_term_contains holds
+     * distance-0 self pairs. Without an explicit same-term comparison the load would re-add every
+     * annotation it already has.
+     *
+     * <p>This applies to every GO load, not only the GPAD one: they all reach this method through
+     * GafLoadJob.
+     */
+    protected boolean isSameAnnotation(MarkerGoTermEvidence existingMarkerGoTermEvidence, MarkerGoTermEvidence markerGoTermEvidenceToAdd) {
+        return existingMarkerGoTermEvidence.isSameButGo(markerGoTermEvidenceToAdd)
+            && existingMarkerGoTermEvidence.getGoTerm().getZdbID()
+                   .equals(markerGoTermEvidenceToAdd.getGoTerm().getZdbID());
     }
 
     public void addAnnotation(MarkerGoTermEvidence markerGoTermEvidenceToAdd, GafJobData gafJobData, boolean isInternalLoad)
@@ -887,8 +1122,43 @@ public class GafService {
             if (markerGoTermEvidenceToRemove != null) {
                 logger.debug("removing existing with Nd evidence: " + markerGoTermEvidenceToRemove);
                 markerGoTermEvidenceRepository.removeEvidence(markerGoTermEvidenceToRemove);
-                gafJobData.addRemoved(markerGoTermEvidenceToRemove);
+                gafJobData.addRemoved(markerGoTermEvidenceToRemove, owningOrganizationOf(markerGoTermEvidenceToRemove));
                 logger.debug("removed entry " + markerGoTermEvidenceToRemove.getZdbID() + " replaced by " + markerGoTermEvidenceToAdd);
+            }
+
+            // ND has lowest precedence: a non-root annotation supersedes any stored root-term
+            // (ND) annotation on the same marker/aspect, even one this run's own file didn't
+            // itself re-supply for dropRootTermsSupersededInThisRun to catch (the common case --
+            // see its javadoc). p_check_drop_go_root_term already deletes the stale row as a side
+            // effect of the addEvidence() insert below -- reliably and atomically, in the same
+            // statement. This block does NOT also delete it explicitly; it only detects and
+            // reports it, purely for visibility.
+            //
+            // ZFIN-10518 follow-up (found via a real rehearsal, not in review): an explicit
+            // removeEvidence() call here used to sit right where this comment is, issued via
+            // Hibernate before addEvidence(). Both are queued, not executed immediately -- they
+            // only hit the DB at end-of-batch flush -- and Hibernate's default flush order runs
+            // every queued INSERT before every queued DELETE, regardless of the order they were
+            // issued in Java. So addEvidence()'s INSERT ran first, its own trigger deleted this
+            // row as a side effect, and the explicit DELETE queued moments earlier in Java then
+            // ran against a row that no longer existed: "OptimisticLockException: actual row
+            // count: 0; expected: 1". That's a Hibernate batch failure, not a row-level one --
+            // it rolled back the ENTIRE ~100-row batch, discarding every other annotation batched
+            // alongside it. 210 of 212 batch failures in one rehearsal were exactly this.
+            if (!markerGoTermEvidenceToAdd.getGoTerm().isRoot()) {
+                MarkerGoTermEvidence staleRootAnnotation =
+                    rootTermAnnotationsByAspectKey().remove(aspectKey(markerGoTermEvidenceToAdd));
+                if (staleRootAnnotation != null) {
+                    String message = "Superseding stored root-term (ND) annotation "
+                        + staleRootAnnotation.getZdbID() + " (" + staleRootAnnotation.getGoTerm().getOboID()
+                        + ") for marker '" + staleRootAnnotation.getMarker().getAbbreviation()
+                        + "': this run adds a non-root " + markerGoTermEvidenceToAdd.getGoTerm().getOntology()
+                        + " annotation for it, and the two must not coexist. The database removes"
+                        + " it automatically; this is reporting only.";
+                    logger.warn(message);
+                    System.out.println(message);
+                    gafJobData.addRemoved(staleRootAnnotation, owningOrganizationOf(staleRootAnnotation));
+                }
             }
 
             logger.debug("adding " + markerGoTermEvidenceToAdd);

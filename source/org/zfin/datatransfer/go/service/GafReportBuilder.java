@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 /**
  * Translates {@link GafJobData} + {@link GafErrorSummary} into a generic
@@ -37,6 +38,7 @@ public class GafReportBuilder {
     private static final String SCHEMA_ERROR_ENTRY = "errorEntry";
     private static final String SCHEMA_COUNT       = "labelCount";
     private static final String SCHEMA_KV          = "keyValue";
+
 
     /**
      * Pulls {@code key='value'} pairs out of toString() blobs like
@@ -112,7 +114,14 @@ public class GafReportBuilder {
             .field("count",        Report.FieldDef.number("Count"))
 
             .tableSchema(SCHEMA_ANNOTATION, new Report.TableSchema()
-                .description("Annotation entries (one row per MarkerGoTermEvidence).")
+                .description("Annotation entries (one row per MarkerGoTermEvidence). \"Owning "
+                    + "org\" is which load owns/removes the row (GOA/Noctua/PAINT/...) -- the "
+                    + "same organization the Cutover Impact Summary's per-org tables use. "
+                    + "\"Created by\" is the source's own assigned_by (e.g. InterPro, UniProt, "
+                    + "GO_Central, ZFIN) -- a different thing README-danre-mod-consolidation.md "
+                    + "warns not to conflate: many non-ZFIN assigned_by values are still owned "
+                    + "by the GOA org, and ZFIN-assigned_by rows can be owned by either Noctua "
+                    + "or PAINT.")
                 .addColumn(ReportTable.Column.of("zdbID",        "ZDB ID",       "zdbID"))
                 .addColumn(ReportTable.Column.of("marker",       "Gene"))
                 .addColumn(ReportTable.Column.of("qualifier",    "Qualifier"))
@@ -123,7 +132,8 @@ public class GafReportBuilder {
                 .addColumn(ReportTable.Column.of("annotExtn",    "Annotation extension"))
                 .addColumn(ReportTable.Column.of("noctuaModel",  "Noctua model"))
                 .addColumn(ReportTable.Column.of("source",       "Source pub",   "publication"))
-                .addColumn(ReportTable.Column.of("organization", "Organization")))
+                .addColumn(ReportTable.Column.of("owningOrg",    "Owning org"))
+                .addColumn(ReportTable.Column.of("organization", "Created by")))
 
             .tableSchema(SCHEMA_ERROR_ENTRY, new Report.TableSchema()
                 .description("Errors with the GAF entry (or annotation) that triggered them.")
@@ -134,7 +144,8 @@ public class GafReportBuilder {
                 .addColumn(ReportTable.Column.of("goTermID",  "GO ID",     "goTermID"))
                 .addColumn(ReportTable.Column.of("evidence",  "Evidence"))
                 .addColumn(ReportTable.Column.of("source",    "Source"))
-                .addColumn(ReportTable.Column.of("message",   "Error")))
+                .addColumn(ReportTable.Column.of("message",   "Error"))
+                .addColumn(ReportTable.Column.of("count",     "Count")))
 
             .tableSchema(SCHEMA_COUNT, new Report.TableSchema()
                 .addColumn(ReportTable.Column.of("label", "Category"))
@@ -251,6 +262,7 @@ public class GafReportBuilder {
                 "annotExtn",    safe(e.getAnnotationExtensions()),
                 "noctuaModel",  safe(e.getNoctuaModelId()),
                 "source",       safe(e.getSource()),
+                "owningOrg",    safe(e.getOwningOrganization()),
                 "organization", safe(e.getOrganizationCreatedBy())
             );
         }
@@ -274,18 +286,28 @@ public class GafReportBuilder {
 
         Map<String, Integer> categoryCounts = errorSummary.getCategoryCounts();
         if (categoryCounts != null && !categoryCounts.isEmpty()) {
+            List<Map.Entry<String, Integer>> byCountDesc = categoryCounts.entrySet().stream()
+                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
+                .collect(Collectors.toList());
+
             ReportTable summary = new ReportTable()
                 .schemaRef(SCHEMA_COUNT)
                 .title("Error counts by category");
-            categoryCounts.entrySet().stream()
-                .sorted(Map.Entry.<String, Integer>comparingByValue().reversed())
-                .forEach(e -> summary.addRow("label", e.getKey(), "count", e.getValue()));
+            byCountDesc.forEach(e -> summary.addRow("label", e.getKey(), "count", e.getValue()));
             node.addTable(summary);
 
-            node.addTable(buildAllErrorsTable(data.getErrors()));
+            // Computed once and reused for both the flat table and every category's drill-down
+            // below -- grouping is a single O(errors) pass; re-deriving it per category (302 of
+            // them) would make this O(errors * categories) for no reason.
+            GroupedErrorRows grouped = groupErrors(data.getErrors());
+            node.addTable(buildAllErrorsTable(grouped));
 
-            for (Map.Entry<String, Integer> entry : categoryCounts.entrySet()) {
-                node.addChild(buildErrorCategoryNode(entry.getKey(), entry.getValue(), data, errorSummary));
+            // Same order as the summary table above (biggest first) -- these are also what
+            // populate the sidebar tree and the auto-generated children list, so an unsorted
+            // (insertion-order) iteration here made the categories that actually matter hard to
+            // find among the long tail of one-off ones.
+            for (Map.Entry<String, Integer> entry : byCountDesc) {
+                node.addChild(buildErrorCategoryNode(entry.getKey(), entry.getValue(), grouped, errorSummary));
             }
         }
 
@@ -298,10 +320,8 @@ public class GafReportBuilder {
      * "ZFIN") across categories — useful because many errors come from
      * annotations curated by other organizations and aren't ZFIN's to fix.
      */
-    private ReportTable buildAllErrorsTable(List<GafValidationError> errors) {
+    private ReportTable buildAllErrorsTable(GroupedErrorRows grouped) {
         ReportTable table = new ReportTable()
-            .title("All errors (" + errors.size() + ")")
-            .description("Filter by any column (e.g. \"ZFIN\" in Created by).")
             .addColumn(ReportTable.Column.of("category",  "Category"))
             .addColumn(ReportTable.Column.of("createdBy", "Created by"))
             .addColumn(ReportTable.Column.of("entryId",   "Identifier"))
@@ -310,20 +330,108 @@ public class GafReportBuilder {
             .addColumn(ReportTable.Column.of("goTermID",  "GO ID",     "goTermID"))
             .addColumn(ReportTable.Column.of("evidence",  "Evidence"))
             .addColumn(ReportTable.Column.of("source",    "Source",    "publication"))
-            .addColumn(ReportTable.Column.of("message",   "Error"));
-        for (GafValidationError err : errors) {
-            String msg = err.getMessage();
-            if (msg == null) continue;
-            String firstLine = msg.split("\n", 2)[0].strip();
-            Map<String, Object> row = buildErrorRow(err, firstLine);
-            row.put("category", GafErrorSummary.categorize(firstLine));
-            table.addRow(row);
+            .addColumn(ReportTable.Column.of("message",   "Error"))
+            .addColumn(ReportTable.Column.of("count",     "Count"));
+
+        grouped.rows.forEach(table::addRow);
+
+        table.title("All errors (" + grouped.totalErrors + ")");
+        StringBuilder desc = new StringBuilder();
+        if (grouped.totalDistinctRows != grouped.totalErrors) {
+            desc.append(String.format(
+                "%,d raw entries collapse to %,d distinct rows (same Category through Error columns — "
+                + "they differ only in fields not shown here, e.g. the with/from list or GOA's own "
+                + "accession id). Every distinct row is here; the page only paints the first few "
+                + "hundred at a time (see \"show more\" below the table) but the CSV download "
+                + "always has the complete set. ",
+                grouped.totalErrors, grouped.totalDistinctRows));
         }
+        desc.append("Filter by any column (e.g. \"ZFIN\" in Created by).");
+        table.description(desc.toString());
         return table;
     }
 
+    /**
+     * Groups errors into rows that would render identically across every "All errors" /
+     * "Matching errors" column, with a Count of how many raw errors collapsed into each —
+     * otherwise a category dominated by near-duplicate rows (e.g. "Duplicate annotation entry",
+     * which is the file's own known ~53% row duplication, README finding 8) just repeats the
+     * same visible line dozens of times with nothing to explain why they're separate errors at
+     * all: they differ only in a field this table doesn't render (with/from, the GOA accession
+     * id in annotation_properties, etc).
+     *
+     * <p>Every distinct row is kept, deliberately not capped: a producer-side cap here would
+     * limit what's in the JSON itself, which is what a table's CSV download exports (see
+     * {@code ReportTable}'s {@code downloadCsv} in report-template.html) — a viewer render limit
+     * cannot make up for data the report never included in the first place. Bounding how many
+     * rows actually get painted to the DOM at once is report-template.html's job
+     * (INITIAL_RENDER_LIMIT / "show more"), against the real, complete row set this returns.
+     */
+    private GroupedErrorRows groupErrors(List<GafValidationError> errors) {
+        // category -> (rowKey -> row). LinkedHashMap throughout to preserve first-seen order.
+        Map<String, Map<String, Map<String, Object>>> byCategory = new LinkedHashMap<>();
+        int totalErrors = 0;
+        for (GafValidationError err : errors) {
+            String msg = err.getMessage();
+            if (msg == null) continue;
+            totalErrors++;
+            String firstLine = msg.split("\n", 2)[0].strip();
+            String category = GafErrorSummary.categorize(firstLine);
+
+            Map<String, Object> row = buildErrorRow(err, firstLine);
+            row.put("category", category);
+            String key = rowKey(row);
+
+            Map<String, Map<String, Object>> rowsForCategory =
+                byCategory.computeIfAbsent(category, k -> new LinkedHashMap<>());
+            Map<String, Object> existing = rowsForCategory.get(key);
+            if (existing != null) {
+                existing.merge("count", 1, (a, b) -> (Integer) a + (Integer) b);
+            } else {
+                row.put("count", 1);
+                rowsForCategory.put(key, row);
+            }
+        }
+
+        GroupedErrorRows result = new GroupedErrorRows();
+        result.totalErrors = totalErrors;
+        for (Map.Entry<String, Map<String, Map<String, Object>>> categoryEntry : byCategory.entrySet()) {
+            Map<String, Map<String, Object>> rowsForCategory = categoryEntry.getValue();
+            result.distinctRowCountByCategory.put(categoryEntry.getKey(), rowsForCategory.size());
+            // Every distinct row goes into the data -- NOT capped at maxPerCategory. That used to
+            // cap the JSON payload itself, which meant "showing 25 of 51,457" was a lie: the
+            // other 51,432 rows were never in the report at all, so the table's own CSV download
+            // -- which exports table.rows, not what's currently rendered -- could only ever
+            // produce the same 25 rows, not the full data it visually promised. Bounding what
+            // gets PAINTED to the DOM is report-template.html's job now (INITIAL_RENDER_LIMIT /
+            // "show more"), which works against the real, complete row set; this maxPerCategory
+            // argument is kept only to floor how many rows influence the initial page weight,
+            // not to withhold data the UI claims exists.
+            result.totalDistinctRows += rowsForCategory.size();
+            result.rows.addAll(rowsForCategory.values());
+        }
+        return result;
+    }
+
+    /** Identity for grouping: every column {@link #groupErrors} renders, "count" excepted. */
+    private static String rowKey(Map<String, Object> row) {
+        return String.join("\u0001",
+            String.valueOf(row.get("category")),  String.valueOf(row.get("createdBy")),
+            String.valueOf(row.get("entryId")),    String.valueOf(row.get("qualifier")),
+            String.valueOf(row.get("goTerm")),     String.valueOf(row.get("goTermID")),
+            String.valueOf(row.get("evidence")),   String.valueOf(row.get("source")),
+            String.valueOf(row.get("message")));
+    }
+
+    private static final class GroupedErrorRows {
+        final List<Map<String, Object>> rows = new java.util.ArrayList<>();
+        final Map<String, Integer> distinctRowCountByCategory = new LinkedHashMap<>();
+        int totalErrors;
+        int totalDistinctRows;
+    }
+
     private ReportNode buildErrorCategoryNode(String category, int count,
-                                              GafJobData data, GafErrorSummary errorSummary) {
+                                              GroupedErrorRows grouped, GafErrorSummary errorSummary) {
         ReportNode child = new ReportNode()
             .id("err-" + slugify(category))
             .title(category)
@@ -336,19 +444,21 @@ public class GafReportBuilder {
             addGeneNotFoundDetail(child, errorSummary);
         }
 
-        // Attach matching error messages, parsed into structured columns.
-        // Use GafErrorSummary.categorize() as the single source of truth so the
-        // matching logic can't drift from how the categories are bucketed.
-        ReportTable matches = new ReportTable()
-            .schemaRef(SCHEMA_ERROR_ENTRY)
-            .title("Matching errors");
-        for (GafValidationError err : data.getErrors()) {
-            String msg = err.getMessage();
-            if (msg == null) continue;
-            String firstLine = msg.split("\n", 2)[0].strip();
-            if (!category.equals(GafErrorSummary.categorize(firstLine))) continue;
-            matches.addRow(buildErrorRow(err, firstLine));
+        // Rows for this category, already grouped (identical rows collapsed with a Count) by
+        // buildErrors' single shared pass -- see groupErrors' javadoc for why. Every distinct
+        // row is here, full stop: report-template.html's own render limit ("show more") bounds
+        // what actually gets painted, and its CSV download always exports whatever is in
+        // table.rows -- which, because of that, is now the complete set, not a subset of it.
+        ReportTable matches = new ReportTable().schemaRef(SCHEMA_ERROR_ENTRY);
+        for (Map<String, Object> row : grouped.rows) {
+            if (category.equals(row.get("category"))) {
+                matches.addRow(row);
+            }
         }
+        int distinctForCategory = grouped.distinctRowCountByCategory.getOrDefault(category, 0);
+        matches.title(count != distinctForCategory
+            ? String.format("Matching errors (%,d distinct; %,d raw entries)", distinctForCategory, count)
+            : "Matching errors");
         if (matches.getRows() != null) child.addTable(matches);
         return child;
     }
@@ -603,6 +713,7 @@ public class GafReportBuilder {
                 "annotExtn",    GafJobEntry.formatAnnotationExtensions(e),
                 "noctuaModel",  safe(e.getNoctuaModelId()),
                 "source",       e.getSource() != null ? safe(e.getSource().getZdbID()) : "",
+                "owningOrg",    e.getGafOrganization() != null ? safe(e.getGafOrganization().getOrganization()) : "",
                 "organization", safe(e.getOrganizationCreatedBy())
             );
         }
