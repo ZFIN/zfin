@@ -39,9 +39,9 @@ public class SecondaryLoadContext {
 
     private Map<String, List<DBLinkSlimDTO>> uniprotDbLinks;
     private Map<String, List<DBLinkSlimDTO>> interproDbLinks;
+    // ZFIN-10418 retired the Pfam and PROSITE dblink families. EC stays: it is the input to the
+    // ec2go derivation and is retired with it (see LOAD_INTERPRO2GO_EC2GO).
     private Map<String, List<DBLinkSlimDTO>> ecDbLinks;
-    private Map<String, List<DBLinkSlimDTO>> prositeDbLinks;
-    private Map<String, List<DBLinkSlimDTO>> pfamDbLinks;
     private Map<String, List<DBLinkSlimDTO>> uniprotDbLinksByGeneZdbID;
 //    private Map<DBLinkSlimDTO, DBLinkExternalNoteSlimDTO> externalNotesByUniprotAccession;
 
@@ -82,12 +82,6 @@ public class SecondaryLoadContext {
 
         log.info("Load Step 3: Getting Existing EC DB Links");
         initializeECDBLinksFromDatabase();
-
-        log.info("Load Step 4: Getting Existing PFAM DB Links");
-        initializePfamDBLinksFromDatabase();
-
-        log.info("Load Step 5: Getting Existing PROSITE DB Links");
-        initializePrositeDBLinksFromDatabase();
 
         log.info("Load Step 7: Getting Existing MarkerGoTermEvidence Records");
         initializeMarkerGoTermEvidenceFromDatabase();
@@ -142,24 +136,6 @@ public class SecondaryLoadContext {
                 convertToDTO(
                         sr.getMarkerDBLinks(
                                 sr.getReferenceDatabase(EC, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializePfamDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-
-        setPfamDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(PFAM, DOMAIN, PROTEIN, ZEBRAFISH))));
-    }
-
-    public void initializePrositeDBLinksFromDatabase() {
-        SequenceRepository sr = getSequenceRepository();
-
-        setPrositeDbLinks(
-                convertToDTO(
-                        sr.getMarkerDBLinks(
-                                sr.getReferenceDatabase(PROSITE, DOMAIN, PROTEIN, ZEBRAFISH))));
     }
 
     public void initializeMarkerGoTermEvidenceFromDatabase() {
@@ -381,8 +357,6 @@ public class SecondaryLoadContext {
         Map<String, List<DBLinkSlimDTO>> dblinks = switch (dbName) {
             case INTERPRO -> getInterproDbLinks();
             case EC -> getEcDbLinks();
-            case PFAM -> getPfamDbLinks();
-            case PROSITE -> getPrositeDbLinks();
             case UNIPROTKB -> getUniprotDbLinks();
             default -> Collections.emptyMap();
         };

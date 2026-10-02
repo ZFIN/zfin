@@ -16,7 +16,8 @@ import java.util.Set;
 import static org.zfin.util.ZfinCollectionUtils.firstInEachGrouping;
 
 /**
- * Adds InterPro, PFAM, EC, PROSITE accessions to db_links table.
+ * Adds InterPro and EC accessions to db_links table.
+ * (Pfam and PROSITE were retired by ZFIN-10418.)
  * This is based on the entries that appear in the uniprot release file.
  * If the accession is already in the database, it is not added.
  */
@@ -27,6 +28,7 @@ public class AddNewDBLinksFromUniProtsActionCreator implements ActionCreator {
         return SecondaryTermLoadAction.SubType.DB_LINK;
     }
 
+    @lombok.Getter
     private final ForeignDB.AvailableName dbName;
 
     public AddNewDBLinksFromUniProtsActionCreator(ForeignDB.AvailableName dbName) {

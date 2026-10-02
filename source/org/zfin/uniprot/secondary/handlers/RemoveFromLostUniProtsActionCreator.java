@@ -16,7 +16,7 @@ import static java.util.Collections.emptyList;
 
 /**
  * Remove from db_link table if the existing db_link table contains an accession, but the new uniprot release
- * no longer has that same accession (InterPro, EC, PROSITE, PFAM)
+ * no longer has that same accession (InterPro, EC; Pfam and PROSITE retired by ZFIN-10418)
  * This is related to the AddNewFromUniProtsHandler, but handles deletes instead of inserts
  */
 @Log4j2
@@ -26,6 +26,7 @@ public class RemoveFromLostUniProtsActionCreator implements ActionCreator {
         return SecondaryTermLoadAction.SubType.DB_LINK;
     }
 
+    @lombok.Getter
     private final ForeignDB.AvailableName dbName;
 
     public RemoveFromLostUniProtsActionCreator(ForeignDB.AvailableName dbName) {

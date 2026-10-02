@@ -44,6 +44,7 @@ If checked, the cutover SQL runs after the load and before the AFTER snapshot, s
 Runs two scripts from server_apps/DB_maintenance/gafLoad:
   cutover-rehome-phylo-to-paint.sql -- moves pre-existing GO_REF:0000033 rows from GOA to PAINT. The loader only routes newly loaded rows there, so without this phylo annotations end up split across both organizations.
   cutover-purge-uniprot-2go.sql -- drops the ~70k UniProt-org interpro2go/ec2go rows the load has just superseded.
+  cutover-purge-ec-dblinks.sql -- drops the ~5k EC db_link rows that fed the now-retired ec2go derivation (ZFIN-10418). Refuses to run until the 2go purge above has cleared the UniProt-org ec2go rows. Only durable once LOAD_INTERPRO2GO_EC2GO=false on UniProt-Secondary-Term-Load -- no SQL can verify that parameter, so it stays a manual runbook step. Side effect: the curation GO editor's EC inference dropdown goes empty (audited as never used).
 
 The purge has to run after the load, not before: it refuses to start until the GOA-org replacement rows exist. It will therefore fail if GAF_LOAD_REPORT_ONLY is checked, since a report-only run writes nothing for it to find.</description>
           <defaultValue>false</defaultValue>
@@ -121,6 +122,12 @@ $PSQL -f $SQL/cutover-rehome-phylo-to-paint.sql
 
 echo "=== cutover: purging superseded UniProt-org interpro2go/ec2go ==="
 $PSQL -f $SQL/cutover-purge-uniprot-2go.sql
+
+# Must follow the 2go purge: EC dblinks feed the ec2go derivation, so this script refuses to run
+# while UniProt-org ec2go rows still exist (ZFIN-10418). Not gated separately -- unlike kw2go it
+# destroys no annotations, only an unused curation dropdown's source rows.
+echo "=== cutover: purging EC dblinks now that ec2go has retired ==="
+$PSQL -f $SQL/cutover-purge-ec-dblinks.sql
 
 # kw2go is gated separately: ZFIN-10344 is still open, and unlike the 2go purge this one has no
 # replacement to guard against, so nothing but this flag stops it deleting the wrong thing.

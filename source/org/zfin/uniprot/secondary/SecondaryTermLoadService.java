@@ -21,9 +21,9 @@ public class SecondaryTermLoadService {
 
     public static final String EXTNOTE_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-47";
     public static final String INTERPRO_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-48";
+    // ZFIN-10418 retired Pfam (-50) and PROSITE (-51). EC stays: it feeds the ec2go derivation
+    // and is retired with it (see LOAD_INTERPRO2GO_EC2GO).
     public static final String EC_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-49";
-    public static final String PFAM_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-50";
-    public static final String PROSITE_REFERENCE_DATABASE_ID = "ZDB-FDBCONT-040412-51";
     public static final Map<String, ReferenceDatabase> referenceDatabasesCache = new HashMap<>();
 
     public static ReferenceDatabase getReferenceDatabaseForAction(SecondaryTermLoadAction action) {
@@ -35,8 +35,6 @@ public class SecondaryTermLoadService {
         switch (action.getDbName()) {
             case INTERPRO -> referenceDatabaseID = INTERPRO_REFERENCE_DATABASE_ID;
             case EC -> referenceDatabaseID = EC_REFERENCE_DATABASE_ID;
-            case PFAM -> referenceDatabaseID = PFAM_REFERENCE_DATABASE_ID;
-            case PROSITE -> referenceDatabaseID = PROSITE_REFERENCE_DATABASE_ID;
             default -> log.error("Unknown dblink dbname to load " + action.getDbName());
         }
         return referenceDatabaseID;

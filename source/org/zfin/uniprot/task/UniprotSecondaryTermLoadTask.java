@@ -50,7 +50,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     private final String domainFile;
     private final String contextInputFile;
 
-    private enum LoadTaskMode {
+    // Package-private rather than private so same-package tests can construct the task.
+    enum LoadTaskMode {
         REPORT,
         REPORT_AND_LOAD
     }
@@ -390,22 +391,24 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
     }
 
     private void calculatePipelineActions() {
+        registerPipelineHandlers();
+        pipeline.createActions();
+    }
+
+    /**
+     * Register the pipeline's handlers. Package-private and separate from
+     * {@link #calculatePipelineActions()} so the registration -- whose ORDER is load-bearing,
+     * see the EC block -- can be asserted without a database. Registration is pure; running the
+     * handlers is not.
+     */
+    void registerPipelineHandlers() {
         /* The following could be all handled by the same class in a refactoring: */
         // TODO: refactor this area
-        // Something like this: pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(List.of(INTERPRO, EC, PFAM, PROSITE)), RemoveFromLostUniProtsActionProcessor.class);
-        // And could even combine the Add and Remove handlers into one class that calls out to the two classes
         pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(INTERPRO), RemoveFromLostUniProtsActionProcessor.class);
         pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(INTERPRO), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(EC), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(EC), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PFAM), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PFAM), AddNewDBLinksFromUniProtsActionProcessor.class);
-
-        pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(PROSITE), RemoveFromLostUniProtsActionProcessor.class);
-        pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(PROSITE), AddNewDBLinksFromUniProtsActionProcessor.class);
-        /* The above could be refactored to all be handled by the same class */
+        // ZFIN-10418: Pfam and PROSITE dblinks are retired -- nothing outside this load ever read
+        // them. EC is deliberately NOT retired here. It is the input to the ec2go derivation, so
+        // its handlers live inside the LOAD_INTERPRO2GO_EC2GO gate below and are retired with it.
 
         // ZFIN-10344 / ZFIN-10025: the three *2go GO-mapping streams below are what the unified
         // DANRE-mod GO load is meant to take over. They are GATED rather than deleted so both
@@ -423,13 +426,26 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         //     subsumed by a retained more-specific term). That is open decision 4, unresolved.
         //
         // Turning a stream off stops both its Add and Remove handlers, so existing rows are
-        // frozen -- neither refreshed nor pruned -- until an explicit purge removes them.
+        // frozen -- neither refreshed nor pruned -- until an explicit purge removes them. For
+        // interpro2go/ec2go that freeze covers the EC dblinks too, since they are gated here.
         if (loadInterPro2GoAndEc2Go()) {
+            // EC dblinks exist only to feed ec2go (ZFIN-10418 audit: no consumer outside this
+            // load), so they are gated with it rather than registered unconditionally.
+            //
+            // Order matters. MarkerGoTermEvidenceActionCreator(EC) derives its annotations from
+            // the stored EC dblinks PLUS the LOAD actions these two handlers produce, and it
+            // deletes every stored ec2go row that its derivation does not reproduce. Register the
+            // ec2go handler without them and the derived set is empty, so the load deletes all
+            // ~4,700 ec2go annotations instead of refreshing them.
+            pipeline.addHandler(new RemoveFromLostUniProtsActionCreator(EC), RemoveFromLostUniProtsActionProcessor.class);
+            pipeline.addHandler(new AddNewDBLinksFromUniProtsActionCreator(EC), AddNewDBLinksFromUniProtsActionProcessor.class);
+
             pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(INTERPRO, ipToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
             pipeline.addHandler(new MarkerGoTermEvidenceActionCreator(EC, ecToGoRecords), MarkerGoTermEvidenceActionProcessor.class);
         } else {
             log.info("LOAD_INTERPRO2GO_EC2GO=false -> skipping interpro2go and ec2go GO-mapping "
-                    + "handlers; existing rows are left untouched (not refreshed, not pruned)");
+                    + "handlers, and the EC dblink handlers that feed ec2go; existing rows are "
+                    + "left untouched (not refreshed, not pruned)");
         }
 
         if (loadKeyword2Go()) {
@@ -446,8 +462,6 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.addHandler(new InterproMarkerToProteinActionCreator(), InterproMarkerToProteinActionProcessor.class);
         pipeline.addHandler(new ProteinToInterproActionCreator(), ProteinToInterproActionProcessor.class);
         pipeline.addHandler(new PDBActionCreator(), PDBActionProcessor.class);
-
-        pipeline.createActions();
     }
 
     private void writeActionsToFile(SecondaryTermLoadActionsContainer actionsContainer) {
