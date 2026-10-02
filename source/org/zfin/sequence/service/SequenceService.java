@@ -96,14 +96,6 @@ public class SequenceService {
         );
     }
 
-    public static SummaryDBLinkDisplay getProteinProducts(Marker gene) {
-        List<DBLink> dbLinkList = sequenceRepository.getDBLinksForMarker(gene.getZdbID(), ForeignDBDataType.SuperType.PROTEIN);
-        SummaryDBLinkDisplay summaryDBLinkDisplay = new SummaryDBLinkDisplay();
-        summaryDBLinkDisplay.addAllDBlinks(dbLinkList);
-        return summaryDBLinkDisplay;
-    }
-
-
     public JsonResultResponse<MarkerDBLink> getMarkerDBLinkJsonResultResponse(String zdbID,
                                                                               Pagination pagination,
                                                                               boolean summary,

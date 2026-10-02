@@ -4,11 +4,13 @@
   <description>
     This job loads the secondary terms from the UniProt data into the database.
     This includes the following:
-    - Interpro
-    - GO
-    - EC
-    - ProSite
-    - Pfam
+    - Interpro (dblinks, domains, GO)
+    - PDB (dblinks)
+    - EC (dblinks; gated with ec2go by LOAD_INTERPRO2GO_EC2GO)
+    - GO (interpro2go, ec2go, UniProtKB-Keyword kw2go; see LOAD_INTERPRO2GO_EC2GO / LOAD_KW2GO)
+    Pfam and PROSITE dblinks were retired by ZFIN-10418 (no consumer outside
+    this load ever read them). EC was audited the same way, but it is the input
+    to the ec2go derivation, so it retires with that stream rather than here.
     The primary load for the UniProt data must be run first.
   </description>
   <keepDependencies>false</keepDependencies>
@@ -25,7 +27,7 @@
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>LOAD_INTERPRO2GO_EC2GO</name>
-          <description>Keep deriving interpro2go and ec2go GO annotations in this load (default: yes). Uncheck once the unified DANRE-mod GO load supplies them (ZFIN-10344). WARNING: unchecking this alone DUPLICATES rather than replaces -- the DANRE-mod load writes the same content under the GOA organization while these rows are owned by UniProt, so the cutover must also purge gafOrganization='UniProt'. Existing rows are left frozen (neither refreshed nor pruned) while unchecked.</description>
+          <description>Keep deriving interpro2go and ec2go GO annotations in this load (default: yes). Uncheck once the unified DANRE-mod GO load supplies them (ZFIN-10344). Since ZFIN-10418 this also gates the EC dblink handlers, because EC dblinks are the input to the ec2go derivation and have no other consumer -- unchecking freezes the EC dblinks along with the annotations. WARNING: unchecking this alone DUPLICATES rather than replaces -- the DANRE-mod load writes the same content under the GOA organization while these rows are owned by UniProt, so the cutover must also purge gafOrganization='UniProt'. Existing rows are left frozen (neither refreshed nor pruned) while unchecked.</description>
           <defaultValue>true</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>

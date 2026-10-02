@@ -13,7 +13,7 @@ import static org.zfin.uniprot.secondary.SecondaryTermLoadService.getReferenceDa
 
 /**
  * Remove from db_link table if the existing db_link table contains an accession, but the new uniprot release
- * no longer has that same accession (InterPro, EC, PROSITE, PFAM)
+ * no longer has that same accession (InterPro, EC; Pfam and PROSITE retired by ZFIN-10418)
  * This is related to the AddNewFromUniProtsHandler, but handles deletes instead of inserts
  */
 @Log4j2

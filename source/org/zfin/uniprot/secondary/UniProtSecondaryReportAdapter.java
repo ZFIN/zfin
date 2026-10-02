@@ -20,7 +20,7 @@ import java.util.Map;
 
 /**
  * Converts a {@link SecondaryTermLoadActionsContainer} into a {@link ZfinReport}
- * so the UniProt secondary-term load (InterPro/EC/PFAM/PROSITE/UniProtKB-KW/PDB
+ * so the UniProt secondary-term load (InterPro/EC/UniProtKB-KW/PDB
  * link and GO annotation handling) can render through the unified HTML viewer
  * ({@code source/org/zfin/report/report-template.html}).
  *

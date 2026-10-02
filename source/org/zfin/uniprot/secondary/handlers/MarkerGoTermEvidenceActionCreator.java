@@ -45,6 +45,7 @@ public class MarkerGoTermEvidenceActionCreator implements ActionCreator {
     public static final String IP_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020724-1";
 
     public static final String SPKW_MRKRGOEV_PUBLICATION_ATTRIBUTION_ID = "ZDB-PUB-020723-1";
+    @lombok.Getter
     protected final ForeignDB.AvailableName dbName;
 
     protected final List<SecondaryTerm2GoTerm> translationRecords;

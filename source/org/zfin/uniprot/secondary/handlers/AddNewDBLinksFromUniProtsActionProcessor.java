@@ -15,7 +15,8 @@ import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.repository.RepositoryFactory.*;
 
 /**
- * Adds InterPro, PFAM, EC, PROSITE accessions to db_links table.
+ * Adds InterPro and EC accessions to db_links table.
+ * (Pfam and PROSITE were retired by ZFIN-10418.)
  * This is based on the entries that appear in the uniprot release file.
  * If the accession is already in the database, it is not added.
  */

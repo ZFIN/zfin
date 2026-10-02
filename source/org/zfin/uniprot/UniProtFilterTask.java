@@ -67,7 +67,9 @@ public class UniProtFilterTask extends AbstractScriptWrapper {
     private List<RichSequenceAdapter> readAndFilterSequencesFromStream() throws BioException {
         RichStreamReaderAdapter richStreamReader = getRichStreamReaderForUniprotDatFile(filteredInputFileReader, true);
 
-        List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "Pfam", "PROSITE", "PDB", "Ensembl", "EC");
+        // ZFIN-10418 dropped Pfam and PROSITE -- nothing outside the secondary load read them.
+        // EC stays until the ec2go derivation retires with it (see LOAD_INTERPRO2GO_EC2GO).
+        List<String> xrefsToKeep = List.of("ZFIN", "GeneID", "RefSeq", "EMBL", "GO", "InterPro", "PDB", "Ensembl", "EC");
         RichSequenceAdapter lastSequence = null;
         int count = 0;
         List<RichSequenceAdapter> uniProtSequences = new ArrayList<>();
