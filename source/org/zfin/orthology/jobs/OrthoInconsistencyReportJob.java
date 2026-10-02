@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.report.InlineDiff;
 import org.zfin.report.Report;
 import org.zfin.report.ReportNode;
 import org.zfin.report.ReportTable;
@@ -155,10 +156,10 @@ public class OrthoInconsistencyReportJob extends AbstractValidateDataReportTask 
                 "zdbID",     r.zdbId,
                 "organism",  r.organism,
                 "diffType",  diffType,
-                "zfinSym",   symbolOk ? zfinSym  : OrthoNameDiff.highlightOld(zfinSym,  orthoSym),
-                "orthoSym",  symbolOk ? orthoSym : OrthoNameDiff.highlightNew(zfinSym,  orthoSym),
-                "zfinName",  nameOk   ? zfinName : OrthoNameDiff.highlightOld(zfinName, orthoName),
-                "orthoName", nameOk   ? orthoName: OrthoNameDiff.highlightNew(zfinName, orthoName));
+                "zfinSym",   symbolOk ? zfinSym  : InlineDiff.highlightOld(zfinSym,  orthoSym),
+                "orthoSym",  symbolOk ? orthoSym : InlineDiff.highlightNew(zfinSym,  orthoSym),
+                "zfinName",  nameOk   ? zfinName : InlineDiff.highlightOld(zfinName, orthoName),
+                "orthoName", nameOk   ? orthoName: InlineDiff.highlightNew(zfinName, orthoName));
         }
         root.addTable(table);
         report.root(root);
