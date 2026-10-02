@@ -6,7 +6,7 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
 
     <changeSet author="rtaylor" id="ZFIN-10461-gff3-attribute-gene-id-load-changed">
-        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/migrations/0080-ZFIN-10461-gff3-attribute-gene-id-changed.csv"
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/csvs/0080-ZFIN-10461-gff3-attribute-gene-id-changed.csv"
                   tableName="stg_gff3_gene_id_changed" encoding="UTF-8" quotchar='"'>
             <column header="gid" name="gid" type="String"/>
             <column header="gstart" name="gstart" type="NUMERIC"/>
@@ -17,7 +17,7 @@
     </changeSet>
 
     <changeSet author="rtaylor" id="ZFIN-10461-gff3-attribute-gene-id-load-removed">
-        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/migrations/0080-ZFIN-10461-gff3-attribute-gene-id-removed.csv"
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/csvs/0080-ZFIN-10461-gff3-attribute-gene-id-removed.csv"
                   tableName="stg_gff3_gene_id_removed" encoding="UTF-8" quotchar='"'>
             <column header="gid" name="gid" type="String"/>
             <column header="gstart" name="gstart" type="NUMERIC"/>
@@ -27,7 +27,7 @@
     </changeSet>
 
     <changeSet author="rtaylor" id="ZFIN-10461-gff3-attribute-gene-id-load-added">
-        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/migrations/0080-ZFIN-10461-gff3-attribute-gene-id-added.csv"
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1185/csvs/0080-ZFIN-10461-gff3-attribute-gene-id-added.csv"
                   tableName="stg_gff3_gene_id_added" encoding="UTF-8" quotchar='"'>
             <column header="gid" name="gid" type="String"/>
             <column header="gstart" name="gstart" type="NUMERIC"/>
