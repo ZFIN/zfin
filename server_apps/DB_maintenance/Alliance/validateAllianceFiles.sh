@@ -52,8 +52,46 @@ main() {
 # once with:
 #
 #   gradle tokenStorage --args="write ALLIANCE_API_TOKEN <token>"
+# Preferred path is zfin-util, so the token is fetched through TokenStorage
+# rather than by this script knowing where the file lives (PR #2010 review).
+# When the move to 1Password happens, TokenStorage changes and this does not.
+# zfin-util is used in preference to `gradle tokenStorage` because this script
+# runs straight after a 40-minute Gradle build in the same job, and a second JVM
+# plus Gradle's own startup is a lot of machinery for reading one string.
+#
+# The file read stays as a fallback: zfin-util is installed by
+# `gradle installUtilities`, which is NOT part of a normal deployment, so on a
+# host where that has not been run the preferred path simply does not exist.
+# Both paths end at the same place -- ServiceKey.ALLIANCE_API_TOKEN is defined
+# as alliance-api-token.txt -- so the fallback is the same secret, not a second
+# source of truth.
 readToken() {
+  local key='ALLIANCE_API_TOKEN'
   local tokenFile="${TARGETROOT}/server_apps/tokens/alliance-api-token.txt"
+  local util="${TARGETROOT}/utilities/bin/zfin-util"
+  local value
+
+  if [ -n "$TARGETROOT" ] && [ -x "$util" ]; then
+    # Exit status, not just non-empty output: on a missing or empty token
+    # TokenStorage prints its complaint to STDOUT and exits 1 or 2, so a naive
+    # capture would send "Token file for ... does not exist." as the bearer
+    # token. The whitespace check is the belt to that braces -- one branch of
+    # TokenStorage (TARGETROOT unset) prints a message and still exits 0, and a
+    # real token never contains a space.
+    if value=$("$util" token-storage read "$key" 2>/dev/null); then
+      value=$(printf '%s' "$value" | tr -d '\r\n')
+      case "$value" in
+        '' | *[[:space:]]*) ;;
+        *)
+          AUTHORIZATION="$value"
+          echo "token: read via zfin-util token-storage $key"
+          return
+          ;;
+      esac
+    fi
+    echo "token: zfin-util could not supply $key; falling back to the token file"
+  fi
+
   if [ -n "$TARGETROOT" ] && [ -f "$tokenFile" ]; then
     # tr strips a trailing newline and any CRLF: the value goes straight into an
     # HTTP header, where a stray newline is a malformed request rather than a
