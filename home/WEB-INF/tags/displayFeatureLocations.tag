@@ -36,7 +36,14 @@
                         - <fmt:formatNumber value="${member.end}" pattern="##,###"/>
                     </c:if></td>
                     <td>${member.assembly}</td>
-                    <td>${member.source}</td>
+                    <%-- displayName, not the enum itself: EL on an enum calls
+                         toString(), so this column showed raw constant names
+                         ("DIRECT") rather than the labels the sibling view
+                         PhysicalMapAndBrowserSection.tag has always shown.
+                         It also matters for ZFIN-10501 -- the lifted rows are
+                         stored as 'ZFIN', whose constant is ZFIN_NCBI, so
+                         without this they would read "ZFIN_NCBI". --%>
+                    <td>${member.source.displayName}</td>
                     <authz:authorize access="hasRole('root')">
                         <td>${member.detailedSource}</td>
                     </authz:authorize>
