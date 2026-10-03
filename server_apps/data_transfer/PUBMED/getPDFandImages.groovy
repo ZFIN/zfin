@@ -287,7 +287,10 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
 
             String fileNameNoExtension = FilenameUtils.removeExtension(storedImage)
             makeThumbnailAndMediumImage(storedImage, fileNameNoExtension, zdbId, pubYear)
-            String extension = FilenameUtils.getExtension(storedImage)
+            // Not the stored image's own extension: a webp is readable and servable but
+            // ImageIO cannot write it, so its derivatives are JPEG. Asking ImageService
+            // keeps these filenames and the bytes on disk in agreement.
+            String extension = ImageService.derivativeExtension(storedImage)
             String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
             String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
             FIGS_TO_LOAD.add([zdbId, pmcId, storedImage, label, caption, pubYear + "/" + zdbId + "/" + storedImage,
@@ -299,7 +302,9 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
 
 def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear) {
 
-    String extension = FilenameUtils.getExtension(fileName)
+    // Must match the names recorded in FIGS_TO_LOAD above -- hence the same helper
+    // rather than the source file's own extension.
+    String extension = ImageService.derivativeExtension(fileName)
 
     String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
     String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
