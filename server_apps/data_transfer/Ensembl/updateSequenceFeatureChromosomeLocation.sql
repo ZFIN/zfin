@@ -36,6 +36,21 @@ delete from sequence_feature_chromosome_location_generated
 delete from sequence_feature_chromosome_location_generated
  where sfclg_location_source = 'UCSCStartEndLoader';
 
+-- ZFIN-10501. §G now emits 'ZFIN' instead of 'DirectSubmission' for the lifted
+-- GRCz11 -> GRCz12tu locations, so those rows need deleting here too or the
+-- next run's re-insert collides with uk_sfclg_unique_location, which includes
+-- sfclg_location_source.
+--
+-- Restricted to rows §G owns. 'ZFIN' is also written by the gene-side loaders
+-- (22,704 rows, all genes and gene-like records) and this script must not
+-- touch those; selecting via sequence_feature_chromosome_location keeps the
+-- delete to feature locations, which are ZDB-ALT, NCCR and ENHANCER ids
+-- rather than any one prefix.
+delete from sequence_feature_chromosome_location_generated
+ where sfclg_location_source = 'ZFIN'
+   and sfclg_data_zdb_id in (select sfcl_feature_zdb_id
+                               from sequence_feature_chromosome_location);
+
 
 -- §B. Build tmp_gff_start_end / tmp_gene from gff3 + ensdart_name_mapping. ---
 -- Keys off gff_id (= ENSDART transcript ID), then derives transcript spans
@@ -207,7 +222,18 @@ INSERT INTO sequence_feature_chromosome_location_generated
 insert into sequence_feature_chromosome_location_generated (
   sfclg_chromosome, sfclg_data_zdb_id, sfclg_start, sfclg_end, sfclg_acc_num, sfclg_location_source, sfclg_location_subsource, sfclg_assembly, sfclg_pub_zdb_id)
 select distinct on (sfcl_feature_zdb_id, sfcl_assembly, sfcl_chromosome_reference_accession_number, sfcl_start_position, sfcl_end_position)
-       sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, sfcl_chromosome_reference_accession_number, 'DirectSubmission', '', sfcl_assembly, recattrib_source_zdb_id
+       sfcl_chromosome, sfcl_feature_zdb_id, sfcl_start_position, sfcl_end_position, sfcl_chromosome_reference_accession_number,
+       -- ZFIN-10501: locations we lifted from GRCz11 to GRCz12tu are ours, not
+       -- a direct submission, so they are sourced 'ZFIN'. The liftover
+       -- publication is what identifies them -- migration
+       -- 1186/0010-ZFIN-10501 re-attributes exactly those rows to it, and it
+       -- is the only attribution they carry afterwards, so the DISTINCT ON
+       -- below cannot pick a different pub for them. Keying off the
+       -- attribution rather than the ZDB ID date prefix keeps the one-off
+       -- batch identifier out of the daily refresh, and means a future
+       -- liftover attributed to the same pub is handled without touching this.
+       case when recattrib_source_zdb_id = 'ZDB-PUB-261001-17'
+            then 'ZFIN' else 'DirectSubmission' end, '', sfcl_assembly, recattrib_source_zdb_id
   from sequence_feature_chromosome_location
   left outer join record_attribution on recattrib_data_zdb_id = sfcl_zdb_id
  order by sfcl_feature_zdb_id, sfcl_assembly, sfcl_chromosome_reference_accession_number, sfcl_start_position, sfcl_end_position, recattrib_source_zdb_id;
