@@ -78,35 +78,62 @@ code calls it directly.
 
 ## Scale
 
-Taking publications that have a PDF and asking how many also have figures,
-cohorted by the month ZFIN created the record:
+Counting publications that have a PDF but no figures, cohorted by the month
+ZFIN created the record (production snapshot, 2026-09-30):
 
 ```
-2025-01 .. 2026-02   80-86% have figures   (stable for 14 months)
-2026-03   262 pubs   201 with figures   76.7%   shortfall  17
-2026-04   299         222               74.2%             26
-2026-05   331         206               62.2%             69
-2026-06   301         169               56.1%             81
-2026-07   240         136               56.7%             63
-2026-08   174          64               36.8%             81
-2026-09   126           2                1.6%            103
-                                                      --------
-                                                           440
+month      missing   loadable   blocked by copyright
+2026-09      124       123         1
+2026-08       74        66         8
+2026-07       20         8        12
+2026-06       34        17        17
+2026-05       17         5        12
+2026-04       11         3         8
+2026-03        8         3         5
+                        ---
+                        225
+2026-02       12         6         6   <- baseline resumes
+2026-01        9         8         1
+2025-12        8         6         2
+2025-11        8         3         5
 ```
 
-Roughly 440 publications, against an 83% baseline.
+**Roughly 225 loadable publications, and 189 of them are August and September
+alone.** "Loadable" means `pub_can_show_images = 't'`; the rest cannot have
+figures loaded whatever the format, and are a standing background of eight to
+twelve a month.
 
-Two things follow from the shape. It was not a single switchover — the erosion
-runs from March to September, consistent with PMC migrating journals in waves,
-which is why it went unnoticed for six months: each month looked only slightly
-worse than the last. And the rate reached effectively zero, so by September
-every publication being curated was losing its figures.
+### A correction worth keeping
 
-The number is an estimate from a symptom, not a count of webp files. Skipped
-figures were never recorded, so nothing in the database knows *why* a given
-publication lacks figures — the 17% that never had figures at baseline are
-genuine absences (no figures at PMC, embargoes, article types without figures),
-and some of the 440 will be those.
+An earlier pass at this estimated ~440 affected publications from a *shortfall
+model* — comparing the percentage of publications with figures each month
+against the 83% that held steady for the fourteen months to 2026-02. That model
+was misleading in a way worth recording, because it is the obvious way to
+measure this.
+
+It read the March–July period as a gradual PMC rollout, each month slightly
+worse than the last. Counting actual rows shows most of that elevation is
+copyright-blocked publications, which a percentage model cannot distinguish
+from format failures: July has 20 missing but only 8 loadable. The real damage
+is far more concentrated — it begins in earnest in August and is total by
+September.
+
+Both numbers describe something true (440 is the gap against baseline, 225 is
+the actionable list) but only the second is a thing you can act on, and the
+first implied a six-month gradual decline that the data does not support.
+
+### What the numbers cannot tell you
+
+Skipped figures were never recorded, so nothing in the database knows *why* a
+given publication lacks figures. A publication with a PDF and no figures might
+have had webp figures skipped, might have no figures at PMC at all, or might
+simply have been fetched before PMC published them.
+
+That last case is real and not rare: in a ten-publication dry run on a dev
+instance, **five loaded figures successfully with no webp involved** — their
+figures were in an accepted format and had simply not been available when the
+job last looked. The selection SQL never revisits them, so they accumulate
+silently alongside the webp ones. See *Open items* on retry behaviour.
 
 ## Re-fetching the backlog
 
@@ -155,19 +182,23 @@ SELECT p.zdb_id FROM publication p
 Publications that loaded *some* figures are deliberately excluded and need
 handling separately.
 
-Run against a production copy on 2026-10-03, that query returns:
+Run against a production copy on 2026-10-03, restricted to records created from
+2026-03 onward, that query returns:
 
 ```
-292   candidates (PMC id, PDF loaded, zero figures, record created 2026-03..12)
-229     of which pub_can_show_images = 't'   <- actually loadable
+288   candidates (PMC id, PDF loaded, zero figures)
+225     of which pub_can_show_images = 't'   <- actually loadable
  63     excluded by pub_can_show_images      <- will stay without figures
 ```
 
-Note 292 is smaller than the 440 above, and the two are measuring different
-things. 440 is a statistical shortfall against the historical baseline, which
-includes publications with no PMC id and counts the gap rather than the rows.
-292 is the concrete list this procedure can act on. Expect to load **229**, and
-expect the other 63 to remain without figures for copyright reasons.
+Expect to load **225**, with 189 of those from August and September. Widening
+the date range adds roughly 40 more loadable publications from before the webp
+period — long-standing absences for reasons that predate this bug. Including
+them is defensible but they are not this regression, and they will not all
+succeed.
+
+The 63 excluded here are the same standing background described under *Scale*;
+they stay without figures however often the job runs.
 
 ### Order of operations
 
@@ -192,8 +223,10 @@ delete from tmp_figs_to_load_with_ids
                     where pub_can_show_images = 't' and zdb_id = pub_zdb_id);
 ```
 
-Some of the 440 will be excluded for copyright reasons rather than webp, and
-will stay without figures however often the job is run.
+That is where the 63 in the counts above come from. They are excluded for
+copyright reasons rather than webp, and will stay without figures however often
+the job is run — which is why the list query filters on the same flag rather
+than letting them fail silently inside the load.
 
 ## Open items
 
