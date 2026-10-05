@@ -1,0 +1,132 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description>
+        ZFIN-10486: Weekly read-only report. Compares each feature's stored
+        flanking sequence/variation (variant_flanking_sequence) against what's
+        computed live from the assembly FASTA and current mutation detail, at
+        the feature's location on whichever assembly ZFIN currently treats as
+        authoritative. Character-level diff highlighting makes a 1-2bp
+        difference inside a 500bp sequence actually visible. No DB writes.
+
+        Three sections, because they need different follow-up:
+
+        - Drift: stale values (e.g. left by the old GRCz11-hardcoded Flank-Seq
+          batch job after a feature also gained a GRCz12tu location). Fixable,
+          but only by hand -- see below.
+        - Ambiguous location: more than one location row on the current
+          assembly, with different coordinates (sometimes different
+          chromosomes). No single right answer to recompute against -- needs a
+          curator to resolve the duplicate, not a backfill.
+        - Submitter-provided: flanking sequence that came from the Sanger ZMP
+          data submission rather than being computed. Never recomputed by
+          anything; listed so the exclusion is visible.
+
+        NOTHING IS FIXED AUTOMATICALLY. This job only reports. Load-Flank-Seq_w
+        is manual-only (ZFIN-10486) and no longer runs nightly, so acting on the
+        Drift section means triggering that job by hand with
+        FORCE_FULL_UPDATE=true, plus INCLUDE_SANGER=true if "sa" features appear
+        in the report. Then re-run this job to confirm the count drops.
+    </description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <EnvInjectJobProperty plugin="envinject@2.3.0">
+            <info>
+                <propertiesFilePath>$CATALINA_BASE/webapps/ROOT/WEB-INF/zfin.properties</propertiesFilePath>
+                <secureGroovyScript plugin="script-security@1.73">
+                    <script></script>
+                    <sandbox>false</sandbox>
+                </secureGroovyScript>
+            </info>
+            <on>true</on>
+            <keepJenkinsSystemVariables>true</keepJenkinsSystemVariables>
+            <keepBuildVariables>true</keepBuildVariables>
+            <overrideBuildParameters>false</overrideBuildParameters>
+        </EnvInjectJobProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+cd $SOURCEROOT
+./gradlew checkFlankingSequenceDrift
+            ]]>
+            </command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>server_apps/DB_maintenance/report_data/Check-Flanking-Sequence-Drift_w/Check-Flanking-Sequence-Drift_w.html</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.logparser.LogParserPublisher plugin="log-parser@1.0.8">
+            <unstableOnWarning>true</unstableOnWarning>
+            <failBuildOnError>false</failBuildOnError>
+            <parsingRulesPath></parsingRulesPath>
+        </hudson.plugins.logparser.LogParserPublisher>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList></recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>Flanking-sequence drift report attached (Drift / Ambiguous location / Submitter-provided).
+
+This job only reports -- nothing is fixed automatically. To correct what the Drift section lists, trigger Load-Flank-Seq_w by hand with FORCE_FULL_UPDATE=true, adding INCLUDE_SANGER=true if "sa" features appear in the report. That job is manual-only and no longer runs nightly. Re-run this check afterwards to confirm the drift count drops.
+
+The other two sections are not fixable that way: Ambiguous location needs a curator to resolve duplicate location rows, and Submitter-provided is deliberately never recomputed.</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern>server_apps/DB_maintenance/report_data/Check-Flanking-Sequence-Drift_w/Check-Flanking-Sequence-Drift_w.html</attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>Flanking-sequence drift check failed to run -- see the build log and console output. No drift report was produced, so nothing has been assessed this run.</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers>
+    </buildWrappers>
+</project>
