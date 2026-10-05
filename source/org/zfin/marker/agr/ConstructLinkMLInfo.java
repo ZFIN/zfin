@@ -144,7 +144,9 @@ public class ConstructLinkMLInfo extends LinkMLInfo {
                                             ConstructGenomicEntityAssociationDTO associationDTO = new ConstructGenomicEntityAssociationDTO();
                                             associationDTO.setConstructIdentifier("ZFIN:" + construct.zdbID);
                                             associationDTO.setGenomicEntityIdentifier("ZFIN:" + componentZdbID);
-                                            associationDTO.setGenomicEntityRelationName(relationName);
+                                            // Renamed from setGenomicEntityRelationName in the
+                                            // curation_api upgrade (2025-09 build -> v0.53.0).
+                                            associationDTO.setRelationName(relationName);
                                             genomicEntityAssociationDTOList.add(associationDTO);
                                         }
                                         default -> {
