@@ -78,7 +78,16 @@ if (specificPubZdbIDs.size() > 0) {
     """
 }
 
-@Field final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff'] as Set
+// ZFIN-10523: webp is here because PMC's cloud service now delivers figures in it.
+// Leaving it out did not fail loudly -- the key was dropped here, the XML parser
+// still found <graphic xlink:href='fig1.webp'>, and the figure was reported as
+// "file not found on disk (not available in S3)" even though it was in S3 and we
+// simply had not asked for it. That is why this looked like PMC moving files.
+//
+// ImageService.WEB_SAFE_EXTENSIONS has always included webp, so the two halves of
+// the pipeline disagreed: the display side considered webp fine while the download
+// side would not fetch it.
+@Field final Set<String> DOWNLOADABLE_EXTENSIONS = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'tif', 'tiff', 'webp'] as Set
 
 def downloadS3FilesForArticle(List<String> s3Keys, String zdbId, String pubYear) {
     def timeStart = new Date()
@@ -278,7 +287,10 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
 
             String fileNameNoExtension = FilenameUtils.removeExtension(storedImage)
             makeThumbnailAndMediumImage(storedImage, fileNameNoExtension, zdbId, pubYear)
-            String extension = FilenameUtils.getExtension(storedImage)
+            // Not the stored image's own extension: a webp is readable and servable but
+            // ImageIO cannot write it, so its derivatives are JPEG. Asking ImageService
+            // keeps these filenames and the bytes on disk in agreement.
+            String extension = ImageService.derivativeExtension(storedImage)
             String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
             String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
             FIGS_TO_LOAD.add([zdbId, pmcId, storedImage, label, caption, pubYear + "/" + zdbId + "/" + storedImage,
@@ -290,7 +302,9 @@ def parseLabelCaptionImage(groupMatchString, zdbId, pmcId, imageFilePath, pubYea
 
 def makeThumbnailAndMediumImage(fileName, fileNameNoExtension, pubZdbId, pubYear) {
 
-    String extension = FilenameUtils.getExtension(fileName)
+    // Must match the names recorded in FIGS_TO_LOAD above -- hence the same helper
+    // rather than the source file's own extension.
+    String extension = ImageService.derivativeExtension(fileName)
 
     String thumbnailFilename = fileNameNoExtension + "_thumb" + FilenameUtils.EXTENSION_SEPARATOR + extension
     String mediumFileName = fileNameNoExtension + "_medium" + FilenameUtils.EXTENSION_SEPARATOR + extension
