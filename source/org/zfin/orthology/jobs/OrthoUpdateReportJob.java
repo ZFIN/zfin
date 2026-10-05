@@ -3,6 +3,7 @@ package org.zfin.orthology.jobs;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
+import org.zfin.report.InlineDiff;
 import org.zfin.report.Report;
 import org.zfin.report.ReportNode;
 import org.zfin.report.ReportTable;
@@ -220,21 +221,21 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
                 table.addRow(
                     "firstSeen", orEmpty(r.firstSeen),
                     "zdbID",     r.zdbId,
-                    "zfinSym",   otherSym.isEmpty() ? zSym : OrthoNameDiff.highlightOld(zSym, otherSym),
-                    "humanSym",  hSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, hSym),
-                    "mouseSym",  mSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, mSym),
-                    "zfinName",  OrthoNameDiff.highlightOld(zName, otherName),
-                    "humanName", hName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, hName),
-                    "mouseName", mName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, mName));
+                    "zfinSym",   otherSym.isEmpty() ? zSym : InlineDiff.highlightOld(zSym, otherSym),
+                    "humanSym",  hSym.isEmpty() ? "" : InlineDiff.highlightNew(zSym, hSym),
+                    "mouseSym",  mSym.isEmpty() ? "" : InlineDiff.highlightNew(zSym, mSym),
+                    "zfinName",  InlineDiff.highlightOld(zName, otherName),
+                    "humanName", hName.isEmpty() ? "" : InlineDiff.highlightNew(zName, hName),
+                    "mouseName", mName.isEmpty() ? "" : InlineDiff.highlightNew(zName, mName));
             } else {
                 table.addRow(
                     "zdbID",     r.zdbId,
-                    "zfinSym",   otherSym.isEmpty() ? zSym : OrthoNameDiff.highlightOld(zSym, otherSym),
-                    "humanSym",  hSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, hSym),
-                    "mouseSym",  mSym.isEmpty() ? "" : OrthoNameDiff.highlightNew(zSym, mSym),
-                    "zfinName",  OrthoNameDiff.highlightOld(zName, otherName),
-                    "humanName", hName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, hName),
-                    "mouseName", mName.isEmpty() ? "" : OrthoNameDiff.highlightNew(zName, mName));
+                    "zfinSym",   otherSym.isEmpty() ? zSym : InlineDiff.highlightOld(zSym, otherSym),
+                    "humanSym",  hSym.isEmpty() ? "" : InlineDiff.highlightNew(zSym, hSym),
+                    "mouseSym",  mSym.isEmpty() ? "" : InlineDiff.highlightNew(zSym, mSym),
+                    "zfinName",  InlineDiff.highlightOld(zName, otherName),
+                    "humanName", hName.isEmpty() ? "" : InlineDiff.highlightNew(zName, hName),
+                    "mouseName", mName.isEmpty() ? "" : InlineDiff.highlightNew(zName, mName));
             }
         }
         return table;
@@ -254,8 +255,8 @@ public class OrthoUpdateReportJob extends AbstractValidateDataReportTask {
                 "zdbID",   col(r, 0),
                 "zfinSym", col(r, 1),
                 "species", col(r, 2),
-                "oldName", OrthoNameDiff.highlightOld(oldName, newName),
-                "newName", OrthoNameDiff.highlightNew(oldName, newName));
+                "oldName", InlineDiff.highlightOld(oldName, newName),
+                "newName", InlineDiff.highlightNew(oldName, newName));
         }
         node.count((long) rows.size());
         node.addTable(table);

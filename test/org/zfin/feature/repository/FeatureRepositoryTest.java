@@ -21,6 +21,7 @@ import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.FilterValuesDTO;
 import org.zfin.gwt.root.dto.MutationDetailControlledVocabularyTermDTO;
 import org.zfin.mapping.FeatureLocation;
+import org.zfin.mapping.GenomicLocationService;
 import org.zfin.marker.Marker;
 import org.zfin.mutant.SequenceTargetingReagent;
 import org.zfin.profile.Organization;
@@ -100,7 +101,45 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
 
         assertNotNull("feature list exists", features);
         assertTrue("non sa  features have genomic mutation details", features.size() > 0);
+        assertTrue("excludes sa features by default", features.stream()
+            .noneMatch(f -> f.getAbbreviation().startsWith("sa")));
+    }
 
+    @Test
+    public void getNonSaFeaturesWithGenomicMutDetsIncludeSangerAlsoReturnsSaFeatures() {
+        List<Feature> withoutSanger = featureRepository.getNonSaFeaturesWithGenomicMutDets(null, null, false);
+        List<Feature> withSanger = featureRepository.getNonSaFeaturesWithGenomicMutDets(null, null, true);
+
+        assertTrue("includeSanger=true returns at least as many features",
+            withSanger.size() >= withoutSanger.size());
+        assertTrue("includeSanger=true surfaces sa features", withSanger.stream()
+            .anyMatch(f -> f.getAbbreviation().startsWith("sa")));
+    }
+
+    /**
+     * Features whose flanking sequence was submitted (attributed to the ZMP data-submission
+     * pub) must never come back as recalculation candidates -- recomputing them would
+     * overwrite submitter data. This has to hold even with includeSanger=true, since
+     * essentially all of them are "sa" features and the name-based exclusion is off then.
+     */
+    @Test
+    public void submittedFlankingSequenceFeaturesAreNeverRecalculationCandidates() {
+        Set<String> submitted = new HashSet<>(HibernateUtil.currentSession().createNativeQuery("""
+            select v.vfseq_data_zdb_id
+            from variant_flanking_sequence v
+            join record_attribution ra on ra.recattrib_data_zdb_id = v.vfseq_zdb_id
+            where ra.recattrib_source_zdb_id = :pub
+            """, String.class)
+            .setParameter("pub", GenomicLocationService.SUBMITTED_FLANK_SEQ_PUB)
+            .list());
+        assertFalse("fixture: some submitted flanking sequences exist", submitted.isEmpty());
+
+        for (boolean includeSanger : new boolean[]{false, true}) {
+            List<Feature> candidates =
+                featureRepository.getNonSaFeaturesWithGenomicMutDets(null, null, includeSanger);
+            assertTrue("no submitted-flank feature returned (includeSanger=" + includeSanger + ")",
+                candidates.stream().noneMatch(f -> submitted.contains(f.getZdbID())));
+        }
     }
 
 
@@ -429,12 +468,14 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     }
 
     @Test
-    public void getAllFeatureLocationsOnGRCz11() {
+    public void getLocationByFeaturePrefersMostCurrentAssembly() {
+        // ZDB-ALT-211102-4 has locations on both GRCz11 and GRCz12tu; the assembly
+        // table ranks GRCz12tu higher (lower a_order), so that's the one returned.
         Feature feature = getFeatureRepository().getFeatureByID("ZDB-ALT-211102-4");
-        FeatureLocation featureLocation = getFeatureRepository().getAllFeatureLocationsOnGRCz11(feature);
+        FeatureLocation featureLocation = getFeatureRepository().getLocationByFeature(feature);
         assertNotNull(featureLocation);
+        assertEquals("GRCz12tu", featureLocation.getAssembly());
         assertEquals("13", featureLocation.getChromosome());
-
     }
 
     @Test

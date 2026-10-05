@@ -1279,12 +1279,10 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
 
     // Assemblies for which we generate/refresh flanking sequences and accept new
     // location entries on the curation form. Other AssemblyEnum values (GRCz10, Zv9)
-    // are read-only legacy options shown in the edit dropdown only.
+    // are read-only legacy options shown in the edit dropdown only, since there's no
+    // FASTA on disk to compute against them -- see GenomicLocationService.supportedAssemblyFor().
     private static AssemblyEnum currentAssemblyEnum(String name) {
-        if (name == null) return null;
-        if (AssemblyEnum.GRCZ12TU.getName().equals(name)) return AssemblyEnum.GRCZ12TU;
-        if (AssemblyEnum.GRCZ11.getName().equals(name)) return AssemblyEnum.GRCZ11;
-        return null;
+        return GenomicLocationService.supportedAssemblyFor(name);
     }
 
     @Override

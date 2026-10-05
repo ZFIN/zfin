@@ -173,7 +173,7 @@ public class OrthoUpdateReportJobTest {
         // inflated JSON rather than the (now opaque) HTML.
         String json = inflateReportData(html);
         assertTrue(json.contains("Inconsistent ZF gene names"));
-        // Diff highlighting reached the output (OrthoNameDiff wraps changes in <u>).
+        // Diff highlighting reached the output (InlineDiff wraps changes in <u>).
         assertTrue(json.contains("<u>"));
         // Gene-symbol columns are present (ZFIN + human + mouse abbreviations) so
         // curators can spot abbreviation-only changes.

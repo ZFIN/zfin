@@ -157,6 +157,62 @@ task loadFlankSeq(type: JavaExec) {
     mainClass = 'org.zfin.datatransfer.flankingsequence.FlankSeqLoadJob'
 }
 
+// Resolves <$TARGETROOT or -Djob.output.basedir>/<relativePath> for a task whose output
+// must land in the deploy workspace rather than SOURCEROOT -- unlike updateOrthologyReport
+// above (which writes under validateData/report_data in SOURCEROOT and relies on its
+// Jenkins job to `mv` the HTML into $TARGETROOT afterward), matching the job.output.basedir
+// convention used by prepareZecoTaxonomyObo / loadGff3NcbiFile / runMeshChebiGenerator.
+// Returns null if neither is set -- deliberately no SOURCEROOT fallback; pass the result to
+// requireOutputDir() in a doFirst block to fail the build loudly instead of silently
+// reporting from the wrong place. Reusable by any task here, not just flanking-sequence ones.
+def resolveOutputDir(String relativePath) {
+    // A plain `def method() {}` doesn't close over script-level `def` variables (like the
+    // `env` map above) the way inline script code or a closure would, so read the env var
+    // directly here rather than via `env.TARGETROOT`.
+    def base = System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT')
+    return base ? "${base}/${relativePath}" : null
+}
+
+// Fails the build if resolvedPath (from resolveOutputDir()) is null, or the directory can't
+// be created or isn't writable. Call from a task's doFirst, not at script-evaluation time, so
+// only tasks that actually need this directory are affected by a missing TARGETROOT.
+def requireOutputDir(String resolvedPath) {
+    if (resolvedPath == null) {
+        throw new GradleException("TARGETROOT is not set and -Djob.output.basedir was not given -- " +
+                "don't know where to write output. Export TARGETROOT or pass -Djob.output.basedir=<dir>.")
+    }
+    File dir = file(resolvedPath)
+    if (!dir.exists() && !dir.mkdirs()) {
+        throw new GradleException("Could not create output directory: ${dir}")
+    }
+    if (!dir.canWrite()) {
+        throw new GradleException("Output directory is not writable: ${dir}")
+    }
+}
+
+// ZFIN-10486: report features whose stored flanking sequence/variation disagrees with a
+// live recompute against their current-assembly location. Read-only. Character-level diff
+// highlighting makes a 1-2bp difference inside a 500bp sequence visible in the HTML report
+// (same InlineDiff/Report infra as updateOrthologyReport above).
+//
+// Run from the project root:
+//   ./gradlew :server_apps:DB_maintenance:checkFlankingSequenceDrift
+//
+// Output:
+//   $TARGETROOT/server_apps/DB_maintenance/report_data/Check-Flanking-Sequence-Drift_w/Check-Flanking-Sequence-Drift_w.html
+def flankSeqReportDir = resolveOutputDir('server_apps/DB_maintenance/report_data')
+task checkFlankingSequenceDrift(type: JavaExec) {
+    dependsOn ":copyClasspathTemplates"
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'org.zfin.datatransfer.flankingsequence.CheckFlankingSequenceDriftTask'
+    doFirst { requireOutputDir(flankSeqReportDir) }
+    args = [
+            "${webDir}/zfin.properties",
+            "${flankSeqReportDir}",
+            "Check-Flanking-Sequence-Drift_w"
+    ]
+}
+
 // Ad-hoc runner for the registered Java SolrIndexers. Use during
 // development to push docs for migrated entities; pass
 // -PsolrEntities=lab,company to limit the run to a subset (default: all

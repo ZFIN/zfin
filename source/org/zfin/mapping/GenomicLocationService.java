@@ -9,6 +9,7 @@ import org.zfin.feature.FeatureGenomicMutationDetail;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.RecordAttribution;
 import org.zfin.publication.repository.HibernatePublicationRepository;
@@ -17,7 +18,12 @@ import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 import static org.zfin.framework.HibernateUtil.currentSession;
 import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
@@ -30,36 +36,81 @@ public class GenomicLocationService {
 	public static final String FASTA_GENOMIC_Z11_URL = "Danio_rerio.fa";
 	public static final String FASTA_GENOMIC_Z12_FILE = "GCF_049306965.1_GRCz12tu_genomic.fna";
 
+	/** Nucleotides of flanking sequence read either side of a feature. */
+	public static final int FLANKING_OFFSET = 500;
+
+	/** The feature types that get a computed flanking sequence at all. */
+	public static final Set<FeatureTypeEnum> FLANKING_SEQUENCE_TYPES =
+		Collections.unmodifiableSet(EnumSet.of(INDEL, DELETION, INSERTION, MNV, POINT_MUTATION));
+
+	/** Attributed to every flanking-sequence row this code computes. */
+	public static final String COMPUTED_FLANK_SEQ_PUB = "ZDB-PUB-191030-9";
+
+	/**
+	 * "Sanger Institute Zebrafish Mutation Project mutant data submission" -- flanking
+	 * sequence rows attributed to this came from the submitter, not from any assembly FASTA
+	 * (they also carry a 50bp offset this code never produces). Recomputing them would
+	 * overwrite submitted data, so batch recalculation skips them regardless of scope flags.
+	 */
+	public static final String SUBMITTED_FLANK_SEQ_PUB = "ZDB-PUB-130425-4";
+
 	private FeatureRepository featureRepository = new HibernateFeatureRepository();
 	private PublicationRepository pubRepo = new HibernatePublicationRepository();
-	private String pathToBlast = FASTA_URL_BASE_DIR;
+	private final Map<AssemblyEnum, IndexedFastaSequenceFile> fastaFilesByAssembly = new HashMap<>();
 
 	public GenomicLocationService() {
 	}
 
-	private String getFastaPath(AssemblyEnum assembly) {
+	private static String getFastaPath(AssemblyEnum assembly) {
 		String pathname = null;
 		switch (assembly) {
-			case GRCZ12TU -> pathname = pathToBlast + FASTA_GENOMIC_Z12_FILE;
-			case GRCZ11 -> pathname = pathToBlast + FASTA_GENOMIC_Z11_URL;
+			case GRCZ12TU -> pathname = FASTA_URL_BASE_DIR + FASTA_GENOMIC_Z12_FILE;
+			case GRCZ11 -> pathname = FASTA_URL_BASE_DIR + FASTA_GENOMIC_Z11_URL;
 		}
 		return pathname;
 	}
 
+	/**
+	 * The assembly (by name, e.g. from FeatureLocation.getAssembly()) this app can
+	 * currently compute sequence against, or null if it's a read-only legacy assembly
+	 * with no FASTA on disk (today: anything but GRCz12tu/GRCz11). Shared by the
+	 * interactive curation save, the flanking-sequence batch job and the drift report so
+	 * they all apply the same "can we actually compute this" rule. Static: it reads no
+	 * instance state, and callers (e.g. FeatureRPCServiceImpl, several times per save)
+	 * shouldn't have to build a service plus its repositories for a string lookup.
+	 */
+	public static AssemblyEnum supportedAssemblyFor(String assemblyName) {
+		if (assemblyName == null) {
+			return null;
+		}
+		for (AssemblyEnum candidate : AssemblyEnum.values()) {
+			if (candidate.getName().equals(assemblyName) && getFastaPath(candidate) != null) {
+				return candidate;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Reused across calls on this instance -- opening an IndexedFastaSequenceFile re-reads
+	 * the .fai index from disk, which is wasteful when a caller (e.g. the flanking-sequence
+	 * batch job) processes many features against the same one or two assemblies.
+	 */
 	private IndexedFastaSequenceFile getIndexedFastaSequenceFile(AssemblyEnum assembly) {
-		return getIndexedFastaSequenceFile(getFastaPath(assembly));
+		return fastaFilesByAssembly.computeIfAbsent(assembly, a -> getIndexedFastaSequenceFile(getFastaPath(a)));
 	}
 
 	/**
 	 * Length of a chromosome in the given assembly, or null when the assembly has no such
-	 * chromosome. Read from the FASTA .fai index, so the sequence itself is never loaded.
+	 * chromosome. Reads the .fai index only, so the sequence itself is never loaded -- and
+	 * goes through the cached IndexedFastaSequenceFile rather than re-parsing the .fai per
+	 * call, which matters because locationWithinChromosome() calls this once per feature.
 	 */
 	public Long getChromosomeLength(AssemblyEnum assembly, String chromosome) {
-		String pathname = getFastaPath(assembly);
-		if (pathname == null || chromosome == null) {
+		if (getFastaPath(assembly) == null || chromosome == null) {
 			return null;
 		}
-		FastaSequenceIndex index = new FastaSequenceIndex(new File(pathname + ".fai"));
+		FastaSequenceIndex index = getIndexedFastaSequenceFile(assembly).getIndex();
 		return index.hasIndexEntry(chromosome) ? index.getIndexEntry(chromosome).getSize() : null;
 	}
 
@@ -97,21 +148,59 @@ public class GenomicLocationService {
 		return getIndexedFastaSequenceFile(assembly).getSubsequenceAt(chromosome, start, end);
 	}
 
+	public record FlankingSequencePair(String fivePrime, String threePrime) {
+	}
+
+	/**
+	 * The five-prime/three-prime flanking sequence for a feature type at a given location,
+	 * read live from the assembly FASTA. Shared by upsertFlankingSequence()'s on-save
+	 * recalculation and by CheckFlankingSequenceDriftTask's read-only comparison, so both
+	 * always agree on what "correct" means.
+	 */
+	public FlankingSequencePair computeFlankingSequences(FeatureTypeEnum type, AssemblyEnum assembly, String chromosome, int locStart, int locEnd, int offset) {
+		IndexedFastaSequenceFile ref = getIndexedFastaSequenceFile(assembly);
+		int leftOffset = Math.max(locStart - offset, 1);
+		String seq1 = "";
+		String seq2 = "";
+		switch (type) {
+			case POINT_MUTATION -> {
+				seq1 = subsequence(ref, chromosome, leftOffset, locStart - 1);
+				seq2 = subsequence(ref, chromosome, locStart + 1, locStart + offset);
+			}
+			case DELETION, MNV, INDEL -> {
+				seq1 = subsequence(ref, chromosome, leftOffset, locStart - 1);
+				seq2 = subsequence(ref, chromosome, locEnd + 1, locEnd + offset);
+			}
+			case INSERTION -> {
+				seq1 = subsequence(ref, chromosome, leftOffset, locStart);
+				seq2 = subsequence(ref, chromosome, locEnd, locEnd + offset);
+			}
+			default -> {
+			}
+		}
+		return new FlankingSequencePair(seq1, seq2);
+	}
+
+	/**
+	 * Recomputes and saves the feature's flanking sequence from the assembly FASTA.
+	 * Returns an UpsertResult saying whether a row was written and whether it was new, so
+	 * batch callers can report what actually changed without re-querying the row themselves.
+	 */
 	// create a new FeatureGenomicMutationDetail object if not exists
 	// remove variant sequence if FeatureGenomicMutationDetail is null or empty (cleanup)
-	public void upsertFlankingSequence(Feature feature, AssemblyEnum assembly) {
+	public UpsertResult upsertFlankingSequence(Feature feature, AssemblyEnum assembly) {
 		FeatureLocation ftrLoc = featureRepository.getAllFeatureLocationsForAssembly(assembly, feature);
 
 		// A stored location running past the end of its chromosome (bad legacy data) cannot be read
 		// from the FASTA at all. Leave whatever sequences exist alone rather than throwing out of
 		// the middle of a save -- the caller reports the out-of-range location as a validation error.
 		if (featureLocationIsNotEmpty(ftrLoc) && !locationWithinChromosome(assembly, ftrLoc)) {
-			return;
+			return UpsertResult.UNCHANGED;
 		}
 
 		// there is a sequence_feature_chromosome_location record / landmark
 		// then
-		if (isIn(feature.getType(), INDEL, DELETION, INSERTION, MNV, POINT_MUTATION)) {
+		if (FLANKING_SEQUENCE_TYPES.contains(feature.getType())) {
 			if (featureLocationIsNotEmpty(ftrLoc)) {
 				String ftrChrom = ftrLoc.getChromosome();
 				int locStart = ftrLoc.getStartLocation();
@@ -122,40 +211,13 @@ public class GenomicLocationService {
 					insertFeatureGenomeRecord(feature, refSeq);
 				}
 //                checkForInconsistentBetweenFgmdAndReferenceFA(feature, ref, ftrChrom, locStart, locEnd);
-				String seq1 = "";
-				String seq2 = "";
-				// number of nucleotides upstream or downstream
-				int offset = 500;
-				IndexedFastaSequenceFile ref = getIndexedFastaSequenceFile(assembly);
-				int leftOffset = locStart - offset;
-				if (leftOffset < 1) {
-					leftOffset = 1;
+				int offset = FLANKING_OFFSET;
+				if (isIn(feature.getType(), POINT_MUTATION, INDEL)
+						&& StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
+					updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
 				}
-				switch (feature.getType()) {
-					case POINT_MUTATION -> {
-						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
-							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
-						}
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
-						seq2 = subsequence(ref, ftrChrom, locStart + 1, locStart + offset);
-					}
-					case DELETION, MNV -> {
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
-						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
-					}
-					case INSERTION -> {
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart);
-						seq2 = subsequence(ref, ftrChrom, locEnd, locEnd + offset);
-					}
-					case INDEL -> {
-						if (StringUtils.isEmpty(feature.getFeatureGenomicMutationDetail().getFgmdSeqRef())) {
-							updateFeatureGenomeRecord(feature.getFeatureGenomicMutationDetail(), refSeq);
-						}
-						seq1 = subsequence(ref, ftrChrom, leftOffset, locStart - 1);
-						seq2 = subsequence(ref, ftrChrom, locEnd + 1, locEnd + offset);
-					}
-				}
-				insertOrUpdateFlankSeq(feature, seq1, seq2, offset);
+				FlankingSequencePair flankingSequencePair = computeFlankingSequences(feature.getType(), assembly, ftrChrom, locStart, locEnd, offset);
+				return insertOrUpdateFlankSeq(feature, flankingSequencePair.fivePrime(), flankingSequencePair.threePrime(), offset);
 			} else {
 				// Location is empty/deleted - clean up the flanking-sequence row.
 				// We deliberately do NOT touch feature_genomic_mutation_detail here:
@@ -168,40 +230,63 @@ public class GenomicLocationService {
 				VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
 				if (vrSeq != null) {
 					HibernateUtil.currentSession().delete(vrSeq);
+					return UpsertResult.DELETED;
 				}
 			}
 		}
+		return UpsertResult.UNCHANGED;
 	}
 
-	private void insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
+	/**
+	 * The "ref/var" notation stored in vfseq_variation and shown in red on the feature page,
+	 * or null when it would carry no sequence at all.
+	 *
+	 * The structural characters differ by type -- a deletion is "ACGT/-" (no variant sequence
+	 * by definition), an insertion "-/ACGT" (no reference) -- so emptiness of one side is
+	 * normal and only a notation with no bases in it at all is meaningless. That happens for a
+	 * point mutation or MNV whose mutation detail has neither sequence: the result is a bare
+	 * "/", which would render as a stray slash between the flanks. Returning null leaves
+	 * whatever is stored alone, the same way this code has always handled an INDEL with no
+	 * reference sequence. Features in that state are a separate data problem, already reported
+	 * by Check-Feature-Mutation-Detail-Missing-Sequences_w.
+	 */
+	public static String variationNotation(FeatureTypeEnum type, String seqRef, String seqVar) {
+		String ref = seqRef == null ? "" : seqRef;
+		String var = seqVar == null ? "" : seqVar;
+		String notation = switch (type) {
+			case DELETION -> ref + "/-";
+			case INSERTION -> "-/" + var;
+			case INDEL, POINT_MUTATION, MNV -> ref + "/" + var;
+			default -> null;
+		};
+		if (notation == null || notation.replace("/", "").replace("-", "").isEmpty()) {
+			return null;
+		}
+		return notation;
+	}
+
+	/** What upsertFlankingSequence() did, so batch callers can report it without re-querying. */
+	public enum UpsertResult {
+		CREATED, UPDATED, UNCHANGED, DELETED;
+
+		public boolean wroteAnything() {
+			return this != UNCHANGED;
+		}
+	}
+
+	private UpsertResult insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
 		VariantSequence vrSeq = featureRepository.getFeatureVariant(ftr);
 		boolean newSequence = vrSeq == null;
 		if (newSequence) {
 			vrSeq = new VariantSequence();
 		}
 
-		String vfsTargetSequence = null;
-		String vfsVariation = null;
-		switch (ftr.getType()) {
-			case DELETION -> {
-				vfsTargetSequence = seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-" + "]" + seq2;
-				vfsVariation = ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + "-";
-			}
-			case INDEL -> {
-				if (ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef().length() != 0) {
-					vfsTargetSequence = seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2;
-					vfsVariation = ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar();
-				}
-			}
-			case INSERTION -> {
-				vfsTargetSequence = seq1 + "[" + "-" + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2;
-				vfsVariation = "-" + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar();
-			}
-			case POINT_MUTATION, MNV -> {
-				vfsTargetSequence = seq1 + "[" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar() + "]" + seq2;
-				vfsVariation = ftr.getFeatureGenomicMutationDetail().getFgmdSeqRef() + "/" + ftr.getFeatureGenomicMutationDetail().getFgmdSeqVar();
-			}
-		}
+		// Null when the mutation detail carries no sequence at all; hasFlankSeqChanged() then
+		// leaves both fields alone rather than storing a meaningless "[/]"/"/" (the INDEL
+		// branch has always worked this way -- variationNotation() applies it to every type).
+		FeatureGenomicMutationDetail detail = ftr.getFeatureGenomicMutationDetail();
+		String vfsVariation = variationNotation(ftr.getType(), detail.getFgmdSeqRef(), detail.getFgmdSeqVar());
+		String vfsTargetSequence = vfsVariation == null ? null : seq1 + "[" + vfsVariation + "]" + seq2;
 		boolean updateMade = hasFlankSeqChanged(vrSeq,
 			ftr.getZdbID(),
 			seq1,
@@ -226,20 +311,15 @@ public class GenomicLocationService {
 		}
 		if (newSequence) {
 			PublicationAttribution pa = new PublicationAttribution();
-			pa.setPublication(pubRepo.getPublication("ZDB-PUB-191030-9"));
+			pa.setPublication(pubRepo.getPublication(COMPUTED_FLANK_SEQ_PUB));
 			pa.setDataZdbID(vrSeq.getZdbID());
 			pa.setSourceType(RecordAttribution.SourceType.STANDARD);
 			currentSession().save(pa);
 		}
-/*
-        if (changed) {
-            if (newSequence) {
-                this.updated.add(List.of("NEW: " + ftr.getZdbID(), seq1, seq2));
-            } else {
-                this.updated.add(List.of("UPDATED: " + ftr.getZdbID(), seq1, seq2));
-            }
-        }
-*/
+		if (!changed) {
+			return UpsertResult.UNCHANGED;
+		}
+		return newSequence ? UpsertResult.CREATED : UpsertResult.UPDATED;
 	}
 
 	private void updateFeatureGenomeRecord(FeatureGenomicMutationDetail fgmd, String seqRef) {

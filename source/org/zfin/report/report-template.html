@@ -202,11 +202,12 @@
             min-height: 24px;
         }
         .report-table-header h4 { margin: 0; }
-        /* ChildrenList reuses this header so its Items table gets the same CSV
-           button; its heading is an h3 and carries a bottom margin on its own. */
+        /* ChildrenList reuses this header so its Items table gets the same download
+           buttons; its heading is an h3 and carries a bottom margin on its own. */
         .report-table-header h3 { margin: 0; }
         .table-description { color: #666; font-size: 13px; margin: 0 0 6px; }
-        .csv-download-btn {
+        .download-buttons { display: inline-flex; gap: 2px; }
+        .download-btn {
             background: none;
             border: none;
             cursor: pointer;
@@ -215,9 +216,13 @@
             border-radius: 3px;
             display: inline-flex;
             align-items: center;
+            gap: 3px;
+            font: inherit;
+            font-size: 11px;
+            letter-spacing: 0.03em;
         }
-        .csv-download-btn:hover { background: #eef4f4; color: #035361; }
-        .csv-download-btn svg { display: block; }
+        .download-btn:hover { background: #eef4f4; color: #035361; }
+        .download-btn svg { display: block; }
         .table-search-row {
             display: flex;
             align-items: center;
@@ -225,6 +230,27 @@
             margin: 4px 0 8px;
         }
         .filter-info { color: #678; font-size: 12px; }
+
+        .render-limit-note {
+            color: #678;
+            font-size: 12px;
+            margin: 8px 0 2px;
+            padding: 6px 10px;
+            background: #f6fafa;
+            border: 1px solid #ddeded;
+            border-radius: 3px;
+        }
+        .show-more-btn {
+            background: #fff;
+            border: 1px solid #99bcbc;
+            color: #345;
+            border-radius: 3px;
+            padding: 2px 10px;
+            margin: 0 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .show-more-btn:hover { background: #eef4f4; }
 
         .data-table {
             border-collapse: collapse;
@@ -237,6 +263,13 @@
             padding: 5px 10px;
             border: 1px solid #ddd;
             vertical-align: top;
+            /* Bound any single cell (a long GO term name, a raw unparsed message with no
+               natural break points) so one wide value can't drag the whole table -- and with
+               it #right-content's min-width: min-content -- past the viewport. Wraps instead
+               of truncating: unlike the tree-row ellipsis, these values are the actual data a
+               curator needs to read, not a label. */
+            max-width: 480px;
+            overflow-wrap: anywhere;
         }
         .data-table th { background: #c9e0e0; }
         .data-table tr:nth-child(even) { background: #f6fafa; }
@@ -402,11 +435,82 @@
         for (const row of rows) {
             lines.push(columns.map(c => csvEscape(row[c.key])).join(','));
         }
-        const blob = new Blob([lines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+        downloadBlob(lines.join('\n'), 'text/csv;charset=utf-8;', filename || 'table.csv');
+    }
+
+    function escapeHtml(v) {
+        return String(v == null ? '' : v)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formulaGuard(v) {
+        const s = (v == null) ? '' : String(v);
+        return /^[=+\-@\t\r]/.test(s) ? "'" + s : s;
+    }
+
+    // Same type handling as formatField(), but producing an HTML string rather than a
+    // vnode, for the .xls export below.
+    function formatFieldForExport(value, fieldDef) {
+        if (value === null || value === undefined || value === '') return '';
+        const type = (fieldDef && fieldDef.type) || 'text';
+        switch (type) {
+            case 'link': {
+                const tpl = (fieldDef && fieldDef.hrefTemplate) || '#';
+                const href = tpl.replace('{value}', encodeURIComponent(String(value)));
+                return '<a href="' + escapeHtml(href) + '">' + escapeHtml(value) + '</a>';
+            }
+            case 'date':
+                return escapeHtml(new Date(value).toLocaleString());
+            // Unformatted: toLocaleString()'s thousands separators would be noise in a
+            // spreadsheet. The sheet is text-formatted throughout (see mso-number-format
+            // below), deliberately -- Excel otherwise reinterprets values like a coordinate
+            // range "15:2028870-2028873" as a time, and mangles long identifiers.
+            case 'number':
+                return escapeHtml(Number(value));
+            case 'boolean':
+                return value ? '\u2713' : '\u2717';
+            // The point of the .xls export: markup (e.g. InlineDiff's <u>) is passed through
+            // so Excel renders the highlighting instead of showing tags.
+            case 'html':
+                return String(value);
+            default:
+                return escapeHtml(formulaGuard(value));
+        }
+    }
+
+    /**
+     * Excel opens an HTML document containing a <table> and renders it as a worksheet, so a
+     * .xls file whose body is HTML carries formatting CSV can't -- notably the per-character
+     * underline InlineDiff uses to mark differences. Excel builds rich-text runs from inline
+     * markup and a run carries its own font attributes, so the changed characters come
+     * through underlined and red; fill is a cell-level property there, which is why the
+     * browser's yellow highlight has no spreadsheet equivalent.
+     */
+    function downloadXls(columns, rows, filename, fieldDefs) {
+        const head = columns.map(c => '<th>' + escapeHtml(c.title) + '</th>').join('');
+        const body = rows.map(row =>
+            '<tr>' + columns.map(col =>
+                '<td>' + formatFieldForExport(row[col.key], col.fieldRef ? fieldDefs[col.fieldRef] : null) + '</td>'
+            ).join('') + '</tr>'
+        ).join('');
+        const doc = '<html><head><meta charset="utf-8">'
+            + '<style>table{border-collapse:collapse}'
+            + 'th,td{border:1px solid #ccc;padding:3px;vertical-align:top;mso-number-format:"\\@"}'
+            + 'th{background:#eef4f4;font-weight:bold}'
+            + 'u{text-decoration:underline;color:#c00000;font-weight:bold}</style>'
+            + '</head><body><table>'
+            + '<thead><tr>' + head + '</tr></thead><tbody>' + body + '</tbody></table></body></html>';
+        downloadBlob(doc, 'application/vnd.ms-excel;charset=utf-8;', filename);
+    }
+
+    // A BOM so Excel reads either download as UTF-8 rather than mojibake.
+    function downloadBlob(content, mimeType, filename) {
+        const blob = new Blob(['\ufeff' + content], { type: mimeType });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = filename || 'table.csv';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -440,9 +544,17 @@
     }
 
     const TABLE_SEARCH_THRESHOLD = 10;
+    // A producer's `rows` array can legitimately run into the hundreds of thousands (a raw
+    // per-annotation dump) -- holding all of them in memory is cheap (the JSON is already
+    // decompressed to get here), but PAINTING that many <tr>s is not, and is what actually makes
+    // the tab hang. Rendering is capped independently of the data itself: filtering/searching and
+    // the CSV download both still operate over every row, always -- only the DOM is bounded.
+    const INITIAL_RENDER_LIMIT = 200;
+    const RENDER_STEP = 500;
 
     function ReportTable({ table, definitions }) {
         const [search, setSearch] = useState('');
+        const [renderLimit, setRenderLimit] = useState(INITIAL_RENDER_LIMIT);
 
         let columns = table.columns;
         let description = table.description;
@@ -454,9 +566,9 @@
         }
         if (!columns || !table.rows || table.rows.length === 0) return null;
 
-        const filename = ((table.title || description || 'table')
+        const baseName = (table.title || description || 'table')
             .replace(/[^a-z0-9]+/gi, '_')
-            .toLowerCase()) + '.csv';
+            .toLowerCase();
 
         const heading = table.title || description || null;
         const showDescription = description && description !== heading;
@@ -471,12 +583,29 @@
             : table.rows;
         const showSearch = table.rows.length > TABLE_SEARCH_THRESHOLD;
 
+        // Narrowing the filter should show all of the (now smaller) match set again rather than
+        // staying stuck at whatever limit an earlier, larger set had reached.
+        useEffect(() => { setRenderLimit(INITIAL_RENDER_LIMIT); }, [q]);
+
+        const visibleRows = filteredRows.slice(0, renderLimit);
+        const hiddenCount = filteredRows.length - visibleRows.length;
+
         return html`
             <div className="report-table">
                 <div className="report-table-header">
                     ${heading ? html`<h4>${heading}</h4>` : html`<span></span>`}
-                    <button className="csv-download-btn" title="Download as CSV"
-                            onClick=${() => downloadCsv(columns, table.rows, filename)}>${downloadIcon}</button>
+                    <span className="download-buttons">
+                        <button className="download-btn"
+                                title=${'Download all ' + table.rows.length.toLocaleString() + ' rows as CSV'}
+                                onClick=${() => downloadCsv(columns, table.rows, baseName + '.csv')}>
+                            ${downloadIcon}CSV
+                        </button>
+                        <button className="download-btn"
+                                title=${'Download all ' + table.rows.length.toLocaleString() + ' rows as Excel (keeps diff highlighting)'}
+                                onClick=${() => downloadXls(columns, table.rows, baseName + '.xls', fieldDefs)}>
+                            ${downloadIcon}XLS
+                        </button>
+                    </span>
                 </div>
                 ${showDescription && html`<p className="table-description">${description}</p>`}
                 ${showSearch && html`
@@ -493,7 +622,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filteredRows.map((row, idx) => html`
+                        ${visibleRows.map((row, idx) => html`
                             <tr key=${idx}>
                                 ${columns.map(col => html`
                                     <td>${formatField(row[col.key], col.fieldRef ? fieldDefs[col.fieldRef] : null)}</td>
@@ -502,6 +631,16 @@
                         `)}
                     </tbody>
                 </table>
+                ${hiddenCount > 0 && html`
+                    <div className="render-limit-note">
+                        Showing ${visibleRows.length.toLocaleString()} of ${filteredRows.length.toLocaleString()} rows.
+                        <button className="show-more-btn"
+                                onClick=${() => setRenderLimit(renderLimit + RENDER_STEP)}>
+                            Show ${Math.min(RENDER_STEP, hiddenCount).toLocaleString()} more
+                        </button>
+                        or use the CSV download above to browse the full table.
+                    </div>
+                `}
             </div>
         `;
     }
@@ -569,6 +708,7 @@
 
     function ChildrenList({ node, definitions, onSelect }) {
         const [search, setSearch] = useState('');
+        const [renderLimit, setRenderLimit] = useState(INITIAL_RENDER_LIMIT);
         const children = sortByCategory(node.children || [],
             definitions && definitions.categories);
         if (children.length === 0) return null;
@@ -594,6 +734,9 @@
 
         const q = search.toLowerCase();
         const filtered = q ? children.filter(c => nodeText(c).toLowerCase().includes(q)) : children;
+        useEffect(() => { setRenderLimit(INITIAL_RENDER_LIMIT); }, [q]);
+        const visible = filtered.slice(0, renderLimit);
+        const hiddenCount = filtered.length - visible.length;
 
         const fieldDefs = (definitions && definitions.fields) || {};
         const tagDefs = (definitions && definitions.tags) || {};
@@ -617,16 +760,26 @@
             }
             return row;
         });
-        const csvFilename = ((node.title || 'items')
+        const csvBaseName = (node.title || 'items')
             .replace(/[^a-z0-9]+/gi, '_')
-            .toLowerCase()) + '.csv';
+            .toLowerCase();
 
         return html`
             <div className="children-list">
                 <div className="report-table-header">
                     <h3>Items (${filtered.length.toLocaleString()})</h3>
-                    <button className="csv-download-btn" title="Download as CSV"
-                            onClick=${() => downloadCsv(csvColumns, csvRows, csvFilename)}>${downloadIcon}</button>
+                    <span className="download-buttons">
+                        <button className="download-btn"
+                                title=${'Download all ' + csvRows.length.toLocaleString() + ' rows as CSV'}
+                                onClick=${() => downloadCsv(csvColumns, csvRows, csvBaseName + '.csv')}>
+                            ${downloadIcon}CSV
+                        </button>
+                        <button className="download-btn"
+                                title=${'Download all ' + csvRows.length.toLocaleString() + ' rows as Excel'}
+                                onClick=${() => downloadXls(csvColumns, csvRows, csvBaseName + '.xls', {})}>
+                            ${downloadIcon}XLS
+                        </button>
+                    </span>
                 </div>
                 <input type="text" className="search" placeholder="Search..."
                        onInput=${(e) => setSearch(e.target.value)} />
@@ -643,7 +796,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        ${filtered.map(child => {
+                        ${visible.map(child => {
                             const cat = child.categoryRef && catDefs[child.categoryRef];
                             const cnt = displayCount(child);
                             return html`
@@ -668,6 +821,16 @@
                         })}
                     </tbody>
                 </table>
+                ${hiddenCount > 0 && html`
+                    <div className="render-limit-note">
+                        Showing ${visible.length.toLocaleString()} of ${filtered.length.toLocaleString()} items.
+                        <button className="show-more-btn"
+                                onClick=${() => setRenderLimit(renderLimit + RENDER_STEP)}>
+                            Show ${Math.min(RENDER_STEP, hiddenCount).toLocaleString()} more
+                        </button>
+                        or use the CSV download above.
+                    </div>
+                `}
             </div>
         `;
     }

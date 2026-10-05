@@ -74,6 +74,8 @@ public interface FeatureRepository {
 
     List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureZdbID);
 
+    List<Feature> getNonSaFeaturesWithGenomicMutDets(Date startDate, String featureZdbID, boolean includeSanger);
+
     List<Feature> getDeletionFeatures();
 
     List<Feature> getDeletionFeatures(String featureID);
@@ -114,7 +116,6 @@ public interface FeatureRepository {
 
     String getAALink(Feature feature);
 
-    FeatureLocation getAllFeatureLocationsOnGRCz11(Feature feature);
     FeatureLocation getAllFeatureLocationsForAssembly(AssemblyEnum assembly, Feature feature);
 
     List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails();

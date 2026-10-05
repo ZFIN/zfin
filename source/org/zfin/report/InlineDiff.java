@@ -1,4 +1,4 @@
-package org.zfin.orthology.jobs;
+package org.zfin.report;
 
 import com.github.difflib.text.DiffRowGenerator;
 
@@ -12,13 +12,13 @@ import java.util.List;
  * configured instance because reconfiguration is non-trivial and the generator
  * is documented as thread-safe-for-reuse when used in inline mode.
  *
- * <p>Input is fed in raw — the underlying query filters to {@code mrkr_type
- * = 'GENE'} and that data has no {@code <}, {@code >}, or {@code &} anywhere
- * (verified against the DB), so the only markup that ever reaches the output
- * is the {@code <u>...</u>} pair we add. If the producer ever widens the
- * query to types where HTML metacharacters can occur (transgenes have
- * {@code >} in SNV notation, e.g. {@code Tg(...T>A...)}), an escape step
- * needs to come back.
+ * <p>Input is fed in raw — callers are responsible for confirming their data
+ * has no {@code <}, {@code >}, or {@code &} that would be misinterpreted as
+ * markup once rendered, since the only escaping this class does is adding the
+ * {@code <u>...</u>} pair itself. (Originally written for ortholog gene names,
+ * which are verified clean; DNA sequence data is similarly clean by
+ * construction.) If a caller's data can contain HTML metacharacters, escape it
+ * before calling in.
  *
  * <p>Why {@code <u>}: Excel's HTML importer honours per-character underline,
  * but not per-character background colour (Excel cell background is whole-cell
@@ -26,7 +26,7 @@ import java.util.List;
  * yellow }} so the browser also shows the diffs as yellow-highlighted; the
  * underline is the fallback for Excel export.
  */
-final class OrthoNameDiff {
+public final class InlineDiff {
 
     /**
      * Treat each character as a token so single-character changes (a hyphen, a
@@ -42,16 +42,34 @@ final class OrthoNameDiff {
         .newTag(open -> open ? "<u>" : "</u>")
         .build();
 
-    private OrthoNameDiff() {}
+    private InlineDiff() {}
+
+    /**
+     * Index of the first position where the two strings differ, or -1 if they're equal.
+     * Useful for windowing a long value down to the interesting part before diffing it for
+     * display -- a character-level diff of two long, wholly-different strings marks up almost
+     * every character, which is both unreadable and very large.
+     */
+    public static int firstDifference(String a, String b) {
+        String left = nullToEmpty(a);
+        String right = nullToEmpty(b);
+        int shared = Math.min(left.length(), right.length());
+        for (int i = 0; i < shared; i++) {
+            if (left.charAt(i) != right.charAt(i)) {
+                return i;
+            }
+        }
+        return left.length() == right.length() ? -1 : shared;
+    }
 
     /** Returns the "old" side of the diff with deletions marked. */
-    static String highlightOld(String oldText, String newText) {
+    public static String highlightOld(String oldText, String newText) {
         return GENERATOR.generateDiffRows(List.of(nullToEmpty(oldText)), List.of(nullToEmpty(newText)))
             .get(0).getOldLine();
     }
 
     /** Returns the "new" side of the diff with insertions marked. */
-    static String highlightNew(String oldText, String newText) {
+    public static String highlightNew(String oldText, String newText) {
         return GENERATOR.generateDiffRows(List.of(nullToEmpty(oldText)), List.of(nullToEmpty(newText)))
             .get(0).getNewLine();
     }
