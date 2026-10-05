@@ -1188,6 +1188,14 @@ dependencies {
     implementation "com.googlecode.owasp-java-html-sanitizer:owasp-java-html-sanitizer:20200713.1"
     implementation "com.mchange:c3p0:0.9.5.5"
     implementation "com.mchange:mchange-commons-java:0.2.15"
+    // ZFIN-10523. PMC's cloud service ships figures as .webp, and the JDK has no
+    // webp ImageIO reader -- `ImageIO.getImageReadersByFormatName("webp")` is empty
+    // on the Java 21 we run. Without a decoder a downloaded .webp stores fine (it is
+    // web-safe, so ImageService does not re-encode it) but every thumbnail and medium
+    // image fails to generate, leaving rows pointing at _thumb.webp files that were
+    // never written. This is a reader-only plugin; it registers itself through the
+    // ImageIO service loader, so nothing has to call it directly.
+    implementation "com.twelvemonkeys.imageio:imageio-webp:3.12.0"
     implementation "com.sun.activation:jakarta.activation:2.0.1"
     implementation "com.sun.istack:istack-commons-runtime:3.0.7"
     implementation "com.sun.mail:jakarta.mail:2.0.1"

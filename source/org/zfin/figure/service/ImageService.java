@@ -51,6 +51,14 @@ public class ImageService {
     // re-encoded as JPEG on the way in: Chrome and Firefox draw nothing for a .tif,
     // however valid the file is, so an unconverted upload is an invisible figure.
     private final static Set<String> WEB_SAFE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif", "webp");
+    // Formats ImageIO can WRITE, which is not the same question as what a browser can
+    // render, and webp is where the two part company. Browsers draw webp happily, so an
+    // uploaded or downloaded .webp is kept verbatim -- but the JDK has no webp writer,
+    // and the TwelveMonkeys plugin added for ZFIN-10523 is a reader only. Writing a
+    // derivative named .webp therefore produced a file containing JPEG bytes: it
+    // rendered, because browsers sniff content, while every filename in the database
+    // said something untrue. Derivatives of a webp source are named .jpg instead.
+    private final static Set<String> WRITABLE_EXTENSIONS = Set.of("jpg", "jpeg", "png", "gif");
     private final static String CONVERTED_EXTENSION = "jpg";
     // ImageIO's ~0.75 default is visibly lossy on confocal fluorescence detail.
     private final static float JPEG_QUALITY = 0.9f;
@@ -132,8 +140,11 @@ public class ImageService {
         File destinationDirectory = getDestinationParentDirectory(publicationZdbId, false);
         String destinationBasename = destinationDirectory + "/" + image.getZdbID();
         String destinationFilename = destinationBasename + FilenameUtils.EXTENSION_SEPARATOR + extension;
-        String thumbnailFilename = destinationBasename + THUMB + FilenameUtils.EXTENSION_SEPARATOR + extension;
-        String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + extension;
+        // Derivatives take the extension of the format we can actually write, which
+        // differs from the original's only for webp -- see derivativeExtension().
+        String derivedExtension = derivativeExtension(destinationFilename);
+        String thumbnailFilename = destinationBasename + THUMB + FilenameUtils.EXTENSION_SEPARATOR + derivedExtension;
+        String mediumFilename = destinationBasename + MEDIUM + FilenameUtils.EXTENSION_SEPARATOR + derivedExtension;
         File destinationFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), destinationFilename);
         File thumbnailFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), thumbnailFilename);
         File mediumFile = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString(), mediumFilename);
@@ -289,6 +300,23 @@ public class ImageService {
     private static String outputExtension(String sourceExtension) {
         String normalized = sourceExtension == null ? "" : sourceExtension.toLowerCase();
         return WEB_SAFE_EXTENSIONS.contains(normalized) ? sourceExtension : CONVERTED_EXTENSION;
+    }
+
+    /**
+     * The extension the generated _thumb / _medium files take, given the extension of
+     * the file they are generated FROM. Usually the same -- a .png keeps .png -- but
+     * not for a format we can read and serve yet cannot write, which today means webp:
+     * {@link #writeImage} falls through to JPEG for anything it has no writer for, so
+     * naming the result .webp would describe it incorrectly.
+     *
+     * <p>Deliberately separate from {@link #outputExtension}, which governs the stored
+     * original. A webp original stays webp -- browsers render it and re-encoding would
+     * lose quality for nothing -- while its derivatives become .jpg.
+     */
+    public static String derivativeExtension(String storedFilename) {
+        String extension = FilenameUtils.getExtension(storedFilename);
+        String normalized = extension == null ? "" : extension.toLowerCase();
+        return WRITABLE_EXTENSIONS.contains(normalized) ? extension : CONVERTED_EXTENSION;
     }
 
     /**
