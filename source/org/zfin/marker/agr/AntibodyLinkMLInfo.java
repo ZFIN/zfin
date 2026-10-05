@@ -9,6 +9,8 @@ import org.alliancegenome.curation_api.model.ingest.dto.CrossReferenceDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.DataProviderDTO;
 import org.alliancegenome.curation_api.model.ingest.dto.IngestDTO;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.zfin.Species;
 import org.zfin.antibody.Antibody;
 import org.zfin.infrastructure.ActiveData;
 import org.zfin.infrastructure.PublicationAttribution;
@@ -20,7 +22,9 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getAntibodyRepository;
@@ -45,14 +49,16 @@ import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
  * <p><b>Those five are validated against Alliance vocabularies</b> --
  * antibody_clonality, antibody_host_taxon, antibody_antigen_taxon,
  * antibody_heavy_chain_isotype and antibody_light_chain_isotype, per
- * AntibodyDTOValidator. We emit our stored values verbatim ("polyclonal",
- * "Rabbit", "Human") because those are the natural candidates, but no mapping
- * table has been agreed with the Alliance yet. Run the file through
- * validateAllianceFiles.sh with submit=false first: term mismatches surface
- * there per record, and that report is what a mapping table should be built
- * from rather than guesswork here.
+ * AntibodyDTOValidator, which matches on the exact term name. Clonality and the
+ * isotypes use the same names we store. The taxon terms are named by NCBITaxon
+ * curie ("NCBITaxon:10090"; "mouse (Mus musculus)" is only the definition), so
+ * our organism common names are translated through organism_taxid.
  */
 public class AntibodyLinkMLInfo extends LinkMLInfo {
+
+    // ZFIN organism common name (what atb_host_organism / atb_immun_organism
+    // hold) -> NCBITaxon curie, which is the Alliance taxon term name.
+    private final Map<String, String> taxonCurieByCommonName = new HashMap<>();
 
     public AntibodyLinkMLInfo(int number) {
         super(number);
@@ -81,6 +87,10 @@ public class AntibodyLinkMLInfo extends LinkMLInfo {
     }
 
     public List<AntibodyDTO> getAllAntibodyInfo() {
+        List<Species> species = new ArrayList<>(getAntibodyRepository().getHostSpeciesList());
+        species.addAll(getAntibodyRepository().getImmunogenSpeciesList());
+        species.forEach(s -> taxonCurieByCommonName.put(s.getCommonName(), "NCBITaxon:" + s.getTaxonomyID()));
+
         List<Antibody> allAntibodies = getAntibodyRepository().getAllAntibodies();
         System.out.println("Antibodies exported: " + allAntibodies.size());
 
@@ -102,9 +112,12 @@ public class AntibodyLinkMLInfo extends LinkMLInfo {
         GregorianCalendar date = ActiveData.getDateFromId(antibody.getZdbID());
         dto.setDateCreated(format(date));
 
-        dto.setClonalityName(antibody.getClonalType());
-        dto.setHostTaxonTermName(antibody.getHostSpecies());
-        dto.setAntigenTaxonTermName(antibody.getImmunogenSpecies());
+        // clonality is required by the Alliance; 287 antibodies have no atb_type,
+        // and antibody_clonality carries "not_specified" for exactly that case.
+        dto.setClonalityName(StringUtils.isNotEmpty(antibody.getClonalType())
+            ? antibody.getClonalType() : "not_specified");
+        dto.setHostTaxonTermName(taxonCurie(antibody.getHostSpecies()));
+        dto.setAntigenTaxonTermName(taxonCurie(antibody.getImmunogenSpecies()));
         dto.setHeavyChainIsotypeName(antibody.getHeavyChainIsotype());
         dto.setLightChainIsotypeName(antibody.getLightChainIsotype());
 
@@ -145,6 +158,19 @@ public class AntibodyLinkMLInfo extends LinkMLInfo {
         }
 
         return dto;
+    }
+
+    private String taxonCurie(String commonName) {
+        if (StringUtils.isEmpty(commonName)) {
+            return null;
+        }
+        String curie = taxonCurieByCommonName.get(commonName);
+        // Both columns are FKs to organism, so a miss means the host/immunogen
+        // flags on organism drifted; fail rather than emit an invalid term.
+        if (curie == null) {
+            throw new IllegalStateException("No taxon id for organism: " + commonName);
+        }
+        return curie;
     }
 
     /**
