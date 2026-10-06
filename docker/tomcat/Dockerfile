@@ -13,6 +13,10 @@ RUN addgroup --gid 1000 zfin && \
 RUN mkdir -p /research/zunloads/download-files
 RUN mkdir -p /opt/zfin/loadUp
 
+# Shared volumes with compile: declare them so fresh volumes seed gradle-owned, not root.
+RUN mkdir -p /opt/zfin/catalina_bases/zfin.org /opt/apache/apache-tomcat/conf /opt/zfin/www_homes/zfin.org \
+    && chown 1000:1000 /opt/zfin/catalina_bases/zfin.org /opt/apache/apache-tomcat/conf /opt/zfin/www_homes/zfin.org
+
 RUN groupadd -g 1476 zfishweb
 RUN usermod  -aG zfishweb zfishweb
 RUN groupadd -g 1477 zfloadup
