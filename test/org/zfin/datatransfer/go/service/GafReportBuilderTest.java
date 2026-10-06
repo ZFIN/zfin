@@ -127,6 +127,137 @@ public class GafReportBuilderTest {
     }
 
     @Test
+    public void largeCategoryIsNotCappedInEitherErrorTable() {
+        // "Duplicate annotation entry" can run into the hundreds of thousands of rows in a real
+        // run (the file's own known ~53% duplication). Earlier this data was capped in Java at
+        // 25 rows/category -- but that meant the CSV download (which exports table.rows, not
+        // what's currently rendered) could only ever produce those same 25 rows, never the rest,
+        // even though the UI text said "showing 25 of 51,457". Capping how much gets PAINTED is
+        // report-template.html's job (INITIAL_RENDER_LIMIT/"show more"); the data itself -- and
+        // so the CSV -- must carry every distinct row.
+        GafJobData data = new GafJobData();
+        int total = 30;
+        for (int i = 0; i < total; i++) {
+            data.addError(new GafValidationError(
+                "A duplicate entry is being added:\n" +
+                "MarkerGoTermEvidence{zdbID='ZDB-MRKRGOEV-" + i + "', marker='gene-" + i + "'," +
+                " evidenceCode='IEA', source='ZDB-PUB-1', createdBy='InterPro'} from:\n" +
+                "GafEntry{entryId='ZDB-GENE-" + i + "', goid='GO:0000001'}"));
+        }
+
+        GafErrorSummary summary = new GafErrorSummary();
+        summary.processErrors(data.getErrors());
+
+        Report report = new GafReportBuilder().build("test", "ZFIN",
+            Collections.emptyList(), data, summary);
+        ReportNode errors = findChild(report.getRoot(), "cat-errors");
+        assertNotNull(errors);
+
+        ReportTable counts = findTable(errors.getTables(), "Error counts by category");
+        assertNotNull(counts);
+        Map<String, Object> countRow = counts.getRows().get(0);
+        assertEquals("Duplicate annotation entry", countRow.get("label"));
+        assertEquals(total, countRow.get("count"));
+
+        // The flat "All errors" table carries all 30 -- each of these is distinct (different
+        // gene/zdbID), so distinct rows == raw errors here and the description says nothing
+        // about collapsing (there's nothing to collapse in this particular dataset).
+        ReportTable allErrors = findTable(errors.getTables(), "All errors (" + total + ")");
+        assertNotNull(allErrors);
+        assertEquals(30, allErrors.getRows().size());
+        assertEquals(1, allErrors.getRows().get(0).get("count"));
+
+        // The per-category drill-down carries all 30 too.
+        ReportNode category = findChild(errors, "err-duplicate-annotation-entry");
+        assertNotNull("Drill-down node for the category should exist", category);
+        ReportTable matches = category.getTables().get(0);
+        assertEquals(30, matches.getRows().size());
+        assertEquals("Matching errors", matches.getTitle());
+    }
+
+    @Test
+    public void identicalRowsCollapseWithACountInsteadOfRepeating() {
+        // Same visible (category/createdBy/entryId/qualifier/goTerm/goTermID/evidence/source/
+        // message) three times over -- differing only in zdbID, which isn't a rendered column.
+        // This is exactly the file's own known ~53% row duplication (README finding 8): without
+        // grouping, a curator sees the same line three times with nothing to explain why there
+        // are three errors instead of one.
+        GafJobData data = new GafJobData();
+        for (int i = 0; i < 3; i++) {
+            data.addError(new GafValidationError(
+                "A duplicate entry is being added:\n" +
+                "MarkerGoTermEvidence{zdbID='ZDB-MRKRGOEV-" + i + "', marker='gene-a'," +
+                " evidenceCode='IEA', source='ZDB-PUB-1', createdBy='InterPro'} from:\n" +
+                "GafEntry{entryId='ZDB-GENE-A', goid='GO:0000001'}"));
+        }
+        // One row in a different category, so it isn't accidentally swept into the same bucket.
+        data.addError(new GafValidationError(
+            "A duplicate entry is being added:\n" +
+            "MarkerGoTermEvidence{zdbID='ZDB-MRKRGOEV-9', marker='gene-b'," +
+            " evidenceCode='IEA', source='ZDB-PUB-1', createdBy='InterPro'} from:\n" +
+            "GafEntry{entryId='ZDB-GENE-B', goid='GO:0000002'}"));
+
+        GafErrorSummary summary = new GafErrorSummary();
+        summary.processErrors(data.getErrors());
+        Report report = new GafReportBuilder().build("test", "ZFIN",
+            Collections.emptyList(), data, summary);
+
+        ReportNode errors = findChild(report.getRoot(), "cat-errors");
+        ReportTable allErrors = findTable(errors.getTables(), "All errors (4)");
+        assertNotNull(allErrors);
+        // 4 raw errors, but only 2 distinct rows.
+        assertEquals(2, allErrors.getRows().size());
+
+        Map<String, Object> geneARow = allErrors.getRows().stream()
+            .filter(r -> "ZDB-GENE-A".equals(r.get("entryId")))
+            .findFirst().orElse(null);
+        assertNotNull(geneARow);
+        assertEquals(3, geneARow.get("count"));
+
+        Map<String, Object> geneBRow = allErrors.getRows().stream()
+            .filter(r -> "ZDB-GENE-B".equals(r.get("entryId")))
+            .findFirst().orElse(null);
+        assertNotNull(geneBRow);
+        assertEquals(1, geneBRow.get("count"));
+    }
+
+    @Test
+    public void allDistinctRowsAreAvailableForCsvDownloadEvenWhenManyMoreThanTheOldCap() {
+        // Regression for the exact bug a user hit: title said "showing 25 of 51,457 distinct",
+        // but the CSV download (which exports table.rows verbatim) produced a 25-row file --
+        // because the OLD Java-level cap meant those other 51,432 rows were never in the report
+        // at all. 300 distinct rows here is arbitrary except that it's well past the old cap of
+        // 25 and past report-template.html's own INITIAL_RENDER_LIMIT (200), so this also pins
+        // down that the *data* layer (this class) is uncapped independent of what the viewer
+        // chooses to paint first.
+        GafJobData data = new GafJobData();
+        int total = 300;
+        for (int i = 0; i < total; i++) {
+            data.addError(new GafValidationError(
+                "A duplicate entry is being added:\n" +
+                "MarkerGoTermEvidence{zdbID='ZDB-MRKRGOEV-" + i + "', marker='gene-" + i + "'," +
+                " evidenceCode='IEA', source='ZDB-PUB-1', createdBy='InterPro'} from:\n" +
+                "GafEntry{entryId='ZDB-GENE-" + i + "', goid='GO:0000001'}"));
+        }
+
+        GafErrorSummary summary = new GafErrorSummary();
+        summary.processErrors(data.getErrors());
+        Report report = new GafReportBuilder().build("test", "ZFIN",
+            Collections.emptyList(), data, summary);
+        ReportNode errors = findChild(report.getRoot(), "cat-errors");
+
+        ReportTable allErrors = findTable(errors.getTables(), "All errors (" + total + ")");
+        assertNotNull(allErrors);
+        assertEquals("the flat table must carry every distinct row, not a capped subset",
+            total, allErrors.getRows().size());
+
+        ReportNode category = findChild(errors, "err-duplicate-annotation-entry");
+        ReportTable matches = category.getTables().get(0);
+        assertEquals("the per-category drill-down (and so its own CSV download) must match",
+            total, matches.getRows().size());
+    }
+
+    @Test
     public void embeddedApostropheInValueTruncatesField() {
         // Locks in the current behaviour so a future toString that uses
         // single-quoted values with embedded apostrophes doesn't silently regress.

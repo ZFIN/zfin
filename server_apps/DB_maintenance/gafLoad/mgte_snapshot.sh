@@ -3,16 +3,17 @@
 # Snapshot marker_go_term_evidence for one or more GAF organizations into CSVs, for the
 # before/after DB diff the GO load jobs produce (ZFIN-8948).
 #
-#   mgte_snapshot.sh <before|after> <outdir> [--others] [--all] <org>...
+#   mgte_snapshot.sh <before|after> <outdir> [--all] <org>...
 #
 # Writes <outdir>/mgte_<phase>_<TAG>.csv per organization, where TAG is the org name with
 # spaces replaced by underscores ("FP Inferences" -> FP_Inferences).
 #
-# --others
-#     Additionally write mgte_<phase>_OTHER.csv holding every row whose organization is NOT one
-#     of those named. It should always be empty; if it is not, some org is being written that
-#     nobody is watching, and its rows would otherwise be absent from the diff entirely. Cheap
-#     insurance -- naming organizations explicitly is what hid PAINT until it was added by hand.
+# Always also writes mgte_<phase>_OTHER.csv, holding every row whose organization is NOT one of
+# those named. It should always be empty; if it is not, some org is being written that nobody is
+# watching, and its rows would otherwise be absent from the diff entirely. Cheap insurance --
+# naming organizations explicitly is what hid PAINT until it was added by hand, so this isn't
+# optional: an un-named org should never be able to go unnoticed just because a caller forgot a
+# flag.
 #
 # --all
 #     Additionally write mgte_<phase>_ALL.csv holding every row in the table regardless of
@@ -24,8 +25,8 @@
 #     is a column, so the move shows up as an update instead. Diff it with mgte_csvdiff.sh --all,
 #     which pairs this file with a deliberately coarser key.
 #
-# Both flags are additive: the per-org files are still written and are still the per-org
-# accounting. --all is a sixth view, not a replacement.
+# --all is additive: the per-org files (and OTHER) are still written and are still the per-org
+# accounting. --all is an extra view, not a replacement.
 #
 # Env: PGHOST, DBNAME, SOURCEROOT -- as provided by the Jenkins job environment.
 #
@@ -38,7 +39,7 @@
 #
 set -euo pipefail
 
-PHASE="${1:?usage: mgte_snapshot.sh <before|after> <outdir> [--others] [--all] <org>...}"
+PHASE="${1:?usage: mgte_snapshot.sh <before|after> <outdir> [--all] <org>...}"
 OUT="${2:?outdir required}"
 shift 2
 
@@ -47,14 +48,12 @@ case "$PHASE" in
     *) echo "phase must be 'before' or 'after', got '$PHASE'" >&2; exit 1 ;;
 esac
 
-OTHERS=false
 ALL=false
 ARGS=()
 for a in "$@"; do
     case "$a" in
-        --others) OTHERS=true ;;
-        --all)    ALL=true ;;
-        *)        ARGS+=("$a") ;;
+        --all) ALL=true ;;
+        *)     ARGS+=("$a") ;;
     esac
 done
 set -- "${ARGS[@]}"
@@ -76,8 +75,11 @@ snapshot() {
     local CSV="$OUT/mgte_${PHASE}_${TAG}.csv"
 
     "${PSQL[@]}" "$@" -v stage="$STAGE" -f "$SQL/snapshot_mgte.sql"
-    "${PSQL[@]}" -c "\copy (SELECT * FROM $STAGE ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$CSV"
-    "${PSQL[@]}" -c "DROP TABLE IF EXISTS $STAGE"
+    # Double-quoted here too, same reason snapshot_mgte.sql uses :"stage" not :stage -- STAGE
+    # is built from whatever the caller passed as an org, so an unrecognized flag containing
+    # `--` would otherwise start a SQL comment mid-statement.
+    "${PSQL[@]}" -c "\copy (SELECT * FROM \"$STAGE\" ORDER BY zdb_id) TO STDOUT CSV HEADER" > "$CSV"
+    "${PSQL[@]}" -c "DROP TABLE IF EXISTS \"$STAGE\""
 
     SNAP_ROWS=$(( $(wc -l < "$CSV") - 1 ))
 }
@@ -87,13 +89,11 @@ for ORG in "$@"; do
     echo "${PHASE^^} $ORG rows: $SNAP_ROWS"
 done
 
-if [ "$OTHERS" = true ]; then
-    KNOWN="$(printf '%s|' "$@")"; KNOWN="${KNOWN%|}"
-    snapshot OTHER -v org_others=true -v known_orgs="$KNOWN"
-    echo "${PHASE^^} (everything else) rows: $SNAP_ROWS"
-    [ "$SNAP_ROWS" -eq 0 ] || \
-        echo "  WARNING: $SNAP_ROWS row(s) belong to an organization not named above" >&2
-fi
+KNOWN="$(printf '%s|' "$@")"; KNOWN="${KNOWN%|}"
+snapshot OTHER -v org_others=true -v known_orgs="$KNOWN"
+echo "${PHASE^^} (everything else) rows: $SNAP_ROWS"
+[ "$SNAP_ROWS" -eq 0 ] || \
+    echo "  WARNING: $SNAP_ROWS row(s) belong to an organization not named above" >&2
 
 if [ "$ALL" = true ]; then
     snapshot ALL -v org_all=true

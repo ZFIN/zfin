@@ -30,9 +30,10 @@
 --
 -- WHAT THIS DOES NOT TOUCH
 -- The FP Inferences org (1,623 rows on the same publication). Moving those into PAINT would place
--- them in the new load's removal scope, and 1,144 of them are not in the GPAD file, so the next
--- run would delete them. Their disposition -- freeze in the dead FP Inferences org, or delete
--- explicitly -- is a separate decision (README open decision 9).
+-- them in the new load's removal scope, and most of them are not in the GPAD file, so the next
+-- run would delete them. Decided separately (README, "Phylo IBA org" under Open decisions before
+-- cutover): delete explicitly, via cutover-purge-fp-inference.sql, now wired into
+-- RUN_CUTOVER_SCRIPTS alongside this script.
 --
 -- Idempotent: re-running moves nothing.
 

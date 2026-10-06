@@ -28,18 +28,20 @@
 -- neither GPAD file carries the content, so these annotations do not reappear under another
 -- organization. That is why this script has no such guard: there is nothing to check for.
 --
--- WHAT IS LOST (measured 2026-08-17 against the loaded end state -- GOA + Noctua + PAINT)
+-- WHAT IS LOST (re-measured 2026-10-05, full cutover rehearsal, against the loaded end state --
+-- GOA + Noctua + PAINT, all four cutover purges applied)
 --
 --     kw2go rows                                            41,027
 --       distinct (gene, GO) pairs                           40,408
---       already reproduced by the new load                   15,030
---       would-be-lost                                        25,378
---         subsumed -- gene keeps a more specific term         14,471
---         TRUE LOSS                                          10,907
+--       already reproduced by the new load                   15,853
+--       would-be-lost                                        24,555
+--         subsumed -- gene keeps a more specific term         13,711
+--         specificity_lost -- gene keeps only a broader term     974
+--         TRUE LOSS                                           9,870
 --
--- So ~10,907 (gene, GO) statements disappear from ZFIN entirely. The rest are either already
--- present from another source or implied by a more specific term the gene retains. These match
--- README-danre-mod-consolidation.md finding 2; if they diverge, the README is authoritative.
+-- So ~9,870 (gene, GO) statements disappear from ZFIN entirely. The rest are either already
+-- present from another source or implied by a term the gene retains. Re-derive these figures
+-- with mgte_subsumption.sh rather than trusting this comment, as they move with the input file.
 --
 -- Idempotent: re-running finds nothing to delete.
 

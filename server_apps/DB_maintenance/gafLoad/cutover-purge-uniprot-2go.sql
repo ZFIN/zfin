@@ -23,8 +23,8 @@
 -- exists twice. Nothing detects it: a per-org csvDiff shows 0/0 on the UniProt org because
 -- that org genuinely did not change.
 --
--- ⚠️ THIS IS A NET REDUCTION, NOT A SWAP. The GPAD file under-covers both streams
--- (README-danre-mod-consolidation.md finding 2). Measured 2026-08-14, post-load:
+-- ⚠️ THIS IS A NET REDUCTION, NOT A SWAP. The GPAD file under-covers both streams.
+-- Measured 2026-08-14, post-load:
 --
 --     stream        UniProt-org (removed here)   GOA-org (retained)   net
 --     interpro2go               65,327                   40,723      -24,604
@@ -36,9 +36,11 @@
 --
 -- ⚠️ WHAT THIS DOES NOT TOUCH: kw2go (UniProtKB-Keyword, ZDB-PUB-020723-1, 41,027 rows).
 -- That stream has NO successor -- GO retired GO_REF:0000004 and neither GPAD file carries it --
--- so purging it would delete the annotations outright with nothing replacing them. It is a
--- separate open decision (README open decision 4). Do not widen the pub list below without
--- that decision being made and recorded.
+-- so purging it deletes the annotations outright with nothing replacing them. Decided
+-- separately (kw2go is essentially unreproducible, unlike interpro2go/ec2go above) and purged
+-- by its own script, cutover-purge-uniprot-kw2go.sql, gated behind RUN_KW2GO_PURGE. Do not widen
+-- the pub list below to include it -- that would collapse two differently-reasoned purges into
+-- one.
 --
 -- Idempotent: re-running finds nothing to delete.
 
