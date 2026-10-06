@@ -1,9 +1,47 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 <%@ page import="org.zfin.properties.ZfinPropertiesEnum" %>
+<%@ page import="org.zfin.framework.featureflag.FeatureFlagEnum" %>
 
 <z:page bootstrap="true">
 <%--    <script src="${zfn:getAssetPath("angular.js")}"></script>--%>
     <script src="${zfn:getAssetPath("curation.js")}"></script>
+
+    <style>
+        .page-jump-buttons {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1050;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .page-jump-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid #ccc;
+            background: #fff;
+            color: #333;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .page-jump-btn:hover {
+            background: #f0f0f0;
+        }
+    </style>
+
+    <c:if test="${zfn:isFlagEnabled(FeatureFlagEnum.CURATION_PAGE_JUMP_BUTTONS)}">
+        <div class="page-jump-buttons">
+            <button type="button" id="go-to-top-btn" class="page-jump-btn" title="Go to top of page">
+                <i class="fas fa-angle-double-up" aria-hidden="true"></i>
+            </button>
+            <button type="button" id="go-to-bottom-btn" class="page-jump-btn" title="Go to bottom of page">
+                <i class="fas fa-angle-double-down" aria-hidden="true"></i>
+            </button>
+        </div>
+    </c:if>
 
     <c:if test="${hasCorrespondence}">
         <c:set var="correspondenceURL">/action/publication/${publication.zdbID}/track#correspondence</c:set>
@@ -154,6 +192,14 @@
             });
 
             $('.zfin-tooltip').tipsy({gravity: 's'});
+
+            $('#go-to-top-btn').on('click', function () {
+              window.scrollTo({top: 0, behavior: 'smooth'});
+            });
+
+            $('#go-to-bottom-btn').on('click', function () {
+              window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'});
+            });
 
             function goToTab (hash) {
               $('#curation-tabs a[href="' + hash + '"]').tab('show');
