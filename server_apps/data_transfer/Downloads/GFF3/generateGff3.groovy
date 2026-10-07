@@ -23,19 +23,15 @@ println 'Start generating GFF3 download files...'
 def propertiesFile = "${System.getenv()["ZFIN_PROPERTIES_PATH"]}"
 
 // The genomics reference directory, holding the contig header below plus the genome FASTAs that
-// GenomicLocationService reads. Docker mounts it at /opt/zfin/gff3 (docker-compose's
-// ${DOCKER_GFF3_PATH}, which is /research/zprodmore/gff3/ in production), so the two names are the
-// same directory there. Reaching it as /research/zprodmore/gff3 also resolved, via the image's
-// /research symlink shim onto ${DOCKER_RESEARCH_PATH}, but that is a *second* mount governed by a
-// second variable: the two only coincide when both point at the same tree, so a dev stack could
-// have the FASTAs under one name and nothing under the other. Use the one canonical in-container
-// path, the same one the Java side uses.
-def gff3SourceDir = '/opt/zfin/gff3'
+// GenomicLocationService reads. Reached through the image's /research symlink shim onto
+// ${DOCKER_RESEARCH_PATH}: /research/zprodmore resolves to .../vol/prod, which is
+// /research/zprodmore/gff3/ in production -- the same path the Java side uses.
+def gff3SourceDir = '/research/zprodmore/gff3'
 def contigFile = new File("$gff3SourceDir/zfin_genes_header.gff3")
 if (!contigFile.exists()) {
     throw new FileNotFoundException("Missing GFF3 contig header: ${contigFile}. It is not generated "
-        + "by this script -- it lives in the genomics reference directory mounted at "
-        + "$gff3SourceDir (\$DOCKER_GFF3_PATH, /research/zprodmore/gff3/ in production). Point that "
+        + "by this script -- it lives in the genomics reference directory reached via "
+        + "$gff3SourceDir (\$DOCKER_RESEARCH_PATH, /research/zprodmore/gff3/ in production). Point that "
         + "mount at a tree that contains zfin_genes_header.gff3.")
 }
 def destination = new File(downloadDir + "zfin_genes_header.gff3")

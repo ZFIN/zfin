@@ -48,10 +48,9 @@ Named volumes are managed by Docker. Bind mounts (prefixed with `$DOCKER_*`) are
 | `$DOCKER_SOURCE_ROOTS_PATH` | `/opt/zfin/source_roots/zfin.org` (SOURCEROOT) | compile, jenkins, ncbiload |
 | `$DOCKER_DB_UNLOADS_PATH` | `/opt/zfin/unloads/db` | compile |
 | `$DOCKER_SOLR_UNLOADS_PATH` | `/opt/zfin/unloads/solr` (parent of the per-instance snapshot dirs: `zfindb/`, `<instance>/`, …) | compile, solr, jenkins |
-| `$DOCKER_RESEARCH_PATH` | `/mnt/research` | compile, jenkins, ncbiload |
+| `$DOCKER_RESEARCH_PATH` | `/mnt/research` | compile, tomcat, tomcatdebug, jenkins, ncbiload |
 | `$DOCKER_LOADUP_PATH` | `/opt/zfin/loadUp` | compile, httpd, tomcat, tomcatdebug, jenkins |
 | `$DOCKER_DOWNLOADS_PATH` | `/opt/zfin/download-files` | compile, httpd, tomcat, tomcatdebug, jenkins |
-| `$DOCKER_GFF3_PATH` | `/opt/zfin/gff3` | compile, tomcat, tomcatdebug, jenkins |
 | `$DOCKER_BLASTSERVER_BLAST_DATABASE_PATH` | `/opt/zfin/blastdb` | compile, tomcat, tomcatdebug, blast, jenkins |
 | `$DOCKER_ABBLAST_PATH` | `/opt/ab-blast` | compile, tomcat, tomcatdebug, blast, jenkins |
 | `$DOCKER_HHATLAS_PATH` | `/opt/zfin/hh_atlas` | httpd |
