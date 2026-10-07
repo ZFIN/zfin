@@ -1,0 +1,99 @@
+ZFIN-10545 follow-up: suspicious foreign_db URLs needing investigation
+=======================================================================
+
+Found 2026-10-07 while building the Check-Foreign-Db-Urls_m Jenkins job: for
+each foreign_db row, requested dbUrlPrefix + a real accession (drawn from
+foreign_db_contains/db_link) + dbUrlSuffix and inspected the response. The
+job itself only checks status code / cross-host redirects (see
+CheckForeignDbUrlsTask.java); the rows below were flagged by a one-time
+manual pass that also looked at response bodies, which the job deliberately
+does not do (NCBI's own anti-bot challenge pages return 200, so body
+sniffing would mostly produce false positives against NCBI-backed rows).
+
+Each entry below gives: the problem, and where that foreign_db's links
+actually appear on zfin.org (or don't), from a codebase pass done
+2026-10-07.
+
+1. EC (Enzyme Commission numbers)
+   http://ca.expasy.org/enzyme/<ec-number> -> HTTP 404 ("404 Not Found")
+   Displayed: Gene page -> "Gene Ontology" tab, "Inferred From" column.
+   MarkerGoEvidencePresentation.java:104-110,198-199 (getEcReferenceDatabase,
+   case EC); rendered via gene-view.jsp:78 (GeneOntologyRibbon).
+
+2. Sanger_Clone
+   http://www.sanger.ac.uk/cgi-bin/Projects/D_rerio/WebFPCreport.cgi?...
+   -> HTTP 404 ("404: page not found")
+   Displayed: Clone/Gene page -> "Sequences" tab, generically (no code
+   special-cases this foreign_db name -- it shows up if its
+   foreign_db_contains row is classified SuperType.SEQUENCE).
+   SequenceService.java:177-179; clone-view.jsp:59-65, gene-view.jsp:114-123.
+
+3. VEGA, VEGA_Clone, Vega_Trans, VEGAPROT
+   http://vega.sanger.ac.uk/... -> HTTP 503 for all four (service appears to
+   be down/retired -- Vega genome browser was folded into Ensembl's archive
+   some years ago; an https probe of the same URLs also failed to connect,
+   see the ZFIN-10545 http->https migration note for which rows were left
+   alone and why).
+   Displayed:
+     - VEGA / Vega_Trans: Gene page -> Summary tab, "Genome Resources"
+       section. HibernateMarkerRepository.java:2509-2535
+       (getVegaGeneDBLinksTranscript), GeneViewController.java:106-113,
+       gene-view-summary.jsp:49. Also special-cased on the BLAST results
+       page (labeled "[Vega]"): BlastLinkPresentation.java:42-46,
+       blastResultData.tag:9.
+     - VEGA_Clone / VEGAPROT: no dedicated display code found; would only
+       appear generically (same mechanism as Sanger_Clone) if configured
+       that way in the DB.
+   Likely needs a real decision (retire the rows / point at
+   archive.ensembl.org) rather than a URL tweak, since the whole service
+   looks gone.
+
+4. zfishbook
+   http://www.zfishmeta.org/index.php?topic=<id> -> HTTP 400 ("Invalid URL")
+   Displayed: no dedicated display code found (ForeignDB.isZfishbook() and
+   Feature.isAllZfishbook()/isNoZfishbook() exist but are never called --
+   dead code, Feature.java:533-563). Would only show up generically under
+   Feature/Allele page -> Summary tab -> "Other Pages", if its
+   foreign_db_contains row is assigned to the SUMMARY_PAGE display group.
+   FeatureService.java:80-86; feature-view-summary.jsp:163-178.
+
+5. zfishbook-constructs
+   http://www.zfishbook.org/staticpages/index.php?page=gbtPlasmids&... ->
+   HTTP 404
+   Displayed: same situation as zfishbook above -- generic "Other Pages"
+   only, no dedicated code found.
+
+6. ZIRC Protocol
+   http://zebrafish.org/fish/pdf/pcrpd1.pdf -> HTTP 404 ("Not Found")
+   Displayed: Feature/Allele page -> "Supplemental Information" tab,
+   "Genotyping protocol" link. IMPORTANT: this link does NOT go through
+   foreign_db.fdb_db_query at all -- it's a hardcoded URL prefix
+   ("https://zebrafish.org/fish/pdf/pcr/") in the JSP itself. Fixing the
+   foreign_db row (if one even applies here) will NOT fix this link; the
+   fix has to go into FeatureService.java:103-116 (getZIRCGenoLink) and/or
+   feature-view-zirc.jsp:9-13.
+
+7. PANTHER
+   http://pantree.org/node/annotationNode.jsp?id=<id> -> connection failed
+   Displayed: Gene page -> "Gene Ontology" tab, "Inferred From" column --
+   but again via a HARDCODED url
+   (MarkerGoEvidencePresentation.java:210-211,268-271, createPantherLink),
+   not through the foreign_db row. The actual AvailableName.PANTHER
+   foreign_db row is otherwise only read for AGR data export
+   (DataProvider.java:14), not for anything displayed on zfin.org.
+   Fixing foreign_db won't fix the visible link here either.
+
+8. CreZoo
+   http://crezoo.crt-dresden.de/crezoo/transgenicLine/detail/<id> ->
+   connection failed (host may be down entirely)
+   Displayed: no dedicated display code found at all (ForeignDB.isCrezoo()
+   and Feature.isAllCrezoo()/isNoCrezoo() are dead code, never called --
+   Feature.java:585-631). Would only show generically under Feature/Allele
+   page "Other Pages" if configured that way in the DB.
+
+Also noted, not necessarily "broken" but worth a look:
+- GenBank/GenPept/RefSeq/Gene (NCBI-hosted): the scripted check gets served
+  a reCAPTCHA challenge page (HTTP 200, title "Checking your browser -
+  reCAPTCHA") instead of real content. Not a sign the underlying link is
+  actually broken for a real browser -- just a blind spot for any
+  automated checker hitting NCBI.
