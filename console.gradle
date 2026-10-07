@@ -224,6 +224,19 @@ task readAndQuerySitemapTask(type: JavaExec) {
     main = 'org.zfin.infrastructure.seo.ReadAndQuerySitemapTask'
 }
 
+task checkForeignDbUrlsTask(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.infrastructure.ant.CheckForeignDbUrlsTask'
+
+    // ZFIN-10545: Check-Foreign-Db-Urls_m. Runs from the Jenkins job via plain
+    // `gradle checkForeignDbUrlsTask` (no -D flags needed) -- these defaults land the
+    // report where that job's ArtifactArchiver/HtmlPublisher already expect it.
+    systemProperty "jobName", System.getProperty("jobName", "Check-Foreign-Db-Urls_m")
+    systemProperty "propertyFilePath", System.getProperty("propertyFilePath", "home/WEB-INF/zfin.properties")
+    systemProperty "dataDirectory", System.getProperty("dataDirectory",
+            (System.getenv("TARGETROOT") ?: projectDir.toString()) + "/server_apps/DB_maintenance/validatedata")
+}
+
 task checkSequenceValidationRulesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.sequence.CheckSequenceValidationRulesTask'

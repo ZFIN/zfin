@@ -38,10 +38,9 @@
     <concurrentBuild>false</concurrentBuild>
     <customWorkspace>$TARGETROOT</customWorkspace>
     <builders>
-        <hudson.tasks.Ant plugin="ant@1.2">
-            <targets>check-foreign-db-urls -DJobName=Check-Foreign-Db-Urls_m</targets>
-            <buildFile>$SOURCEROOT/server_apps/DB_maintenance/build.xml</buildFile>
-        </hudson.tasks.Ant>
+        <hudson.tasks.Shell>
+            <command>cd $SOURCEROOT &amp;&amp; gradle checkForeignDbUrlsTask</command>
+        </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>

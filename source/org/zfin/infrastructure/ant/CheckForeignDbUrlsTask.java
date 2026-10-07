@@ -161,14 +161,18 @@ public class CheckForeignDbUrlsTask extends AbstractValidateDataReportTask {
         return lower.startsWith("www.") ? lower.substring(4) : lower;
     }
 
+    /**
+     * Invoked via the checkForeignDbUrlsTask Gradle task (console.gradle), not Ant -- reads
+     * its configuration from system properties, forwarded there as -D flags, rather than
+     * positional args (the house style for gradle-invoked report/maintenance tasks).
+     */
     public static void main(String[] args) {
-        String instance = args[0];
-        String jobName = args[1];
-        String directory = args[2];
-        String propertyFilePath = args[3];
-        CheckForeignDbUrlsTask task = new CheckForeignDbUrlsTask(
-                jobName, propertyFilePath, directory);
-        task.setInstance(instance);
+        String jobName = System.getProperty("jobName", "Check-Foreign-Db-Urls_m");
+        String propertyFilePath = System.getProperty("propertyFilePath", "home/WEB-INF/zfin.properties");
+        String directory = System.getProperty("dataDirectory",
+                (System.getenv("TARGETROOT") != null ? System.getenv("TARGETROOT") : System.getProperty("user.dir"))
+                        + "/server_apps/DB_maintenance/validatedata");
+        CheckForeignDbUrlsTask task = new CheckForeignDbUrlsTask(jobName, propertyFilePath, directory);
         task.initDatabase();
         System.exit(task.execute());
     }
