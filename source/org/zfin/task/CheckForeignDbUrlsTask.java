@@ -1,10 +1,11 @@
-package org.zfin.infrastructure.ant;
+package org.zfin.task;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.infrastructure.ant.AbstractValidateDataReportTask;
 import org.zfin.repository.RepositoryFactory;
 import org.zfin.sequence.ForeignDbUrlCheckRow;
 

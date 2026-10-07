@@ -226,7 +226,7 @@ task readAndQuerySitemapTask(type: JavaExec) {
 
 task checkForeignDbUrlsTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.infrastructure.ant.CheckForeignDbUrlsTask'
+    main = 'org.zfin.task.CheckForeignDbUrlsTask'
 
     // ZFIN-10545: Check-Foreign-Db-Urls_m. Runs from the Jenkins job via plain
     // `gradle checkForeignDbUrlsTask` (no -D flags needed) -- these defaults land the
