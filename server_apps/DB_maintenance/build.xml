@@ -419,6 +419,21 @@
         </java>
     </target>
 
+    <target name="check-foreign-db-urls" description="ZFIN-10545 follow-up: curl one example accession URL per foreign_db row and report ones that no longer resolve (non-2xx, connection failure, or a redirect to a different host). Read-only.">
+        <echo message="Check Foreign DB Urls"/>
+        <echo message="Use database: ${DBNAME}"/>
+        <echo message="Use JobName: ${JobName}"/>
+        <echo message="ValidateData Dir: ${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+        <java classname="org.zfin.infrastructure.ant.CheckForeignDbUrlsTask" fork="yes"
+              classpathref="combined.classpath"
+              failonerror="true">
+            <arg value="${DBNAME}"/>
+            <arg value="${JobName}"/>
+            <arg value="${env.TARGETROOT}/server_apps/DB_maintenance/validatedata"/>
+            <arg value="${web-inf.dir}/zfin.properties"/>
+        </java>
+    </target>
+
     <target name="run-data-report-param" description="">
         <data-report-param/>
     </target>
