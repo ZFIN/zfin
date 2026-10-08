@@ -176,6 +176,15 @@ public interface SequenceRepository {
      * size disagrees with end-start+1. Read-only.
      */
     List<FeatureDeletionSizeRow> getDeletionSizeDriftCandidates(Collection<FeatureTypeEnum> featureTypes);
+
+    /**
+     * Returns one row per foreign_db entry that has a dbUrlPrefix (fdb_db_query)
+     * set, paired with a single example accession drawn from
+     * foreign_db_contains/db_link (null if nothing ever used that foreign_db).
+     * Used by CheckForeignDbUrlsTask to build a live example URL per foreign_db
+     * and curl it. Read-only.
+     */
+    List<ForeignDbUrlCheckRow> getForeignDbUrlCheckCandidates();
 }
 
 
