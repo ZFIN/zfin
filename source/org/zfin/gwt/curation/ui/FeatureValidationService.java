@@ -14,6 +14,14 @@ public class FeatureValidationService {
 
     public static final String UNSPECIFIED_FEATURE_NAME = "_unspecified";
 
+    /**
+     * Assembly information is no longer flagged with a manually-entered date; it is inferred from
+     * whether a chromosome has been recorded at all, matching FeatureRPCServiceImpl.isLocationRemoved().
+     */
+    private static boolean isAssemblyInfoUnknown(FeatureDTO featureDTO) {
+        return StringUtils.isEmptyTrim(featureDTO.getFeatureChromosome());
+    }
+
     public static String isValidToSave(FeatureDTO featureDTO) {
 
         // should never get here
@@ -31,21 +39,12 @@ public class FeatureValidationService {
 
             // A location is stored as chromosome + assembly. A row saved without an assembly is
             // invisible to this form afterwards -- getLocationByFeature() only matches assemblies
-            // like GRCz1x or Zv9 -- so blanking the assembly can only mean "remove the location".
-            // Ask before discarding the rest of it, but only once the curator has recorded that
-            // the assembly location is not known; otherwise a blank assembly is just a mistake.
+            // like GRCz1x or Zv9 -- so a chromosome without an assembly can only be a mistake. To
+            // remove a location entirely, clear the chromosome (and positions) as well, which is
+            // what marks assembly information as not known (see isAssemblyInfoUnknown()).
             if (StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())) {
-                if (StringUtils.isEmptyTrim(featureDTO.getAssemblyInfoDate())) {
-                    return "You must specify an assembly if you specify a chromosome. "
-                        + "To remove the location, clear the chromosome and positions as well.";
-                }
-                if (!Window.confirm("Remove the location information for this feature?")) {
-                    return "Save cancelled. Choose an assembly, or clear the chromosome and positions.";
-                }
-                featureDTO.setFeatureChromosome("");
-                featureDTO.setFeatureStartLoc(null);
-                featureDTO.setFeatureEndLoc(null);
-                featureDTO.setEvidence("");
+                return "You must specify an assembly if you specify a chromosome. "
+                    + "To remove the location, clear the chromosome and positions as well.";
             }
 
             if (featureDTO.getFeatureStartLoc() != null || featureDTO.getFeatureEndLoc() != null) {
@@ -59,11 +58,11 @@ public class FeatureValidationService {
         }
 
         if (featureDTO.getFgmdChangeDTO() != null && StringUtils.isNotEmpty(featureDTO.getFgmdChangeDTO().getFgmdSeqVar())) {
-            // Once "Assembly information not known as of" is filled in, the sequence fields are
-            // entered by hand rather than derived from a location (ZFIN-10371), so a full location
+            // Once the assembly location is not known (ZFIN-10371 / ZFIN-10485), the sequence
+            // fields are entered by hand rather than derived from a location, so a full location
             // is no longer a precondition for having a Sequence of Variant. Without this the
             // curator cannot remove the location from a feature that already has one.
-            if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
+            if (isAssemblyInfoUnknown(featureDTO)) {
                 // no location required
             } else if (StringUtils.isEmptyTrim(featureDTO.getFeatureChromosome())
                     || StringUtils.isEmptyTrim(featureDTO.getFeatureAssembly())
@@ -81,12 +80,6 @@ public class FeatureValidationService {
         String missingMutationDetailSequence = getMissingMutationDetailSequence(featureDTO);
         if (missingMutationDetailSequence != null) {
             return missingMutationDetailSequence;
-        }
-
-        if (StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
-            if (featureDTO.getAssemblyInfoDate().length() != 8 || !(featureDTO.getAssemblyInfoDate().contains("/"))) {
-                return "Please enter date in mm/dd/yy format";
-            }
         }
 
         if (featureDTO.getPublicNote()!=null) {

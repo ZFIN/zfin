@@ -79,8 +79,8 @@
                                 <td><zfin:StringTextBox ui:field="insertedSequence" /></td>
                             </tr>-->
                             <tr ui:field="deletionLengthRow">
-                                <td>deletion<br/><span class="{style.grey-text}">(auto-calculated)</span></td>
-                                <td><zfin:NumberTextBox ui:field="minusBasePair" visibleLength="4" readOnly="true"/> bp</td>
+                                <td>deletion<br/><span class="{style.grey-text}">(auto-calculated; editable)</span></td>
+                                <td><zfin:NumberTextBox ui:field="minusBasePair" visibleLength="4"/> bp</td>
                             </tr>
                             <!--<tr ui:field="deletionSequenceRow">
                                 <td>deleted sequence</td>

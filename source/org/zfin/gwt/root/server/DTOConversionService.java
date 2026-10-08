@@ -51,7 +51,6 @@ import org.zfin.sequence.*;
 import org.zfin.sequence.presentation.DBLinkPresentation;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -631,9 +630,6 @@ public class DTOConversionService {
     }
 
     public static Feature convertToFeature(FeatureDTO featureDTO) throws ValidationException {
-        DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy");
-        dateFormat.setLenient(false);
-        Date entryDate;
         Feature feature = new Feature();
         feature.setAbbreviation(escapeString(featureDTO.getAbbreviation()));
         feature.setName(escapeString(featureDTO.getName()));
@@ -641,14 +637,10 @@ public class DTOConversionService {
         // these two need to be added, but a trigger fixes them
         feature.setAbbreviationOrder(featureDTO.getAbbreviation());
 
-
-        if (org.zfin.gwt.root.util.StringUtils.isNotEmpty(featureDTO.getAssemblyInfoDate())) {
-            try {
-                entryDate = dateFormat.parse(featureDTO.getAssemblyInfoDate());
-            } catch (ParseException e) {
-                throw new ValidationException("Incorrect date format, please check");
-            }
-            feature.setFtrAssemblyInfoDate(entryDate);
+        // Assembly info date is no longer entered manually -- it is inferred from whether a
+        // chromosome (location) was supplied at all (see FeatureRPCServiceImpl.isLocationRemoved).
+        if (org.zfin.gwt.root.util.StringUtils.isEmpty(featureDTO.getFeatureChromosome())) {
+            feature.setFtrAssemblyInfoDate(new Date());
         } else {
             feature.setFtrAssemblyInfoDate(null);
         }
