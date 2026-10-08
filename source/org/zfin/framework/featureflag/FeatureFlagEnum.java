@@ -8,7 +8,8 @@ public enum FeatureFlagEnum {
     USE_NAVIGATION_COUNTER("Show Navigation Counter", false),
     SHOW_ALLIANCE_DATA("Show Alliance Data", false),
     ENABLE_CAPTCHA("Enable Captcha", false),
-    ZIRC_LINE_SUBMISSIONS("ZIRC Line Submissions", false);
+    ZIRC_LINE_SUBMISSIONS("ZIRC Line Submissions", false),
+    CURATION_PAGE_JUMP_BUTTONS("Curation Page Jump Buttons", false);
 
 
     private final String name;
