@@ -72,6 +72,14 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
 
     @Override
     public int compareTo(FeatureTranscriptMutationDetail o) {
-        return ObjectUtils.compare(transcriptConsequence, o.transcriptConsequence);
+        int result = ObjectUtils.compare(transcriptConsequence, o.transcriptConsequence);
+        if (result != 0) {
+            return result;
+        }
+        result = ObjectUtils.compare(exonNumber, o.exonNumber);
+        if (result != 0) {
+            return result;
+        }
+        return ObjectUtils.compare(intronNumber, o.intronNumber);
     }
 }
