@@ -67,7 +67,6 @@ services:
       - ${DOCKER_RESEARCH_PATH}:/mnt/research
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
-      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
       - ${DOCKER_SSH_AUTH_SOCK}:/run/host-services/ssh-auth.sock
       - ~/.ssh/known_hosts:/home/gradle/.ssh/known_hosts
       - /var/run/docker.sock:/var/run/docker.sock
@@ -190,7 +189,9 @@ services:
       - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
+      # GenomicLocationService reads genome FASTAs through the image's /research symlink shim,
+      # which needs ${DOCKER_RESEARCH_PATH} mounted here to resolve.
+      - ${DOCKER_RESEARCH_PATH}:/mnt/research
   tomcatdebug:
     hostname: tomcat
     build: ./tomcat/
@@ -217,7 +218,9 @@ services:
       - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
+      # GenomicLocationService reads genome FASTAs through the image's /research symlink shim,
+      # which needs ${DOCKER_RESEARCH_PATH} mounted here to resolve.
+      - ${DOCKER_RESEARCH_PATH}:/mnt/research
   blast:
     build: ./blast/
     platform: linux/amd64
@@ -273,7 +276,6 @@ services:
       - ${DOCKER_SOLR_UNLOADS_PATH}:/opt/zfin/unloads/solr
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      - ${DOCKER_GFF3_PATH}:/opt/zfin/gff3
       - maven_cache:/home/gradle/.m2
       - gradle_cache:/home/gradle/.gradle
       - /etc/localtime:/etc/localtime:ro
