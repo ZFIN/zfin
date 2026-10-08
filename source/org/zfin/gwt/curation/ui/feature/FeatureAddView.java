@@ -105,7 +105,6 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
         featureStartLoc.clear();
         featureEndLoc.setEnabled(false);
         featureEndLoc.clear();
-        assemblyInfoDate.clear();
         featureSequenceBox.getAccessionNumber().setEnabled(false);
         featureSequenceBox.getAccessionNumber().clear();
         featureSequenceBox.setFlagVisibility(false);
