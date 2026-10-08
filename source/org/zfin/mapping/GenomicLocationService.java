@@ -32,7 +32,10 @@ import static org.zfin.util.ZfinCollectionUtils.isIn;
 
 public class GenomicLocationService {
 
-	public static final String FASTA_URL_BASE_DIR = "/opt/zfin/gff3/";
+	// Reached through the image's /research symlink shim rather than a dedicated mount:
+	// /research/zprodmore resolves to ${DOCKER_RESEARCH_PATH}/vol/prod, which is
+	// /research/zprodmore/gff3/ in production.
+	public static final String FASTA_BASE_DIR = "/research/zprodmore/gff3/";
 	public static final String FASTA_GENOMIC_Z11_URL = "Danio_rerio.fa";
 	public static final String FASTA_GENOMIC_Z12_FILE = "GCF_049306965.1_GRCz12tu_genomic.fna";
 
@@ -64,8 +67,8 @@ public class GenomicLocationService {
 	private static String getFastaPath(AssemblyEnum assembly) {
 		String pathname = null;
 		switch (assembly) {
-			case GRCZ12TU -> pathname = FASTA_URL_BASE_DIR + FASTA_GENOMIC_Z12_FILE;
-			case GRCZ11 -> pathname = FASTA_URL_BASE_DIR + FASTA_GENOMIC_Z11_URL;
+			case GRCZ12TU -> pathname = FASTA_BASE_DIR + FASTA_GENOMIC_Z12_FILE;
+			case GRCZ11 -> pathname = FASTA_BASE_DIR + FASTA_GENOMIC_Z11_URL;
 		}
 		return pathname;
 	}
