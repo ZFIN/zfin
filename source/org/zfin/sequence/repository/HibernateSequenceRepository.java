@@ -1383,6 +1383,42 @@ public class HibernateSequenceRepository implements SequenceRepository {
                 .setParameterList("types", featureTypes)
                 .list();
     }
+
+    @Override
+    public List<ForeignDbUrlCheckRow> getForeignDbUrlCheckCandidates() {
+        // LATERAL + LIMIT 1 so each foreign_db is paired with one accession
+        // without scanning every db_link row that uses it.
+        String sql = """
+            select fdb.fdb_db_pk_id      as dbid,
+                   fdb.fdb_db_name       as dbname,
+                   fdb.fdb_db_query      as dburlprefix,
+                   fdb.fdb_url_suffix    as dburlsuffix,
+                   sample.dblink_acc_num as accession
+              from foreign_db fdb
+              left join lateral (
+                  select dbl.dblink_acc_num
+                    from foreign_db_contains fdc
+                    join db_link dbl on dbl.dblink_fdbcont_zdb_id = fdc.fdbcont_zdb_id
+                   where fdc.fdbcont_fdb_db_id = fdb.fdb_db_pk_id
+                   limit 1
+              ) sample on true
+             where fdb.fdb_db_query is not null
+               and fdb.fdb_db_query <> ''
+             order by fdb.fdb_db_pk_id
+            """;
+        List<Tuple> rows = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class).list();
+        List<ForeignDbUrlCheckRow> result = new ArrayList<>(rows.size());
+        for (Tuple row : rows) {
+            result.add(new ForeignDbUrlCheckRow(
+                    ((Number) row.get("dbid")).longValue(),
+                    row.get("dbname", String.class),
+                    row.get("dburlprefix", String.class),
+                    row.get("dburlsuffix", String.class),
+                    row.get("accession", String.class)
+            ));
+        }
+        return result;
+    }
 }
 
 
