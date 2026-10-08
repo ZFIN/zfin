@@ -1747,7 +1747,7 @@ def copyWebAppFiles(String webappRoot) {
 task tomcatDeploy {
     description = 'Deploy application directly to Tomcat webapps/ROOT (exploded WAR)'
     group = 'deployment'
-    dependsOn compileJava
+    dependsOn compileJava, installUtilities
 
     doLast {
         def catBase = System.getenv('CATALINA_BASE') ?: '/opt/zfin/catalina_bases/zfin.org'
@@ -2074,7 +2074,7 @@ task jspcopy {
 task dirtydeploy {
     description = 'Build frontend assets then do an incremental sync to Tomcat'
     group = 'development'
-    dependsOn npmBuild, dirtycopy
+    dependsOn npmBuild, dirtycopy, installUtilities
 
     // Ensure npm build runs before the copy
     dirtycopy.mustRunAfter npmBuild
