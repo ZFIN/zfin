@@ -13,7 +13,7 @@
     <b>Browse Genome</b>
     <ul class="list-inline">
         <li class="list-inline-item">
-            <a href="/action/jbrowse2">ZFIN</a>
+            <a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a>
         </li>
         <li class="list-inline-item">
             <zfin2:externalLink href="http://www.ensembl.org/Danio_rerio/">Ensembl</zfin2:externalLink>
