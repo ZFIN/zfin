@@ -79,7 +79,7 @@
     Releases up to 1136 are commented out (2026-10): every database we run against has
     applied them, and their large loadData files were removed from the repository.
     A database restored from a dump older than release 1137 can no longer be updated
-    with this changelog.
+    with this changelog. See README.md here for the removed files and how to get them back.
 -->
     <include file="source/org/zfin/db/postGmakePostloaddb/1137/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1138/db.changelog.master.xml"/>

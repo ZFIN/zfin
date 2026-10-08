@@ -43,6 +43,7 @@
 <!--
     Release 1098 is commented out (2026-10): every database we run against has applied it,
     and its large loadData files (ChickenDance/*.csv) were removed from the repository.
+    See ../postGmakePostloaddb/README.md for how to get them back.
     <include file="source/org/zfin/db/load/1098/allemande/db.changelog.master.xml" />
     <include file="source/org/zfin/db/load/1098/ChickenDance/db.changelog.master.xml" />
 -->
