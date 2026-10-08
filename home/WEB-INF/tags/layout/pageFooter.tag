@@ -60,7 +60,7 @@
                 <div class="nav-column-header">Genomics</div>
                 <ul>
                     <li><a href="/action/blast/blast">BLAST</a></li>
-                    <li><a href="/action/jbrowse2">ZFIN</a></li>
+                    <li><a href="https://main.d2u241g26l748k.amplifyapp.com/?loc=13:33,153,905..33,200,688&tracks=zfin-gene12,refseq12&assembly=GRCz12tu">ZFIN</a></li>
                 </ul>
             </div>
 
