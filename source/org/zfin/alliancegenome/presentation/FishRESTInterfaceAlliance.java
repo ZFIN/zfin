@@ -6,7 +6,7 @@ import org.alliancegenome.curation_api.model.entities.Gene;
 import org.alliancegenome.curation_api.model.entities.orthology.GeneToGeneOrthologyGenerated;
 import org.alliancegenome.curation_api.response.ObjectResponse;
 import org.alliancegenome.curation_api.response.SearchResponse;
-import org.alliancegenome.curation_api.view.View;
+import org.alliancegenome.curation_api.view.CurationView;
 import org.eclipse.microprofile.openapi.annotations.parameters.RequestBody;
 
 import jakarta.ws.rs.*;
@@ -20,7 +20,7 @@ public interface FishRESTInterfaceAlliance {
 
     @POST
     @Path("/agm/search")
-    @JsonView({View.ForPublic.class})
+    @JsonView({CurationView.ForPublic.class})
     SearchResponse<AffectedGenomicModel> search(@HeaderParam("Authorization") String auth,@DefaultValue("0") @QueryParam("page") Integer page, @DefaultValue("10") @QueryParam("limit") Integer limit, @RequestBody HashMap<String, Object> params);
 
 }
