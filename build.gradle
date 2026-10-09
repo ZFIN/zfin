@@ -135,8 +135,12 @@ configurations.all { config ->
 task loadDatabase() {
     doLast {
         File unloads = file(dbunloadspath)
-        String unloadPath
-        if (unloads.exists()) {
+        // -DB=<dump> (or -Dunload=<dump>) names the dump outright -- -DB rather than -Ddb, so it
+        // reads as "DB=". The newest-directory scan below is then skipped: it could only pick a
+        // different file, or fail on an unloads directory that is not laid out as dated
+        // subdirectories (a single dump mounted on its own).
+        String unloadPath = System.getProperty("unload") ?: System.getProperty("B")
+        if (!unloadPath && unloads.exists()) {
             def files = unloads.listFiles()
             Arrays.sort(files, new Comparator<File>() {
                 int compare(File f1, File f2) {
@@ -146,17 +150,6 @@ task loadDatabase() {
             File latest = files[0]
             File latestBakDump = latest.listFiles().last()
             unloadPath = latestBakDump.getPath()
-        }
-
-        //use -DB=... path if specified, also, yes, I'm being cute so that it will be -DB=...
-        //rather than -Ddb=...
-        if (System.getProperty("B")) {
-            unloadPath = System.getProperty("B")
-        }
-
-        //might as well support -Dunload also
-        if (System.getProperty("unload")) {
-            unloadPath = System.getProperty("unload")
         }
 
         println "Loading $unloadPath into $dbname"

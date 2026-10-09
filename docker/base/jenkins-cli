@@ -2,7 +2,7 @@
 
 # Jenkins CLI Shim Wrapper
 #
-# Wraps the Jenkins CLI: extracts the CLI JAR from the Jenkins WAR on first use,
+# Wraps the Jenkins CLI: fetches the CLI JAR on first use (see extract_jar),
 # resolves credentials, verifies them before running a command, and -- when auth
 # is missing or wrong -- prints a short message plus setup instructions instead
 # of dumping a raw 401 / "anonymous is missing the Overall/Read permission" error.
@@ -22,10 +22,10 @@
 #      jenkins-cli list-jobs
 #      jenkins-cli build my-job
 #
-# Bootstrapping auth when no admin account exists yet (run on the Docker host,
-# outside the container) -- creates the admin user and configures the CLI token:
-#      zexec jenkins -c 'jenkins-cli configure-admin-token --create-admin'
-#      zrestart jenkins
+# Bootstrapping auth when no admin account exists yet (run on the Docker host, in the
+# checkout's docker/ directory) -- creates the admin user and configures the CLI token:
+#      docker compose exec jenkins jenkins-cli configure-admin-token --create-admin
+#      docker compose restart jenkins
 #
 # Credential resolution order (first match wins):
 #   1. JENKINS_CLI_USER + JENKINS_CLI_PASSWORD environment variables
@@ -40,7 +40,15 @@
 # Paths
 JENKINS_DIR="${JENKINS_DIR:-/opt/jenkins}"
 WAR_PATH="$JENKINS_DIR/jenkins.war"
-CLI_JAR="$JENKINS_DIR/jenkins-cli.jar"
+# Cache the jar where the CURRENT container can write: /opt/jenkins exists only in the jenkins
+# image. Per-container rather than on a shared volume, so a stale jar cannot outlive the
+# Jenkins it came from -- it is ~12MB and fetched once per container.
+CLI_JAR="${JENKINS_CLI_JAR:-}"
+if [ -z "$CLI_JAR" ]; then
+    if [ -w "$JENKINS_DIR" ] 2>/dev/null; then CLI_JAR="$JENKINS_DIR/jenkins-cli.jar"
+    else CLI_JAR="${XDG_CACHE_HOME:-$HOME/.cache}/zfin/jenkins-cli.jar"
+    fi
+fi
 
 # JENKINS_HOME may be unset in the environment when invoked via `docker exec`;
 # fall back to the volume-mounted location so credential storage still works.
@@ -131,16 +139,29 @@ Authentication:
 EOF
 }
 
+# Get the CLI jar. Two sources, because this script ships in the BASE image and so runs in
+# containers that have no Jenkins installed: `jenkins` has the WAR to unzip, while `compile`
+# has only the network. Downloading is the better source anyway -- Jenkins serves
+# the jar matching the version actually running, so it cannot drift from the server.
 extract_jar() {
-    if [ ! -f "$CLI_JAR" ]; then
-        echo "Extracting Jenkins CLI jar..." >&2
-        # unzip -p streams the content of the first match to stdout
-        unzip -p "$WAR_PATH" "WEB-INF/lib/cli-*.jar" > "$CLI_JAR"
-        if [ $? -ne 0 ] || [ ! -s "$CLI_JAR" ]; then
-            echo "Error: Could not extract CLI jar from $WAR_PATH" >&2
-            exit 1
-        fi
+    [ -f "$CLI_JAR" ] && [ -s "$CLI_JAR" ] && return 0
+    mkdir -p "$(dirname "$CLI_JAR")" 2>/dev/null
+
+    if [ -f "$WAR_PATH" ]; then
+        echo "Extracting Jenkins CLI jar from $WAR_PATH..." >&2
+        unzip -p "$WAR_PATH" "WEB-INF/lib/cli-*.jar" > "$CLI_JAR" 2>/dev/null
+        [ -s "$CLI_JAR" ] && return 0
+        echo "Warning: could not extract from the WAR; falling back to download." >&2
     fi
+
+    echo "Downloading Jenkins CLI jar from $BASE_URL..." >&2
+    if ! curl -fsS -o "$CLI_JAR" "$BASE_URL/jnlpJars/jenkins-cli.jar"; then
+        rm -f "$CLI_JAR"
+        echo "Error: could not fetch the CLI jar from $BASE_URL/jnlpJars/jenkins-cli.jar" >&2
+        echo "       Is the jenkins service up?  (on the host: docker compose up -d jenkins)" >&2
+        exit 1
+    fi
+    [ -s "$CLI_JAR" ] || { rm -f "$CLI_JAR"; echo "Error: downloaded an empty CLI jar" >&2; exit 1; }
 }
 
 # Resolve AUTH_ARGS from env, stored creds file, or initial admin password.
