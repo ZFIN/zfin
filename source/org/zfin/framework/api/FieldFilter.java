@@ -9,6 +9,7 @@ public enum FieldFilter {
     FISH_TYPE("fish.type"),
     SEQUENCE_ACCESSION("sequence.accession"),
     SEQUENCE_TYPE("sequence.type"),
+    SEQUENCE_ASSEMBLY("sequence.assembly"),
     FILTER_TERM_NAME("termName"),
     FILTER_EVIDENCE("evidence"),
     FILTER_REF("ref"),

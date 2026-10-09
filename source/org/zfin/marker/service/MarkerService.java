@@ -188,6 +188,7 @@ public class MarkerService {
         link.setPublications(dbLink.getPublications());
         link.setSequence(dbLink.getSequence());
         link.setLinkInfo(dbLink.getLinkInfo());
+        link.setAssemblies(dbLink.getAssemblies());
         markerDBLinks.forEach(markerDBLink -> link.addPublicationAttributions(markerDBLink.getPublications()));
         return link;
     }
@@ -202,6 +203,7 @@ public class MarkerService {
         link.setReferenceDatabase(dbLink.getReferenceDatabase());
         link.setPublications(dbLink.getPublications());
         link.setLinkInfo(dbLink.getLinkInfo());
+        link.setAssemblies(dbLink.getAssemblies());
         return link;
     }
 
