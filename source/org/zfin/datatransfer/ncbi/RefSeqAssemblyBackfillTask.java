@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.zfin.datatransfer.ncbi.dto.Gene2AccessionDTO;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +19,7 @@ import java.util.Set;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFPEPT;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_DNA;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_RNA;
+import static org.zfin.datatransfer.ncbi.NCBIReleaseFileSet.FileName.GENE2ACCESSION;
 import static org.zfin.datatransfer.ncbi.port.PortHelper.stringStartsWithLetter;
 import static org.zfin.util.DateUtil.nowToString;
 
@@ -30,17 +32,34 @@ import static org.zfin.util.DateUtil.nowToString;
  * accession that's already in {@code db_link}. This task exists to catch up the RefSeqs already
  * loaded before that change. Run it once, manually; it does not need to be scheduled, since
  * {@link NCBIDirectPort} keeps new data correct going forward.
+ *
+ * <p>Usage: {@code gradle refSeqAssemblyBackfill [--args="/path/to/gene2accession.gz"]}. Given a
+ * path, it reads that gzipped gene2accession file (NCBI's column layout and header; full or
+ * zebrafish-filtered) and downloads nothing. Without one, it downloads only NCBI's current
+ * gene2accession.gz into {@code NCBI_DOWNLOAD_DIRECTORY} (default
+ * {@code NCBI_RELEASE_ARCHIVE_DIR/<today>}); that directory should be new or empty, since a
+ * previously filtered download there gets resumed onto and corrupted.
  */
 @Log4j2
-public class RefSeqAssemblyBackfillTask {
+public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
 
     public static void main(String[] args) throws IOException {
+        new RefSeqAssemblyBackfillTask().initAll();
         log.info("Starting RefSeq Assembly Backfill Task (ZFIN-10510)");
 
-        File downloadDirectory = getDownloadDirectory();
-        NCBIReleaseFetcher fetcher = new NCBIReleaseFetcher();
-        NCBIReleaseFileReader reader = fetcher.downloadLatestReleaseFileSetReader(downloadDirectory);
-        List<Gene2AccessionDTO> gene2AccessionDTOs = reader.readGene2AccessionFile();
+        List<Gene2AccessionDTO> gene2AccessionDTOs;
+        if (args.length > 0) {
+            File gene2AccessionFile = new File(args[0]);
+            if (!gene2AccessionFile.isFile()) {
+                throw new IllegalArgumentException("gene2accession file not found: " + gene2AccessionFile);
+            }
+            log.info("Reading gene2accession from " + gene2AccessionFile);
+            gene2AccessionDTOs = new NCBIReleaseFileReader().readGene2AccessionFile(gene2AccessionFile);
+        } else {
+            File gene2AccessionFile = new NCBIReleaseFetcher().downloadReleaseFile(
+                    GENE2ACCESSION, new File(getDownloadDirectory(), GENE2ACCESSION.getFileName()), null);
+            gene2AccessionDTOs = new NCBIReleaseFileReader().readGene2AccessionFile(gene2AccessionFile);
+        }
 
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
