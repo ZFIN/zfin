@@ -12,7 +12,7 @@ CREATE OR REPLACE FUNCTION publication_update()
     NEW.authors = scrub_char(NEW.authors);
     NEW.pub_authors_lower = lower(NEW.authors);
     NEW.pub_pages = scrub_char(NEW.pub_pages);
-    NEW.pub_mini_ref = scrub_char(get_pub_mini_ref(NEW.zdb_id));
+    NEW.pub_mini_ref = scrub_char(get_pub_mini_ref_from_values(NEW.authors, NEW.jtype, extract(year from NEW.pub_date)::text, NEW.zdb_id));
     NEW.keywords = scrub_char(NEW.keywords);
     NEW.pub_acknowledgment = scrub_char(NEW.pub_acknowledgment);
     NEW.pub_volume = scrub_char(NEW.pub_volume);
