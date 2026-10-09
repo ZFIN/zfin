@@ -95,6 +95,7 @@ public class DownloadOntology extends AbstractScriptWrapper {
                 os.write(temp, 0, numOfBytesRead);
         } catch (IOException e) {
             LOG.error("Error while reading the file", e);
+            return false;
         } finally {
             try {
                 if (is != null) {
