@@ -1,37 +1,24 @@
 package org.zfin.datatransfer.ncbi;
 
-import jakarta.persistence.Tuple;
 import lombok.extern.log4j.Log4j2;
 import org.hibernate.Session;
-import org.hibernate.query.NativeQuery;
 import org.zfin.datatransfer.ncbi.dto.Gene2AccessionDTO;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.ontology.datatransfer.AbstractScriptWrapper;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
-import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFPEPT;
-import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_DNA;
-import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_RNA;
 import static org.zfin.datatransfer.ncbi.NCBIReleaseFileSet.FileName.GENE2ACCESSION;
-import static org.zfin.datatransfer.ncbi.port.PortHelper.stringStartsWithLetter;
 import static org.zfin.util.DateUtil.nowToString;
 
 /**
- * One-off backfill (ZFIN-10510): links RefSeq {@code db_link} rows already loaded by prior
- * {@link NCBIDirectPort} runs to the NCBI genome assembly(ies) they were annotated against.
+ * Runs {@link RefSeqAssemblyReconciler} on demand (ZFIN-10510): makes the RefSeq {@code db_link}
+ * rows' {@code db_link_assembly} links match NCBI's gene2accession, adding and removing links.
  *
- * <p>{@link NCBIDirectPort} only captures this for accessions it loads from here on (see
- * {@code NCBIDirectPort.refSeqAccessionAssemblyIds}) — its incremental design never revisits an
- * accession that's already in {@code db_link}. This task exists to catch up the RefSeqs already
- * loaded before that change. Run it once, manually; it does not need to be scheduled, since
- * {@link NCBIDirectPort} keeps new data correct going forward.
+ * <p>{@link NCBIDirectPort} already does this after every weekly load. Run this to catch up a
+ * database without waiting for a load, e.g. once when ZFIN-10510 is first deployed.
  *
  * <p>Usage: {@code gradle refSeqAssemblyBackfill [--args="/path/to/gene2accession.gz"]}. Given a
  * path, it reads that gzipped gene2accession file (NCBI's column layout and header; full or
@@ -63,16 +50,19 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
 
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
-        int linksInserted;
+        RefSeqAssemblyReconciler.Changes changes;
         try {
-            linksInserted = backfill(gene2AccessionDTOs, NcbiAssemblyResolver.fromDatabase(), session);
+            changes = RefSeqAssemblyReconciler.reconcile(
+                    RefSeqAssemblyReconciler.buildAccessionAssemblyMap(gene2AccessionDTOs, NcbiAssemblyResolver.fromDatabase()),
+                    session);
             session.getTransaction().commit();
         } catch (RuntimeException e) {
             session.getTransaction().rollback();
             throw e;
         }
 
-        log.info("Finished RefSeq Assembly Backfill Task. Links inserted: " + linksInserted);
+        log.info("Finished RefSeq Assembly Backfill Task. Links added: " + changes.toAdd().size()
+                + ", removed: " + changes.toRemove().size());
     }
 
     private static File getDownloadDirectory() {
@@ -84,76 +74,5 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
             downloadDirectory.mkdirs();
         }
         return downloadDirectory;
-    }
-
-    /**
-     * Links every existing RefSeq RNA/protein/genomic {@code db_link} row whose accession is
-     * named in {@code gene2AccessionDTOs} to its resolved assembly(ies), inserting into
-     * {@code db_link_assembly} (skipping ones already linked). Returns the number of new links
-     * inserted. Package-visible/static so it can be exercised directly in tests without file
-     * download.
-     */
-    static int backfill(List<Gene2AccessionDTO> gene2AccessionDTOs, NcbiAssemblyResolver assemblyResolver, Session session) {
-        Map<String, Set<Long>> accessionToAssemblyIds = buildAccessionAssemblyMap(gene2AccessionDTOs, assemblyResolver);
-        if (accessionToAssemblyIds.isEmpty()) {
-            return 0;
-        }
-
-        NativeQuery<Tuple> query = session.createNativeQuery("""
-                select dblink_zdb_id, dblink_acc_num
-                  from db_link
-                 where dblink_fdbcont_zdb_id in (:refseqRna, :refPept, :refseqDna)
-                """, Tuple.class);
-        query.setParameter("refseqRna", FDCONT_REFSEQ_RNA);
-        query.setParameter("refPept", FDCONT_REFPEPT);
-        query.setParameter("refseqDna", FDCONT_REFSEQ_DNA);
-        List<Tuple> existingRefSeqDbLinks = query.list();
-
-        int linksInserted = 0;
-        for (Tuple row : existingRefSeqDbLinks) {
-            String dblinkZdbId = row.get(0, String.class);
-            String accNum = row.get(1, String.class);
-            Set<Long> assemblyIds = accessionToAssemblyIds.get(accNum);
-            if (assemblyIds == null) {
-                continue;
-            }
-            for (Long assemblyId : assemblyIds) {
-                int inserted = session.createNativeQuery("""
-                        insert into db_link_assembly (dbla_dblink_zdb_id, dbla_a_pk_id)
-                        values (:dblinkZdbId, :assemblyId)
-                        on conflict (dbla_dblink_zdb_id, dbla_a_pk_id) do nothing
-                        """)
-                        .setParameter("dblinkZdbId", dblinkZdbId)
-                        .setParameter("assemblyId", assemblyId)
-                        .executeUpdate();
-                linksInserted += inserted;
-            }
-        }
-        return linksInserted;
-    }
-
-    static Map<String, Set<Long>> buildAccessionAssemblyMap(List<Gene2AccessionDTO> gene2AccessionDTOs, NcbiAssemblyResolver assemblyResolver) {
-        Map<String, Set<Long>> accessionToAssemblyIds = new HashMap<>();
-        for (Gene2AccessionDTO dto : gene2AccessionDTOs) {
-            if (!dto.includeThisRecord() || "SUPPRESSED".equals(dto.status())) {
-                continue;
-            }
-            Long assemblyId = assemblyResolver.resolveAssemblyId(dto.assembly());
-            if (assemblyId == null) {
-                continue;
-            }
-            addAccession(accessionToAssemblyIds, dto.rnaNucleotideAccessionVersion(), assemblyId);
-            addAccession(accessionToAssemblyIds, dto.proteinAccessionVersion(), assemblyId);
-            addAccession(accessionToAssemblyIds, dto.genomicNucleotideAccessionVersion(), assemblyId);
-        }
-        return accessionToAssemblyIds;
-    }
-
-    private static void addAccession(Map<String, Set<Long>> accessionToAssemblyIds, String accessionVersion, Long assemblyId) {
-        if (!stringStartsWithLetter(accessionVersion)) {
-            return;
-        }
-        String accession = accessionVersion.replaceFirst("\\.\\d+$", "");
-        accessionToAssemblyIds.computeIfAbsent(accession, k -> new LinkedHashSet<>()).add(assemblyId);
     }
 }

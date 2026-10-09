@@ -472,6 +472,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         executeDeleteAndLoadSQLFile();
         printTimingInformation(480);
 
+        reconcileRefSeqAssemblies();
+        printTimingInformation(482);
+
         // Before the marker-assembly update on purpose: clearing a stale location here lets
         // markerAssemblyUpdate.sql write the correct one in the same run.
         genomeLocationActions = new NcbiGenomeLocationReconciler(LOG).reconcile();
@@ -1689,25 +1692,19 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         if (rnaAcc.matches("^(NM_|XM_|NR_|XR_).*")) {
                             RefSeqRNAncbiGeneIds.put(rnaAcc, ncbiGeneId);
                         }
-                        if (assemblyId != null) {
-                            refSeqAccessionAssemblyIds.computeIfAbsent(rnaAcc, k -> new LinkedHashSet<>()).add(assemblyId);
-                        }
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, rnaAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(rnaAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(proteinAccVersion)) {
                         String proteinAcc = proteinAccVersion.replaceFirst("\\.\\d+$", "");
                         RefPeptNCBIgeneIds.put(proteinAcc, ncbiGeneId);
-                        if (assemblyId != null) {
-                            refSeqAccessionAssemblyIds.computeIfAbsent(proteinAcc, k -> new LinkedHashSet<>()).add(assemblyId);
-                        }
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, proteinAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(proteinAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(dnaAccVersion)) {
                         String dnaAcc = dnaAccVersion.replaceFirst("\\.\\d+$", "");
                         RefSeqDNAncbiGeneIds.put(dnaAcc, ncbiGeneId);
-                        if (assemblyId != null) {
-                            refSeqAccessionAssemblyIds.computeIfAbsent(dnaAcc, k -> new LinkedHashSet<>()).add(assemblyId);
-                        }
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, dnaAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(dnaAcc, ncbiGeneId);
                     }
                 }
@@ -3275,9 +3272,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (geneAccFdbcont.containsKey(hashKey)) continue;
 
             Integer lengthVal = sequenceLength.get(refSeqRNA);
-            Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refSeqRNA, Set.of());
 
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub, assemblyIds));
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqRNA, lengthVal, FDCONT_REFSEQ_RNA, attributionPub));
             geneAccFdbcont.put(hashKey, "1");
         }
     }
@@ -3297,9 +3293,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             if (geneAccFdbcont.containsKey(hashKey)) continue;
 
             Integer lengthVal = sequenceLength.get(refPept);
-            Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refPept, Set.of());
 
-            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub, assemblyIds));
+            recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refPept, lengthVal, FDCONT_REFPEPT, attributionPub));
             geneAccFdbcont.put(hashKey, "1");
         }
     }
@@ -3323,10 +3318,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 }
 
                 Integer lengthVal = sequenceLength.get(refSeqDNA);
-                Set<Long> assemblyIds = refSeqAccessionAssemblyIds.getOrDefault(refSeqDNA, Set.of());
 
-                // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub|assemblyIds
-                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub, assemblyIds));
+                // Format: zdbGeneId|RefSeqDNA||length|fdcontRefSeqDNA|attributionPub
+                recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbGeneId, refSeqDNA, lengthVal, FDCONT_REFSEQ_DNA, attributionPub));
                 geneAccFdbcont.put(hashKey, "1"); // Mark as added to prevent re-adding in this run for other types if logic allows
             }
     }
@@ -3381,6 +3375,26 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         runSqlFile("loadNCBIgeneAccs.sql", "loadLog1.txt", "loadLog2.txt");
         print(LOG, "\nDone with the deletion and loading!\n\n");
+    }
+
+    /**
+     * Bring db_link_assembly in line with this run's gene2accession (ZFIN-10510), after the load
+     * has added and deleted RefSeq db_links. A failure is logged and reported, not fatal: the
+     * links are display-only and the next run corrects them.
+     */
+    private void reconcileRefSeqAssemblies() {
+        try {
+            createTransaction();
+            RefSeqAssemblyReconciler.Changes changes =
+                    RefSeqAssemblyReconciler.reconcile(refSeqAccessionAssemblyIds, currentSession());
+            flushAndCommitCurrentSession();
+            print(LOG, "RefSeq assembly reconciliation: " + changes.toAdd().size() + " links added, "
+                    + changes.toRemove().size() + " removed.\n");
+        } catch (RuntimeException e) {
+            rollbackTransaction();
+            print(LOG, "ERROR: Could not reconcile RefSeq assemblies: " + e.getMessage() + "\n");
+            reportErr("Notify : NCBI gene load :: RefSeq assembly reconciliation failed: " + e.getMessage());
+        }
     }
 
     private void executeMarkerAssemblyUpdate() {

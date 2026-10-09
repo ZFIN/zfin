@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.DiscriminatorFormula;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.EntityAttribution;
@@ -95,9 +96,11 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
 
     // Not @JsonView-annotated: Assembly.marker (mappedBy="assemblies") has no @JsonView of its
     // own, so with Jackson's default view inclusion, serializing this collection directly would
-    // pull in full Marker object graphs through that back-reference. getLatestAssembly() below
-    // exposes what the API needs as a plain String instead.
+    // pull in full Marker object graphs through that back-reference. MarkerDBLink.getAssemblyNames()
+    // exposes what the API needs as plain Strings instead. @BatchSize: a gene's Sequences table
+    // reads this for every row, so initialize up to 100 rows' collections per query, not one each.
     @ManyToMany(fetch = FetchType.LAZY)
+    @BatchSize(size = 100)
     @JoinTable(name = "db_link_assembly",
             joinColumns = @JoinColumn(name = "dbla_dblink_zdb_id"),
             inverseJoinColumns = @JoinColumn(name = "dbla_a_pk_id"))

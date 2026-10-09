@@ -54,10 +54,12 @@ public class SequenceController {
                                                             @RequestParam(value = "summary", required = false, defaultValue = "false") boolean summary,
                                                             @RequestParam(value = "filter.type", required = false) String type,
                                                             @RequestParam(value = "filter.accession", required = false) String accessionNumber,
+                                                            @RequestParam(value = "filter.assembly", required = false) String assembly,
                                                             @Version Pagination pagination) {
         HibernateUtil.createTransaction();
         pagination.addFieldFilter(FieldFilter.SEQUENCE_ACCESSION, accessionNumber);
         pagination.addFieldFilter(FieldFilter.SEQUENCE_TYPE, type);
+        pagination.addFieldFilter(FieldFilter.SEQUENCE_ASSEMBLY, assembly);
         JsonResultResponse<MarkerDBLink> response = sequenceService.getMarkerDBLinkJsonResultResponse(zdbID, pagination, summary, false);
         response.setHttpServletRequest(request);
         HibernateUtil.flushAndCommitCurrentSession();
