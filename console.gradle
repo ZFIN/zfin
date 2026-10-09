@@ -305,6 +305,13 @@ task ncbiLoadPort(type: JavaExec) {
     main = 'org.zfin.datatransfer.ncbi.NCBIDirectPort'
 }
 
+// One-off backfill for ZFIN-10510. Optionally pass a gzipped gene2accession file to skip the download:
+// gradle refSeqAssemblyBackfill --args="/path/to/gene2accession.gz"
+task refSeqAssemblyBackfill(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ncbi.RefSeqAssemblyBackfillTask'
+}
+
 task csv2xlsx(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.util.CSVToXLSXConverter'

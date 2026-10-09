@@ -187,6 +187,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private Map<String, String>  RefPeptNCBIgeneIds;
     private Map<String, String>  RefSeqDNAncbiGeneIds;
     private Map<String, String>  RefSeqRNAncbiGeneIds;
+    private Map<String, Set<Long>>  refSeqAccessionAssemblyIds;
+    private NcbiAssemblyResolver assemblyResolver;
     private Map<String, String>  noLength;
     private Map<String, Set<String>>  supportedGeneNCBI;
     private Map<String, Set<String>>  supportingAccNCBI;
@@ -469,6 +471,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         executeDeleteAndLoadSQLFile();
         printTimingInformation(480);
+
+        reconcileRefSeqAssemblies();
+        printTimingInformation(482);
 
         // Before the marker-assembly update on purpose: clearing a stale location here lets
         // markerAssemblyUpdate.sql write the correct one in the same run.
@@ -1598,6 +1603,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         RefSeqRNAncbiGeneIds = new HashMap<>();
         RefPeptNCBIgeneIds = new HashMap<>();
         RefSeqDNAncbiGeneIds = new HashMap<>();
+        refSeqAccessionAssemblyIds = new HashMap<>();
+        assemblyResolver = NcbiAssemblyResolver.fromDatabase();
         noLength = new HashMap<>();
 
         ctNoLength = 0;
@@ -1678,21 +1685,26 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         checkAndStoreNoLength.accept(dnaAcc, ncbiGeneId);
                     }
                 } else {
+                    Long assemblyId = assemblyResolver.resolveAssemblyId(fields.length > 12 ? fields[12] : null);
+
                     if (stringStartsWithLetter(rnaAccVersion)) {
                         String rnaAcc = rnaAccVersion.replaceFirst("\\.\\d+$", "");
                         if (rnaAcc.matches("^(NM_|XM_|NR_|XR_).*")) {
                             RefSeqRNAncbiGeneIds.put(rnaAcc, ncbiGeneId);
                         }
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, rnaAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(rnaAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(proteinAccVersion)) {
                         String proteinAcc = proteinAccVersion.replaceFirst("\\.\\d+$", "");
                         RefPeptNCBIgeneIds.put(proteinAcc, ncbiGeneId);
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, proteinAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(proteinAcc, ncbiGeneId);
                     }
                     if (stringStartsWithLetter(dnaAccVersion)) {
                         String dnaAcc = dnaAccVersion.replaceFirst("\\.\\d+$", "");
                         RefSeqDNAncbiGeneIds.put(dnaAcc, ncbiGeneId);
+                        RefSeqAssemblyReconciler.addAccession(refSeqAccessionAssemblyIds, dnaAcc, assemblyId);
                         checkAndStoreNoLengthRefSeq.accept(dnaAcc, ncbiGeneId);
                     }
                 }
@@ -3363,6 +3375,26 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         runSqlFile("loadNCBIgeneAccs.sql", "loadLog1.txt", "loadLog2.txt");
         print(LOG, "\nDone with the deletion and loading!\n\n");
+    }
+
+    /**
+     * Bring db_link_assembly in line with this run's gene2accession (ZFIN-10510), after the load
+     * has added and deleted RefSeq db_links. A failure is logged and reported, not fatal: the
+     * links are display-only and the next run corrects them.
+     */
+    private void reconcileRefSeqAssemblies() {
+        try {
+            createTransaction();
+            RefSeqAssemblyReconciler.Changes changes =
+                    RefSeqAssemblyReconciler.reconcile(refSeqAccessionAssemblyIds, currentSession());
+            flushAndCommitCurrentSession();
+            print(LOG, "RefSeq assembly reconciliation: " + changes.toAdd().size() + " links added, "
+                    + changes.toRemove().size() + " removed.\n");
+        } catch (RuntimeException e) {
+            rollbackTransaction();
+            print(LOG, "ERROR: Could not reconcile RefSeq assemblies: " + e.getMessage() + "\n");
+            reportErr("Notify : NCBI gene load :: RefSeq assembly reconciliation failed: " + e.getMessage());
+        }
     }
 
     private void executeMarkerAssemblyUpdate() {

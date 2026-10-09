@@ -32,24 +32,24 @@ public class SequenceControllerTest extends AbstractDatabaseTest {
         // hack but need to stop the tx from the @Before action on the super class
         // need to use more declarative transactions
         HibernateUtil.rollbackTransaction();
-        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, new Pagination());
+        JsonResultResponse<MarkerDBLink> links = controller.getSequenceView(zdbID, false, null, null, null, new Pagination());
         assertNotNull(links);
         assertThat(links.getTotal(), greaterThanOrEqualTo(30L));
 
-        links = controller.getSequenceView(zdbID, false, null, "1", new Pagination());
+        links = controller.getSequenceView(zdbID, false, null, "1", null, new Pagination());
         assertNotNull(links);
         // filtered records for accession number '1'.
         assertThat(links.getTotal(), greaterThanOrEqualTo(10L));
         assertThat(links.getTotal(), lessThanOrEqualTo(20L));
 
-        links = controller.getSequenceView(zdbID, false, "GEnomic", null, new Pagination());
+        links = controller.getSequenceView(zdbID, false, "GEnomic", null, null, new Pagination());
         assertNotNull(links);
         // filtered records on type
         assertThat(links.getTotal(), greaterThanOrEqualTo(3L));
         assertThat(links.getTotal(), lessThanOrEqualTo(10L));
 
         // summary view
-        links = controller.getSequenceView(zdbID, true, null, null, new Pagination());
+        links = controller.getSequenceView(zdbID, true, null, null, null, new Pagination());
         assertNotNull(links);
         assertThat(links.getResults().size(), equalTo(3));
     }

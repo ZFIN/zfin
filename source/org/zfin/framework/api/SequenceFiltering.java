@@ -10,6 +10,7 @@ public class SequenceFiltering extends Filtering<MarkerDBLink> {
     public SequenceFiltering() {
         filterFieldMap.put(FieldFilter.SEQUENCE_ACCESSION, accessionFilter);
         filterFieldMap.put(FieldFilter.SEQUENCE_TYPE, typeFilter);
+        filterFieldMap.put(FieldFilter.SEQUENCE_ASSEMBLY, assemblyFilter);
         filterFieldMap.put(FieldFilter.ENTITY_ID, entityIdFilter);
         filterFieldMap.put(FieldFilter.SUPER_TYPE, superTypeFilter);
         filterFieldMap.put(FieldFilter.FOREIGN_DB, foreignDBFilter);
@@ -19,6 +20,9 @@ public class SequenceFiltering extends Filtering<MarkerDBLink> {
 
     public static FilterFunction<MarkerDBLink, String> accessionFilter =
         (dbLink, value) -> FilterFunction.contains(dbLink.getAccessionNumberDisplay(), value);
+
+    public static FilterFunction<MarkerDBLink, String> assemblyFilter =
+        (dbLink, value) -> FilterFunction.contains(String.join(", ", dbLink.getAssemblyNames()), value);
 
     public static FilterFunction<MarkerDBLink, String> dbInfoFilter =
         (dbLink, value) -> {
