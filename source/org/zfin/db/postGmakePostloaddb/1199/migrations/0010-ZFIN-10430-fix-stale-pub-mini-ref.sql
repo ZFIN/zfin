@@ -7,8 +7,8 @@
 -- sees the pre-statement row, so any single-statement UPDATE that corrected
 -- a mis-encoded authors value left pub_mini_ref computed from the old, bad
 -- authors text -- freezing the corruption into pub_mini_ref even after
--- authors itself was fixed. This trigger bug is fixed alongside this
--- changeset (lib/DB_triggers/publication.sql, publication_update.sql,
+-- authors itself was fixed. This trigger bug is fixed in the same commit
+-- (lib/DB_triggers/publication.sql, publication_update.sql,
 -- lib/DB_functions/get_pub_mini_ref.sql).
 --
 -- Two publications were left with a Unicode replacement character
