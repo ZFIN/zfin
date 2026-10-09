@@ -105,6 +105,15 @@ task createReferenceExchangeInfoFile(type: JavaExec) {
     main = 'org.zfin.marker.agr.BasicReferenceExchangeInfo'
 }
 
+// ZFIN-10409. Needs agr_curation_api v0.53.0 or later for AntibodyDTO.
+task createAntibodyLinkMLFile(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.marker.agr.AntibodyLinkMLInfo'
+    doFirst {
+        args linkMLVersion
+    }
+}
+
 task createAllelesLinkMLFile(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.marker.agr.AlleleLinkMLInfo'
@@ -170,6 +179,7 @@ task createFishAlleleLinkMLFile(type: JavaExec) {
 }
 
 task createAllianceLinkMLFiles {
+    dependsOn createAntibodyLinkMLFile
     dependsOn createGenesLinkMLFile
     dependsOn createAllelesLinkMLFile
     dependsOn createFishLinkMLFile

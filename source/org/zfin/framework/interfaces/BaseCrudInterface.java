@@ -1,7 +1,7 @@
 package org.zfin.framework.interfaces;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import org.alliancegenome.curation_api.view.View;
+import org.alliancegenome.curation_api.view.CurationView;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.zfin.framework.api.ObjectResponse;
@@ -24,7 +24,7 @@ public interface BaseCrudInterface<E extends BaseEntity> {
 
     @POST
     @Path("/find")
-    @JsonView(View.FieldsAndLists.class)
+    @JsonView(CurationView.FieldsAndLists.class)
     public SearchResponse<E> find(@DefaultValue("0") @QueryParam("page") Integer page, @DefaultValue("10") @QueryParam("limit") Integer limit, @RequestBody HashMap<String, Object> params);
 
 }
