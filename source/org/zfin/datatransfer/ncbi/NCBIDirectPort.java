@@ -188,6 +188,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private Map<String, String>  RefSeqDNAncbiGeneIds;
     private Map<String, String>  RefSeqRNAncbiGeneIds;
     private Map<String, Set<Long>>  refSeqAccessionAssemblyIds;
+    private NcbiAssemblyResolver assemblyResolver;
     private Map<String, String>  noLength;
     private Map<String, Set<String>>  supportedGeneNCBI;
     private Map<String, Set<String>>  supportingAccNCBI;
@@ -1600,6 +1601,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         RefPeptNCBIgeneIds = new HashMap<>();
         RefSeqDNAncbiGeneIds = new HashMap<>();
         refSeqAccessionAssemblyIds = new HashMap<>();
+        assemblyResolver = NcbiAssemblyResolver.fromDatabase();
         noLength = new HashMap<>();
 
         ctNoLength = 0;
@@ -1680,7 +1682,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         checkAndStoreNoLength.accept(dnaAcc, ncbiGeneId);
                     }
                 } else {
-                    Long assemblyId = NcbiAssemblyResolver.resolveAssemblyId(fields.length > 12 ? fields[12] : null);
+                    Long assemblyId = assemblyResolver.resolveAssemblyId(fields.length > 12 ? fields[12] : null);
 
                     if (stringStartsWithLetter(rnaAccVersion)) {
                         String rnaAcc = rnaAccVersion.replaceFirst("\\.\\d+$", "");

@@ -65,7 +65,7 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
         session.beginTransaction();
         int linksInserted;
         try {
-            linksInserted = backfill(gene2AccessionDTOs, session);
+            linksInserted = backfill(gene2AccessionDTOs, NcbiAssemblyResolver.fromDatabase(), session);
             session.getTransaction().commit();
         } catch (RuntimeException e) {
             session.getTransaction().rollback();
@@ -93,8 +93,8 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
      * inserted. Package-visible/static so it can be exercised directly in tests without file
      * download.
      */
-    static int backfill(List<Gene2AccessionDTO> gene2AccessionDTOs, Session session) {
-        Map<String, Set<Long>> accessionToAssemblyIds = buildAccessionAssemblyMap(gene2AccessionDTOs);
+    static int backfill(List<Gene2AccessionDTO> gene2AccessionDTOs, NcbiAssemblyResolver assemblyResolver, Session session) {
+        Map<String, Set<Long>> accessionToAssemblyIds = buildAccessionAssemblyMap(gene2AccessionDTOs, assemblyResolver);
         if (accessionToAssemblyIds.isEmpty()) {
             return 0;
         }
@@ -132,13 +132,13 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
         return linksInserted;
     }
 
-    static Map<String, Set<Long>> buildAccessionAssemblyMap(List<Gene2AccessionDTO> gene2AccessionDTOs) {
+    static Map<String, Set<Long>> buildAccessionAssemblyMap(List<Gene2AccessionDTO> gene2AccessionDTOs, NcbiAssemblyResolver assemblyResolver) {
         Map<String, Set<Long>> accessionToAssemblyIds = new HashMap<>();
         for (Gene2AccessionDTO dto : gene2AccessionDTOs) {
             if (!dto.includeThisRecord() || "SUPPRESSED".equals(dto.status())) {
                 continue;
             }
-            Long assemblyId = NcbiAssemblyResolver.resolveAssemblyId(dto.assembly());
+            Long assemblyId = assemblyResolver.resolveAssemblyId(dto.assembly());
             if (assemblyId == null) {
                 continue;
             }

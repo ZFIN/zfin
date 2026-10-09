@@ -100,28 +100,21 @@ public class MarkerDBLink extends DBLink implements Comparable<MarkerDBLink>, Se
     }
 
     /**
-     * Names of the assemblies this RefSeq is annotated against, highest ranking (lowest
-     * {@code a_order}) first. Falls back to the marker's latest assembly for non-NM_ RefSeqs
-     * with no assemblies of their own; empty for non-RefSeq links.
+     * Names of the assemblies NCBI annotates this RefSeq against, highest ranking (lowest
+     * {@code a_order}) first. Empty for non-RefSeq links and for RefSeqs with no
+     * {@code db_link_assembly} rows; no assembly is guessed from the marker.
      */
     @JsonView(View.SequenceAPI.class)
     public List<String> getAssemblyNames() {
-        if (!getReferenceDatabase().isRefSeq()) {
-            return List.of();
-        }
         // getAssemblies() is null (not just empty) for MarkerDBLink instances built directly via
         // `new MarkerDBLink()` rather than loaded through Hibernate - several callers do this for
         // synthetic/lightweight display rows.
-        if (getAssemblies() != null && !getAssemblies().isEmpty()) {
-            return getAssemblies().stream()
-                    .sorted(Comparator.comparing(Assembly::getOrder))
-                    .map(Assembly::getName)
-                    .toList();
-        }
-        if (getAccessionNumber().startsWith("NM_")) {
+        if (!getReferenceDatabase().isRefSeq() || getAssemblies() == null) {
             return List.of();
         }
-        Assembly latestAssembly = marker.getLatestAssembly();
-        return latestAssembly == null ? List.of() : List.of(latestAssembly.getName());
+        return getAssemblies().stream()
+                .sorted(Comparator.comparing(Assembly::getOrder))
+                .map(Assembly::getName)
+                .toList();
     }
 }
