@@ -12,6 +12,17 @@
     this load ever read them). EC was audited the same way, but it is the input
     to the ec2go derivation, so it retires with that stream rather than here.
     The primary load for the UniProt data must be run first.
+
+    GO terms are not ingested ready-made -- they are derived by joining each zebrafish
+    protein's UniProt keywords / InterPro domains / EC numbers (from the primary load's
+    processed .dat release) against GO's external2go translation tables, downloaded at run
+    time: interpro2go, uniprotkb_kw2go, ec2go. Code: UniprotSecondaryTermLoadTask,
+    SecondaryTerm2GoTermTranslator.
+
+    ZFIN-10025/10344 (unified DANRE-mod GO load): only the three *2go GO streams are being
+    retired (LOAD_INTERPRO2GO_EC2GO, LOAD_KW2GO below) -- the InterPro/EC/PFAM/PROSITE/PDB
+    dblink+domain refresh and protein matching are NOT part of this and keep running
+    regardless of cutover, since DANRE-mod supplies none of it.
   </description>
   <keepDependencies>false</keepDependencies>
 
@@ -33,7 +44,7 @@
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>LOAD_KW2GO</name>
-          <description>Keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load (default: yes). WARNING: unlike interpro2go/ec2go there is NO successor for this stream -- GO retired GO_REF:0000004 and neither DANRE file carries it -- so unchecking this strands ~41k annotations with nothing else supplying them. Unresolved decision; see README-danre-mod-consolidation.md open decision 4.</description>
+          <description>Keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load (default: yes). kw2go has no successor in either DANRE file -- GO retired GO_REF:0000004 -- and is being dropped at cutover: uncheck this together with enabling Load-GPAD-GO-Central_m and its RUN_KW2GO_PURGE.</description>
           <defaultValue>true</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>

@@ -115,6 +115,13 @@ public class HibernateMarkerGoTermEvidenceRepository implements MarkerGoTermEvid
     }
 
     @Override
+    @SuppressWarnings("unchecked")
+    public List<MarkerGoTermEvidence> getAllRootTermAnnotations() {
+        String hql = "from MarkerGoTermEvidence where goTerm.root = true";
+        return HibernateUtil.currentSession().createQuery(hql, MarkerGoTermEvidence.class).list();
+    }
+
+    @Override
     public GafOrganization getGafOrganization(GafOrganization.OrganizationEnum organizationEnum) {
         Query<GafOrganization> query = HibernateUtil.currentSession().createQuery("from GafOrganization where organization = :organization", GafOrganization.class);
         query.setParameter("organization", organizationEnum.toString()); //GafOrganization.organization is a String

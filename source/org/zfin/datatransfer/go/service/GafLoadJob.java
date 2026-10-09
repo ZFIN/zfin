@@ -30,6 +30,7 @@ import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.getInfrastructureRepository;
 import static org.zfin.util.ZfinSystemUtils.envTrue;
@@ -91,6 +92,12 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
     // reports, but perform NO database writes (no add/update/remove, no LoadFileLog). Lets
     // the unified DANRE-mod load be QC'd against staging through the real pipeline safely.
     protected Boolean reportOnly; //default to false
+    // Set when the removal-safety guard withheld deletions for at least one organization, so the
+    // job can exit non-zero and the operator is not left thinking the prune succeeded.
+    // Withheld deletions, or deletions let through under an override. Drives exit code 2.
+    protected boolean removalNeedsReview = false;
+    protected int withheldRemovals = 0;
+    private static final double DEFAULT_MAX_REMOVAL_FRACTION = 0.10d;
 
     private boolean isReportOnly() {
         return reportOnly != null && reportOnly;
@@ -181,10 +188,14 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 // each source only prunes the annotations it owns (no cross-source mass-deletes).
                 for (GafOrganization.OrganizationEnum orgEnum : DanreModSourceOrganization.allTargetOrganizations()) {
                     GafOrganization org = RepositoryFactory.getMarkerGoTermEvidenceRepository().getGafOrganization(orgEnum);
+                    int before = gafJobData.getRemovedEntries().size();
                     gafService.generateRemovedEntries(gafJobData, org);
+                    checkRemovalIsSafe(gafJobData, org, gafJobData.getRemovedEntries().size() - before);
                 }
             } else {
+                int before = gafJobData.getRemovedEntries().size();
                 gafService.generateRemovedEntries(gafJobData, gafOrganization);
+                checkRemovalIsSafe(gafJobData, gafOrganization, gafJobData.getRemovedEntries().size() - before);
             }
             List<GafJobEntry> optional = Optional.ofNullable(gafJobData.getRemovedEntries()).orElse(new ArrayList<>());
             System.out.println("Removed entries: " + optional.size());
@@ -271,6 +282,16 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             if (gafParser.isErrorEncountered()) {
                 System.out.println(gafParser.getErrorMessage());
                 System.err.println(gafParser.getErrorMessage());
+                exitCode = 2;
+            }
+
+            // A withheld or forced prune must not look clean.
+            if (removalNeedsReview) {
+                String message = withheldRemovals > 0
+                    ? "Removal-safety guard withheld " + withheldRemovals + " deletion(s) attributable to rejected rows."
+                    : "Removal-safety guard: deletions attributable to rejected rows were applied under GAF_ALLOW_LARGE_REMOVAL.";
+                logger.error(message);
+                System.out.println(message);
                 exitCode = 2;
             }
 
@@ -412,12 +433,25 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
                 HibernateUtil.flushAndCommitCurrentSession();
             } catch (Exception e) {
                 HibernateUtil.rollbackTransaction();
-                String error = "Failed to add batch: ";
+                // The root cause (why the transaction actually failed) is the useful part and
+                // used to be entirely absent from this message -- getMessage() on a
+                // GafValidationError(String, Exception) returns only the String, and the
+                // exception itself was visible nowhere but the server log. Concatenating every
+                // batch member's full toString() also made this the single biggest offender for
+                // the report's "wall of text" error rows: one row could carry BATCH_SIZE full
+                // MarkerGoTermEvidence blobs. Reduced to the cause plus a short per-row
+                // identifier list -- full detail on each row is already in _details.txt if this
+                // specific batch needs to be traced further.
+                String cause = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+                StringBuilder error = new StringBuilder(String.format(
+                    "Failed to add batch of %d annotation(s): %s", batchToAdd.size(), cause));
                 for (MarkerGoTermEvidence markerGoTermEvidence : batchToAdd) {
-                    error += markerGoTermEvidence.toString() + "\n";
+                    error.append("\n  ").append(markerGoTermEvidence.getMarker().getAbbreviation())
+                         .append(' ').append(markerGoTermEvidence.getGoTerm().getOboID())
+                         .append(" (").append(markerGoTermEvidence.getZdbID()).append(')');
                 }
-                GafValidationError gafValidationError = new GafValidationError(error, e);
-                logger.error(error, e);
+                GafValidationError gafValidationError = new GafValidationError(error.toString(), e);
+                logger.error(error.toString(), e);
                 gafJobData.addError(gafValidationError);
             } finally {
                 // the theory is that these were being left open . . . this should fix that
@@ -522,6 +556,83 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
      *             downloadUrl2
      *             downloadUrl3
      */
+    /**
+     * Removal-safety guard.
+     *
+     * <p>{@code findOutdatedEntries} removes everything an organization owns that the file did not
+     * produce. A row that threw during validation reaches none of
+     * newEntries/updateEntries/existingEntries, so it is indistinguishable from a row the file
+     * never contained and its database counterpart is deleted -- turning any parsing or lookup bug
+     * into silent data loss.
+     *
+     * <p>Only removals a rejected row could account for are withheld, matched on (marker, GO term).
+     * Volume is deliberately not part of that decision: a first run against a legacy database
+     * legitimately removes a large fraction, while the kind of defect this exists for can be a
+     * fraction of a percent. GAF_MAX_REMOVAL_FRACTION is therefore advisory only -- it marks the
+     * build for review and never withholds.
+     *
+     * <p>GAF_ALLOW_LARGE_REMOVAL applies the attributable removals anyway, for a bulk retirement or
+     * a first cutover, and still marks the run for review.
+     */
+    private void checkRemovalIsSafe(GafJobData gafJobData, GafOrganization org, int removedForOrg) {
+        if (removedForOrg <= 0) {
+            return;
+        }
+        List<GafEntry> rejectedForOrg = gafService.rejectedEntriesForOrganization(gafJobData, org);
+        int owned = gafService.countEvidencesForOrganization(org);
+        double fraction = owned == 0 ? 0d : (double) removedForOrg / (double) owned;
+
+        Set<String> suspectKeys = gafService.findRemovalKeysAttributableToRejections(gafJobData, org);
+        List<GafJobEntry> attributable = GafService.removalsAttributableTo(
+            gafJobData.getRemovedEntries(), org.getOrganization(), suspectKeys);
+
+        String detail = String.format(
+            "%s: removing %d of %d annotations (%.1f%%); %d input rows rejected; %d removal(s) attributable to a rejected row",
+            org.getOrganization(), removedForOrg, owned, fraction * 100d, rejectedForOrg.size(), attributable.size());
+
+        if (!attributable.isEmpty()) {
+            String message = "REMOVAL AT RISK — " + detail
+                + ". A rejected row is indistinguishable from a row the file omitted, so these "
+                + "deletions may be spurious. Fix the rejections (see the error summary), or set "
+                + "GAF_ALLOW_LARGE_REMOVAL=true to apply them anyway.";
+            removalNeedsReview = true;
+            if (envTrue("GAF_ALLOW_LARGE_REMOVAL")) {
+                logger.warn("GAF_ALLOW_LARGE_REMOVAL=true, applying anyway: " + message);
+                System.out.println("WARNING (overridden): " + message);
+            } else {
+                logger.error(message);
+                System.out.println(message);
+                Set<GafJobEntry> withhold = new HashSet<>(attributable);
+                gafJobData.getRemovedEntries().removeIf(withhold::contains);
+                withheldRemovals += attributable.size();
+                System.out.println("Withheld " + attributable.size() + " deletion(s) for " + org.getOrganization()
+                    + "; the remaining " + (removedForOrg - attributable.size()) + " will be applied.");
+            }
+        } else if (fraction > maxRemovalFraction()) {
+            String message = "LARGE REMOVAL — " + detail
+                + ". None of it is attributable to a rejected row, so nothing is withheld; review the diff.";
+            logger.warn(message);
+            System.out.println(message);
+            removalNeedsReview = true;
+        } else {
+            logger.info("Removal check passed — " + detail);
+            System.out.println("Removal check passed — " + detail);
+        }
+    }
+
+    private static double maxRemovalFraction() {
+        String configured = System.getenv("GAF_MAX_REMOVAL_FRACTION");
+        if (configured == null || configured.isBlank()) {
+            return DEFAULT_MAX_REMOVAL_FRACTION;
+        }
+        try {
+            return Double.parseDouble(configured.trim());
+        } catch (NumberFormatException e) {
+            logger.warn("Unparseable GAF_MAX_REMOVAL_FRACTION [" + configured + "], using default");
+            return DEFAULT_MAX_REMOVAL_FRACTION;
+        }
+    }
+
     public static void main(String[] args) {
         initLog4J();
         setLoggerToInfoLevel(logger);

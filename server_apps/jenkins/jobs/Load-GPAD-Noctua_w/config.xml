@@ -33,7 +33,7 @@ set -e
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff
 
-bash $SQL/mgte_snapshot.sh before "$OUT" --others Noctua
+bash $SQL/mgte_snapshot.sh before "$OUT" Noctua
 ]]></command>
         </hudson.tasks.Shell>
         <hudson.tasks.Shell>
@@ -47,8 +47,8 @@ set -e
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-Noctua_w-dbdiff
 
-bash $SQL/mgte_snapshot.sh after "$OUT" --others Noctua
-bash $SQL/mgte_csvdiff.sh        "$OUT" --others Noctua
+bash $SQL/mgte_snapshot.sh after "$OUT" Noctua
+bash $SQL/mgte_csvdiff.sh        "$OUT" Noctua
 ]]></command>
         </hudson.tasks.Shell>
     </builders>

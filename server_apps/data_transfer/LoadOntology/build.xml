@@ -244,7 +244,7 @@
     <target name="download-zeco-ontology">
         <property name="localOboFile" value="zeco.obo"/>
         <property name="oboFileURL" value="${zecoOboURL}"/>
-        <copy file="${zecoOboURL}" tofile="${run-directory}/${localOboFile}"/>
+        <copy file="${zecoOboURL}" tofile="${job.output.basedir}/${run-directory}/${localOboFile}"/>
     </target>
 
     <target name="download-go-qualifier-ontology">
@@ -484,7 +484,9 @@
                 <property name="run-directory" value="./run-${DSTAMP}"/>
         -->
         <property name="run-directory" value="./obo-files"/>
-        <mkdir dir="${run-directory}"/>
+        <!-- The loaders run with dir="${job.output.basedir}", so ${run-directory} has to exist
+             there, not relative to this build file (ant's own basedir). -->
+        <mkdir dir="${job.output.basedir}/${run-directory}"/>
     </target>
 
     <target name="archive-run-directory">

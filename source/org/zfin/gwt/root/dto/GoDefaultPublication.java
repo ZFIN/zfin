@@ -31,6 +31,11 @@ public enum GoDefaultPublication implements PubEnum {
     // still resolves those shared pub IDs to the original constants).
     GOREF_INTERPRO2GO("GO_REF:0000002", "ZDB-PUB-020724-1", InferenceCategory.INTERPRO, false),
     GOREF_EC2GO("GO_REF:0000003", "ZDB-PUB-031118-3", InferenceCategory.EC, false),
+    // ZFIN-10464 item 3: GO Central's logical-inference annotations, net-new content the legacy
+    // GOA load rejected. 7,766 rows / 3,157 distinct (gene, GO) pairs in DANRE-mod, all carrying
+    // ECO:0000366 or ECO:0000364 (both mapped to IEA in release 1185). Their with/from is always a
+    // GO term, hence InferenceCategory.GO; not curated, since these are automatic assertions.
+    GOREF_GO_CENTRAL_INFERENCE("GO_REF:0000108", "ZDB-PUB-260903-15", InferenceCategory.GO, false),
     ;
 
     private final String title;
@@ -116,6 +121,7 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_ARBA);
             goRefPubs.add(GOREF_INTERPRO2GO);
             goRefPubs.add(GOREF_EC2GO);
+            goRefPubs.add(GOREF_GO_CENTRAL_INFERENCE);
         }
         return goRefPubs;
     }

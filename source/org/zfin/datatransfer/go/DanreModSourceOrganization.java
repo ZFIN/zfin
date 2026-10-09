@@ -24,11 +24,16 @@ import java.util.Set;
  *       Curation ownership wins over everything below.</li>
  *   <li>{@code GO_REF:0000033} → {@link OrganizationEnum#PAINT} — phylogenetically inferred
  *       annotations (IBA), whoever asserted them. See below.</li>
+ *   <li>{@code GO_REF:0000115} → {@link OrganizationEnum#GOA} — RNAcentral-derived
+ *       annotations (45 rows). Listed explicitly, even though it resolves to the same place as
+ *       {@link #DEFAULT}, to record that this was a reviewed decision (ZFIN-10025 open decision
+ *       4, settled: leave in GOA) rather than an unmapped source falling through by
+ *       default.</li>
  *   <li>everything else → {@link OrganizationEnum#GOA} — the legacy GOA load owned all
  *       non-ZFIN sources (UniProt, InterPro, RHEA, IntAct, …).</li>
  * </ul>
  *
- * <p><b>Why phylo gets its own org (ZFIN-10025 open decision 9, settled).</b> The legacy
+ * <p><b>Why phylo gets its own org (ZFIN-10025, README "Phylo IBA org", settled).</b> The legacy
  * FP-Inference load owned {@code zfin-prediction.gaf} under the {@code FP Inferences} org, and
  * those rows sit on {@code ZDB-PUB-110330-1} — the <i>same</i> publication as the unified file's
  * {@code GO_REF:0000033} rows. They are the same kind of annotation, differing only in
@@ -62,9 +67,14 @@ public final class DanreModSourceOrganization {
         "ZFIN", OrganizationEnum.NOCTUA
     );
 
-    /** References whose ownership differs from the default, regardless of who asserted them. */
+    /**
+     * References with an explicit ownership ruling, regardless of who asserted them.
+     * {@code GO_REF:0000115} maps to the same org as {@link #DEFAULT} — it is listed to record
+     * the decision, not because resolution would differ without it.
+     */
     private static final Map<String, OrganizationEnum> BY_REFERENCE = Map.of(
-        "GO_REF:0000033", OrganizationEnum.PAINT
+        "GO_REF:0000033", OrganizationEnum.PAINT,
+        "GO_REF:0000115", OrganizationEnum.GOA
     );
 
     /** Owner for any source not explicitly mapped above (the legacy GOA bucket). */

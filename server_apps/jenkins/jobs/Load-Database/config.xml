@@ -6,6 +6,10 @@
 By default, loads the latest backup from $DB_UNLOADS_PATH.
 Set BACKUP_PATH to load a specific file.
 Set LIST_ONLY to true to list available backups without loading.
+Set RUN_LIQUIBASE to true to run gradle liquibasePostBuild after the restore completes -- a
+restore alone is not a usable baseline for anything that depends on recent postGmakePostloaddb
+migrations (e.g. the ZFIN-10025 GO load work) until that runs. Covers the common case only: a
+dump old enough to also need liquibasePreBuild first is rare enough to run by hand.
 
 Note: This will drop and recreate the database. All existing data will be replaced.</description>
   <keepDependencies>false</keepDependencies>
@@ -21,6 +25,11 @@ Note: This will drop and recreate the database. All existing data will be replac
               <hudson.model.BooleanParameterDefinition>
                   <name>LIST_ONLY</name>
                   <description>List available backups and exit without loading.</description>
+                  <defaultValue>false</defaultValue>
+              </hudson.model.BooleanParameterDefinition>
+              <hudson.model.BooleanParameterDefinition>
+                  <name>RUN_LIQUIBASE</name>
+                  <description>If checked, run gradle liquibasePostBuild after the restore completes. Leave unchecked to only restore the backup, matching this job's previous behavior.</description>
                   <defaultValue>false</defaultValue>
               </hudson.model.BooleanParameterDefinition>
               <hudson.model.TextParameterDefinition>
@@ -97,6 +106,17 @@ gradle loaddb $GRADLE_ARGS
 
 echo ""
 echo "Database load complete."
+
+if [ "$RUN_LIQUIBASE" = "true" ]; then
+    echo ""
+    echo "RUN_LIQUIBASE=true -> running gradle liquibasePostBuild"
+    echo ""
+    gradle liquibasePostBuild
+    echo ""
+    echo "liquibasePostBuild complete."
+else
+    echo "RUN_LIQUIBASE not true -> skipping liquibasePostBuild"
+fi
 ]]></command>
     </hudson.tasks.Shell>
   </builders>

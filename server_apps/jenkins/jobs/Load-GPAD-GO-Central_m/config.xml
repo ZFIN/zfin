@@ -5,11 +5,11 @@
 
     *** THIS JOB WRITES TO THE DATABASE BY DEFAULT *** (GAF_LOAD_REPORT_ONLY defaults to false.) Left as-is it will add/update/remove marker_go_term_evidence rows for the GOA and Noctua organizations. Tick GAF_LOAD_REPORT_ONLY for a dry run that only produces the QC report.
 
-    Captures before/after marker_go_term_evidence snapshots and a DB-level csvDiff for FIVE organizations: the three the load owns (GOA, Noctua, PAINT) plus the two it must NOT touch (FP Inferences, UniProt). The latter two are expected to diff 0/0; capturing them turns that assumption into a check, and documents the two known cutover gaps -- FP-Inference rows are orphaned rather than migrated, and the UniProt-org *2go rows (111,089 across all three streams) sit outside the removal scope, so the 70,062 interpro2go/ec2go ones would duplicate at cutover unless purged (see server_apps/DB_maintenance/gafLoad/README-danre-mod-consolidation.md).
+    Captures before/after marker_go_term_evidence snapshots and a DB-level csvDiff for FIVE organizations: the three the load owns (GOA, Noctua, PAINT) plus two it does not own (FP Inferences, UniProt). On a normal run (RUN_CUTOVER_SCRIPTS unchecked) both of those are expected to diff 0/0 -- capturing them turns that assumption into a check. On a cutover run they diff deliberately: RUN_CUTOVER_SCRIPTS purges FP Inferences entirely (see its own parameter description), and the UniProt-org *2go rows (111,089 across all three streams) get the interpro2go/ec2go portion purged the same way, with kw2go purged separately if RUN_KW2GO_PURGE is also checked.
 
     Exit code 2 from the load means "completed with errors" and is mapped to UNSTABLE, not FAILURE — a run with errors is normal, not an abort.
 
-    *** THIS JOB IS DISABLED UNTIL CUTOVER. *** Enabling it is HALF of a two-part switch and must not be done on its own. The other half is turning the UniProt-Secondary load's *2go GO streams OFF (LOAD_INTERPRO2GO_EC2GO=false, LOAD_KW2GO=false on UniProt-Secondary-Term-Load) and purging the pre-existing UniProt-org interpro2go + ec2go rows (70,062). Note the purge deliberately does NOT include kw2go (41,027), which has no successor -- that is a separate decision. Enable this job while those streams are still on and the same InterPro2GO/EC2GO content exists twice, under two different organizations — the secondary load owns its copies as gafOrganization='UniProt' and this load writes its own as 'GOA', so neither prunes the other. Enable it, flip those flags and run the purge together. See server_apps/DB_maintenance/gafLoad/README-danre-mod-consolidation.md, open decisions 3 and 4.</description>
+    *** THIS JOB IS DISABLED UNTIL CUTOVER. *** Enabling it is HALF of a two-part switch and must not be done on its own. The other half is turning the UniProt-Secondary load's *2go GO streams OFF (LOAD_INTERPRO2GO_EC2GO=false, LOAD_KW2GO=false on UniProt-Secondary-Term-Load) and purging the pre-existing UniProt-org interpro2go + ec2go rows (70,062). Note the purge deliberately does NOT include kw2go (41,027) -- that's RUN_KW2GO_PURGE below, kept separately gated since it's a one-way delete with no successor to guard against. Enable this job while those streams are still on and the same InterPro2GO/EC2GO content exists twice, under two different organizations — the secondary load owns its copies as gafOrganization='UniProt' and this load writes its own as 'GOA', so neither prunes the other. Enable it, flip those flags and run the purge together. kw2go has no successor in either GPAD file and is being dropped, not swapped -- see RUN_KW2GO_PURGE below.</description>
   <keepDependencies>false</keepDependencies>
   <properties>
     <hudson.model.ParametersDefinitionProperty>
@@ -41,23 +41,35 @@
 
 If checked, the cutover SQL runs after the load and before the AFTER snapshot, so this build's before/after diff covers the load AND the cutover data changes together. That combined number is the one to sign off before cutover, but it is NOT comparable to the reference run in RUNBOOK-danre-mod-load.md section 10, which brackets the load alone.
 
-Runs two scripts from server_apps/DB_maintenance/gafLoad:
+Runs four scripts from server_apps/DB_maintenance/gafLoad:
   cutover-rehome-phylo-to-paint.sql -- moves pre-existing GO_REF:0000033 rows from GOA to PAINT. The loader only routes newly loaded rows there, so without this phylo annotations end up split across both organizations.
   cutover-purge-uniprot-2go.sql -- drops the ~70k UniProt-org interpro2go/ec2go rows the load has just superseded.
   cutover-purge-ec-dblinks.sql -- drops the ~5k EC db_link rows that fed the now-retired ec2go derivation (ZFIN-10418). Refuses to run until the 2go purge above has cleared the UniProt-org ec2go rows. Only durable once LOAD_INTERPRO2GO_EC2GO=false on UniProt-Secondary-Term-Load -- no SQL can verify that parameter, so it stays a manual runbook step. Side effect: the curation GO editor's EC inference dropdown goes empty (audited as never used).
+  cutover-purge-fp-inference.sql -- deletes all FP Inferences-org rows (~1,623 pairs). Unlike the 2go purge this is not a like-for-like swap -- only about a third of those pairs are reproduced by the new load's phylo content, so this is a real (if judged-acceptable) loss, not just a representation change. See the Cutover Impact Summary's true-loss-by-organization-and-source table for the actual count on this run.
 
-The purge has to run after the load, not before: it refuses to start until the GOA-org replacement rows exist. It will therefore fail if GAF_LOAD_REPORT_ONLY is checked, since a report-only run writes nothing for it to find.</description>
+The 2go purge has to run after the load, not before: it refuses to start until the GOA-org replacement rows exist. It will therefore fail if GAF_LOAD_REPORT_ONLY is checked, since a report-only run writes nothing for it to find. The EC-dblinks purge has the same ordering dependency on the 2go purge, for the same reason. The FP-Inference purge has no such guard (there is no replacement to check for) and runs regardless.</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>RUN_KW2GO_PURGE</name>
           <description>Additionally delete the 41,027 UniProt-org kw2go rows (cutover-purge-uniprot-kw2go.sql). Ignored unless RUN_CUTOVER_SCRIPTS is also checked.
 
-Kept separate from RUN_CUTOVER_SCRIPTS because it is a separate and still-open decision (ZFIN-10344). Unlike interpro2go and ec2go, kw2go has no successor in either GPAD file, so this is not a swap: of its 40,408 distinct (gene, GO) pairs, 10,907 are a true loss -- no other source supplies them and no more specific term the gene retains implies them.
+Kept separate from RUN_CUTOVER_SCRIPTS because it's a one-way delete with no successor to guard against (ZFIN-10344: decided to drop kw2go). Unlike interpro2go and ec2go, this is not a swap: of its 40,408 distinct (gene, GO) pairs, 9,870 are a true loss -- no other source supplies them and no more specific term the gene retains implies them.
 
-Only check this if that decision was "delete", and set LOAD_KW2GO=false on UniProt-Secondary-Term-Load first, or its next run re-derives every row this deletes.</description>
+Set LOAD_KW2GO=false on UniProt-Secondary-Term-Load first, or its next run re-derives every row this deletes.</description>
           <defaultValue>false</defaultValue>
         </hudson.model.BooleanParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>GAF_ALLOW_LARGE_REMOVAL</name>
+          <description>Apply deletions the removal-safety guard attributes to rejected input rows, instead of withholding them. A rejected row is indistinguishable from a row the file omitted, so its database counterpart would be deleted; the guard withholds exactly those. Tick this for a bulk retirement or a first cutover, where large removals are expected. The run is still marked UNSTABLE either way. Removals with no matching rejection are applied regardless and are unaffected by this flag.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+        <hudson.model.StringParameterDefinition>
+          <name>GAF_MAX_REMOVAL_FRACTION</name>
+          <description>Advisory only; it never withholds anything. If an organization removes more than this fraction of what it owns AND none of the removal is attributable to a rejected row, the run is marked UNSTABLE with a LARGE REMOVAL notice so the diff gets read. Blank uses the 0.10 default.</description>
+          <defaultValue></defaultValue>
+          <trim>true</trim>
+        </hudson.model.StringParameterDefinition>
       </parameterDefinitions>
     </hudson.model.ParametersDefinitionProperty>
   </properties>
@@ -87,7 +99,7 @@ echo "DANRE_MOD_GPAD_URL   = $DANRE_MOD_GPAD_URL"
 echo "GAF_LOAD_REPORT_ONLY = $GAF_LOAD_REPORT_ONLY"
 echo "RUN_MGTE_CLEANUP     = $RUN_MGTE_CLEANUP"
 
-bash $SQL/mgte_snapshot.sh before "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
+bash $SQL/mgte_snapshot.sh before "$OUT" --all GOA Noctua PAINT "FP Inferences" UniProt
 ]]></command>
         </hudson.tasks.Shell>
         <hudson.tasks.Shell>
@@ -109,6 +121,17 @@ set -e
 #
 # It also sits before the AFTER snapshot on purpose: the point of a rehearsal is a single diff
 # spanning load + cutover.
+# RUN_KW2GO_PURGE is read INSIDE this step, so without RUN_CUTOVER_SCRIPTS it would quietly purge
+# nothing while the build went green. Exit 1, not 2: a misconfigured run is a FAILURE, not a run
+# that completed with errors.
+if [ "$RUN_KW2GO_PURGE" = "true" ] && [ "$RUN_CUTOVER_SCRIPTS" != "true" ]; then
+    echo "ERROR: RUN_KW2GO_PURGE=true requires RUN_CUTOVER_SCRIPTS=true." >&2
+    echo "       The kw2go purge runs inside the cutover step, so on its own this flag does" >&2
+    echo "       nothing at all -- no rows would be deleted and nothing would say so." >&2
+    echo "       Re-run with both set, or clear RUN_KW2GO_PURGE." >&2
+    exit 1
+fi
+
 if [ "$RUN_CUTOVER_SCRIPTS" != "true" ]; then
     echo "RUN_CUTOVER_SCRIPTS not true -> skipping the cutover scripts"
     exit 0
@@ -129,13 +152,16 @@ $PSQL -f $SQL/cutover-purge-uniprot-2go.sql
 echo "=== cutover: purging EC dblinks now that ec2go has retired ==="
 $PSQL -f $SQL/cutover-purge-ec-dblinks.sql
 
-# kw2go is gated separately: ZFIN-10344 is still open, and unlike the 2go purge this one has no
-# replacement to guard against, so nothing but this flag stops it deleting the wrong thing.
+echo "=== cutover: purging FP Inferences (no replacement for ~2/3 of these pairs -- judged stale predictions, not unique knowledge) ==="
+$PSQL -f $SQL/cutover-purge-fp-inference.sql
+
+# kw2go is gated separately: ZFIN-10344 is still open, and unlike the purges above this one has
+# no replacement to guard against, so nothing but this flag stops it deleting the wrong thing.
 if [ "$RUN_KW2GO_PURGE" = "true" ]; then
     echo "=== cutover: RUN_KW2GO_PURGE=true -> deleting UniProt-org kw2go ==="
     $PSQL -f $SQL/cutover-purge-uniprot-kw2go.sql
 else
-    echo "RUN_KW2GO_PURGE not true -> leaving kw2go rows in place (ZFIN-10344 undecided)"
+    echo "RUN_KW2GO_PURGE not true -> leaving kw2go rows in place"
 fi
 ]]></command>
         </hudson.tasks.Shell>
@@ -175,8 +201,23 @@ set -e
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m-dbdiff
 
-bash $SQL/mgte_snapshot.sh after "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
-bash $SQL/mgte_csvdiff.sh        "$OUT" --others --all GOA Noctua PAINT "FP Inferences" UniProt
+bash $SQL/mgte_snapshot.sh after "$OUT" --all GOA Noctua PAINT "FP Inferences" UniProt
+bash $SQL/mgte_csvdiff.sh        "$OUT" --all GOA Noctua PAINT "FP Inferences" UniProt
+
+# Splits the pairs the diff says disappeared into subsumed / specificity_lost / true_loss. Needs
+# the --all snapshots, hence its position. Non-fatal: a reporting refinement must not mask the
+# load's own result or lose the workbooks written above.
+bash $SQL/mgte_subsumption.sh "$OUT" || echo "WARNING: mgte_subsumption.sh failed; the csvdiff workbooks above are unaffected"
+
+# Adds a "Cutover Impact Summary" node (per-org before/after + subsumption-bucket breakdown) to
+# the load's own HTML report, alongside its existing Added/Updated/Removed/Errors/Existing nodes
+# in the left-nav (GafReportBuilder writes that report before any of the above runs, so this is
+# the earliest point the two can be combined -- see GafCutoverImpactSummary's javadoc). Non-fatal
+# for the same reason as mgte_subsumption.sh above: a missing summary section must never take
+# down a build whose real artifacts (the load report, the diff workbooks) are otherwise fine.
+cd $SOURCEROOT
+gradle gafCutoverImpactSummary --args="$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GPAD-GO-Central_m/Load-GPAD-GO-Central_m.html $OUT" \
+    || echo "WARNING: gafCutoverImpactSummary failed; the load report and diff workbooks above are unaffected"
 ]]></command>
         </hudson.tasks.Shell>
     </builders>

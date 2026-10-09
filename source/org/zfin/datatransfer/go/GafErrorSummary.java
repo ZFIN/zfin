@@ -67,6 +67,22 @@ public class GafErrorSummary {
         if (message.startsWith("RO term") && message.contains("does not exist")) {
             return "RO term does not exist";
         }
+        // Normalize: strip the specific GO id and marker -- isValidMarkerGoTerm's message embeds
+        // both directly (no GafEntry/MarkerGoTermEvidence blob to parse them out of separately),
+        // so without this every distinct (marker, GO id) pair became its own one-row category --
+        // this was most of why the category list could run into the hundreds.
+        if (message.startsWith("Cannot add root-term annotation")) {
+            return "Cannot add root-term annotation (non-root already exists for that marker)";
+        }
+        // Normalize: same reason, for dropRootTermsSupersededInThisRun's message.
+        if (message.startsWith("Root-term annotation") && message.contains("dropped:")) {
+            return "Root-term annotation dropped (superseded by non-root in same run)";
+        }
+        // Normalize: strip the row count and cause so every failed batch lands in one bucket
+        // rather than one category per batch (the cause varies row to row).
+        if (message.startsWith("Failed to add batch")) {
+            return "Failed to add batch (transaction rolled back)";
+        }
         if (message.startsWith("MarkerGoTermEvidence{")) {
             return "Annotation insertion failed";
         }

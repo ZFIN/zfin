@@ -625,7 +625,7 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
     @Test
     @Ignore
     @SuppressWarnings("unchecked")
-    public void isMoreSpecificGo() throws Exception {
+    public void ancestorTermIsNotTheSameAnnotation() throws Exception {
 
         String hql = "from MarkerGoTermEvidence";
         MarkerGoTermEvidence existingEvidence = (MarkerGoTermEvidence) currentSession().createQuery(hql)
@@ -662,21 +662,22 @@ public class GoaGafServiceTest extends AbstractDatabaseTest {
         parentTerms = ontologyRepository.getParentDirectTerms(existingEvidence.getGoTerm());
         newEvidence.setGoTerm(parentTerms.iterator().next());
 
+        // ZFIN-10518: descendant filtering was removed -- an ancestor of an existing annotation is
+        // now a DIFFERENT annotation, to be stored alongside it rather than suppressed.
         assertFalse(existingEvidence.equals(newEvidence));
-        assertTrue(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
-        parentTerms = ontologyRepository.getParentDirectTerms(existingEvidence.getGoTerm());
-
-        newEvidence.setGoTerm(parentTerms.iterator().next());
-
-        assertFalse(existingEvidence.equals(newEvidence));
-        assertTrue(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
+        assertFalse("a parent term is not the same annotation",
+            gafService.isSameAnnotation(existingEvidence, newEvidence));
 
         List<GenericTerm> childTerms = ontologyRepository.getChildDirectTerms(existingEvidence.getGoTerm());
         newEvidence.setGoTerm(childTerms.iterator().next());
+        assertFalse("a child term is not the same annotation",
+            gafService.isSameAnnotation(existingEvidence, newEvidence));
 
-        assertFalse(existingEvidence.equals(newEvidence));
-        assertFalse(gafService.isMoreSpecificAnnotation(existingEvidence, newEvidence));
-
+        // the identical term still counts as already stored, which is what stops the load
+        // re-adding everything it already has
+        newEvidence.setGoTerm(existingEvidence.getGoTerm());
+        assertTrue("the identical annotation is recognised as existing",
+            gafService.isSameAnnotation(existingEvidence, newEvidence));
     }
 
 

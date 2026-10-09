@@ -420,10 +420,11 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         //     so it has a successor. Note it currently lands in the GOA organization while these
         //     rows are owned by UniProt, so turning this OFF alone leaves the old copies in place
         //     and DUPLICATES rather than replaces: the cutover must also purge
-        //     gafOrganization='UniProt'. See README-danre-mod-consolidation.md finding 2.
+        //     gafOrganization='UniProt' (cutover-purge-uniprot-2go.sql).
         //   * kw2go -- GO retired GO_REF:0000004 and neither DANRE file carries it, so there is
         //     NO successor. Turning this OFF strands ~41k annotations (~68% of which are not
-        //     subsumed by a retained more-specific term). That is open decision 4, unresolved.
+        //     subsumed by a retained more-specific term). Decided: drop -- turn this off and run
+        //     cutover-purge-uniprot-kw2go.sql.
         //
         // Turning a stream off stops both its Add and Remove handlers, so existing rows are
         // frozen -- neither refreshed nor pruned -- until an explicit purge removes them. For

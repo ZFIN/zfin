@@ -32,6 +32,14 @@ public interface MarkerGoTermEvidenceRepository {
 
     MarkerGoTermEvidence getNdExistsForGoGeneEvidenceCode(MarkerGoTermEvidence markerGoTermEvidenceToAdd);
 
+    /**
+     * Every currently-stored root-term (GO:0003674 / GO:0008150 / GO:0005575) annotation, across
+     * all markers. Small (a few thousand rows at most -- ND is a placeholder, not a common
+     * annotation), so a full fetch is cheap and lets a caller build an in-memory lookup once per
+     * run instead of querying per row.
+     */
+    List<MarkerGoTermEvidence> getAllRootTermAnnotations();
+
     GafOrganization getGafOrganization(GafOrganization.OrganizationEnum organizationEnum);
 
     /**
