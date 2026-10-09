@@ -1,5 +1,7 @@
 package org.zfin.datatransfer.go;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
 import org.zfin.mutant.MarkerGoTermAnnotationExtn;
 import org.zfin.mutant.MarkerGoTermEvidence;
@@ -15,22 +17,34 @@ import java.util.TreeSet;
  * This is a placeholder for GafJobData.
  * It is used in place of MarkerGoTermEvidence to indicate what entries exist or should be removed.
  */
+@Getter
 public class GafJobEntry {
+    @Setter
     private String zdbID;
+    @Setter
     private String entryString;
 
     // Captured at construction time so downstream consumers (e.g. report builders)
     // can render structured columns without re-parsing the toString() blob.
     private String marker;
+    // Needed to join a removal against rejected raw file rows, which carry a ZDB id and no
+    // abbreviation.
+    @Setter
+    private String markerZdbID;
     private String evidenceCode;
     private String qualifierRelation;
     private String source;
     private String goTermName;
+    @Setter
     private String goTermID;
+    @Setter
     private String organizationCreatedBy;
     private String withFrom;
     private String annotationExtensions;
     private String noctuaModelId;
+    // Which organization's removal pass produced this entry; null when it is not one.
+    @Setter
+    private String owningOrganization;
 
     public GafJobEntry(String zdbID) {
         this.zdbID = zdbID;
@@ -40,6 +54,7 @@ public class GafJobEntry {
         this.zdbID       = m.getZdbID();
         this.entryString = m.toString();
         this.marker                = m.getMarker()            != null ? m.getMarker().getAbbreviation()       : null;
+        this.markerZdbID           = m.getMarker()            != null ? m.getMarker().getZdbID()              : null;
         this.evidenceCode          = m.getEvidenceCode()      != null ? m.getEvidenceCode().getName()         : null;
         this.qualifierRelation     = m.getQualifierRelation() != null ? m.getQualifierRelation().getTermName(): null;
         this.source                = m.getSource()            != null ? m.getSource().getZdbID()              : null;
@@ -88,33 +103,6 @@ public class GafJobEntry {
         java.util.Collections.sort(parts);
         return String.join("|", parts);
     }
-
-    public String getZdbID() {
-        return zdbID;
-    }
-
-    public void setZdbID(String zdbID) {
-        this.zdbID = zdbID;
-    }
-
-    public String getEntryString() {
-        return entryString;
-    }
-
-    public void setEntryString(String entryString) {
-        this.entryString = entryString;
-    }
-
-    public String getMarker()                { return marker; }
-    public String getEvidenceCode()          { return evidenceCode; }
-    public String getQualifierRelation()     { return qualifierRelation; }
-    public String getSource()                { return source; }
-    public String getGoTermName()            { return goTermName; }
-    public String getGoTermID()              { return goTermID; }
-    public String getOrganizationCreatedBy() { return organizationCreatedBy; }
-    public String getWithFrom()              { return withFrom; }
-    public String getAnnotationExtensions()  { return annotationExtensions; }
-    public String getNoctuaModelId()         { return noctuaModelId; }
 
     @Override
     public boolean equals(Object o) {

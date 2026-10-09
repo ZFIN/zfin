@@ -3,7 +3,7 @@
 # Row-level (database) diff of the before/after marker_go_term_evidence snapshots written by
 # mgte_snapshot.sh, one workbook per GAF organization (ZFIN-8948).
 #
-#   mgte_csvdiff.sh <outdir> [--others] [--all] <org>...
+#   mgte_csvdiff.sh <outdir> [--all] <org>...
 #
 # Reads  <outdir>/mgte_{before,after}_<TAG>.csv
 # Writes <outdir>/mgte_dbdiff_<TAG>.xlsx  (sheets: deletes / adds / updated_1 / updated_2)
@@ -32,6 +32,14 @@
 # 2026.07.05.1 GOA snapshot). That is only safe because CSVDiff became multiplicity-aware on
 # 2026-08-12; the older implementation silently dropped all but one member of a key group.
 #
+# qualifier_flag ('not' / 'contributes to' / 'colocalizes with' / '-') is in NEITHER list too,
+# same reasoning: a NOT<->positive flip on an otherwise-unchanged annotation now surfaces as an
+# UPDATE. Before this column existed in the snapshot at all, that flip was invisible everywhere
+# -- a NOT row and its positive twin agreed on every column the diff saw and collapsed onto one
+# key. Putting it in KEY would turn every flip into a delete+add (and, same as protein_acc,
+# fragment key groups); putting it in IGNORE would hide the flip outright, which for a negated
+# statement is the one failure mode worse than noise.
+#
 # --all diffs the combined all-organizations snapshot with a DELIBERATELY COARSER KEY, because it
 # answers a different question. The per-org key above asks "is this the same annotation record,
 # same provenance?" -- right for per-org accounting, but it makes any change of owner or of
@@ -51,18 +59,17 @@
 # harder on multiplicity-aware CSVDiff. Same caveat as above, more so.
 set -euo pipefail
 
-OUT="${1:?usage: mgte_csvdiff.sh <outdir> [--others] <org>...}"
+OUT="${1:?usage: mgte_csvdiff.sh <outdir> [--all] <org>...}"
 shift
 
-# --others / --all diff the extra snapshots mgte_snapshot.sh writes under the same flags.
-OTHERS=false
+# OTHER is always diffed, matching mgte_snapshot.sh always writing it. --all diffs the extra
+# combined snapshot mgte_snapshot.sh writes under the same flag.
 ALL=false
 ARGS=()
 for a in "$@"; do
     case "$a" in
-        --others) OTHERS=true ;;
-        --all)    ALL=true ;;
-        *)        ARGS+=("$a") ;;
+        --all) ALL=true ;;
+        *)     ARGS+=("$a") ;;
     esac
 done
 set -- "${ARGS[@]}"
@@ -89,7 +96,7 @@ diff_pair() {
 
 TAGS=()
 for ORG in "$@"; do TAGS+=("$(echo "$ORG" | tr ' ' '_')"); done
-[ "$OTHERS" = true ] && TAGS+=(OTHER)
+TAGS+=(OTHER)
 
 for TAG in "${TAGS[@]}"; do
     diff_pair "$TAG" "$KEY" "$IGNORE"

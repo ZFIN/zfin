@@ -72,7 +72,7 @@ set -e
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff
 
-bash $SQL/mgte_snapshot.sh before "$OUT" --others GOA
+bash $SQL/mgte_snapshot.sh before "$OUT" GOA
 ]]></command>
     </hudson.tasks.Shell>
     <hudson.tasks.Ant plugin="ant@1.2">
@@ -108,8 +108,8 @@ set -e
 SQL=$SOURCEROOT/server_apps/DB_maintenance/gafLoad
 OUT=$TARGETROOT/server_apps/DB_maintenance/gafLoad/Load-GAF-GOA_m-dbdiff
 
-bash $SQL/mgte_snapshot.sh after "$OUT" --others GOA
-bash $SQL/mgte_csvdiff.sh        "$OUT" --others GOA
+bash $SQL/mgte_snapshot.sh after "$OUT" GOA
+bash $SQL/mgte_csvdiff.sh        "$OUT" GOA
 ]]></command>
     </hudson.tasks.Shell>
   </builders>
