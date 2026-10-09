@@ -56,7 +56,7 @@ const MarkerSequencesTable = ({markerId, showSummary}) => {
         },
         {
             label: 'Genome Assembly',
-            content: row => row.latestAssembly,
+            content: row => row.assemblyNames && row.assemblyNames.join(', '),
             width: '150px',
             filterName: 'accession',
         },
