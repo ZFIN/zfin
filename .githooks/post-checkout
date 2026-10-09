@@ -2,6 +2,12 @@
 
 [ "$SKIP_HOOKS" = "1" ] && exit 0
 
+# A fresh `git worktree add` (or an unborn checkout) passes an all-zero OLD ref ($1) -- there
+# is no previous state to diff against. Skip: without this, `git diff-tree $1 $2` below prints
+# "fatal: bad object 0000000000000000000000000000000000000000". (Feature worktrees install
+# node deps inside Docker, so a host `npm ci` on worktree creation isn't wanted anyway.)
+[ "$1" = "0000000000000000000000000000000000000000" ] && exit 0
+
 source $(dirname "$0")/helpers
 
 changed_files="$(git diff-tree -r --name-only --no-commit-id $1 $2)"

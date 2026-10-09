@@ -36,10 +36,7 @@ RUN curl -fsSL "https://updates.jenkins.io/download/war/${JENKINS_VERSION}/jenki
     && echo "${JENKINS_WAR_SHA256}  /opt/jenkins/jenkins.war" \
         | sha256sum -c -
 
-ADD --chown=gradle:zfin ./jenkins-cli-shim-wrapper.sh /usr/local/bin/jenkins-cli
-
-# If we switch to buildkit, this could be combined with the above "ADD" line
-RUN chmod 755 /usr/local/bin/jenkins-cli
+# jenkins-cli comes from the base image (docker/base/jenkins-cli).
 
 CMD /bin/bash -l -c "/opt/java/openjdk/bin/java \
 	--add-opens java.base/java.lang=ALL-UNNAMED \

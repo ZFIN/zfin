@@ -17,6 +17,10 @@ COPY ./init.d-httpd /etc/init.d/httpd
 RUN chmod 755 /etc/init.d/httpd
 
 RUN mkdir -p /opt/apache/apache-tomcat/conf && chown -R gradle /opt/apache/apache-tomcat 
+# The npm and maven cache volumes mount here. Docker seeds an empty volume's ownership from the
+# image's directory at that path; with no directory it creates a root-owned one, and npm (as
+# gradle) then fails with EACCES on a stack's first build.
+RUN mkdir -p /home/gradle/.npm /home/gradle/.m2 && chown gradle /home/gradle/.npm /home/gradle/.m2
 RUN mkdir -p /opt/zfin/log/httpd && cd /opt/zfin/log/httpd && touch zfin_access zfin_access.json zfin_errors && chmod 664 *
 
 RUN mkdir -p /var/solr/data/site_index/data/snapshot_metadata && \

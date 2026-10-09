@@ -9,6 +9,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Add the PostgreSQL and NodeSource repos, install everything in one shot, then
 # purge packages we inherit from the base gradle image but never use.
 #
+# pigz: parallel gzip, for tooling that tars volumes. tar's own gzip is single-threaded and
+# CPU-bound; pigz is a drop-in replacement that scales across cores and writes an ordinary
+# gzip stream.
+#
 # Both repo signing keys are dropped into /etc/apt/trusted.gpg.d as
 # ASCII-armored files (.asc), which apt reads directly — so we don't need a
 # `gpg --dearmor` step (and therefore don't depend on gnupg being preinstalled).
@@ -25,6 +29,7 @@ RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
        libwww-perl libdbi-perl libdbd-pg-perl libmime-lite-perl libjson-perl \
        rsync bind9-dnsutils \
        gnupg msmtp jq file \
+       pigz \
        postgresql-client-18 \
        nodejs \
     && npm install -g npm \
@@ -89,6 +94,12 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
     && adduser gradle solr
 
 USER gradle
+# Pre-create the cache mountpoints so a fresh named volume mounted here inherits
+# gradle ownership (Docker seeds an empty volume from the image dir's metadata).
+# .gradle already ships gradle-owned from the upstream image; .npm and .m2 don't
+# exist upstream, so without this Docker creates the volume root as root:root and
+# the unprivileged gradle user can't write to it (npm ci fails with EACCES).
+RUN mkdir -p /home/gradle/.npm /home/gradle/.m2
 COPY ./bash_profile /tmp/bash_profile
 RUN cat /tmp/bash_profile >> /home/gradle/.profile \
     && git config --global --add safe.directory /opt/zfin/source_roots/zfin.org \
@@ -108,3 +119,11 @@ CMD ["/bin/bash","-l"]
 #     && apt autoremove -y \
 #     && apt clean && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cpanm
 # USER gradle
+
+# jenkins-cli, for every image built on this one: jenkins (which has the WAR to unzip) and
+# compile (which downloads the jar from the running Jenkins instead). It resolves credentials
+# from the jenkins-home secrets on www_data, a volume both mount, and talks to
+# http://jenkins:9499/jobs over the compose network, so the common case needs no arguments.
+# `jenkins-cli --help` for usage.
+ADD --chown=gradle:zfin ./jenkins-cli /usr/local/bin/jenkins-cli
+RUN chmod 755 /usr/local/bin/jenkins-cli

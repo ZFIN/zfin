@@ -12,6 +12,10 @@ RUN sed -i \
 RUN groupadd -g 1000 zfin && \
     usermod -a -G zfin apache
 
+# Shared volumes with compile: declare them so fresh volumes seed gradle-owned, not root.
+RUN mkdir -p /opt/zfin/static /opt/zfin/tls /opt/zfin/www_homes/zfin.org \
+    && chown 1000:1000 /opt/zfin/static /opt/zfin/tls /opt/zfin/www_homes/zfin.org
+
 RUN /bin/ln -s /opt/zfin/www_homes /srv/www
 
 COPY ./httpd.conf /etc/httpd/conf/httpd.conf
