@@ -84,8 +84,10 @@ public final class ZircLesionFormSchema {
             List.of("point_mutation", "deletion", "insertion", "indel", "transgene");
     // ZFIN-10380 adds deletion: a deletion can remove residues, so it wants
     // the amino-acid section and the protein-consequence list too.
+    // ZFIN-10487 adds insertion and indel, which can add or replace residues;
+    // every type here gets the full protein_consequence_term list, unfiltered.
     private static final List<String> PROTEIN_TYPES =
-            List.of("point_mutation", "deletion");
+            List.of("point_mutation", "deletion", "insertion", "indel");
     /**
      * Bases accepted in sequence fields. Declared here and emitted onto every
      * nucleotideSequence Control, so the widget and the server-side

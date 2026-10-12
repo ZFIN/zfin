@@ -298,7 +298,7 @@
       "rule" : {
         "condition" : {
           "schema" : {
-            "enum" : [ "point_mutation", "deletion" ]
+            "enum" : [ "point_mutation", "deletion", "insertion", "indel" ]
           },
           "scope" : "#/properties/lesionType"
         },
