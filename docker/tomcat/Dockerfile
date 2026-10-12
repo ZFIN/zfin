@@ -10,7 +10,17 @@ RUN id -u 1000 && userdel $(id -un 1000)
 RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
 
-RUN mkdir -p /research/zunloads/download-files
+# /research/* symlink shim from docker/base/Dockerfile -- mirror it here
+RUN mkdir -p /research /mnt/research \
+    && ln -s /mnt/research/vol/archive /research/zarchive \
+    && ln -s /mnt/research/vol/blast /research/zblast \
+    && ln -s /mnt/research/vol/blast /research/zblastfiles \
+    && ln -s /mnt/research/vol/central /research/zcentral \
+    && ln -s /mnt/research/vol/prod /research/zprod \
+    && ln -s /mnt/research/vol/prod /research/zprodmore \
+    && ln -s /mnt/research/vol/unloads /research/zunloads \
+    && ln -s /mnt/research/vol/users /research/zusers \
+    && mkdir -p /mnt/research/vol/unloads/download-files
 RUN mkdir -p /opt/zfin/loadUp
 
 # Shared volumes with compile: declare them so fresh volumes seed gradle-owned, not root.
