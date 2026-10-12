@@ -10,17 +10,13 @@ RUN id -u 1000 && userdel $(id -un 1000)
 RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
 
-# /research/* symlink shim from docker/base/Dockerfile -- mirror it here
-RUN mkdir -p /research /mnt/research \
-    && ln -s /mnt/research/vol/archive /research/zarchive \
-    && ln -s /mnt/research/vol/blast /research/zblast \
-    && ln -s /mnt/research/vol/blast /research/zblastfiles \
-    && ln -s /mnt/research/vol/central /research/zcentral \
+# /research/zprod(more) symlink shim from docker/base/Dockerfile, pared down to what tomcat
+# actually reads (GenomicLocationService's gff3 FASTAs) -- unlike base/compile, only
+# vol/prod/gff3 is bind-mounted here, not all of /mnt/research, so the other /research/z*
+# aliases from the base shim are omitted rather than left dangling.
+RUN mkdir -p /research /mnt/research/vol/prod \
     && ln -s /mnt/research/vol/prod /research/zprod \
-    && ln -s /mnt/research/vol/prod /research/zprodmore \
-    && ln -s /mnt/research/vol/unloads /research/zunloads \
-    && ln -s /mnt/research/vol/users /research/zusers \
-    && mkdir -p /mnt/research/vol/unloads/download-files
+    && ln -s /mnt/research/vol/prod /research/zprodmore
 RUN mkdir -p /opt/zfin/loadUp
 
 # Shared volumes with compile: declare them so fresh volumes seed gradle-owned, not root.
