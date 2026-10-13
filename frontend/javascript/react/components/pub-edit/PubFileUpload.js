@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { useDropzone } from 'react-dropzone'
 import LoadingButton from '../LoadingButton';
 import http from '../../utils/http';
+import { uploadTooLargeMessage } from '../../utils/upload-errors';
 
 const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSuccess }) => {
     const [type, setType] = useState('');
@@ -32,7 +33,11 @@ const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSucces
             setError('');
             onSuccess(response)
         } catch (error) {
-            setError(error.responseJSON ? error.responseJSON.message : 'Something went wrong');
+            if (error.status === 413) {
+                setError(uploadTooLargeMessage(error.responseText, files[0].size));
+            } else {
+                setError(error.responseJSON ? error.responseJSON.message : 'Something went wrong');
+            }
         }
         setSaving(false);
     }
