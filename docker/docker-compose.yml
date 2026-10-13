@@ -334,6 +334,8 @@ services:
       INSTANCE: ${DOCKER_INSTANCE}
       OPENIDC_CLIENTID: ${OPENIDC_CLIENTID}
       OPENIDC_CLIENTSECRET: ${OPENIDC_CLIENTSECRET}
+      DISABLE_OIDC: ${DISABLE_OIDC:-false}
+      JENKINS_ADMIN_PASSWORD: ${JENKINS_ADMIN_PASSWORD:-}
     volumes:
       #- jenkins_data:/var/jenkins_home
       - ${DOCKER_SOURCE_ROOTS_PATH}:/opt/zfin/source_roots/zfin.org

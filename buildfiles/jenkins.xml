@@ -116,6 +116,10 @@
 	        </copy>
             </else>
         </if>
+        <!-- Startup scripts; zfin-security-realm.groovy honors DISABLE_OIDC on every start -->
+        <copy todir="${JENKINS_HOME}/init.groovy.d" overwrite="true">
+            <fileset dir="${basedir}/server_apps/jenkins/init.groovy.d"/>
+        </copy>
 	<copy tofile="${JENKINS_HOME}/jenkins.model.JenkinsLocationConfiguration.xml">
 	    <fileset file="${basedir}/server_apps/jenkins/jenkins.model.JenkinsLocationConfiguration.xml"/>
             <filterset>
