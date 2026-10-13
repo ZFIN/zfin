@@ -34,7 +34,9 @@ public class GenomicLocationService {
 
 	// Reached through the image's /research symlink shim rather than a dedicated mount:
 	// /research/zprodmore resolves to ${DOCKER_RESEARCH_PATH}/vol/prod, which is
-	// /research/zprodmore/gff3/ in production.
+	// /research/zprodmore/gff3/ in production. In the tomcat/tomcatdebug containers only that
+	// gff3 subdir is bind-mounted (not all of ${DOCKER_RESEARCH_PATH}), so this is the only
+	// /research/z* path that resolves there.
 	public static final String FASTA_BASE_DIR = "/research/zprodmore/gff3/";
 	public static final String FASTA_GENOMIC_Z11_URL = "Danio_rerio.fa";
 	public static final String FASTA_GENOMIC_Z12_FILE = "GCF_049306965.1_GRCz12tu_genomic.fna";

@@ -10,7 +10,10 @@ RUN id -u 1000 && userdel $(id -un 1000)
 RUN addgroup --gid 1000 zfin && \
     adduser --home /usr/local/tomcat --no-create-home --ingroup zfin --disabled-password --gecos '' zfishweb
 
-RUN mkdir -p /research/zunloads/download-files
+# /research/zprod(more) symlink shim, pared down to the gff3 path tomcat reads
+RUN mkdir -p /research /mnt/research/vol/prod \
+    && ln -s /mnt/research/vol/prod /research/zprod \
+    && ln -s /mnt/research/vol/prod /research/zprodmore
 RUN mkdir -p /opt/zfin/loadUp
 
 # Shared volumes with compile: declare them so fresh volumes seed gradle-owned, not root.

@@ -247,9 +247,8 @@ services:
       - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      # GenomicLocationService reads genome FASTAs through the image's /research symlink shim,
-      # which needs ${DOCKER_RESEARCH_PATH} mounted here to resolve.
-      - ${DOCKER_RESEARCH_PATH}:/mnt/research
+      # Only the gff3 subdir, for GenomicLocationService's FASTAs via /research/zprod(more)
+      - ${DOCKER_RESEARCH_PATH}/vol/prod/gff3:/mnt/research/vol/prod/gff3
   tomcatdebug:
     hostname: tomcat
     depends_on:                      # same contract as tomcat
@@ -284,9 +283,8 @@ services:
       - ${DOCKER_BOWTIE_PATH}/bowtie2:/opt/misc/bowtie2
       - ${DOCKER_DOWNLOADS_PATH}:/opt/zfin/download-files
       - ${DOCKER_LOADUP_PATH}:/opt/zfin/loadUp
-      # GenomicLocationService reads genome FASTAs through the image's /research symlink shim,
-      # which needs ${DOCKER_RESEARCH_PATH} mounted here to resolve.
-      - ${DOCKER_RESEARCH_PATH}:/mnt/research
+      # Only the gff3 subdir, for GenomicLocationService's FASTAs via /research/zprod(more)
+      - ${DOCKER_RESEARCH_PATH}/vol/prod/gff3:/mnt/research/vol/prod/gff3
   blast:
     build: ./blast/
     platform: linux/amd64
