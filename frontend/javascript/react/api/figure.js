@@ -1,3 +1,5 @@
+import { parseUploadResponse } from '../utils/upload-errors';
+
 export const getFigures = (pubId) => {
     return fetch(`/action/publication/${pubId}/figures`)
         .then(response => response.json());
@@ -14,7 +16,7 @@ export const addFigure = (pubId, label, caption, fileList) => {
     return fetch(`/action/publication/${pubId}/figures`, {
         method: 'POST',
         body: form
-    }).then(response => response.json());
+    }).then(response => parseUploadResponse(response, fileList));
 };
 
 export const updateFigure = async (fig) => {
@@ -38,7 +40,7 @@ export const addImage = (fig, file) => {
     return fetch(`/action/figure/${fig.zdbId}/images`, {
         method: 'POST',
         body: form
-    }).then(response => response.json());
+    }).then(response => parseUploadResponse(response, [file]));
 };
 
 export const deleteImage = (img) => {
