@@ -62,7 +62,8 @@ Named volumes are managed by Docker. Bind mounts (prefixed with `$DOCKER_*`) are
 
 | Variable | Default | Used By | Purpose |
 |----------|---------|---------|---------|
-| `DISABLE_OIDC` | `false` | httpd | Set to `true` to bypass OpenID Connect authentication on `/cgi-bin`, `/jobs`, `/solr`, `/logs`, and `/mailpit` for local development. Requires rebuilding the httpd container (`docker compose up -d httpd`). |
+| `DISABLE_OIDC` | `false` | httpd, jenkins | Set to `true` to bypass OpenID Connect authentication on `/cgi-bin`, `/jobs`, `/solr`, `/logs`, and `/mailpit` for local development. Requires recreating the httpd container (`docker compose up -d httpd`). Jenkins also switches from OIDC to its own user database on its next start (`docker compose up -d jenkins`; the startup script is installed by `ant deploy-jobs`). Turning the flag back off restores the OIDC configuration saved at switch time on the next start; if that snapshot is missing, Jenkins logs instructions for redeploying `config.xml` and shuts down. |
+| `JENKINS_ADMIN_PASSWORD` | — | jenkins | Only used with `DISABLE_OIDC=true` when Jenkins has no local accounts yet: password for the `admin` account it creates. If unset, a random password is written to `jenkins-home/secrets/initialAdminPassword`. |
 
 ### Key Observations
 
