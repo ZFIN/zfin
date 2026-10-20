@@ -8,6 +8,12 @@
     <target name="build-solr-index-jenkins">
         <antcall target="build-solr-index"/>
         <antcall target="check-indexer"/>
+        <antcall target="backup-solr-index-jenkins"/>
+    </target>
+
+    <!-- SKIP_SOLR_BACKUP is the Step-2 Jenkins job's parameter, which the Ant plugin passes as
+         -DSKIP_SOLR_BACKUP=true|false. Unset (any other caller) means back up, as before. -->
+    <target name="backup-solr-index-jenkins" unless="${SKIP_SOLR_BACKUP}">
         <antcall target="backup-solr-index"/>
     </target>
 

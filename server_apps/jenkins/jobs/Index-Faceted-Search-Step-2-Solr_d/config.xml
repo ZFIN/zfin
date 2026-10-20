@@ -3,7 +3,17 @@
   <actions/>
   <description>This job creates the index for Faceted Search Step 2. It runs the ant task to build the solr index.</description>
   <keepDependencies>false</keepDependencies>
-  <properties/>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.BooleanParameterDefinition>
+          <name>SKIP_SOLR_BACKUP</name>
+          <description>Skip the Solr snapshot (backup-solr-index) after a successful reindex. For dev/feature stacks whose unloads directory is shared or not writable by Solr.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
   <scm class="hudson.scm.NullSCM"/>
   <canRoam>true</canRoam>
   <disabled>false</disabled>
