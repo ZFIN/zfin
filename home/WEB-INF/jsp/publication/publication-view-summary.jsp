@@ -79,7 +79,7 @@
     <z:attributeListItem label="PubMed">
         <c:choose>
             <c:when test="${!empty publication.accessionNumber}">
-                <a href="http://www.ncbi.nlm.nih.gov:80/entrez/query.fcgi?cmd=search&db=PubMed&dopt=Abstract&term=${publication.accessionNumber}">
+                <a href="https://pubmed.ncbi.nlm.nih.gov/${publication.accessionNumber}">
                         ${publication.accessionNumber}
                 </a>
             </c:when>
