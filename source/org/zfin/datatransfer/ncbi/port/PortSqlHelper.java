@@ -18,11 +18,11 @@ public class PortSqlHelper {
     }
 
     public static String getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-            String fdbContId, String pubMappedbasedOnRNA, String pubMappedbasedOnVega, String pubMappedbasedOnNCBISupplement) {
+            String fdbContId, String pubMappedbasedOnRNA, String pubMappedbasedOnVega, String... pubsMappedbasedOnNCBISupplement) {
         String sql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdbContId) +
                      " and exists (select 1 from record_attribution " +
                      "       where recattrib_data_zdb_id = dblink_zdb_id " +
-                     "         and recattrib_source_zdb_id in ('" + pubMappedbasedOnRNA + "','" + pubMappedbasedOnVega + "','" + pubMappedbasedOnNCBISupplement + "'))";
+                     "         and recattrib_source_zdb_id in ('" + pubMappedbasedOnRNA + "','" + pubMappedbasedOnVega + "','" + String.join("','", pubsMappedbasedOnNCBISupplement) + "'))";
         return sql;
     }
 
