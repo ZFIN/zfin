@@ -2,7 +2,10 @@ package org.zfin.sequence;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.annotation.JsonView;
+import lombok.Getter;
+import lombok.Setter;
 import org.zfin.framework.api.View;
+import org.zfin.sequence.gff.Assembly;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
@@ -33,6 +36,13 @@ public class ForeignDB implements Comparable<ForeignDB>, Serializable {
     @JsonView(View.MarkerRelationshipAPI.class)
     @Column(name = "fdb_db_display_name")
     private String displayName;
+
+    // Set when everything in this database belongs to one assembly, e.g. Ensembl(GRCz12ab).
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "fdb_assembly_id")
+    @Getter
+    @Setter
+    private Assembly assembly;
 
     public Long getDbID() {
         return dbID;
