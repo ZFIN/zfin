@@ -3659,5 +3659,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(query).getResultList();
     }
 
-}
+    @Override
+    public String getAnnotationStatus(String markerZdbID) {
+        List<String> names = HibernateUtil.currentSession().createNativeQuery("""
+                        select vt.vt_name
+                        from marker_annotation_status_derived d
+                        join vocabulary_term vt on vt.vt_id = d.mas_vt_pk_id
+                        where d.mas_mrkr_zdb_id = :markerZdbID
+                        """, String.class)
+                .setParameter("markerZdbID", markerZdbID)
+                .getResultList();
+        return names.isEmpty() ? "Unknown" : names.get(0);
+    }
 
+}
