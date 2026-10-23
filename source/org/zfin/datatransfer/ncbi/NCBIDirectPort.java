@@ -1024,7 +1024,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      *
      * <p>Both columns are therefore attributed to the gene's NCBI Gene db_link only, and
      * left null on every other row. That is the row the load actually derives them from:
-     * loadNCBIgeneAccs.sql rebuilds marker_annotation_status purely from NCBI Gene
+     * marker_annotation_status_derived works the annotation status out purely from NCBI Gene
      * db_links, and its marker_assembly delete is keyed off them too. A gene-level change
      * now shows up exactly once, on the record responsible for it.
      * @param outputFile
@@ -1042,7 +1042,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                         left join record_attribution r on d.dblink_zdb_id = r.recattrib_data_zdb_id
                         left join marker_assembly on d.dblink_linked_recid = ma_mrkr_zdb_id
                         left join assembly on ma_a_pk_id = a_pk_id
-                        left join marker_annotation_status on d.dblink_linked_recid = mas_mrkr_zdb_id
+                        left join marker_annotation_status_derived on d.dblink_linked_recid = mas_mrkr_zdb_id
                         left join vocabulary_term on mas_vt_pk_id = vt_id
                     group by dblink_linked_recid,dblink_acc_num,dblink_info,dblink_zdb_id,dblink_acc_num_display,dblink_length,dblink_fdbcont_zdb_id
                     order by dblink_linked_recid, dblink_acc_num
@@ -3700,141 +3700,93 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     }
 
     private Map<String, List<AnnotationStatusWarningRow>> getAnnotationStatusConflictReports() {
+        // Current because a load publication matched the gene, but NCBI has not placed it on a current assembly.
         String sql = """
-                WITH tmp_csvs AS (
-                    SELECT
-                        mas_mrkr_zdb_id as gene_zdb_id,
-                        mrkr_abbrev as gene_symbol,
-                        mas_vt_pk_id,
-                        'Current' as status,
-                        string_agg(cast(ma_a_pk_id as varchar), ',') as assembly_ids,
-                        string_agg(a_name, ',') as assembly_names,
-                        string_agg(distinct dblink_acc_num, ',') as gene_ncbi_id
-                    FROM
-                        marker_annotation_status
-                            LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
-                            left join assembly on ma_a_pk_id = assembly.a_pk_id
-                            left join marker on mas_mrkr_zdb_id = mrkr_zdb_id
-                        left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
-                            and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
-                    group by mas_mrkr_zdb_id, mas_vt_pk_id, mrkr_abbrev )
-                select *, 'https://zfin.org/' || gene_zdb_id as zfin_url, 'https://www.ncbi.nlm.nih.gov/gene/' || gene_ncbi_id as ncbi_url
-                from tmp_csvs
-                where assembly_ids not like '%1%' -- No GRCz12tu assembly
-                  and mas_vt_pk_id = 12           -- 12 is ""Current"" annotation status
-                ;
+                SELECT d.mas_mrkr_zdb_id AS gene_zdb_id, m.mrkr_abbrev AS gene_symbol,
+                       coalesce(string_agg(DISTINCT a.a_name, ','), '') AS assembly_names,
+                       string_agg(DISTINCT l.dblink_acc_num, ',') AS gene_ncbi_id
+                FROM marker_annotation_status_derived d
+                    JOIN vocabulary_term vt ON vt.vt_id = d.mas_vt_pk_id
+                    JOIN marker m ON m.mrkr_zdb_id = d.mas_mrkr_zdb_id
+                    JOIN db_link l ON l.dblink_linked_recid = d.mas_mrkr_zdb_id AND l.dblink_fdbcont_zdb_id = :ncbiGene
+                    LEFT JOIN marker_assembly ma ON ma.ma_mrkr_zdb_id = d.mas_mrkr_zdb_id
+                    LEFT JOIN assembly a ON a.a_pk_id = ma.ma_a_pk_id
+                WHERE vt.vt_name = 'Current'
+                  AND NOT EXISTS (SELECT 1
+                                    FROM sequence_feature_chromosome_location_generated loc
+                                        JOIN assembly ca ON ca.a_name = loc.sfclg_assembly AND ca.a_is_current
+                                   WHERE loc.sfclg_data_zdb_id = d.mas_mrkr_zdb_id
+                                     AND loc.sfclg_location_source = 'NCBILoader')
+                GROUP BY d.mas_mrkr_zdb_id, m.mrkr_abbrev
                 """;
-        List<AnnotationStatusWarningRow> currentStatusWithoutZ12Records = currentSession().createNativeQuery(sql, Tuple.class)
-                    .list()
-                    .stream()
-                    .map(row -> new AnnotationStatusWarningRow(
-                            row.get("gene_zdb_id", String.class),
-                            row.get("gene_symbol", String.class),
-                            row.get("status", String.class),
-                            row.get("assembly_names", String.class),
-                            row.get("gene_ncbi_id", String.class)
-                    ))
-                    .toList();
-
-        sql = """
-                SELECT
-                    marker_annotation_status.*, mrkr_abbrev,
-                		'not in current annotation release' as status,
-                		a_name as assembly_name,
-                       'https://zfin.org/' || mas_mrkr_zdb_id as prod_url,
-                       'https://cell.zfin.org/' || mas_mrkr_zdb_id as cell_url,
-                       'https://www.ncbi.nlm.nih.gov/gene?cmd=Retrieve&dopt=Graphics&list_uids=' || dblink_acc_num as ncbi_url,
-                         dblink_acc_num as ncbi_id
-                FROM
-                    marker_annotation_status
-                        LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
-                				left join assembly on ma_a_pk_id = a_pk_id
-                				left join marker on mas_mrkr_zdb_id = mrkr_zdb_id
-                        left join db_link on mas_mrkr_zdb_id = dblink_linked_recid
-                            and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1' -- NCBI Gene
-                WHERE
-                    ma_a_pk_id = 1          -- GRCz12tu
-                  AND mas_vt_pk_id = 13   -- not in current
-                  ;
-        """;
-        List<AnnotationStatusWarningRow> notCurrentWithZ12Records = currentSession().createNativeQuery(sql, Tuple.class)
+        List<AnnotationStatusWarningRow> currentWithoutCurrentAssemblyLocation = currentSession().createNativeQuery(sql, Tuple.class)
+                .setParameter("ncbiGene", FDCONT_NCBI_GENE_ID)
                 .list()
                 .stream()
                 .map(row -> new AnnotationStatusWarningRow(
-                        row.get("mas_mrkr_zdb_id", String.class),
-                        row.get("mrkr_abbrev", String.class),
-                        row.get("status", String.class),
-                        row.get("assembly_name", String.class),
-                        row.get("ncbi_id", String.class)
+                        row.get("gene_zdb_id", String.class),
+                        row.get("gene_symbol", String.class),
+                        "Current",
+                        row.get("assembly_names", String.class),
+                        row.get("gene_ncbi_id", String.class)
                 ))
                 .toList();
 
+        // NCBI says the gene is not in the current release, yet NCBI placed it on a current assembly.
         sql = """
-                SELECT
-                	mrkr_zdb_id, mrkr_abbrev, ma_a_pk_id, a_name as assembly_name
-                FROM
-                	marker left join marker_assembly on mrkr_zdb_id = ma_mrkr_zdb_id left join assembly on ma_a_pk_id = a_pk_id
-                WHERE
-                	mrkr_zdb_id NOT IN ( SELECT mas_mrkr_zdb_id FROM marker_annotation_status )
-                AND
-                	(mrkr_zdb_id like '%-GENE-%' or mrkr_zdb_id like '%-GENEP-%')
-                AND
-                  mrkr_zdb_id IN ( SELECT ma_mrkr_zdb_id from marker_assembly);
-        """;
+                SELECT d.mas_mrkr_zdb_id AS gene_zdb_id, m.mrkr_abbrev AS gene_symbol,
+                       string_agg(DISTINCT loc.sfclg_assembly, ',') AS assembly_names,
+                       string_agg(DISTINCT l.dblink_acc_num, ',') AS gene_ncbi_id
+                FROM marker_annotation_status_derived d
+                    JOIN vocabulary_term vt ON vt.vt_id = d.mas_vt_pk_id
+                    JOIN marker m ON m.mrkr_zdb_id = d.mas_mrkr_zdb_id
+                    JOIN db_link l ON l.dblink_linked_recid = d.mas_mrkr_zdb_id AND l.dblink_fdbcont_zdb_id = :ncbiGene
+                    JOIN sequence_feature_chromosome_location_generated loc
+                        ON loc.sfclg_data_zdb_id = d.mas_mrkr_zdb_id AND loc.sfclg_location_source = 'NCBILoader'
+                    JOIN assembly ca ON ca.a_name = loc.sfclg_assembly AND ca.a_is_current
+                WHERE vt.vt_name = 'Not in current annotation release'
+                GROUP BY d.mas_mrkr_zdb_id, m.mrkr_abbrev
+                """;
+        List<AnnotationStatusWarningRow> notCurrentWithCurrentAssemblyLocation = currentSession().createNativeQuery(sql, Tuple.class)
+                .setParameter("ncbiGene", FDCONT_NCBI_GENE_ID)
+                .list()
+                .stream()
+                .map(row -> new AnnotationStatusWarningRow(
+                        row.get("gene_zdb_id", String.class),
+                        row.get("gene_symbol", String.class),
+                        "Not in current annotation release",
+                        row.get("assembly_names", String.class),
+                        row.get("gene_ncbi_id", String.class)
+                ))
+                .toList();
 
+        // A gene or pseudogene that is on some assembly but whose annotation status is Unknown.
+        sql = """
+                SELECT m.mrkr_zdb_id AS gene_zdb_id, m.mrkr_abbrev AS gene_symbol,
+                       string_agg(DISTINCT a.a_name, ',') AS assembly_names
+                FROM marker m
+                    JOIN marker_assembly ma ON ma.ma_mrkr_zdb_id = m.mrkr_zdb_id
+                    JOIN assembly a ON a.a_pk_id = ma.ma_a_pk_id
+                WHERE (m.mrkr_zdb_id LIKE '%-GENE-%' OR m.mrkr_zdb_id LIKE '%-GENEP-%')
+                  AND m.mrkr_zdb_id NOT IN (SELECT mas_mrkr_zdb_id FROM marker_annotation_status_derived)
+                GROUP BY m.mrkr_zdb_id, m.mrkr_abbrev
+                """;
         List<AnnotationStatusWarningRow> unknownStatusRecords = currentSession().createNativeQuery(sql, Tuple.class)
                 .list()
                 .stream()
                 .map(row -> new AnnotationStatusWarningRow(
-                        row.get("mrkr_zdb_id", String.class),
-                        row.get("mrkr_abbrev", String.class),
+                        row.get("gene_zdb_id", String.class),
+                        row.get("gene_symbol", String.class),
                         "Unknown",
-                        row.get("assembly_name", String.class),
-                        ""
-                ))
-                .toList();
-
-        // Annotation status is only meaningful for a gene that has an NCBI Gene ID, and
-        // loadNCBIgeneAccs.sql derives the whole table from NCBI Gene db_links, so this
-        // should always come back empty. It is here as a guard: if some other writer ever
-        // leaves a status behind on a gene with no NCBI Gene ID, the report says so rather
-        // than the stale row quietly riding along in every downstream snapshot.
-        sql = """
-                SELECT
-                    mas_mrkr_zdb_id, mrkr_abbrev, vt_name as status,
-                    string_agg(distinct a_name, ', ' order by a_name) as assembly_name
-                FROM
-                    marker_annotation_status
-                        LEFT JOIN marker ON mas_mrkr_zdb_id = mrkr_zdb_id
-                        LEFT JOIN vocabulary_term ON mas_vt_pk_id = vt_id
-                        LEFT JOIN marker_assembly ON mas_mrkr_zdb_id = ma_mrkr_zdb_id
-                        LEFT JOIN assembly ON ma_a_pk_id = a_pk_id
-                WHERE
-                    NOT EXISTS (
-                        SELECT 1 FROM db_link
-                        WHERE dblink_linked_recid = mas_mrkr_zdb_id
-                          AND dblink_fdbcont_zdb_id = '%s')
-                GROUP BY mas_mrkr_zdb_id, mrkr_abbrev, vt_name
-                ;
-        """.formatted(FDCONT_NCBI_GENE_ID);
-
-        List<AnnotationStatusWarningRow> statusWithoutNcbiGeneIdRecords = currentSession().createNativeQuery(sql, Tuple.class)
-                .list()
-                .stream()
-                .map(row -> new AnnotationStatusWarningRow(
-                        row.get("mas_mrkr_zdb_id", String.class),
-                        row.get("mrkr_abbrev", String.class),
-                        row.get("status", String.class),
-                        row.get("assembly_name", String.class),
+                        row.get("assembly_names", String.class),
                         ""
                 ))
                 .toList();
 
         return Map.of(
-                "Current Annotation Status without GRCz12tu Assembly", currentStatusWithoutZ12Records,
-                "Not Current Annotation Status with GRCz12tu Assembly", notCurrentWithZ12Records,
-                "Unknown Status", unknownStatusRecords,
-                "Annotation Status without NCBI Gene ID", statusWithoutNcbiGeneIdRecords
+                "Current Annotation Status without a Current-Assembly Location", currentWithoutCurrentAssemblyLocation,
+                "Not Current Annotation Status with a Current-Assembly Location", notCurrentWithCurrentAssemblyLocation,
+                "Unknown Status", unknownStatusRecords
         );
 
     }

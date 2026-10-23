@@ -3,6 +3,7 @@ package org.zfin.marker;
 import org.junit.Test;
 import org.zfin.AbstractDatabaseTest;
 import org.zfin.framework.HibernateUtil;
+import org.zfin.repository.RepositoryFactory;
 
 import static org.junit.Assert.assertEquals;
 
@@ -81,5 +82,31 @@ public class MarkerAnnotationStatusDerivedViewTest extends AbstractDatabaseTest 
                 .setParameter("pub", RNA_PUB).executeUpdate();
         HibernateUtil.currentSession().createNativeQuery("update assembly set a_is_current = false").executeUpdate();
         assertEquals("Unknown", statusOf(GENE));
+    }
+
+    @Test
+    public void repositoryReportsTheStatusFromTheView() {
+        assertEquals("Current", RepositoryFactory.getMarkerRepository().getAnnotationStatus(GENE));
+    }
+
+    @Test
+    public void repositoryReportsUnknownForAMarkerWithNoRow() {
+        String unrelated = HibernateUtil.currentSession().createNativeQuery(
+                "select mrkr_zdb_id from marker where mrkr_zdb_id not in " +
+                "(select mas_mrkr_zdb_id from marker_annotation_status_derived) limit 1", String.class).getSingleResult();
+        assertEquals("Unknown", RepositoryFactory.getMarkerRepository().getAnnotationStatus(unrelated));
+    }
+
+    @Test
+    public void markerAnswersFromTheViewAndRemembersIt() {
+        Marker gene = RepositoryFactory.getMarkerRepository().getMarkerByID(GENE);
+        assertEquals("Current", gene.getAnnotationStatus());
+        HibernateUtil.currentSession().createNativeQuery(
+                "insert into external_resource.ncbi_not_in_current_release (ncbi_gene_id) values (:id) on conflict do nothing")
+                .setParameter("id", GENE_NCBI_ID).executeUpdate();
+        assertEquals("Current", gene.getAnnotationStatus());
+        Marker fresh = new Marker();
+        fresh.setZdbID(GENE);
+        assertEquals("Not in current annotation release", fresh.getAnnotationStatus());
     }
 }
