@@ -66,6 +66,24 @@ create temporary table ncbi_gene_load (
 
 \copy ncbi_gene_load from 'toLoad.unl' (delimiter '|');
 
+-- Every record to load must be attributed to a publication that load_publication lists, with a precedence. The
+-- ranking of duplicate matches below relies on it; a publication the table does not know would silently rank last.
+do $$
+declare
+    unlisted text;
+begin
+    select string_agg(distinct l.load_pub_zdb_id, ', ')
+      into unlisted
+      from ncbi_gene_load l
+     where not exists (select 1
+                         from ncbi_load_pub p
+                        where p.pub_zdb_id = l.load_pub_zdb_id
+                          and p.precedence is not null);
+    if unlisted is not null then
+        raise exception 'toLoad.unl names publications that load_publication does not list for the NCBI Gene load: %', unlisted;
+    end if;
+end $$;
+
 update ncbi_gene_load 
  set sequence_length = null
  where sequence_length = '';
