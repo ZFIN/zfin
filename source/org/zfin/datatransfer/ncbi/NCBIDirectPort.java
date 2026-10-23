@@ -272,6 +272,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer numGenesGenBankAfter;
     public Integer ctGenesWithRefSeqAfter;
     private List<String> geneIDsNotInCurrentAnnotationRelease = null;
+    private NcbiNotInCurrentReleaseList.Outcome notInCurrentReleaseRefresh = null;
     private List<LoadReportAction> manyToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> oneToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
@@ -3952,6 +3953,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         LoadReportAction legacyStatsReport = convertReportStatisticsToAction();
         builder.addAction(legacyStatsReport);
         builder.addActions(getAnnotationStatusConflictReportActions());
+        builder.addActions(getNotInCurrentReleaseRefreshReportActions());
         builder.addActions(getUnlinkedGeneReportActions());
         builder.addActions(getGeneSymbolMatchReportActions());
         builder.addActions(getReplacedNCBIGeneIdReportActions());
@@ -4256,6 +4258,50 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         return action;
     }
 
+    /**
+     * Stores the fetched list in external_resource.ncbi_not_in_current_release, unless it is empty or much
+     * smaller than the stored one. Either way the list the load goes on to use is the stored one afterwards,
+     * so a failed NCBI query cannot make every gene look as if it were in the current release.
+     */
+    private void refreshNotInCurrentReleaseTable() {
+        try {
+            HibernateUtil.createTransaction();
+            notInCurrentReleaseRefresh = new NcbiNotInCurrentReleaseList().refresh(geneIDsNotInCurrentAnnotationRelease);
+            HibernateUtil.flushAndCommitCurrentSession();
+        } catch (Exception e) {
+            HibernateUtil.rollbackTransaction();
+            notInCurrentReleaseRefresh = null;
+            print(LOG, "ERROR: could not store the list of gene IDs not in the current annotation release: " + e.getMessage() + "\n");
+            return;
+        }
+        print(LOG, "Not-in-current-release list: " + notInCurrentReleaseRefresh.message() + "\n");
+        geneIDsNotInCurrentAnnotationRelease = new ArrayList<>(notInCurrentReleaseRefresh.effectiveIds());
+    }
+
+    private List<LoadReportAction> getNotInCurrentReleaseRefreshReportActions() {
+        if (notInCurrentReleaseRefresh == null) {
+            return Collections.emptyList();
+        }
+        LoadReportAction action = new LoadReportAction();
+        action.setType(LoadReportAction.Type.REPORTS);
+        action.setSubType("Not-in-current-release list refresh");
+        action.setDetails(notInCurrentReleaseRefresh.message());
+        action.setGeneZdbID("N/A");
+        action.setAccession("N/A");
+        action.setRelatedEntityFields(Map.of("Report Title", "Not-in-current-release list refresh"));
+        LoadReportSummaryTable table = new LoadReportSummaryTable();
+        table.setDescription("");
+        table.setTableHeadersByMap(Map.of("Result", "Result", "Stored before", "Stored before",
+                "Fetched", "Fetched", "In use", "In use"));
+        table.setRows(List.of(Map.of(
+                "Result", notInCurrentReleaseRefresh.result().getDescription(),
+                "Stored before", notInCurrentReleaseRefresh.previousCount(),
+                "Fetched", notInCurrentReleaseRefresh.fetchedCount(),
+                "In use", notInCurrentReleaseRefresh.effectiveIds().size())));
+        action.setTables(List.of(table));
+        return List.of(action);
+    }
+
     private void fetchGeneIDsNotInCurrentAnnotationReleaseSet() {
         if (this.geneIDsNotInCurrentAnnotationRelease != null) {
             return;
@@ -4283,6 +4329,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             geneIDsNotInCurrentAnnotationRelease = NCBIEfetch.fetchGeneIDsNotInCurrentAnnotationReleaseSet();
         }
 
+        refreshNotInCurrentReleaseTable();
         System.out.println("Total of " + geneIDsNotInCurrentAnnotationRelease.size() + " gene IDs not in current annotation release.");
 
         try {
