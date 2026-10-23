@@ -3,6 +3,7 @@ package org.zfin.marker;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.collections4.CollectionUtils;
@@ -14,7 +15,6 @@ import org.zfin.ExternalNote;
 import org.zfin.expression.ExpressionExperiment2;
 import org.zfin.expression.Figure;
 import org.zfin.feature.FeatureMarkerRelationship;
-import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.View;
 import org.zfin.infrastructure.*;
 import org.zfin.mapping.MappedMarkerImpl;
@@ -157,11 +157,12 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
             inverseJoinColumns = @JoinColumn(name = "ma_a_pk_id"))
     private Set<Assembly> assemblies;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "marker_annotation_status",
-            joinColumns = @JoinColumn(name = "mas_mrkr_zdb_id"),
-            inverseJoinColumns = @JoinColumn(name = "mas_vt_pk_id"))
-    private Set<VocabularyTerm> annotationStatusTerms;
+    // The annotation status is worked out from the data by the marker_annotation_status_derived view
+    // (see MarkerRepository.getAnnotationStatus). This only remembers the answer for this instance.
+    @Transient
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private transient String cachedAnnotationStatus;
 
     // cached attribute
     @Transient
@@ -875,9 +876,9 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
 
     @JsonView(View.SequenceAPI.class)
     public String getAnnotationStatus() {
-        if (CollectionUtils.isEmpty(annotationStatusTerms)) {
-            return "Unknown";
+        if (cachedAnnotationStatus == null) {
+            cachedAnnotationStatus = RepositoryFactory.getMarkerRepository().getAnnotationStatus(getZdbID());
         }
-        return annotationStatusTerms.stream().min(Comparator.comparing(VocabularyTerm::getName)).get().getName();
+        return cachedAnnotationStatus;
     }
 }
