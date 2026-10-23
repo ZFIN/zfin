@@ -4,6 +4,7 @@
   <description>Load a database backup using gradle loaddb.
 
 By default, loads the latest backup from $DB_UNLOADS_PATH.
+Check LOAD_NEWEST_DUMP to load the newest dump file; it supersedes BACKUP_PATH.
 Set BACKUP_PATH to load a specific file.
 Set LIST_ONLY to true to list available backups without loading.
 Set RUN_LIQUIBASE to true to run gradle liquibasePostBuild after the restore completes -- a
@@ -16,9 +17,14 @@ Note: This will drop and recreate the database. All existing data will be replac
   <properties>
       <hudson.model.ParametersDefinitionProperty>
           <parameterDefinitions>
+              <hudson.model.BooleanParameterDefinition>
+                  <name>LOAD_NEWEST_DUMP</name>
+                  <description>Load the newest dump file in $DB_UNLOADS_PATH. If checked, BACKUP_PATH is ignored, even when it is filled in.</description>
+                  <defaultValue>false</defaultValue>
+              </hudson.model.BooleanParameterDefinition>
               <hudson.model.StringParameterDefinition>
                   <name>BACKUP_PATH</name>
-                  <description>Full path to a specific backup file. Leave blank to use the latest backup from $DB_UNLOADS_PATH.</description>
+                  <description>Full path to a specific backup file. Leave blank to use the latest backup from $DB_UNLOADS_PATH. Ignored if "Load the newest dump file" is checked.</description>
                   <defaultValue></defaultValue>
                   <trim>true</trim>
               </hudson.model.StringParameterDefinition>
@@ -61,6 +67,14 @@ if [ -n "$NOTES" ]; then
     echo ""
     echo "Notes: $NOTES"
     echo ""
+fi
+
+# "Load the newest dump file" supersedes the dump path: a blank path loads the newest backup below.
+if [ "$LOAD_NEWEST_DUMP" = "true" ]; then
+    if [ -n "$BACKUP_PATH" ]; then
+        echo "LOAD_NEWEST_DUMP is checked: ignoring BACKUP_PATH=$BACKUP_PATH"
+    fi
+    BACKUP_PATH=""
 fi
 
 # List available backups
