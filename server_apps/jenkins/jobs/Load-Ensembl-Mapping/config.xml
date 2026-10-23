@@ -1,0 +1,123 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description>Load Ensembl gene IDs (ENSDARGs) for the newer assemblies (GRCz12tu, GRCz12ab, GRCz13ab) into db_link, from a z11 to z12 mapping file.&lt;br/&gt;
+&lt;br/&gt;
+Each ENSDARG becomes a db_link on the mapping's gene under the Ensembl(&amp;lt;assembly&amp;gt;) reference database, with a db_link_assembly row for that assembly and an attribution to the publication given below. Nothing is deleted or changed, and rerunning a file adds nothing new.&lt;br/&gt;
+&lt;br/&gt;
+Only unambiguous accessions are loaded. Left out, and listed with the reason in ensembl_mapping_load_report.csv: rows the file flags in its conflict column, ENSDARGs given to more than one gene (in the file, or already in the database), genes not in the database, and malformed cells. ensembl_mapping_load_summary.txt has the counts.&lt;br/&gt;
+&lt;br/&gt;
+The file is a CSV with columns zdb_id and any of z12tu, z12ab, z13ab (z11 and other columns are ignored); .gz is accepted.&lt;br/&gt;
+&lt;br/&gt;
+The mapping built for ZFIN-10493 is an example of the format. The scripts that generate it (map_ensembl_z11_z12.py), with the inputs, the generated mapping (z11_z12_mapping_v2.csv) and a report on the method and findings, are attached to that issue as z11_z12_report_and_breakdown_v2.zip.&lt;br/&gt;
+&lt;br/&gt;
+DRY_RUN is on by default: the run reports what it would do and writes nothing. Run it once like that, read the summary, then run again with DRY_RUN off.</description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>-1</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>-1</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.FileParameterDefinition>
+                    <name>MAPPING_FILE_UPLOAD</name>
+                    <description>Required. The mapping CSV (columns zdb_id and z12tu / z12ab / z13ab). See the job description for an example.</description>
+                </hudson.model.FileParameterDefinition>
+                <hudson.model.StringParameterDefinition>
+                    <name>ATTRIBUTION_PUB_ID</name>
+                    <description>Required. ZDB-PUB ID of the publication the new db_links are attributed to.</description>
+                    <defaultValue></defaultValue>
+                    <trim>true</trim>
+                </hudson.model.StringParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>DRY_RUN</name>
+                    <description>Only report what would be loaded; write nothing to the database. Turn off to load.</description>
+                    <defaultValue>true</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Jenkins puts the uploaded file in $WORKSPACE/MAPPING_FILE_UPLOAD; fail early, and plainly, without one.
+[ -s "$WORKSPACE/MAPPING_FILE_UPLOAD" ] || { echo "No mapping file uploaded: set the MAPPING_FILE_UPLOAD parameter."; exit 1; }
+# Keep a copy of the input with the results.
+cp "$WORKSPACE/MAPPING_FILE_UPLOAD" "$WORKSPACE/ensembl_mapping_input.csv"
+cd $SOURCEROOT && gradle loadEnsemblMapping
+]]></command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>ensembl_mapping_load_summary.txt,ensembl_mapping_load_report.csv,ensembl_mapping_input.csv</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList></recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>$PROJECT_DEFAULT_CONTENT</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>true</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>${FILE,path=&quot;ensembl_mapping_load_summary.txt&quot;}</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>true</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern>ensembl_mapping_load_report.csv</attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/plain</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers/>
+</project>

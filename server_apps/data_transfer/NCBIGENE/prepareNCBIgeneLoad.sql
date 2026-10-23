@@ -20,7 +20,8 @@ select distinct recattrib_data_zdb_id
   from record_attribution
  where recattrib_source_zdb_id in (
                                    'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
-                                   'ZDB-PUB-230516-87' -- Curation of NCBI Gene Data Via Shared Ensembl IDs (Supplemental NCBI Load)
+                                   'ZDB-PUB-230516-87', -- Curation of NCBI Gene Data Via Shared Ensembl IDs (Supplemental NCBI Load)
+                                   'ZDB-PUB-261014-17' -- ... from GRCz12 assemblies
      );
 
 create index pd_data_id_index
@@ -38,11 +39,13 @@ select distinct xpatex_dblink_zdb_id
  where exists (select 1 from record_attribution
                where xpatex_dblink_zdb_id = recattrib_data_zdb_id
                and recattrib_source_zdb_id in ('ZDB-PUB-020723-3',
-                                               'ZDB-PUB-230516-87'))
+                                               'ZDB-PUB-230516-87',
+                                               'ZDB-PUB-261014-17'))
  and not exists (select 1 from record_attribution
                  where xpatex_dblink_zdb_id = recattrib_data_zdb_id
                  and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3',
-                                                     'ZDB-PUB-230516-87'));
+                                                     'ZDB-PUB-230516-87',
+                                                     'ZDB-PUB-261014-17'));
 
 --!echo 'Retain those db_link records that are also in expression_experiment2 table, which are only attributed to the load pub'
 
@@ -75,7 +78,8 @@ delete from pre_delete
                 where recattrib_data_zdb_id = dblink_loaded_zdb_id
                   and recattrib_source_zdb_id not in (
                                                       'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
-                                                      'ZDB-PUB-230516-87'
+                                                      'ZDB-PUB-230516-87',
+                                                      'ZDB-PUB-261014-17'
                                                      ));
 
 --!echo 'Analyze what kinds of data in pre_delete table'
