@@ -268,6 +268,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public Integer ctGenesWithRefSeqAfter;
     private List<String> geneIDsNotInCurrentAnnotationRelease = null;
     private NcbiNotInCurrentReleaseList.Outcome notInCurrentReleaseRefresh = null;
+    // The publications the load attributes to, from load_publication (also read by the load's SQL scripts).
+    private NcbiLoadPublications loadPublications = null;
     private List<LoadReportAction> manyToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> oneToManyWarningActions = new ArrayList<>();
     private List<LoadReportAction> manyToOneWarningActions = new ArrayList<>();
@@ -299,6 +301,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         openLoggingFileHandles();
         printTimingInformation(10);
+
+        // Each matching strategy below attributes to a publication named by a constant. They must be recorded in
+        // load_publication, which the SQL scripts of the load read, or the load would not recognize its own records.
+        loadPublications().requireCreatedByLoad(PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
 
 
 //    #-------------------------------------------------------------------------------------------------
@@ -1253,21 +1259,15 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         numRefSeqDNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenBank RNA (only those loaded - excluding curated ones)
-        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
-        );
+        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, loadPublications().createdByLoad());
         numGenBankRNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenPept (only those loaded - excluding curated ones)
-        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
-        );
+        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, loadPublications().createdByLoad());
         numGenPeptBefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenBank DNA (only those loaded - excluding curated ones)
-        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
-        );
+        sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, loadPublications().createdByLoad());
         numGenBankDNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // number of genes with RefSeq RNA
@@ -3543,13 +3543,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_DNA);
         numRefSeqDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, loadPublications().createdByLoad());
         numGenBankRNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, loadPublications().createdByLoad());
         numGenPeptAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, loadPublications().createdByLoad());
         numGenBankDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
         tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NM_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", FDCONT_REFSEQ_RNA);
@@ -4188,6 +4188,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         return action;
+    }
+
+    private NcbiLoadPublications loadPublications() {
+        if (loadPublications == null) {
+            loadPublications = NcbiLoadPublications.fromDatabase();
+        }
+        return loadPublications;
     }
 
     /**

@@ -10,7 +10,24 @@
 
 
 begin work;
-                      
+
+-- The publications the NCBI Gene load treats as its own, from load_publication: records attributed to them are
+-- deleted and replaced on each run, and a record attributed to any other publication is treated as curated.
+create temp table ncbi_load_managed_pub as
+select lp.lp_pub_zdb_id as pub_zdb_id
+  from load_publication lp
+  join load l on l.ld_id = lp.lp_ld_id
+ where l.ld_name = 'NCBI Gene'
+   and lp.lp_load_managed;
+
+-- With none, the load would delete nothing and treat every attribution as curated, so stop here instead.
+do $$
+begin
+    if not exists (select 1 from ncbi_load_managed_pub) then
+        raise exception 'load_publication has no load-managed publication for the NCBI Gene load';
+    end if;
+end $$;
+
 create temp table pre_delete (dblink_loaded_zdb_id text);
 
 --!echo 'Prepare the delete list with accession records in record_attribution table attributed to NCBI gene load publications (ZDB-PUB-020723-3, etc.)'
@@ -18,10 +35,7 @@ create temp table pre_delete (dblink_loaded_zdb_id text);
 insert into pre_delete
 select distinct recattrib_data_zdb_id
   from record_attribution
- where recattrib_source_zdb_id in (
-                                   'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
-                                   'ZDB-PUB-230516-87' -- Curation of NCBI Gene Data Via Shared Ensembl IDs (Supplemental NCBI Load)
-     );
+ where recattrib_source_zdb_id in (select pub_zdb_id from ncbi_load_managed_pub);
 
 create index pd_data_id_index
  on pre_delete(dblink_loaded_zdb_id);
@@ -37,12 +51,10 @@ select distinct xpatex_dblink_zdb_id
  from expression_experiment2
  where exists (select 1 from record_attribution
                where xpatex_dblink_zdb_id = recattrib_data_zdb_id
-               and recattrib_source_zdb_id in ('ZDB-PUB-020723-3',
-                                               'ZDB-PUB-230516-87'))
+               and recattrib_source_zdb_id in (select pub_zdb_id from ncbi_load_managed_pub))
  and not exists (select 1 from record_attribution
                  where xpatex_dblink_zdb_id = recattrib_data_zdb_id
-                 and recattrib_source_zdb_id not in ('ZDB-PUB-020723-3',
-                                                     'ZDB-PUB-230516-87'));
+                 and recattrib_source_zdb_id not in (select pub_zdb_id from ncbi_load_managed_pub));
 
 --!echo 'Retain those db_link records that are also in expression_experiment2 table, which are only attributed to the load pub'
 
@@ -73,10 +85,7 @@ delete from pre_delete
 delete from pre_delete
  where exists (select 1 from record_attribution 
                 where recattrib_data_zdb_id = dblink_loaded_zdb_id
-                  and recattrib_source_zdb_id not in (
-                                                      'ZDB-PUB-020723-3', -- Curation of NCBI Gene Data Via Shared RNA Sequence IDs
-                                                      'ZDB-PUB-230516-87'
-                                                     ));
+                  and recattrib_source_zdb_id not in (select pub_zdb_id from ncbi_load_managed_pub));
 
 --!echo 'Analyze what kinds of data in pre_delete table'
 

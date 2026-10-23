@@ -9,6 +9,22 @@
 
 begin work;
 
+-- The publications the NCBI Gene load attributes its records to, from load_publication.
+create temp table ncbi_load_pub as
+select lp.lp_pub_zdb_id as pub_zdb_id, lp.lp_precedence as precedence, lp.lp_load_managed as load_managed
+  from load_publication lp
+  join load l on l.ld_id = lp.lp_ld_id
+ where l.ld_name = 'NCBI Gene';
+
+-- Without them every record would rank the same and every attribution would look curated, so stop here instead.
+do $$
+begin
+    if not exists (select 1 from ncbi_load_pub where load_managed)
+       or not exists (select 1 from ncbi_load_pub where precedence is not null) then
+        raise exception 'load_publication is missing the NCBI Gene load publications';
+    end if;
+end $$;
+
 drop table if exists tmp_pre_ncbi_gene_delete;
 
 -- Loaded from toDelete.unl
@@ -60,7 +76,7 @@ alter table ncbi_gene_load
 update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
 -- If there are any duplicates in the load file but with different load_pub_zdb_id, we want to keep the one with the highest priority load pub
--- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87
+-- Priority order is the precedence in load_publication: the RNA publication, then the Ensembl supplement, then Vega.
 --
 -- Dropping the losing row, and with it its attribution, is the point rather than a side
 -- effect: once a stronger strategy finds a link, it is no longer a Vega-based mapping and
@@ -71,11 +87,7 @@ create temporary table ncbi_gene_load_dedup as
  select distinct on (mapped_zdb_gene_id, ncbi_accession) *
    from ncbi_gene_load
   order by mapped_zdb_gene_id, ncbi_accession,
-           case load_pub_zdb_id
-             when 'ZDB-PUB-020723-3' then 1
-             when 'ZDB-PUB-230516-87' then 2
-             else 4
-           end;
+           coalesce((select precedence from ncbi_load_pub where pub_zdb_id = load_pub_zdb_id), 99);
 drop table ncbi_gene_load;
 alter table ncbi_gene_load_dedup rename to ncbi_gene_load;
 
@@ -215,7 +227,7 @@ WHERE
     EXISTS (
         SELECT 'x' FROM record_attribution
         WHERE recattrib_data_zdb_id = dblink_zdb_id
-            AND recattrib_source_zdb_id NOT IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87'));
+            AND recattrib_source_zdb_id NOT IN (SELECT pub_zdb_id FROM ncbi_load_pub WHERE load_managed));
 
 -- Combine conflicts into a single table for reporting
 -- This table will be dumped out to 'post_run_n_to_1_zdb_to_ncbi.csv' for review
