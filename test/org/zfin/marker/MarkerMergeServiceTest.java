@@ -88,19 +88,24 @@ public class MarkerMergeServiceTest extends AbstractDatabaseTest {
 
     /**
      * Non-conflicting rows must be remapped, not dropped -- a guard against the conflict handling
-     * widening into deletes. Only plod3 has a marker_annotation_status row, so nothing collides.
+     * widening into deletes. The merged-away gene is given one marker_assembly row that the survivor does
+     * not have, so nothing collides.
      */
     @Test
     public void preservesRowsThatDoNotConflict() {
-        long statusesBefore = count(
-                "select count(*) from marker_annotation_status where mas_mrkr_zdb_id in (?1, ?2)",
-                MGT, PLOD3);
+        long grcz10 = count("select a_pk_id from assembly where a_name = 'GRCz10'");
+        HibernateUtil.currentSession()
+                .createNativeQuery("delete from marker_assembly where ma_a_pk_id = ?1 and ma_mrkr_zdb_id in (?2, ?3)")
+                .setParameter(1, grcz10).setParameter(2, MGT).setParameter(3, PLOD3).executeUpdate();
+        HibernateUtil.currentSession()
+                .createNativeQuery("insert into marker_assembly (ma_mrkr_zdb_id, ma_a_pk_id) values (?1, ?2)")
+                .setParameter(1, MGT).setParameter(2, grcz10).executeUpdate();
 
         new MarkerMergeService(MGT, PLOD3, true).merge();
 
-        assertEquals("a non-conflicting row must be remapped, never deleted", statusesBefore,
-                count("select count(*) from marker_annotation_status where mas_mrkr_zdb_id = ?1", PLOD3));
+        assertEquals("a non-conflicting row must be remapped, never deleted", 1,
+                count("select count(*) from marker_assembly where ma_mrkr_zdb_id = ?1 and ma_a_pk_id = ?2", PLOD3, grcz10));
         assertEquals(0,
-                count("select count(*) from marker_annotation_status where mas_mrkr_zdb_id = ?1", MGT));
+                count("select count(*) from marker_assembly where ma_mrkr_zdb_id = ?1 and ma_a_pk_id = ?2", MGT, grcz10));
     }
 }
