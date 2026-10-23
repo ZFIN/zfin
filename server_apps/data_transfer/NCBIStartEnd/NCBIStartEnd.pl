@@ -1,7 +1,7 @@
 #!/opt/zfin/bin/perl
 
 # NCBIStartEnd.pl
-# parses ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt
+# parses GCF_000002035.6_GRCz11_feature_table.txt(.gz), supplied by upload or local path (see below)
 # prepare the list to update related sequence_feature_chromosome_location_generated records 
 
 use DBI;
@@ -12,10 +12,6 @@ $instance = "<!--|INSTANCE|-->";
 $username = "";
 $password = "";
 
-if (-e "GCF_000002035.6_GRCz11_feature_table.txt") {
-  &doSystemCommand("/bin/rm -f GCF_000002035.6_GRCz11_feature_table.txt");
-}
-
 if (-e "updateList") {
   &doSystemCommand("/bin/rm -f updateList");
 }
@@ -24,14 +20,33 @@ if (-e "addList") {
   &doSystemCommand("/bin/rm -f addList");
 }
 
-&doSystemCommand("/local/bin/wget ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/vertebrate_other/Danio_rerio/all_assembly_versions/GCF_000002035.6_GRCz11/GCF_000002035.6_GRCz11_feature_table.txt.gz");
-&doSystemCommand("/local/bin/gunzip GCF_000002035.6_GRCz11_feature_table.txt.gz");
+# The feature table is no longer downloaded (NCBI removed it from the FTP site).
+# It is supplied either as a Jenkins file upload (FEATURE_TABLE_UPLOAD) or as a
+# local path (FEATURE_TABLE_PATH). An upload wins if both are given.
+# The file may be gzipped or uncompressed.
+$defaultPath = "/research/zarchive/load_files/Load-NCBIStartEndPositions/GCF_000002035.6_GRCz11_feature_table.txt.gz";
+$inputFile = $defaultPath;
+if ($ENV{FEATURE_TABLE_PATH}) {
+  $inputFile = $ENV{FEATURE_TABLE_PATH};
+}
+if ($ENV{FEATURE_TABLE_UPLOAD} && $ENV{WORKSPACE}) {
+  $inputFile = "$ENV{WORKSPACE}/FEATURE_TABLE_UPLOAD";
+}
 
-open (INFO, "GCF_000002035.6_GRCz11_feature_table.txt") ||  die "Cannot open GCF_000002035.6_GRCz11_feature_table.txt : $!\n";
+die "Feature table file not found: $inputFile\n" unless -e $inputFile;
+
+print "Reading feature table from $inputFile\n";
+if ($inputFile =~ /\.gz$/ || (-B $inputFile)) {
+  open (INFO, "-|", "/bin/gunzip", "-c", $inputFile) || die "Cannot gunzip $inputFile : $!\n";
+} else {
+  open (INFO, "<", $inputFile) || die "Cannot open $inputFile : $!\n";
+}
 
 @lines = <INFO>;
 
 close(INFO);
+
+die "No lines read from $inputFile\n" unless @lines;
 
 $ct = 0;
 %chrsGeneIDs = ();                 
@@ -156,8 +171,7 @@ close ADDLIST;
 try {
   &doSystemCommand("psql -v ON_ERROR_STOP=1 -d <!--|DB_NAME|--> -a -f NCBIStartEnd.sql");
 } catch {
-  warn "Failed to execute NCBIStartEnd.sql - $_";
-  exit -1;
+  die "Failed to execute NCBIStartEnd.sql - $_";
 };
 
 exit;
@@ -166,23 +180,11 @@ sub doSystemCommand {
 
   $systemCommand = $_[0];
 
-  print LOG "$0: Executing [$systemCommand] \n";
-    
+  print "$0: Executing [$systemCommand] \n";
+
   $returnCode = system( $systemCommand );
 
-  if ( $returnCode != 0 ) { 
-     $subjectLine = "Auto from $instance: " . "NCBIStartEnd.pl :: failed at: $systemCommand . $! ";
-     print LOG "\nFailed to execute system command, $systemCommand\nExit.\n\n";
-     
-     &reportErrAndExit($subjectLine);
+  if ( $returnCode != 0 ) {
+     die "NCBIStartEnd.pl :: failed at: $systemCommand . $!\n";
   }
 }
-
-sub reportErrAndExit {
-  $subjectError = $_[0];
-  ZFINPerlModules->sendMailWithAttachedReport('<!--|SWISSPROT_EMAIL_ERR|-->',"$subjectError","logNCBIgeneLoad");
-  close LOG;
-  exit -1;
-}
-
-
