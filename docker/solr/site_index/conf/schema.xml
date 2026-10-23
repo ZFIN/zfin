@@ -68,10 +68,17 @@
             WordDelim parts) are removed.
             -->
         <fieldType name="text" class="solr.TextField" positionIncrementGap="100">
+            <!-- ZFIN-10526: WhitespaceTokenizer, not StandardTokenizer, in both analyzers.
+                 StandardTokenizer already splits "light-sheet" into "light" and "sheet", so
+                 WordDelimiterGraphFilter below never sees the hyphen and catenateWords /
+                 catenateAll never produce "lightsheet"; a search for "lightsheet" then
+                 missed "light-sheet" (and "wifi" missed "Wi-Fi", contrary to the comment
+                 above). With whitespace tokens the filter does the splitting, keeps the
+                 parts, the joined form and (preserveOriginal) the original token. -->
             <analyzer type="index">
                 <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
-                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
                 <filter class="solr.WordDelimiterGraphFilterFactory" generateWordParts="1" generateNumberParts="1" catenateWords="1" catenateNumbers="1" catenateAll="1" splitOnCaseChange="0" preserveOriginal="1" splitOnNumerics="0" types="wdgff_types.txt"/>
                 <filter class="solr.FlattenGraphFilterFactory"/>
@@ -84,7 +91,7 @@
             <analyzer type="query">
                 <charFilter class="solr.PatternReplaceCharFilterFactory" pattern="&lt;[^&gt;]+&gt;" replacement=" "/>
                 <charFilter class="solr.HTMLStripCharFilterFactory"/>
-                <tokenizer class="solr.StandardTokenizerFactory"/>
+                <tokenizer class="solr.WhitespaceTokenizerFactory"/>
                 <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt"/>
                 <!-- it's possible that we don't want preserveOriginal here, since it puts in a pair of queries that both need to match....but then, because preserve original is on above,
                      they both sould be in there... something to consider at least -->
