@@ -24,9 +24,10 @@ mkdir $pth/$dirname
 
 echo "pg_dump starting"
 
-# Exclude data (but keep structure) for tables in the external_resource schema.
-# These tables are large mirrors of external data that get reloaded from their sources.
-${PGBINDIR}/pg_dump -Fc ${DBNAME} --exclude-table-data='external_resource.*' -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
+# Exclude data (but keep structure and comments) for the large external_resource tables that are mirrors of
+# external data and get reloaded from their sources. Name each such table here. Other tables in the schema are
+# dumped with their data, e.g. ncbi_not_in_current_release, which the annotation status of every gene depends on.
+${PGBINDIR}/pg_dump -Fc ${DBNAME} --exclude-table-data='external_resource.ncbi_danio_rerio_gene_info' -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
 
 if ($? != "0") then
   /bin/rm -rf $pth/$dirname
