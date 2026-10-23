@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Session;
 import org.zfin.datatransfer.ncbi.NcbiGeneInfo;
 import org.zfin.datatransfer.persistence.LoadFileLog;
+import org.zfin.datatransfer.persistence.LoadFileRegistry;
 
 import java.io.*;
 import java.net.URL;
@@ -185,6 +186,7 @@ public class NcbiGeneInfoService {
             logEntry.setPath(inputFile.getAbsolutePath());
             logEntry.setProcessedDate(new Date());
             logEntry.setTableName(PERSISTENT_TABLE_NAME);
+            logEntry.setLoadFile(LoadFileRegistry.getOrCreate(session, LOAD_NAME, DEFAULT_INPUT_FILE_URL, PERSISTENT_TABLE_NAME));
             logEntry.setNotes("Loaded " + recordCount + " records");
             session.persist(logEntry);
 
