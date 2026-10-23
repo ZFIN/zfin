@@ -1018,9 +1018,9 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      * - db_link
      * - record_attribution
      * - marker_assembly
-     * - marker_annotation_status
+     * - marker_annotation_status_derived
      *
-     * <p>marker_assembly and marker_annotation_status are keyed by <em>marker</em>, not by
+     * <p>marker_assembly and marker_annotation_status_derived are keyed by <em>marker</em>, not by
      * db_link, so joining them onto every one of a gene's db_link rows makes a single
      * gene-level change look like a change to each of that gene's ~17 accessions. In one
      * run 1,550 genes losing their annotation status were reported as 27,056 updated
@@ -3921,7 +3921,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
      * <p>The load rebuilds each strategy from scratch every run — the supplement links are
      * deleted outright by {@code removeEnsemblMatchesFromDB()} before being re-derived —
      * so a strategy that quietly under-produces silently drops thousands of links, and
-     * with them the marker_annotation_status rows derived from them. Putting the per-run
+     * with them the annotation statuses derived from them. Putting the per-run
      * tallies next to each other makes that visible in the report instead of only in
      * logNCBIgeneLoad.txt and debug15.
      */
