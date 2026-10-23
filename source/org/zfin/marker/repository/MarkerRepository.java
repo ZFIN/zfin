@@ -600,4 +600,10 @@ public interface MarkerRepository {
 
     Map<Marker, List<TranscriptBean>> getAllTranscriptBeans(Pagination pagination);
 
+    /**
+     * The annotation status of a marker from the marker_annotation_status_derived view:
+     * "Current", "Not in current annotation release", or "Unknown" when the view has no row.
+     */
+    String getAnnotationStatus(String markerZdbID);
+
 }
