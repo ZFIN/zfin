@@ -43,9 +43,10 @@ public class NcbiNotInCurrentReleaseList {
      * @param effectiveIds the list the load should use: the fetched one if it was stored, otherwise the stored one
      */
     public record Outcome(Result result, int previousCount, int fetchedCount, List<String> effectiveIds) {
+        /** One sentence for the load log and report. No colons: the report splits details text at the first one. */
         public String message() {
-            return result.getDescription() + " (stored before: " + previousCount
-                    + ", fetched: " + fetchedCount + ", in use: " + effectiveIds.size() + ").";
+            return result.getDescription().replace(":", " -") + " (stored before " + previousCount
+                    + ", fetched " + fetchedCount + ", in use " + effectiveIds.size() + ").";
         }
 
         public boolean replaced() {

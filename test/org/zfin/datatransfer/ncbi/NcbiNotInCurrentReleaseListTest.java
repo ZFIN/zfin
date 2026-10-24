@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 public class NcbiNotInCurrentReleaseListTest {
@@ -44,5 +45,14 @@ public class NcbiNotInCurrentReleaseListTest {
     @Test
     public void normalizeAcceptsNull() {
         assertTrue(NcbiNotInCurrentReleaseList.normalize(null).isEmpty());
+    }
+
+    @Test
+    public void messagesHaveNoColonBecauseTheReportSplitsDetailsAtTheFirstOne() {
+        for (Result result : Result.values()) {
+            NcbiNotInCurrentReleaseList.Outcome outcome =
+                    new NcbiNotInCurrentReleaseList.Outcome(result, 2799, 4913, List.of("1", "2"));
+            assertFalse(outcome.message(), outcome.message().contains(":"));
+        }
     }
 }
