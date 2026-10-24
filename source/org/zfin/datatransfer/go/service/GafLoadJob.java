@@ -12,6 +12,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 import org.springframework.stereotype.Component;
 import org.zfin.datatransfer.go.*;
 import org.zfin.datatransfer.persistence.LoadFileLog;
+import org.zfin.datatransfer.persistence.LoadFileRegistry;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.report.Report;
 import org.zfin.report.ReportWriter;
@@ -328,6 +329,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
         loadFileLog.setLoadName(loadName);
         loadFileLog.setFilename(downloadedFile.getName());
         loadFileLog.setSource(downloadUrl);
+        loadFileLog.setLoadFile(LoadFileRegistry.getOrCreate(HibernateUtil.currentSession(), loadName, downloadUrl, null));
         loadFileLog.setSize(downloadedFile.length());
         loadFileLog.setPath(downloadedFile.getAbsolutePath());
         loadFileLog.setNotes(notes);
@@ -348,6 +350,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             loadFileLog2.setLoadName(loadName);
             loadFileLog2.setFilename(downloadedFile2.getName());
             loadFileLog2.setSource(downloadUrl2);
+            loadFileLog2.setLoadFile(LoadFileRegistry.getOrCreate(HibernateUtil.currentSession(), loadName, downloadUrl2, null));
             loadFileLog2.setSize(downloadedFile2.length());
             loadFileLog2.setPath(downloadedFile2.getAbsolutePath());
             loadFileLog2.setNotes("Part 2 of GOA load. " + notes);
@@ -365,6 +368,7 @@ public class GafLoadJob extends AbstractValidateDataReportTask {
             loadFileLog3.setLoadName(loadName);
             loadFileLog3.setFilename(downloadedFile3.getName());
             loadFileLog3.setSource(downloadUrl3);
+            loadFileLog3.setLoadFile(LoadFileRegistry.getOrCreate(HibernateUtil.currentSession(), loadName, downloadUrl3, null));
             loadFileLog3.setSize(downloadedFile3.length());
             loadFileLog3.setPath(downloadedFile3.getAbsolutePath());
             loadFileLog3.setNotes("Part 3 of GOA load. " + notes);

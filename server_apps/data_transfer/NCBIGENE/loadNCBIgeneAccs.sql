@@ -9,6 +9,22 @@
 
 begin work;
 
+-- The publications the NCBI Gene load attributes its records to, from load_publication.
+create temp table ncbi_load_pub as
+select lp.lp_pub_zdb_id as pub_zdb_id, lp.lp_precedence as precedence, lp.lp_load_managed as load_managed
+  from load_publication lp
+  join load l on l.ld_id = lp.lp_ld_id
+ where l.ld_name = 'NCBI Gene';
+
+-- Without them every record would rank the same and every attribution would look curated, so stop here instead.
+do $$
+begin
+    if not exists (select 1 from ncbi_load_pub where load_managed)
+       or not exists (select 1 from ncbi_load_pub where precedence is not null) then
+        raise exception 'load_publication is missing the NCBI Gene load publications';
+    end if;
+end $$;
+
 drop table if exists tmp_pre_ncbi_gene_delete;
 
 -- Loaded from toDelete.unl
@@ -50,6 +66,24 @@ create temporary table ncbi_gene_load (
 
 \copy ncbi_gene_load from 'toLoad.unl' (delimiter '|');
 
+-- Every record to load must be attributed to a publication that load_publication lists, with a precedence. The
+-- ranking of duplicate matches below relies on it; a publication the table does not know would silently rank last.
+do $$
+declare
+    unlisted text;
+begin
+    select string_agg(distinct l.load_pub_zdb_id, ', ')
+      into unlisted
+      from ncbi_gene_load l
+     where not exists (select 1
+                         from ncbi_load_pub p
+                        where p.pub_zdb_id = l.load_pub_zdb_id
+                          and p.precedence is not null);
+    if unlisted is not null then
+        raise exception 'toLoad.unl names publications that load_publication does not list for the NCBI Gene load: %', unlisted;
+    end if;
+end $$;
+
 update ncbi_gene_load 
  set sequence_length = null
  where sequence_length = '';
@@ -60,7 +94,7 @@ alter table ncbi_gene_load
 update ncbi_gene_load set zdb_id = get_id_and_insert_active_data('DBLINK');
 
 -- If there are any duplicates in the load file but with different load_pub_zdb_id, we want to keep the one with the highest priority load pub
--- Priority order is: ZDB-PUB-020723-3 > ZDB-PUB-230516-87
+-- Priority order is the precedence in load_publication: the RNA publication, then the Ensembl supplement, then Vega.
 --
 -- Dropping the losing row, and with it its attribution, is the point rather than a side
 -- effect: once a stronger strategy finds a link, it is no longer a Vega-based mapping and
@@ -71,11 +105,7 @@ create temporary table ncbi_gene_load_dedup as
  select distinct on (mapped_zdb_gene_id, ncbi_accession) *
    from ncbi_gene_load
   order by mapped_zdb_gene_id, ncbi_accession,
-           case load_pub_zdb_id
-             when 'ZDB-PUB-020723-3' then 1
-             when 'ZDB-PUB-230516-87' then 2
-             else 4
-           end;
+           coalesce((select precedence from ncbi_load_pub where pub_zdb_id = load_pub_zdb_id), 99);
 drop table ncbi_gene_load;
 alter table ncbi_gene_load_dedup rename to ncbi_gene_load;
 
@@ -215,7 +245,7 @@ WHERE
     EXISTS (
         SELECT 'x' FROM record_attribution
         WHERE recattrib_data_zdb_id = dblink_zdb_id
-            AND recattrib_source_zdb_id NOT IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87'));
+            AND recattrib_source_zdb_id NOT IN (SELECT pub_zdb_id FROM ncbi_load_pub WHERE load_managed));
 
 -- Combine conflicts into a single table for reporting
 -- This table will be dumped out to 'post_run_n_to_1_zdb_to_ncbi.csv' for review
@@ -369,71 +399,17 @@ delete from zdb_active_data where zactvd_zdb_id in (select dblink_zdb_id from nc
 -- ▙▘▙▖▌ ▐ ▛▖▌  ▌▌▛▖▌▛▖▌▌▌▐ ▌▌▐ ▐ ▌▌▛▖▌  ▚ ▐ ▌▌▐ ▌▌▚
 -- ▙▘▙▖▙▌▟▖▌▝▌  ▛▌▌▝▌▌▝▌▙▌▐ ▛▌▐ ▟▖▙▌▌▝▌  ▄▌▐ ▛▌▐ ▙▌▄▌
 --
--- Logic to handle marker_annotation_status
--- It is safe to say any gene that has an NCBI Gene ID matched by the rna matching method should be considered "Current"
--- with the exception of those genes that are explicitly marked as "Not in current annotation release set"
---
--- Any other gene with an NCBI Gene ID that is matched by the other matching methods should be considered "Unknown".
--- The RNA matching method uses the publication ZDB-PUB-020723-3
---
--- ie:
--- Start with the zdb gene:
---
--- 1. Does the zdb gene have an NCBI Gene ID?
---    - No: Classify as "Unknown"
---    - Yes: Proceed to step 2
---
--- 2. Is the associated NCBI Gene ID for zdb gene explicitly marked as "Not in current annotation release set"?
---     - Yes: Classify as "Not in current annotation release set"
---     - No: Proceed to step 3
---
--- 3. Is the associated NCBI Gene ID attributed with the rna matching method (ZDB-PUB-020723-3)?
---     - Yes: Classify as "Current"
---     - No: Classify as "Unknown"
---
--- End
+-- The annotation status of a gene is no longer stored. The view marker_annotation_status_derived works it out
+-- from the gene's NCBI Gene link, external_resource.ncbi_not_in_current_release, load_publication and the
+-- gene's NCBILoader genome locations. Nothing in this file writes it.
 
-\echo 'Clearing existing marker annotation status entries';
-
--- Clear all existing marker_annotation_status entries since we're recalculating the entire state
-DELETE FROM marker_annotation_status;
-
-\echo 'Calculating and inserting marker annotation status based on NCBI Gene ID matches';
-
--- Insert marker_annotation_status entries based on the logic:
--- 1. If gene has NCBI Gene ID in notInCurrentReleaseGeneIDs.unl -> "Not in current annotation release" (13)
--- 2. Else if gene has NCBI Gene ID attributed with one of the three load pubs -> "Current" (12)
--- 3. Else (other matching methods or no NCBI Gene ID) -> "Unknown" (no entry)
-INSERT INTO marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
-WITH eligible_records AS (
-    SELECT DISTINCT
-        dl.dblink_linked_recid,
-        CASE
-            -- Step 2: If NCBI Gene ID is in notInCurrentReleaseGeneIDs.unl, mark as "Not in current annotation release"
-            WHEN EXISTS (
-                SELECT 1 FROM not_in_current_release nic
-                WHERE nic.ncbi_gene_id = dl.dblink_acc_num
-            ) THEN 13  -- "Not in current annotation release"
-        -- Step 3: If has NCBI Gene ID attributed with load pub, mark as "Current"
-            WHEN EXISTS (
-                SELECT 1 FROM record_attribution ra
-                WHERE ra.recattrib_data_zdb_id = dl.dblink_zdb_id
-                  AND ra.recattrib_source_zdb_id IN ('ZDB-PUB-020723-3', 'ZDB-PUB-230516-87')
-            ) THEN 12  -- "Current"
-            END AS annotation_status
-    FROM db_link dl
-    WHERE dl.dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1'  -- NCBI Gene ID
-)
-SELECT dblink_linked_recid, annotation_status
-FROM eligible_records
-WHERE annotation_status IS NOT NULL;
-
+-- A gene whose NCBI Gene link is deleted loses its GRCz12tu association.
 DELETE FROM marker_assembly
 WHERE ma_a_pk_id = (SELECT a_pk_id FROM assembly WHERE a_name = 'GRCz12tu')
 AND ma_mrkr_zdb_id IN ( SELECT dblink_linked_recid FROM ncbi_gene_delete JOIN db_link
             ON delete_dblink_zdb_id = dblink_zdb_id AND dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-040412-1');
 
-\echo 'Marker annotation status update complete';
+\echo 'Marker assembly update complete';
 -- ▄▖▖ ▖▄   ▄▖▖ ▖▖ ▖▄▖▄▖▄▖▄▖▄▖▄▖▖ ▖  ▄▖▄▖▄▖▄▖▖▖▄▖
 -- ▙▖▛▖▌▌▌  ▌▌▛▖▌▛▖▌▌▌▐ ▌▌▐ ▐ ▌▌▛▖▌  ▚ ▐ ▌▌▐ ▌▌▚
 -- ▙▖▌▝▌▙▘  ▛▌▌▝▌▌▝▌▙▌▐ ▛▌▐ ▟▖▙▌▌▝▌  ▄▌▐ ▛▌▐ ▙▌▄▌

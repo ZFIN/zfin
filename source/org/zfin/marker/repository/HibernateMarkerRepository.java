@@ -2009,6 +2009,10 @@ public class HibernateMarkerRepository implements MarkerRepository {
             if (tuple.length > 11 && tuple[11] != null) {
                 linkDisplay.setAssociatedGeneID(tuple[11].toString());
             }
+            if (tuple.length > 15 && tuple[14] != null) {
+                linkDisplay.setAssemblyOrder(((Number) tuple[14]).intValue());
+                linkDisplay.setAssemblyCurrent((Boolean) tuple[15]);
+            }
             return linkDisplay;
         }
 
@@ -2080,13 +2084,20 @@ public class HibernateMarkerRepository implements MarkerRepository {
 
         String sql = """
             select fdbdt.fdbdt_data_type,dbl.dblink_length,dbl.dblink_linked_recid,dbl.dblink_acc_num,fdb.fdb_db_display_name,fdb.fdb_db_query,fdb.fdb_url_suffix,
-            ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display
+            ra.recattrib_source_zdb_id, fdb.fdb_db_significance, dbl.dblink_zdb_id, fdbc.fdbcont_zdb_id, pub.title, fdbdt.fdbdt_display_order, dbl.dblink_acc_num_display,
+            coalesce(la.a_order, fa.a_order), coalesce(la.a_is_current, fa.a_is_current)
             from db_link dbl
             join foreign_db_contains_display_group_member m on m.fdbcdgm_fdbcont_zdb_id=dbl.dblink_fdbcont_zdb_id
             join foreign_db_contains_display_group g on g.fdbcdg_pk_id=m.fdbcdgm_group_id
             join foreign_db_contains fdbc on dbl.dblink_fdbcont_zdb_id=fdbc.fdbcont_zdb_id
             join foreign_db_data_type fdbdt on fdbdt.fdbdt_pk_id = fdbc.fdbcont_fdbdt_id
             join foreign_db fdb on fdbc.fdbcont_fdb_db_id=fdb.fdb_db_pk_id
+            left outer join assembly fa on fa.a_pk_id = fdb.fdb_assembly_id
+            left outer join lateral (
+                select min(a.a_order) as a_order, bool_or(a.a_is_current) as a_is_current
+                from db_link_assembly dla join assembly a on a.a_pk_id = dla.dbla_a_pk_id
+                where dla.dbla_dblink_zdb_id = dbl.dblink_zdb_id
+            ) la on true
             left outer join record_attribution ra on ra.recattrib_data_zdb_id=dbl.dblink_zdb_id
             left outer join publication pub on ra.recattrib_source_zdb_id=pub.zdb_id
             where g.fdbcdg_name= :displayGroup
@@ -3648,5 +3659,17 @@ public class HibernateMarkerRepository implements MarkerRepository {
         return session.createQuery(query).getResultList();
     }
 
-}
+    @Override
+    public String getAnnotationStatus(String markerZdbID) {
+        List<String> names = HibernateUtil.currentSession().createNativeQuery("""
+                        select vt.vt_name
+                        from marker_annotation_status_derived d
+                        join vocabulary_term vt on vt.vt_id = d.mas_vt_pk_id
+                        where d.mas_mrkr_zdb_id = :markerZdbID
+                        """, String.class)
+                .setParameter("markerZdbID", markerZdbID)
+                .getResultList();
+        return names.isEmpty() ? "Unknown" : names.get(0);
+    }
 
+}

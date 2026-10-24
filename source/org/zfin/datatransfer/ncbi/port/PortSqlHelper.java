@@ -4,6 +4,8 @@ import jakarta.persistence.Query;
 import org.hibernate.Session;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class PortSqlHelper {
     public static String getSqlForGeneAndRnagDbLinksFromFdbContId(String fdbContId) {
@@ -18,11 +20,14 @@ public class PortSqlHelper {
     }
 
     public static String getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-            String fdbContId, String pubMappedbasedOnRNA, String pubMappedbasedOnVega, String pubMappedbasedOnNCBISupplement) {
+            String fdbContId, Collection<String> loadPubs) {
+        String pubList = loadPubs.stream()
+                .map(pub -> "'" + pub.replace("'", "''") + "'")
+                .collect(Collectors.joining(","));
         String sql = getSqlForGeneAndRnagDbLinksFromFdbContId(fdbContId) +
                      " and exists (select 1 from record_attribution " +
                      "       where recattrib_data_zdb_id = dblink_zdb_id " +
-                     "         and recattrib_source_zdb_id in ('" + pubMappedbasedOnRNA + "','" + pubMappedbasedOnVega + "','" + pubMappedbasedOnNCBISupplement + "'))";
+                     "         and recattrib_source_zdb_id in (" + pubList + "))";
         return sql;
     }
 

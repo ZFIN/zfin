@@ -1,0 +1,23 @@
+# Fails while the workbench/ directory exists, so a branch that carries working notes for
+# reviewers to read cannot be merged until the notes are removed.
+
+name: No workbench notes
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  no-workbench:
+    name: Fail while workbench/ exists
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check that workbench/ has been removed
+        run: |
+          if [ -d workbench ]; then
+            echo "::error::workbench/ holds working notes for review and must be removed (git rm -r workbench) before this branch is merged."
+            exit 1
+          fi
