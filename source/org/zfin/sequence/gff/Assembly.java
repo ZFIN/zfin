@@ -33,6 +33,9 @@ public class Assembly extends BaseEntity {
     @SortNatural
     private int order;
 
+    @Column(name = "a_is_current")
+    private boolean current;
+
     @ManyToMany(mappedBy = "assemblies", fetch = FetchType.LAZY)
     private List<Marker> marker;
 
