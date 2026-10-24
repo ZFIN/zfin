@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Genome browsers on ZFIN</title>
+  <style>
+
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+.display.math{display: block; text-align: center; margin: 0.5rem auto;}
+</style>
+  <style type="text/css">
+:root {
+color-scheme: light dark;
+--fg: #1d2a2e;
+--fg-muted: #5a6a6f;
+--bg: #ffffff;
+--bg-soft: #f3f6f7;
+--rule: #d3dde0;
+--link: #0b5f6b;
+--accent: #0c6a75;
+--code-bg: #e9eff1;
+--mark: #fff3c4;
+}
+@media (prefers-color-scheme: dark) {
+:root {
+--fg: #e2edef;
+--fg-muted: #94a9af;
+--bg: #0f1a1d;
+--bg-soft: #162428;
+--rule: #2a3e43;
+--link: #6fcfda;
+--accent: #5cc4cf;
+--code-bg: #1d3237;
+--mark: #4a3d12;
+}
+
+img { filter: brightness(0.92); }
+}
+html {
+color: var(--fg);
+background-color: var(--bg);
+}
+body {
+max-width: min(1500px, 96vw);
+margin: 0 auto;
+padding: 32px clamp(16px, 4vw, 64px) 72px;
+font-family: "Source Sans 3", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+font-size: 1.02rem;
+line-height: 1.55;
+}
+
+body > p, body > ul, body > ol, body > blockquote, body > h1, body > h2, body > h3, body > h4 {
+max-width: 80ch;
+}
+h1, h2, h3, h4 {
+line-height: 1.2;
+margin-top: 2em;
+}
+h1 { margin-top: 0; font-size: 2rem; }
+h2 {
+font-size: 1.5rem;
+padding-bottom: 0.25em;
+border-bottom: 2px solid var(--rule);
+}
+h3 { font-size: 1.15rem; }
+a { color: var(--link); }
+a:visited { color: var(--link); }
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+
+table {
+display: block;
+width: max-content;
+min-width: 100%;
+max-width: 100%;
+overflow-x: auto;
+border-collapse: collapse;
+margin: 1.2em 0;
+font-size: 0.93rem;
+border: 1px solid var(--rule);
+}
+thead { background: var(--bg-soft); }
+tbody { border-top: 0; border-bottom: 0; margin-top: 0; }
+th, td {
+padding: 0.5em 0.75em;
+vertical-align: top;
+text-align: left;
+border: 0;
+border-bottom: 1px solid var(--rule);
+}
+th { border-top: 0; font-size: 0.85em; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: 0; }
+td code, th code { white-space: nowrap; }
+code, kbd, samp {
+font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+font-size: 0.86em;
+background: var(--code-bg);
+padding: 0.12em 0.35em;
+border-radius: 3px;
+}
+pre {
+background: var(--bg-soft);
+border: 1px solid var(--rule);
+border-radius: 4px;
+padding: 0.9em 1em;
+overflow-x: auto;
+margin: 1.2em 0;
+}
+pre code { background: none; padding: 0; font-size: 0.88em; }
+blockquote {
+margin: 1.2em 0;
+padding: 0.1em 1em;
+border-left: 4px solid var(--accent);
+color: var(--fg-muted);
+}
+img {
+display: block;
+max-width: 100%;
+height: auto;
+margin: 1em 0 1.6em;
+border: 1px solid var(--rule);
+border-radius: 4px;
+}
+nav#TOC { background: var(--bg-soft); border: 1px solid var(--rule); padding: 0.5em 1em; border-radius: 4px; }
+@media (max-width: 600px) {
+body { padding: 16px; font-size: 0.98rem; }
+}
+@media print {
+body { max-width: none; padding: 0; }
+:root { color-scheme: light; }
+img { filter: none; }
+}
+</style>
+</head>
+<body>
+<h1 id="genome-browsers-on-zfin-where-they-appear-and-what-goes-wrong">Genome
+browsers on ZFIN: where they appear and what goes wrong</h1>
+<p>Captured 2026-10-23 from production,
+<code>https://franklin.zfin.org/</code>, with Playwright (Chromium, 1400
+x 1000 viewport, each page given about 10 seconds for the browser
+components to draw). The IDs were chosen from the dev database and then
+checked on production. Counts of genes and features come from the dev
+database, so they will differ a little in production.</p>
+<p>Why this file exists: decision D4 in <a href="../assembly-blast-radius.md"><code>../assembly-blast-radius.md</code></a>,
+which asks how the genome browser should behave once GRCz13ab has data.
+Each place below picks its assembly on its own, so the examples are the
+evidence.</p>
+<p>Screenshots are in <a href="images/"><code>images/</code></a>. Code
+references are to the <code>annotation-status-view</code> branch, which
+has the same genome browser code as <code>main</code>.</p>
+<h2 id="contents">Contents</h2>
+<ol type="1">
+<li><a href="#1-where-a-genome-browser-shows-up">Where a genome browser
+shows up</a></li>
+<li><a href="#2-mainline-cases">Mainline cases</a></li>
+<li><a href="#3-edge-cases">Edge cases</a></li>
+<li><a href="#4-the-issues-with-their-evidence">The issues, with their
+evidence</a></li>
+<li><a href="#5-not-captured">Not captured</a></li>
+<li><a href="#6-reproduction-notes">Reproduction notes</a></li>
+</ol>
+<hr />
+<h2 id="1-where-a-genome-browser-shows-up">1. Where a genome browser
+shows up</h2>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Where</th>
+<th>Example on production</th>
+<th>How the assembly is chosen (code)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Gene page, <strong>Sequences</strong></td>
+<td><a href="https://franklin.zfin.org/ZDB-GENE-990415-72#sequences"><code>ZDB-GENE-990415-72#sequences</code></a></td>
+<td><code>GeneViewController</code>: best assembly in
+<code>marker_assembly</code> must be named <code>GRCz12tu</code>, and
+the gene needs exactly one <code>ZFIN</code> or
+<code>ZfinGbrowseStartEndLoader</code> location on it (the
+landmark).</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Gene page, <strong>Transcripts</strong></td>
+<td><a href="https://franklin.zfin.org/ZDB-GENE-990415-72#transcripts"><code>ZDB-GENE-990415-72#transcripts</code></a></td>
+<td><code>TranscriptService</code> fixes <code>GRCZ11</code>.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Pseudogene</strong> page</td>
+<td><a href="https://franklin.zfin.org/ZDB-GENEP-041008-30"><code>ZDB-GENEP-041008-30</code></a></td>
+<td><code>PseudoGeneViewController</code>: first <code>ZFIN</code> or
+<code>NCBILoader</code> location. The image is built before any assembly
+check. The name check only guards the links row.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Clone</strong> page</td>
+<td><a href="https://franklin.zfin.org/ZDB-BAC-030616-1"><code>ZDB-BAC-030616-1</code></a></td>
+<td><code>CloneViewController</code> fixes <code>GRCZ11</code>.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>STR</strong> page (morpholino, CRISPR, TALEN)</td>
+<td><a href="https://franklin.zfin.org/ZDB-CRISPR-131024-1"><code>ZDB-CRISPR-131024-1</code></a></td>
+<td><code>SequenceTargetingReagentViewController</code>: prefers
+GRCz12tu, falls back to GRCz11 for that STR. The only page that chooses
+per object.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Feature</strong> page</td>
+<td><a href="https://franklin.zfin.org/ZDB-ALT-030922-2"><code>ZDB-ALT-030922-2</code></a></td>
+<td><code>FeatureService.getGbrowseImage</code>: the feature&#39;s first
+location, then a switch on its assembly (Zv9, GRCz10, GRCz12tu,
+otherwise GRCz11).</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Mapping detail</strong></td>
+<td><a href="https://franklin.zfin.org/action/mapping/detail/ZDB-GENE-990415-72"><code>/action/mapping/detail/ZDB-GENE-990415-72</code></a></td>
+<td><code>MappingDetailController</code>: first <code>ZFIN</code>
+location (GRCz12tu), otherwise the
+<code>ZfinGbrowseStartEndLoader</code> one (GRCz11). The build comes
+from the source, not the assembly.</td>
+</tr>
+<tr>
+<td>8</td>
+<td><strong>Standalone JBrowse2</strong></td>
+<td><a href="https://franklin.zfin.org/action/jbrowse2"><code>/action/jbrowse2</code></a></td>
+<td><code>JBrowse2Controller</code>: a React app with GRCz11 only.</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Navigation, <strong>Genomics, Genome Browsers, ZFIN</strong></td>
+<td>every page</td>
+<td>External JBrowse on AWS Amplify with <code>assembly=GRCz12tu</code>
+and a fixed location written into the URL
+(<code>pageHeader.tag</code>).</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Footer, <strong>Genomics, ZFIN</strong></td>
+<td>every page</td>
+<td>Links to <code>/action/jbrowse2</code> (item 8). Present on
+production; I did not find it in the templates of this checkout.</td>
+</tr>
+<tr>
+<td>11</td>
+<td><strong>Search &quot;related data&quot;</strong> links</td>
+<td><code>/action/jbrowse/byName?name=&lt;id&gt;</code></td>
+<td><code>RelatedDataService</code>, then <code>JBrowseController</code>
+redirects to the old JBrowse v1 on GRCz11.</td>
+</tr>
+<tr>
+<td>12</td>
+<td>&quot;Genome Browsers&quot; <strong>link rows</strong> under items 1, 2, 3,
+7</td>
+<td>same pages</td>
+<td><code>MappingService.getJBrowserBrowserLinks</code>: names links
+only for GRCz12tu and GRCz11. Links go to Amplify with
+<code>assembly=</code> in the URL, plus NCBI Map Viewer, Ensembl and
+UCSC.</td>
+</tr>
+<tr>
+<td>13</td>
+<td><strong>BLAST</strong> results (transcript hits)</td>
+<td>not captured, see section 5</td>
+<td><code>BlastResultMapper</code>: default build (GRCz12tu).</td>
+</tr>
+</tbody>
+</table>
+<p>The embedded images are the React component
+<code>Jbrowse2Image</code>. It takes <code>data-build</code> from the
+page and looks that name up in <code>config-jbrowse2.json</code>, which
+already lists four assemblies (<strong>GRCz12tu, GRCz11, GRCz10,
+Zv9</strong>) with 39 tracks that each name their assemblies. An unknown
+build falls back to the first assembly in the file. GRCz13ab is not in
+it.</p>
+<hr />
+<h2 id="2-mainline-cases">2. Mainline cases</h2>
+<p>These are the common, working cases. Build and landmark are read from
+each component&#39;s <code>data-build</code> and
+<code>data-landmark</code>.</p>
+<h3 id="m1-gene-with-a-grcz12tu-location-sequences-fgf8a">M1. Gene with
+a GRCz12tu location: Sequences (fgf8a)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-990415-72#sequences"><code>ZDB-GENE-990415-72</code></a>.
+Gene page &quot;Genome Assembly: GRCz12tu&quot;. The Sequences section has a
+<strong>GRCz12tu</strong> browser at <code>13:31859449..31889783</code>,
+with ZFIN Gene and RefSeq tracks, and a &quot;Genome Browsers&quot; row with
+<strong>NCBI Map Viewer</strong> and <strong>ZFIN</strong>.</p>
+<p><img role="img" aria-label="Gene page Sequences section with a GRCz12tu browser" src="images/01-gene-sequences.png" alt="Gene page Sequences section with a GRCz12tu browser" /></p>
+<h3 id="m2-the-same-gene-transcripts">M2. The same gene:
+Transcripts</h3>
+<p>The Transcripts section on the same page shows a different browser:
+<strong>GRCz11</strong> at <code>13:28494763..28502313</code>, labeled
+&quot;Genome Assembly: GRCz11&quot;. One page therefore shows the same gene in two
+assemblies, 3.4 Mb apart on chromosome 13, with nothing explaining the
+difference.</p>
+<p><img role="img" aria-label="Gene page Transcripts section with a GRCz11 browser" src="images/02-gene-transcripts.png" alt="Gene page Transcripts section with a GRCz11 browser" /></p>
+<h3 id="m3-the-same-gene-mapping-detail">M3. The same gene: Mapping
+detail</h3>
+<p>A <strong>GRCz12tu</strong> browser, centered range
+<code>13:31625275..32125275</code>, and a &quot;Genome Browser&quot; table that
+lists every location with its assembly: ZFIN and NCBI Map Viewer on
+GRCz12tu, Ensembl, NCBI Map Viewer and UCSC on GRCz11, and Vega on
+<strong>GRCv10</strong>.</p>
+<p><img role="img" aria-label="Mapping detail with a GRCz12tu browser and the location table" src="images/03-mapping-detail.png" alt="Mapping detail with a GRCz12tu browser and the location table" /></p>
+<h3 id="m4-pseudogene-on-grcz12tu-and-grcz11">M4. Pseudogene on GRCz12tu
+and GRCz11</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENEP-041008-30"><code>ZDB-GENEP-041008-30</code></a>
+(si:dkey-122c11.2p). &quot;Genome Assembly: GRCz12tu&quot;. Two browsers, like a
+gene: <strong>GRCz11</strong> at <code>4:49224182..49225984</code> and
+<strong>GRCz12tu</strong> at <code>6:20824975..20828766</code>. The two
+assemblies put it on different chromosomes.</p>
+<p><img role="img" aria-label="Pseudogene page" src="images/04-pseudogene-grcz12tu-and-grcz11.png" alt="Pseudogene page" /></p>
+<h3 id="m5-clone">M5. Clone</h3>
+<p><a href="https://franklin.zfin.org/ZDB-BAC-030616-1"><code>ZDB-BAC-030616-1</code></a>
+(CH211-101N13). One <strong>GRCz11</strong> browser at
+<code>13:24362967..24602432</code>. All 26,513 clones with locations in
+dev are GRCz11 only, so the fixed build matches the data.</p>
+<p><img role="img" aria-label="Clone page" src="images/05-clone.png" alt="Clone page" /></p>
+<h3 id="m6-str-on-both-assemblies-morpholino-and-crispr">M6. STR on both
+assemblies (morpholino and CRISPR)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-MRPHLNO-041108-1"><code>ZDB-MRPHLNO-041108-1</code></a>
+(MO1-pax8): one <strong>GRCz12tu</strong> browser at
+<code>5:78861029..78872458</code>. <a href="https://franklin.zfin.org/ZDB-CRISPR-131024-1"><code>ZDB-CRISPR-131024-1</code></a>
+(CRISPR1-etsrp): one <strong>GRCz12tu</strong> browser at
+<code>16:46431020..46437109</code>. Both also have GRCz11 locations, and
+the page prefers GRCz12tu.</p>
+<p><img role="img" aria-label="Morpholino page" src="images/06-str-morpholino-both-assemblies.png" alt="Morpholino page" /> <img role="img" aria-label="CRISPR page" src="images/07-str-crispr-both-assemblies.png" alt="CRISPR page" /></p>
+<h3 id="m7-feature-on-four-assemblies">M7. Feature on four
+assemblies</h3>
+<p><a href="https://franklin.zfin.org/ZDB-ALT-030922-2"><code>ZDB-ALT-030922-2</code></a>
+(hu894) has locations on Zv9, GRCz10, GRCz11 and GRCz12tu. One
+<strong>GRCz12tu</strong> browser at <code>17:20694341..20763049</code>.
+The page picks one of four; there is no way to see the others.</p>
+<p><img role="img" aria-label="Feature page" src="images/08-feature-four-assemblies.png" alt="Feature page" /></p>
+<h3 id="m8-standalone-jbrowse2">M8. Standalone JBrowse2</h3>
+<p><a href="https://franklin.zfin.org/action/jbrowse2"><code>/action/jbrowse2</code></a>
+opens <strong>GRCz11</strong> at <code>18:20,426,412..20,504,811</code>
+with ZFIN Gene, Transcript and ZFIN Features tracks and a track picker.
+It is GRCz11 whatever the data.</p>
+<p><img role="img" aria-label="Standalone JBrowse2 page" src="images/09-jbrowse2-standalone.png" alt="Standalone JBrowse2 page" /></p>
+<h3 id="m9-navigation-and-footer">M9. Navigation and footer</h3>
+<p>The <strong>Genomics, Genome Browsers</strong> menu starts with an
+external <strong>ZFIN</strong> link (Amplify, GRCz12tu, a fixed
+location). The footer&#39;s <strong>Genomics, ZFIN</strong> link goes to
+<code>/action/jbrowse2</code>, which is GRCz11. Two different &quot;ZFIN&quot;
+genome browsers sit one click from every page, on different
+assemblies.</p>
+<p><img role="img" aria-label="Navigation menu" src="images/25-nav-genomics-menu.png" alt="Navigation menu" />
+<img role="img" aria-label="Footer" src="images/26-footer-genomics-links.png" alt="Footer" /></p>
+<hr />
+<h2 id="3-edge-cases">3. Edge cases</h2>
+<p>&quot;Dev genes&quot; is the count in the dev database of genes (or features)
+in the same situation.</p>
+<h3 id="e1-two-landmarks-no-browser-in-sequences-marchf4b">E1. Two
+landmarks: no browser in Sequences (marchf4b)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-041210-304#sequences"><code>ZDB-GENE-041210-304</code></a>.
+&quot;Genome Assembly: GRCz12tu&quot;, but the Sequences section has no browser,
+because it has two landmark locations on GRCz12tu and the page needs
+exactly one. The only browser is the GRCz11 one in Transcripts
+(<code>9:52487933..52542057</code>). Dev genes: 7.</p>
+<p><img role="img" aria-label="Two landmarks" src="images/11-gene-two-landmarks.png" alt="Two landmarks" /></p>
+<h3 id="e2-best-assembly-is-grcz11-nothing-in-sequences-grcz11-on-mapping-detail-mhc1uca">E2.
+Best assembly is GRCz11: nothing in Sequences, GRCz11 on Mapping detail
+(mhc1uca)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-010112-3#sequences"><code>ZDB-GENE-010112-3</code></a>.
+&quot;Genome Assembly: GRCz11&quot;. Sequences shows <strong>&quot;Genome Browsers: No
+data available&quot;</strong>. The Transcripts section has a GRCz11 browser
+at <code>19:7042850..7051873</code>, and Mapping detail shows a GRCz11
+browser at <code>19:6797557..7297557</code>. The name check in
+<code>GeneViewController</code> requires GRCz12tu, so a GRCz11-only gene
+never gets a Sequences browser. Dev genes: 2,062 with one landmark
+(2,184 with GRCz11 as their best assembly).</p>
+<p><img role="img" aria-label="Sequences, no browser" src="images/12a-gene-grcz11-best-sequences.png" alt="Sequences, no browser" /> <img role="img" aria-label="Transcripts, GRCz11" src="images/12b-gene-grcz11-best-transcripts.png" alt="Transcripts, GRCz11" /> <img role="img" aria-label="Mapping detail, GRCz11" src="images/12c-gene-grcz11-best-mapping-detail.png" alt="Mapping detail, GRCz11" /></p>
+<h3 id="e3-the-stored-assembly-disagrees-with-the-locations-bicc1b">E3.
+The stored assembly disagrees with the locations (bicc1b)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-080522-3#sequences"><code>ZDB-GENE-080522-3</code></a>.
+The gene page says <strong>&quot;Genome Assembly: GRCz11&quot;</strong> and
+Sequences shows no browser. Its Mapping detail shows a
+<strong>GRCz12tu</strong> browser (<code>12:7621725..8121725</code>) and
+a table row &quot;ZFIN 12 7,840,071 - 7,903,380 GRCz12tu&quot;. The page&#39;s &quot;Genome
+Assembly&quot; comes from the <code>marker_assembly</code> copy, which lacks
+the GRCz12tu row that the location table has. Dev genes: 1 (the only
+drift between the two for GRCz12tu).</p>
+<p><img role="img" aria-label="Sequences, no browser" src="images/13a-gene-bicc1b-sequences.png" alt="Sequences, no browser" /> <img role="img" aria-label="Mapping detail, GRCz12tu" src="images/13b-gene-bicc1b-mapping-detail.png" alt="Mapping detail, GRCz12tu" /></p>
+<h3 id="e4-locations-but-no-marker_assembly-row-unknown-idibd2170">E4.
+Locations but no <code>marker_assembly</code> row: Unknown
+(id:ibd2170)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-000607-14#sequences"><code>ZDB-GENE-000607-14</code></a>.
+&quot;Genome Assembly: Unknown&quot;, no browser anywhere on the page, although
+the gene has GRCz11 locations in the location table. Dev genes: 3,497
+with only GRCz11 locations and no <code>marker_assembly</code> row.</p>
+<p><img role="img" aria-label="Unknown assembly" src="images/14-gene-no-marker-assembly-row.png" alt="Unknown assembly" /></p>
+<h3 id="e5-only-a-grcv10-location-unknown-sich211-237b124">E5. Only a
+GRCv10 location: Unknown (si:ch211-237b12.4)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-030131-8765#sequences"><code>ZDB-GENE-030131-8765</code></a>.
+&quot;Genome Assembly: Unknown&quot;, no browser. Its only location is the legacy
+label GRCv10. Dev genes: 1,515. GRCv10 is also visible to users: the
+Mapping detail table for fgf8a lists a &quot;Vega ... GRCv10&quot; row (M3).</p>
+<p><img role="img" aria-label="GRCv10 only" src="images/15-gene-grcv10-only.png" alt="GRCv10 only" /></p>
+<h3 id="e6-no-location-at-all-couptf3">E6. No location at all
+(couptf3)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENE-000112-32#sequences"><code>ZDB-GENE-000112-32</code></a>.
+&quot;Genome Assembly: Unknown&quot;, no browser. Dev genes: 6,164.</p>
+<p><img role="img" aria-label="No location" src="images/16-gene-no-location.png" alt="No location" /></p>
+<h3 id="e7-pseudogene-on-grcz11-only-sidkey-234l244p">E7. Pseudogene on
+GRCz11 only (si:dkey-234l24.4p)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-GENEP-050420-8#sequences"><code>ZDB-GENEP-050420-8</code></a>.
+&quot;Genome Assembly: GRCz11&quot;. Sequences shows &quot;Genome Browsers: No data
+available&quot; and an empty placeholder where the image would be (the tag
+renders a <code>GbrowseImage</code> element with no build). The page
+reads only <code>ZFIN</code> and <code>NCBILoader</code> locations,
+which are GRCz12tu sources. Dev pseudogenes: 4.</p>
+<p><img role="img" aria-label="Pseudogene on GRCz11 only" src="images/17-pseudogene-grcz11-only.png" alt="Pseudogene on GRCz11 only" /></p>
+<h3 id="e8-str-on-grcz11-only-the-fallback-works-crispr2-hk1">E8. STR on
+GRCz11 only: the fallback works (CRISPR2-hk1)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-CRISPR-160128-223"><code>ZDB-CRISPR-160128-223</code></a>.
+One <strong>GRCz11</strong> browser at
+<code>13:22969396..23011305</code>. This is the per-object fallback, the
+only page that does it. Dev CRISPRs: 19.</p>
+<p><img role="img" aria-label="STR on GRCz11 only" src="images/18-str-crispr-grcz11-only.png" alt="STR on GRCz11 only" /></p>
+<h3 id="e9-str-on-grcz12tu-only-and-str-with-no-location">E9. STR on
+GRCz12tu only, and STR with no location</h3>
+<p><a href="https://franklin.zfin.org/ZDB-CRISPR-160128-304"><code>ZDB-CRISPR-160128-304</code></a>
+(CRISPR1-mpzl2a): <strong>GRCz12tu</strong> at
+<code>15:51758362..51778387</code>. <a href="https://franklin.zfin.org/ZDB-CRISPR-140710-4"><code>ZDB-CRISPR-140710-4</code></a>
+(CRISPR3-tia1l): no browser. Dev CRISPRs: 15 and 207.</p>
+<p><img role="img" aria-label="STR on GRCz12tu only" src="images/19-str-crispr-grcz12tu-only.png" alt="STR on GRCz12tu only" /> <img role="img" aria-label="STR with no location" src="images/20-str-crispr-no-location.png" alt="STR with no location" /></p>
+<h3 id="e10-feature-on-zv9-only-draws-a-zv9-browser-la010001tg">E10.
+Feature on Zv9 only draws a Zv9 browser (la010001Tg)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-ALT-120130-1"><code>ZDB-ALT-120130-1</code></a>.
+One browser with build <strong>Zv9</strong> at
+<code>16:7529315..7549325</code>, drawn by the same component from the
+four-assembly config. Dev features: 9,949.</p>
+<p><img role="img" aria-label="Feature on Zv9 only" src="images/21-feature-zv9-only.png" alt="Feature on Zv9 only" /></p>
+<h3 id="e11-feature-with-a-chromosome-but-no-coordinates-no-browser-dfchr03c1033">E11.
+Feature with a chromosome but no coordinates: no browser
+(Df(Chr03)c1033)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-ALT-000215-12"><code>ZDB-ALT-000215-12</code></a>.
+&quot;Genome Browser: No data available&quot;. In dev its location rows are
+chromosome-only (<code>other map location</code>,
+<code>General Load</code>), with no start or end. Of the 7,713 dev
+features that are on GRCz11 only, <strong>7,139 look like this</strong>
+and 574 have coordinates. This corrects an earlier note that GRCz11-only
+features show a GRCz11 browser.</p>
+<p><img role="img" aria-label="Feature with no coordinates" src="images/22-feature-grcz11-only.png" alt="Feature with no coordinates" /></p>
+<h3 id="e12-feature-on-grcz11-only-with-coordinates-dfchr9b476">E12.
+Feature on GRCz11 only with coordinates (Df(Chr9:...)b476)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-ALT-000712-2"><code>ZDB-ALT-000712-2</code></a>.
+One <strong>GRCz11</strong> browser at
+<code>9:28863850..28946029</code>. The 574 dev features like it are the
+GRCz11 case that works.</p>
+<p><img role="img" aria-label="Feature on GRCz11 only, with coordinates" src="images/24-feature-grcz11-only-with-coordinates.png" alt="Feature on GRCz11 only, with coordinates" /></p>
+<h3 id="e13-feature-on-grcz11-and-grcz12tu-i26">E13. Feature on GRCz11
+and GRCz12tu (i26)</h3>
+<p><a href="https://franklin.zfin.org/ZDB-ALT-000412-8"><code>ZDB-ALT-000412-8</code></a>.
+One <strong>GRCz12tu</strong> browser at
+<code>7:30298387..30348928</code>. The GRCz11 location is not offered.
+Dev features: 5,876.</p>
+<p><img role="img" aria-label="Feature on GRCz11 and GRCz12tu" src="images/23-feature-grcz11-and-grcz12tu.png" alt="Feature on GRCz11 and GRCz12tu" /></p>
+<h3 id="e14-the-related-data-link-opens-the-old-jbrowse-v1-at-the-wrong-place">E14.
+The &quot;related data&quot; link opens the old JBrowse v1 at the wrong place</h3>
+<p><a href="https://franklin.zfin.org/action/jbrowse/byName?name=ZDB-GENE-990415-72"><code>/action/jbrowse/byName?name=ZDB-GENE-990415-72</code></a>
+redirects to
+<code>/jbrowse/?data=data/GRCz11&amp;name=13:28495419..28501985&amp;tracks=&amp;loc=1:23831764..35747419</code>.
+It opens the legacy JBrowse v1 on <strong>GRCz11</strong>, at a region
+of chromosome 1 (<code>loc=1:...</code>) with no track selected,
+although the redirect names a chromosome 13 location. fgf8a is on
+GRCz12tu, so this link is on the wrong assembly as well. I did not
+investigate why the location is wrong.</p>
+<p><img role="img" aria-label="byName redirect" src="images/27-jbrowse-byname-redirect.png" alt="byName redirect" /></p>
+<hr />
+<h2 id="4-the-issues-with-their-evidence">4. The issues, with their
+evidence</h2>
+<p><strong>1. The gene Sequences browser is tied to the name
+<code>GRCz12tu</code>.</strong> The best assembly must be named
+GRCz12tu, so a GRCz11-only gene never gets one (E2). Once GRCz13ab data
+exists, the first gene with a GRCz13ab row gets GRCz13ab as its best
+assembly (<code>a_order</code> 5, below GRCz12tu&#39;s 10), and its browser
+disappears too. Evidence: E2, E3, E4.</p>
+<p><strong>2. &quot;Exactly one landmark&quot; removes the browser from genes that
+have two.</strong> Evidence: E1 (7 dev genes).</p>
+<p><strong>3. The &quot;Genome Assembly&quot; row comes from a stored copy that
+has drifted.</strong> bicc1b says GRCz11 on the gene page and shows
+GRCz12tu on Mapping detail. Evidence: E3. Another 3,497 genes have
+GRCz11 locations and no row at all, so they say Unknown (E4).</p>
+<p><strong>4. GRCv10 is a leftover label.</strong> It is listed on the
+Mapping detail page for fgf8a (M3), and genes whose only location is
+GRCv10 say Unknown (E5). Dev: 62,173 location rows, 23,348 genes. It was
+added to the <code>assembly</code> table as a legacy row (commit
+<code>245c6bf06a</code>).</p>
+<p><strong>5. One page can show two assemblies with nothing connecting
+them.</strong> fgf8a&#39;s Transcripts section is GRCz11 and its Sequences
+section is GRCz12tu, 3.4 Mb apart (M1, M2). The pseudogene in M4 shows
+the two on different chromosomes. About 18,971 dev genes have both
+landmarks.</p>
+<p><strong>6. Each page type has its own rule, and one rule does not fit
+them all.</strong> Transcripts and clones are fixed on GRCz11 (M2, M5).
+The STR page chooses per object (E8, E9). Features take the first
+location (M7, E12, E13). Mapping detail chooses by source (M3, E2, E3).
+A single &quot;has a browser&quot; flag per assembly cannot express this.</p>
+<p><strong>7. Mapping detail and the gene page disagree.</strong> For
+2,067 dev genes (E2) Mapping detail shows a GRCz11 browser and Sequences
+shows none. For bicc1b the opposite assembly is shown (E3). Mapping
+detail picks its build from the location&#39;s source, so a
+<code>ZFIN</code>-source GRCz13ab row would be drawn on the GRCz12tu
+genome with GRCz13ab coordinates. This is from reading the code, not an
+observed case.</p>
+<p><strong>8. The pseudogene page builds the image before checking the
+assembly.</strong> A GRCz11-only pseudogene gets an empty placeholder
+and &quot;No data available&quot; (E7). The code also calls <code>getName()</code>
+on the best assembly without a null check; I did not find a pseudogene
+in dev that triggers it.</p>
+<p><strong>9. Features with no coordinates show nothing, and most
+GRCz11-only features are like that.</strong> 7,139 of 7,713 (E11). A
+chromosome-only location is real data that the browser cannot draw.</p>
+<p><strong>10. Two &quot;ZFIN&quot; genome browsers are one click away, on
+different assemblies.</strong> The navigation link goes to Amplify on
+GRCz12tu with a fixed location (M9), the footer link goes to
+<code>/action/jbrowse2</code> on GRCz11 (M8, M9). Neither follows the
+data.</p>
+<p><strong>11. The search &quot;related data&quot; link opens the old JBrowse v1
+on GRCz11 at the wrong location with no tracks.</strong> Evidence:
+E14.</p>
+<p><strong>12. The front end has its own assembly list.</strong>
+<code>config-jbrowse2.json</code> holds GRCz12tu, GRCz11, GRCz10 and
+Zv9. A page asking for a build that is not in it silently gets the first
+one. GRCz13ab would need an entry, and tracks that name it.</p>
+<p><strong>13. The link rows name sources only for two
+assemblies.</strong> <code>MappingService.getJBrowserBrowserLinks</code>
+has cases for GRCz12tu and GRCz11. Any other assembly gets a link with
+no name.</p>
+<h3 id="what-would-fix-them">What would fix them</h3>
+<p>Where the evidence points, without deciding anything:</p>
+<ul>
+<li>A setting, per page type, of which assemblies may be shown and in
+what order, so an admin can switch GRCz13ab on one page type at a time
+(issues 1, 6, 12).</li>
+<li>The page offers the first of those assemblies on which the object
+has a landmark, and a toggle for the others when there are several
+(issues 5, 7). The front-end config already lists several assemblies,
+which is what a toggle needs.</li>
+<li>The &quot;Genome Assembly&quot; row and the browser read the same data, not a
+stored copy (issues 3, 7).</li>
+<li>Rules for what counts as a landmark: more than one on an assembly
+should pick one, not hide the browser (issue 2).</li>
+</ul>
+<hr />
+<h2 id="5-not-captured">5. Not captured</h2>
+<ul>
+<li><strong>BLAST results</strong> (item 13). They need a submitted
+search. The code uses the default build, GRCz12tu.</li>
+<li><strong>The search result page</strong> that carries the &quot;related
+data&quot; link. I followed the redirect directly (E14).</li>
+<li><strong>Legacy GBrowse</strong> pages (<code>/action/gbrowse</code>,
+<code>/action/gbrowse/GRCz11</code>,
+<code>/action/gbrowse/GRCz10</code>) and the old JBrowse v1 beyond the
+redirect target.</li>
+<li><strong>Transcript pages and the &quot;all target locations&quot; STR
+page</strong>, which also embed the component
+(<code>transcript-view-related-transcripts.jsp</code>,
+<code>sequence-targeting-reagent-target-view.jsp</code>).</li>
+<li><strong>TALEN</strong> pages. Dev TALENs behave like CRISPRs and
+morpholinos.</li>
+<li><strong>Mobile layouts</strong> and anything behind a login.</li>
+</ul>
+<h2 id="6-reproduction-notes">6. Reproduction notes</h2>
+<ul>
+<li>The screenshots are viewport captures after scrolling to the
+section, so the page header or other sections may appear above or below.
+The browser tracks load asynchronously; a few extra seconds can
+matter.</li>
+<li>The JBrowse components read their location from
+<code>data-landmark</code> and their assembly from
+<code>data-build</code>. To list them on any page, run in the console:
+<code>[...document.querySelectorAll(&#39;.genome-browser-image&#39;)].map(e =&gt; [e.id, e.dataset.build, e.dataset.landmark])</code>.</li>
+<li>A component with <code>id=&quot;GbrowseImage&quot;</code> and an empty build
+is the placeholder rendered when the page has no image.</li>
+</ul>
+</body>
+</html>
