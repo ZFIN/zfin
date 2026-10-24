@@ -130,9 +130,24 @@ For A (and the middle path), in order:
 
 For B: the migration and seed for the page table, `trackMap` stays, the same class applies the rank rule, and decide whether to build an edit screen at the same time.
 
-## 3. What loading GRCz13ab needs, regardless of D4
+## 3. Standing goals, and what loading GRCz13ab needs
 
-None of this is built. The detailed steps are in section "Loading GRCz13ab" of `../assembly-blast-radius.md`.
+None of this is built. The detailed steps are in section "Loading GRCz13ab" of `../assembly-blast-radius.md`. Two goals were set during this work and should stay on the list. Both are independent of D4, but D4 and GRCz13ab are easier once they are done.
+
+### Goal 1: remove `marker_assembly`
+
+`marker_assembly` is a stored copy of "which assembly is each gene on", rebuilt by `markerAssemblyUpdate.sql` during the NCBI load. The real source of truth is `sequence_feature_chromosome_location_generated`, and the copy drifts from it (it was off by one assembly for some genes). The goal is to delete the table and replace it with a view, a plain join over the location table, the same way "Current" annotation status became a view in this branch.
+
+- **Before it can go:** D6 (the view must not count genetic positions as sequence placements; a plain join would add 3,993 GRCz11 gene rows, 3,827 of them from `other map location`) and the D8 follow-up (1,524 genes with only GRCv10 locations would show "GRCv10" unless the display ignores legacy assemblies).
+- **What changes:** `markerAssemblyUpdate.sql` stops writing it, readers (`Marker.getLatestAssembly()` and the Genome Assembly row among them) read the view, and a migration drops the table. Use expand-then-contract: the view first, switch readers, drop the table in a later commit.
+
+### Goal 2: move `gff3_ncbi*` to `external_resource`, without cached gene ids
+
+`gff3_ncbi` and `gff3_ncbi_attribute` are a mirror of NCBI's GFF3 file, so they belong in the `external_resource` schema with the other mirrors (such as `ncbi_danio_rerio_gene_info`). The goal is for the table to be only the file's contents.
+
+- **Drop the cached `gene_id` rows.** Today the load adds ZFIN gene ids into the mirror so it can be joined to markers. That mixes derived data into a copy of an upstream file. Replace it with a view that joins the mirror to `db_link` on the NCBI Gene id.
+- **Add an assembly column** (or one table per assembly) so it can hold GRCz12tu and GRCz13ab together, and register the file in `load_file` with `lf_table_name` set, so the dump setting and comments work as for the other mirrors. Whether its rows are dumped follows the policy in `lf_exclude_from_dump`; the default is to dump.
+- **Order:** create the view and switch readers to it, then stop writing the cached rows, then move the table. Table comments should give the upstream file's location, as agreed for the other mirrors.
 
 - The GFF3 tables (`gff3_ncbi`, `gff3_ncbi_attribute`) hold one assembly and belong in `external_resource`; they need an assembly column.
 - The NCBI load is tied to GRCz12tu in `markerAssemblyUpdate.sql`, `NCBIGff3Processor` and `NCBIGff3PostProcessor`. It should read the latest GFF3 for each current assembly from NCBI's `assembly_summary.txt`. NCBI now lists only GRCz12tu `.2` and GRCz13ab `.2` as latest (GRCz12ab was superseded), and the loader still fetches GRCz12tu `.1`.
