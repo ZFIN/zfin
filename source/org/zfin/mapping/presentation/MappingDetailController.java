@@ -272,25 +272,18 @@ public class MappingDetailController {
             trackingGene = GBrowseService.getGbrowseTrackingGene(marker);
         }
         List<MarkerGenomeLocation> genomeLocations = getLinkageRepository().getGenomeLocation(marker);
-        for (MarkerGenomeLocation genomeLocation : genomeLocations) {
-            if (List.of(ZFIN_NCBI, ZFIN).contains(genomeLocation.getSource())) {
-                GenomeBrowserImage gbrowseImage = new GenomeBrowserImageBuilder()
-                    .setLandmarkByGenomeLocation(genomeLocation)
-                    .withCenteredRange(500000)
-                    .highlight(trackingGene) //ignored if using jbrowse for now
-                    .highlightColor("pink")
-                    .withHeight(200)
-                    .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.MAPPING_DETAIL_GENES))
-                    .genomeBuild(genomeLocation.getSource() == ZFIN_NCBI ?
-                        GenomeBrowserBuild.CURRENT : GenomeBrowserBuild.GRCZ11)
-                    .build();
-
-                model.addAttribute("gbrowseImage", gbrowseImage);
-                if (genomeLocation.getSource() == ZFIN_NCBI) {
-                    break;
-                }
-            }
-        }
+        chooseBrowserLocation(genomeLocations, AssemblyOrder.fromDatabase()).ifPresent(genomeLocation -> {
+            GenomeBrowserImage gbrowseImage = new GenomeBrowserImageBuilder()
+                .setLandmarkByGenomeLocation(genomeLocation)
+                .withCenteredRange(500000)
+                .highlight(trackingGene) //ignored if using jbrowse for now
+                .highlightColor("pink")
+                .withHeight(200)
+                .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.MAPPING_DETAIL_GENES))
+                .genomeBuild(GenomeBrowserBuild.forAssembly(genomeLocation.getAssembly()).orElseThrow())
+                .build();
+            model.addAttribute("gbrowseImage", gbrowseImage);
+        });
 
         if (isFeature) {
             model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.MAPPING.getTitleString() + feature.getAbbreviation());
@@ -316,34 +309,66 @@ public class MappingDetailController {
             return;
         }
 
-        //If we have GRCz12tu location, we can omit GRCz11 locations (ZFIN_NCBI is GRCz12tu and ZFIN is GRCz11)
-        boolean hasGRCz12tu = locations.stream()
-            .anyMatch(location -> location.getSource() == ZFIN_NCBI);
+        removeSupersededZfinLocations(locations, AssemblyOrder.fromDatabase());
+    }
 
+    /** The sources of the locations that mark where a marker is for the genome browser. */
+    private static final List<GenomeLocation.Source> LANDMARK_SOURCES = List.of(ZFIN_NCBI, ZFIN);
 
-        if (hasGRCz12tu) {
-            locations.removeIf(location -> location.getSource() == ZFIN);
+    /**
+     * The location the genome browser is centered on: among the landmark locations that are on an assembly with
+     * a browser, the one on the newest assembly, and on that assembly a ZFIN_NCBI one before a ZFIN one. A
+     * landmark on an assembly with no browser is passed over, so it is never drawn on another assembly's genome.
+     */
+    static Optional<MarkerGenomeLocation> chooseBrowserLocation(List<MarkerGenomeLocation> locations,
+                                                                AssemblyOrder assemblyOrder) {
+        return locations.stream()
+            .filter(location -> LANDMARK_SOURCES.contains(location.getSource()))
+            .filter(location -> GenomeBrowserBuild.forAssembly(location.getAssembly()).isPresent())
+            .min(Comparator.comparingInt((MarkerGenomeLocation location) -> assemblyOrder.rank(location.getAssembly()))
+                .thenComparingInt(location -> location.getSource() == ZFIN_NCBI ? 0 : 1));
+    }
+
+    /**
+     * A ZFIN (GBrowse) location is dropped when the marker has a ZFIN_NCBI location on the same or a newer
+     * assembly, since that one says where the marker is now. Other sources are left as they are.
+     */
+    static void removeSupersededZfinLocations(List<? extends GenomeLocation> locations, AssemblyOrder assemblyOrder) {
+        OptionalInt newestZfinNcbi = locations.stream()
+            .filter(location -> location.getSource() == ZFIN_NCBI)
+            .mapToInt(location -> assemblyOrder.rank(location.getAssembly()))
+            .min();
+        if (newestZfinNcbi.isEmpty()) {
+            return;
         }
+        locations.removeIf(location -> location.getSource() == ZFIN
+            && assemblyOrder.rank(location.getAssembly()) >= newestZfinNcbi.getAsInt());
     }
 
     private void filterFeatureLocationsToRemoveOlderAssemblies(List<FeatureGenomeLocation> featureLocations) {
+        removeSupersededOtherMappingLocations(featureLocations, AssemblyOrder.fromDatabase());
+    }
+
+    /**
+     * A genetic-map (OTHER_MAPPING) location of a feature is dropped when the feature has a location on a newer
+     * assembly. Locations from other sources are kept even on an older assembly, because they show the
+     * historical location the data was submitted with.
+     */
+    static void removeSupersededOtherMappingLocations(List<FeatureGenomeLocation> featureLocations,
+                                                      AssemblyOrder assemblyOrder) {
         if (featureLocations == null || featureLocations.isEmpty()) {
             return;
         }
 
-        // Collect features that have a GRCz12tu location
-        Set<String> featuresWithGRCz12tu = featureLocations.stream()
-            .filter(loc -> GenomeLocation.GRCZ12TU.equals(loc.getAssembly()))
-            .map(loc -> loc.getFeature().getZdbID())
-            .collect(java.util.stream.Collectors.toSet());
+        Map<String, Integer> newestRankByFeature = new HashMap<>();
+        for (FeatureGenomeLocation location : featureLocations) {
+            newestRankByFeature.merge(location.getFeature().getZdbID(),
+                assemblyOrder.rank(location.getAssembly()), Math::min);
+        }
 
-        // Remove GRCz11 OTHER_MAPPING locations for features that have GRCz12tu
-        // Keep precise (DirectSubmission etc.) GRCz11 rows as they show historical location data
-        featureLocations.removeIf(loc ->
-            GenomeLocation.GRCZ11.equals(loc.getAssembly())
-            && loc.getSource() == GenomeLocation.Source.OTHER_MAPPING
-            && featuresWithGRCz12tu.contains(loc.getFeature().getZdbID())
-        );
+        featureLocations.removeIf(location ->
+            location.getSource() == GenomeLocation.Source.OTHER_MAPPING
+            && assemblyOrder.rank(location.getAssembly()) > newestRankByFeature.get(location.getFeature().getZdbID()));
     }
 
     /**
