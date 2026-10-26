@@ -29,8 +29,8 @@ RUN touch /home/gradle/.nestedViewsSearch
 # --chown=gradle:zfin. To re-enable BuildKit, this RUN can be replaced by:
 #   ADD --chown=gradle:zfin --checksum=sha256:${JENKINS_WAR_SHA256} \
 #       https://updates.jenkins.io/download/war/${JENKINS_VERSION}/jenkins.war /opt/jenkins/jenkins.war
-ARG JENKINS_VERSION=2.541.3
-ARG JENKINS_WAR_SHA256=0000addfa8722963164137a4e0e60abc227d9d60710c4deb19481f9a751cf512
+ARG JENKINS_VERSION=2.580.1
+ARG JENKINS_WAR_SHA256=393bf2476352dd726519fd1f92ce66eac7d23c0936e6967420b717060c4c40d0
 RUN curl -fsSL "https://updates.jenkins.io/download/war/${JENKINS_VERSION}/jenkins.war" \
         -o /opt/jenkins/jenkins.war \
     && echo "${JENKINS_WAR_SHA256}  /opt/jenkins/jenkins.war" \
