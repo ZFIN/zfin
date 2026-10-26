@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_NCBI_GENE_ID;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_RNA;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT;
+import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.PUB_MAPPED_BASED_ON_VEGA;
 
 @Log4j2
@@ -86,10 +87,10 @@ public class NCBIOutputFileToLoad {
 
     private boolean hasHigherPriorityPub(LoadFileRow row1, LoadFileRow row2) {
         // Priority comparison
-        // PUB_MAPPED_BASED_ON_RNA > PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT > PUB_MAPPED_BASED_ON_VEGA
+        // PUB_MAPPED_BASED_ON_RNA > PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT (either pub) > PUB_MAPPED_BASED_ON_VEGA
         return switch (row1.pub) {
             case PUB_MAPPED_BASED_ON_RNA -> true;
-            case PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT -> row2.pub.equals(PUB_MAPPED_BASED_ON_VEGA);
+            case PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12 -> row2.pub.equals(PUB_MAPPED_BASED_ON_VEGA);
             case PUB_MAPPED_BASED_ON_VEGA -> false;
             default -> {
                 log.warn("Unknown publication type: " + row1.pub);

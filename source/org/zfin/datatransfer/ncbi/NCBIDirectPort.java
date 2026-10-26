@@ -78,6 +78,10 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     public static final String PUB_MAPPED_BASED_ON_RNA = "ZDB-PUB-020723-3";
     public static final String PUB_MAPPED_BASED_ON_VEGA = "ZDB-PUB-130725-2";
     public static final String PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT = "ZDB-PUB-230516-87";
+    // Same strategy as above, but the shared Ensembl ID is from a GRCz12 assembly (ZFIN-10493)
+    public static final String PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12 = "ZDB-PUB-261014-17";
+    public static final List<String> NCBI_SUPPLEMENT_PUBS =
+            List.of(PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12);
 
     public static final String FDCONT_ENSDARG = "ZDB-FDBCONT-200123-1";
     public static final String FDCONT_NCBI_GENE_ID = "ZDB-FDBCONT-040412-1";
@@ -211,6 +215,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
     private BidiMap<String, String>  mapped; //  the list of 1:1; key: ZDB gene Id; value: NCBI gene Id
     private long ctOneToOneNCBI; // Count of 1:1 mappings
 
+    private Map<String, String> ncbiSupplementPubByNcbiId = new HashMap<>(); // key: NCBI gene Id; value: the attribution pub for that supplementary mapping
     private BidiMap<String, String>  ncbiSupplementMap = new DualHashBidiMap<>(); // the list of supplementary mappings; key: ZDB gene Id; value: NCBI gene Id
     private BidiMap<String, String>  legacyVegaMap = new DualHashBidiMap<>(); // the list of mappings from legacy vega logic; key: ZDB gene Id; value: NCBI gene Id
 
@@ -583,11 +588,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
             WHERE
                 dblink_fdbcont_zdb_id in (?)
-                AND recattrib_source_zdb_id = ?
+                AND recattrib_source_zdb_id in (?)
             """;
         NativeQuery<Tuple> selectQuery = currentSession().createNativeQuery(selectSql, Tuple.class);
         selectQuery.setParameter(1, contIDs);
-        selectQuery.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        selectQuery.setParameter(2, NCBI_SUPPLEMENT_PUBS);
         List<Tuple> results = selectQuery.getResultList();
         System.out.println("Found " + results.size() + " Ensembl matched db links to remove from the database");
         try {
@@ -615,11 +620,11 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
                 WHERE
                     dblink_fdbcont_zdb_id in (?)
-                    AND recattrib_source_zdb_id = ?);
+                    AND recattrib_source_zdb_id in (?));
             """;
         NativeQuery rpQuery = currentSession().createNativeQuery(referenceProteinDeleteSql);
         rpQuery.setParameter(1, contIDs);
-        rpQuery.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        rpQuery.setParameter(2, NCBI_SUPPLEMENT_PUBS);
         rpQuery.executeUpdate();
 
         String sql = """
@@ -632,12 +637,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     JOIN record_attribution ON recattrib_data_zdb_id = dblink_zdb_id
                 WHERE
                     dblink_fdbcont_zdb_id in (?)
-                    AND recattrib_source_zdb_id = ?);
+                    AND recattrib_source_zdb_id in (?));
             """;
 
         NativeQuery query = currentSession().createNativeQuery(sql);
         query.setParameter(1, contIDs);
-        query.setParameter(2, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        query.setParameter(2, NCBI_SUPPLEMENT_PUBS);
         query.executeUpdate();
         flushAndCommitCurrentSession();
     }
@@ -1253,19 +1258,19 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
         // GenBank RNA (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12
         );
         numGenBankRNABefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenPept (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12
         );
         numGenPeptBefore = PortSqlHelper.countData(currentSession(), sql);
 
         // GenBank DNA (only those loaded - excluding curated ones)
         sql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(
-                FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT
+                FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12
         );
         numGenBankDNABefore = PortSqlHelper.countData(currentSession(), sql);
 
@@ -2191,6 +2196,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
 
         ncbiSupplementMap = new DualHashBidiMap<>();
+        ncbiSupplementPubByNcbiId = new HashMap<>();
         long ncbiSupplementMapCount = 0;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(localInputFile))) {
@@ -2211,7 +2217,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 String ncbiId = parts[0].trim();
                 String zdbId = parts[1].trim();
-                // String ensemblId = parts[2].trim(); // not used in this logic directly
+                String ensemblId = parts[2].trim(); // only used to pick the attribution pub
                 // String symbol = parts[3].trim(); // not used in this logic directly
                 // String dblinks = parts[4].trim(); // not used in this logic directly
                 // String publications = parts[5].trim(); // not used in this logic directly
@@ -2249,6 +2255,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 
                 debugBuffer.append("Supplemental mapping: ").append(line).append("\n");
                 ncbiSupplementMap.put(zdbId, ncbiId);
+                ncbiSupplementPubByNcbiId.put(ncbiId, getSupplementPubForEnsemblId(ensemblId));
                 ncbiSupplementMapCount++;
                 System.out.print(".");
             }
@@ -2312,6 +2319,18 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         }
     }
 
+    /**
+     * The attribution pub for a match made through a shared Ensembl ID: the GRCz12 pub when the
+     * ENSDARG is from GRCz12tu (ENSDARG00160...) or GRCz12ab (ENSDARG00180...), otherwise the original
+     * (GRCz11) supplement pub.
+     */
+    public static String getSupplementPubForEnsemblId(String ensemblId) {
+        if (ensemblId != null && (ensemblId.startsWith("ENSDARG00160") || ensemblId.startsWith("ENSDARG00180"))) {
+            return PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12;
+        }
+        return PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT;
+    }
+
     private void writeNCBIgeneIdsMappedBasedOnSupplementaryLoad() {
         if (!envTrue("LOAD_NCBI_ONE_WAY_GENES")) {
             return;
@@ -2329,7 +2348,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                     .forEach(entry -> {
                         String zdbId = entry.getKey();
                         String mappedNCBIgeneId = entry.getValue();
-                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT));
+                        recordsToLoad.addRow(new NCBIOutputFileToLoad.LoadFileRow(zdbId, mappedNCBIgeneId, null, FDCONT_NCBI_GENE_ID,
+                                ncbiSupplementPubByNcbiId.getOrDefault(mappedNCBIgeneId, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT)));
                     });
         } catch (RuntimeException e) { // Catch runtime exceptions from the lambda
             if (e.getCause() instanceof IOException) {
@@ -3059,8 +3079,8 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             where recattrib_data_zdb_id = dblink_zdb_id
               and dblink_fdbcont_zdb_id = '%s'
               and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')
-              and recattrib_source_zdb_id not in ('%s','%s','%s')
-            """, FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+              and recattrib_source_zdb_id not in ('%s','%s','%s','%s')
+            """, FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12);
         //Note: Perl had pubMappedbasedOnNCBISupplement missing in the IN clause in the original file for this query.
         //Kept it as is to match original. If this was an omission, it should be added.
         //Looking again, the Perl code for this specific query `sqlGenPeptAttributedToNonLoadPub`
@@ -3542,13 +3562,13 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
         tempSql = getSqlForGeneAndRnagDbLinksFromFdbContId(FDCONT_REFSEQ_DNA);
         numRefSeqDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_RNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12);
         numGenBankRNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENPEPT, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12);
         numGenPeptAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
-        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
+        tempSql = PortSqlHelper.getSqlForGeneAndRnagDbLinksSupportedByLoadPubsFromFdbContId(FDCONT_GENBANK_DNA, PUB_MAPPED_BASED_ON_RNA, PUB_MAPPED_BASED_ON_VEGA, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12);
         numGenBankDNAAfter = PortSqlHelper.countData(currentSession(), tempSql);
 
         tempSql = String.format("select distinct dblink_linked_recid from db_link where dblink_fdbcont_zdb_id = '%s' and dblink_acc_num like 'NM_%%' and (dblink_linked_recid like 'ZDB-GENE%%' or dblink_linked_recid like '%%RNAG%%')", FDCONT_REFSEQ_RNA);
@@ -4037,7 +4057,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
                 Long.toString(ctOneToOneNCBI)));
         strategies.addSummaryRow(List.of(
                 "Shared Ensembl ID (NCBI supplement)" + (supplementEnabled ? "" : " — DISABLED"),
-                PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT,
+                PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT + " (GRCz11), " + PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12 + " (GRCz12)",
                 supplementEnabled ? Long.toString(ctEnsemblSupplementLoaded) : "n/a"));
         strategies.addSummaryRow(List.of(
                 "Legacy Vega (re-asserted, no new matching)",
@@ -4538,7 +4558,7 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
 //            attributionPub = PUB_MAPPED_BASED_ON_VEGA;
         } else if (ncbiSupplementMap != null && ncbiSupplementMap.containsValue(ncbiGeneId)) {
             zdbGeneId = ncbiSupplementMap.getKey(ncbiGeneId);
-            attributionPub = PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT;
+            attributionPub = ncbiSupplementPubByNcbiId.getOrDefault(ncbiGeneId, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT);
         } else if (legacyVegaMap != null && legacyVegaMap.containsValue(ncbiGeneId)) {
             zdbGeneId = legacyVegaMap.getKey(ncbiGeneId);
             attributionPub = PUB_MAPPED_BASED_ON_VEGA;

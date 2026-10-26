@@ -175,5 +175,22 @@ public class NCBIOutputFileToLoadTest {
         assertEquals(expectedOutput, fileOutput.getOutput());
     }
 
+    @Test
+    public void testSupplementPubFollowsEnsemblAssembly() {
+        assertEquals(PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12, getSupplementPubForEnsemblId("ENSDARG00160012345"));
+        assertEquals(PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12, getSupplementPubForEnsemblId("ENSDARG00180029248"));
+        assertEquals(PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, getSupplementPubForEnsemblId("ENSDARG00000012345"));
+        assertEquals(PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT, getSupplementPubForEnsemblId(""));
+    }
+
+    @Test
+    public void testGrcz12SupplementPubRanksBelowRnaAboveVega() {
+        NCBIOutputFileToLoad fileOutput = new NCBIOutputFileToLoad();
+        fileOutput.addRow(new NCBIOutputFileToLoad.LoadFileRow("ZDB-GENE-000000-1", "111111", null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_VEGA));
+        fileOutput.addRow(new NCBIOutputFileToLoad.LoadFileRow("ZDB-GENE-000000-1", "222222", null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_NCBI_SUPPLEMENT_GRCZ12));
+        assertEquals("222222", fileOutput.getRows().get(0).accession());
+        fileOutput.addRow(new NCBIOutputFileToLoad.LoadFileRow("ZDB-GENE-000000-1", "333333", null, FDCONT_NCBI_GENE_ID, PUB_MAPPED_BASED_ON_RNA));
+        assertEquals("333333", fileOutput.getRows().get(0).accession());
+    }
 
 }
