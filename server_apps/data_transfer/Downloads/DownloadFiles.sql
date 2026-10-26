@@ -1038,7 +1038,11 @@ drop view genbank;
 --! echo "'./downloadsStaging/refseq.txt'"
 
 create view refSeq as
-select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
+select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num,
+       (select string_agg(a_name, ',' order by a_order)
+          from db_link_assembly, assembly
+         where dbla_dblink_zdb_id = dblink_zdb_id
+           and dbla_a_pk_id = a_pk_id) as assembly
  from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
  where mrkr_zdb_id = dblink_linked_recid
    and dblink_fdbcont_zdb_id = fdbcont_zdb_id
