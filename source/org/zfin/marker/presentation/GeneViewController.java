@@ -110,6 +110,7 @@ public class GeneViewController {
         List<LinkDisplay> moreLinks = markerRepository.getVegaGeneDBLinksTranscript(gene, DisplayGroup.GroupName.SUMMARY_PAGE);
         otherMarkerDBLinksLinks.addAll(moreLinks);
         otherMarkerDBLinksLinks.sort(linkDisplayOtherComparator);
+        prioritizeGenomeResources(otherMarkerDBLinksLinks);
         geneBean.setOtherMarkerPages(otherMarkerDBLinksLinks);
 
 
@@ -426,4 +427,36 @@ public class GeneViewController {
         return info.getBasicExpressionInfo(number);
     }
 
+
+    // Reference database display names of the links that always lead: Alliance, NCBI Gene.
+    private static final List<String> PINNED_GENOME_RESOURCES = List.of("Alliance", "Gene");
+
+    /**
+     * Alliance and NCBI Gene come first, then links on an assembly in assembly.a_order (newest first),
+     * then everything else. When the gene has a link on a current assembly, links on a non-current
+     * assembly and Vega links are put last and flagged secondary (hidden behind "Show more").
+     * The sort is stable, so ties keep their existing order.
+     */
+    static void prioritizeGenomeResources(List<LinkDisplay> links) {
+        boolean hasCurrentAssemblyLink = links.stream().anyMatch(l -> Boolean.TRUE.equals(l.getAssemblyCurrent()));
+        if (hasCurrentAssemblyLink) {
+            links.stream()
+                .filter(l -> l.getAssemblyCurrent() == null ? isVega(l) : !l.getAssemblyCurrent())
+                .forEach(l -> l.setSecondary(true));
+        }
+        links.sort(Comparator
+            .comparing(LinkDisplay::isSecondary)
+            .thenComparingInt(l -> {
+                int pinned = PINNED_GENOME_RESOURCES.indexOf(l.getReferenceDatabaseName());
+                if (pinned >= 0) {
+                    return pinned;
+                }
+                return l.getAssemblyOrder() != null ? PINNED_GENOME_RESOURCES.size() : PINNED_GENOME_RESOURCES.size() + 1;
+            })
+            .thenComparing(l -> l.getAssemblyOrder() == null ? Integer.MAX_VALUE : l.getAssemblyOrder()));
+    }
+
+    private static boolean isVega(LinkDisplay link) {
+        return link.getReferenceDatabaseName().toUpperCase().startsWith("VEGA");
+    }
 }

@@ -34,6 +34,10 @@ public class LinkDisplay implements ProvidesLink {
     @JsonView(View.MarkerRelationshipAPI.class)
     private String accNumDisplay;
     private String sequenceString;
+    private boolean secondary;
+    // Rank (assembly.a_order) and currency of the assembly this link is on; null if it has none.
+    private Integer assemblyOrder;
+    private Boolean assemblyCurrent;
 
     public String getDisplayName() {
         if (accession.contains("ZDB")) {
