@@ -24,6 +24,9 @@ public enum InferenceCategory {
     UNIPROTKB_KW("UniProtKB-KW"),
     RHEA("RHEA"),
     ARBA("ARBA"),
+    // ZFIN-10567: Rfam family IDs, the with/from of RNAcentral's GO_REF:0000115 annotations
+    // (Rfam:RF00237). Load-only, so not offered in the curation inference list.
+    RFAM("Rfam", false),
     INTERPRO("InterPro"),
     EC("EC"),
     HAMAP("HAMAP"),
