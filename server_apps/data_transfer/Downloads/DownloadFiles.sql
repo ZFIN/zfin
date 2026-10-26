@@ -1039,7 +1039,7 @@ drop view genbank;
 
 create view refSeq as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num,
-       (select string_agg(a_name, ',' order by a_order)
+       (select string_agg(a_name, '|' order by a_order)
           from db_link_assembly, assembly
          where dbla_dblink_zdb_id = dblink_zdb_id
            and dbla_a_pk_id = a_pk_id) as assembly
