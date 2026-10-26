@@ -184,8 +184,12 @@ run_cli() {
 
 # Verify the resolved credentials with a cheap `who-am-i` call.
 # Returns: 0 ok, 2 auth problem (unauthenticated / anonymous), 3 other error.
+#
+# The call reads from /dev/null. The CLI client forwards its standard input to the server for every command,
+# so without this the check consumed whatever the caller piped in (`jenkins-cli update-job NAME < config.xml`
+# reached Jenkins as an empty file and failed with "Premature end of file").
 check_auth() {
-    out="$(run_cli who-am-i 2>&1)"
+    out="$(run_cli who-am-i 2>&1 </dev/null)"
     rc=$?
     if [ $rc -ne 0 ]; then
         case "$out" in
@@ -366,7 +370,7 @@ case "${1:-}" in
         extract_jar
         # Verify before storing.
         AUTH_ARGS="-auth $user:$token"
-        if ! out="$(run_cli who-am-i 2>&1)" || \
+        if ! out="$(run_cli who-am-i 2>&1 </dev/null)" || \
            printf '%s' "$out" | grep -q "Authenticated as: anonymous"; then
             echo "jenkins-cli: those credentials did not authenticate; not storing them." >&2
             print_auth_help
