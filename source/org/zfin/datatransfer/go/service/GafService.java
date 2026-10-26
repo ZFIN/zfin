@@ -818,10 +818,19 @@ public class GafService {
         }
     }
 
+    // A relation given by ID (RO:0002349, BFO:0000066, GOREL:0001019), as GPAD writes it, rather
+    // than by name (results_in_division_of), as the legacy GAF load did. ZFIN-10570: GOREL IDs were
+    // not recognised as IDs and fell through to the name lookup, which can never match them.
+    private static final Pattern RELATION_ID = Pattern.compile("[A-Za-z]+:\\d+");
+
+    static boolean isRelationId(String relation) {
+        return relation != null && RELATION_ID.matcher(relation.trim()).matches();
+    }
+
     private static GenericTerm lookupRelationTerm(String relationName, Collection<Ontology> ontologies) {
         OntologyRepository repo = RepositoryFactory.getOntologyRepository();
-        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
-            return repo.getTermByOboID(relationName);
+        if (isRelationId(relationName)) {
+            return repo.getTermByOboID(relationName.trim());
         }
         return repo.getTermByName(relationName, ontologies);
     }
@@ -842,7 +851,7 @@ public class GafService {
         if (relationTerm == null) {
             throw new GafValidationError("RO term  " + relationName + " does not exist", gafEntry);
         }
-        if (relationName.contains("RO:") || relationName.contains("BFO:")) {
+        if (isRelationId(relationName)) {
             // ZFIN-10230: this row previously would have failed under getTermByName lookup.
             logger.info("ZFIN-10230 recovered annotExtn: entryId={} goid={} qualifier={} pmid={} evidence={} annotExtnPiece='{}' relation={} -> {} ({}) identifier={}",
                 gafEntry.getEntryId(), gafEntry.getGoTermId(), gafEntry.getQualifier(),
