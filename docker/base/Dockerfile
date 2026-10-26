@@ -93,6 +93,15 @@ RUN mkdir -p /opt/zfin/www_homes/zfin.org/server_apps/jenkins/jenkins-home \
     && adduser gradle root \
     && adduser gradle solr
 
+#eMudhra CA certificate compromise fix
+RUN sed -i \
+  -e 's|^mozilla/emSign_ECC_Root_CA_-_G3.crt|!&|' \
+  -e 's|^mozilla/Comodo_AAA_Services_root.crt|!&|' \
+  /etc/ca-certificates.conf \
+  && update-ca-certificates \
+  && touch /var/lib/ca-certificates-java/fresh \
+  && dpkg-reconfigure ca-certificates-java
+
 USER gradle
 # Pre-create the cache mountpoints so a fresh named volume mounted here inherits
 # gradle ownership (Docker seeds an empty volume from the image dir's metadata).
