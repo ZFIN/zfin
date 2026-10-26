@@ -467,3 +467,13 @@ task prepareZecoTaxonomyObo(type: JavaExec) {
         zecoTaxonomyObo.text = text
     }
 }
+
+// Load-Ensembl-Mapping job: loads ENSDARGs for newer assemblies into db_link from a mapping file.
+// Reads MAPPING_FILE_UPLOAD from $WORKSPACE (Jenkins) or MAPPING_FILE; writes its report to
+// TARGETROOT, which is the Jenkins workspace.
+task loadEnsemblMapping(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ensembl.LoadEnsemblMappingTask'
+    workingDir = file(System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT') ?: projectDir)
+    doFirst { workingDir.mkdirs() }
+}
