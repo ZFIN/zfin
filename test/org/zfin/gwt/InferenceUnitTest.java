@@ -4,6 +4,7 @@ import org.junit.Test;
 import org.zfin.gwt.root.dto.GoDefaultPublication;
 import org.zfin.gwt.root.dto.GoEvidenceCodeEnum;
 import org.zfin.gwt.root.dto.InferenceCategory;
+import org.zfin.gwt.root.ui.GoEvidenceValidator;
 import org.zfin.mutant.InferenceGroupMember;
 import org.zfin.mutant.MarkerGoTermEvidence;
 
@@ -119,6 +120,30 @@ public class InferenceUnitTest {
 
         assertEquals(1, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_UNIPROT.zdbID()).length);
         assertEquals(InferenceCategory.UNIPROTKB, GoEvidenceCodeEnum.IEA.getInferenceCategories(GoDefaultPublication.GOREF_UNIPROT.zdbID())[0]);
+    }
+
+    /**
+     * ZFIN-10567: RNAcentral's GO_REF:0000115 rows (IEA, with/from Rfam:RF*) must resolve to
+     * their pub and pass the IEA inference checks. Without the RFAM category the Rfam with/from
+     * was not a valid IEA inference, and without the pub the row was an unknown GO_REF.
+     */
+    @Test
+    public void rnacentralGoRefAcceptsRfamInference() throws Exception {
+        String rfam = "Rfam:RF00237";
+        String pub = GoDefaultPublication.GOREF_RNACENTRAL.zdbID();
+
+        assertEquals("ZDB-PUB-261021-9", pub);
+        assertEquals("GO_REF:0000115", GoDefaultPublication.GOREF_RNACENTRAL.title());
+        assertTrue(GoDefaultPublication.getGoRefPubs().contains(GoDefaultPublication.GOREF_RNACENTRAL));
+        assertFalse(GoDefaultPublication.GOREF_RNACENTRAL.curated());
+
+        assertEquals(InferenceCategory.RFAM, InferenceCategory.getInferenceCategoryByValue(rfam));
+        assertFalse(InferenceCategory.RFAM.curatable());
+        assertArrayEquals(new InferenceCategory[]{InferenceCategory.RFAM},
+                GoEvidenceCodeEnum.IEA.getInferenceCategories(pub));
+        assertTrue(GoEvidenceValidator.isInferenceValid(rfam, GoEvidenceCodeEnum.IEA, pub));
+        // throws ValidationException if the inference does not fit the pub
+        GoEvidenceValidator.validateEvidenceVsPub(GoEvidenceCodeEnum.IEA, pub, rfam);
     }
 
 }

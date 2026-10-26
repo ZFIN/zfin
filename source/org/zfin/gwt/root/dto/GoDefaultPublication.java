@@ -36,6 +36,11 @@ public enum GoDefaultPublication implements PubEnum {
     // ECO:0000366 or ECO:0000364 (both mapped to IEA in release 1185). Their with/from is always a
     // GO term, hence InferenceCategory.GO; not curated, since these are automatic assertions.
     GOREF_GO_CENTRAL_INFERENCE("GO_REF:0000108", "ZDB-PUB-260903-15", InferenceCategory.GO, false),
+    // ZFIN-10567: RNAcentral's annotations of ncRNA genes from Rfam family membership. 45 rows in
+    // DANRE-mod over 18 lncRNA/lincRNA/miRNA genes, all ECO:0000256 (already mapped to IEA) with an
+    // Rfam:RF* with/from, hence InferenceCategory.RFAM. Without this entry the load rejects them as an
+    // unknown GO_REF.
+    GOREF_RNACENTRAL("GO_REF:0000115", "ZDB-PUB-261021-9", InferenceCategory.RFAM, false),
     ;
 
     private final String title;
@@ -122,6 +127,7 @@ public enum GoDefaultPublication implements PubEnum {
             goRefPubs.add(GOREF_INTERPRO2GO);
             goRefPubs.add(GOREF_EC2GO);
             goRefPubs.add(GOREF_GO_CENTRAL_INFERENCE);
+            goRefPubs.add(GOREF_RNACENTRAL);
         }
         return goRefPubs;
     }
