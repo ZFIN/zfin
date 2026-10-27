@@ -40,4 +40,11 @@ RUN chmod 755 /opt/solr/server/solr/configsets/site_index/lib \
  && chmod 755 /docker-entrypoint-initdb.d/sync-config.sh \
  && chown -R solr:solr /opt/zfin-solr
 
+#eMudhra CA certificate compromise fix
+RUN sed -i \
+  -e 's|^mozilla/emSign_ECC_Root_CA_-_G3.crt|!&|' \
+  -e 's|^mozilla/Comodo_AAA_Services_root.crt|!&|' \
+  /etc/ca-certificates.conf \
+  && update-ca-certificates
+
 USER solr
