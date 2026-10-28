@@ -91,6 +91,30 @@ public class LineSubmission implements Serializable {
     @Column(name = "ls_husbandry_info")
     private String husbandryInfo;
 
+    @Column(name = "ls_veterinarian_name")
+    private String veterinarianName;
+
+    @Column(name = "ls_veterinarian_email")
+    private String veterinarianEmail;
+
+    @Column(name = "ls_veterinarian_address")
+    private String veterinarianAddress;
+
+    @Column(name = "ls_veterinarian_phone")
+    private String veterinarianPhone;
+
+    @Column(name = "ls_technical_transfer_name")
+    private String technicalTransferName;
+
+    @Column(name = "ls_technical_transfer_email")
+    private String technicalTransferEmail;
+
+    @Column(name = "ls_technical_transfer_address")
+    private String technicalTransferAddress;
+
+    @Column(name = "ls_technical_transfer_phone")
+    private String technicalTransferPhone;
+
     /**
      * Acceptance reasons as a postgres text[] of snake_case option values
      * (e.g. {@code {"frequently_requested","expect_high_demand"}}). The

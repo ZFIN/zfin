@@ -96,6 +96,14 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
                 unreportedFeaturesDetails: '',
                 husbandryInfo: '',
                 additionalInfo: '',
+                veterinarianName: '',
+                veterinarianEmail: '',
+                veterinarianAddress: '',
+                veterinarianPhone: '',
+                technicalTransferName: '',
+                technicalTransferEmail: '',
+                technicalTransferAddress: '',
+                technicalTransferPhone: '',
             },
         };
     }
@@ -118,6 +126,14 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
             unreportedFeaturesDetails: submission.unreportedFeaturesDetails ?? '',
             husbandryInfo: submission.husbandryInfo ?? '',
             additionalInfo: submission.additionalInfo ?? '',
+            veterinarianName: submission.veterinarianName ?? '',
+            veterinarianEmail: submission.veterinarianEmail ?? '',
+            veterinarianAddress: submission.veterinarianAddress ?? '',
+            veterinarianPhone: submission.veterinarianPhone ?? '',
+            technicalTransferName: submission.technicalTransferName ?? '',
+            technicalTransferEmail: submission.technicalTransferEmail ?? '',
+            technicalTransferAddress: submission.technicalTransferAddress ?? '',
+            technicalTransferPhone: submission.technicalTransferPhone ?? '',
         },
     };
 }
