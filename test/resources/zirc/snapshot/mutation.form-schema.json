@@ -10,6 +10,11 @@
         "title" : "ZFIN Record Established",
         "type" : [ "boolean", "null" ]
       },
+      "alleleLabInstitution" : {
+        "readOnly" : true,
+        "title" : "Institution",
+        "type" : "string"
+      },
       "assays" : {
         "items" : {
           "properties" : {
@@ -238,7 +243,33 @@
         "options" : {
           "placeholder" : "Lab / institution"
         },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "HIDE"
+        },
         "scope" : "#/properties/mutationInstitution",
+        "type" : "Control"
+      }, {
+        "options" : {
+          "comments" : false,
+          "helpText" : "Lab of origin and institution of the selected ZFIN allele.",
+          "managesOwnPersistence" : true
+        },
+        "rule" : {
+          "condition" : {
+            "schema" : {
+              "const" : true
+            },
+            "scope" : "#/properties/alleleInZfin"
+          },
+          "effect" : "SHOW"
+        },
+        "scope" : "#/properties/alleleLabInstitution",
         "type" : "Control"
       } ],
       "label" : "General",

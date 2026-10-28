@@ -44,6 +44,7 @@ export interface MutationDTO {
     sortOrder: number;
     alleleDesignation: string | null;
     alleleName: string | null;
+    alleleLabInstitution: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
     mutationDiscoverer: string | null;
