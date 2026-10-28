@@ -108,4 +108,40 @@ class PubmedPaginationParseSpec extends Specification {
         then: "the page range is preserved; pii is ignored"
         pages == "271-277"
     }
+
+    def "ELocationID pii fallback skips Elsevier-style PII identifiers"() {
+        given: "an Epub-ahead-of-print Elsevier article — no <Pagination>, and the only pii is the internal S-number (e.g. PMID with Cell 2026 S0092-8674(26)01124-4)"
+        def article = new XmlSlurper().parseText("""
+            <Article>
+              <ELocationID EIdType="pii">S0092-8674(26)01124-4</ELocationID>
+              <ELocationID EIdType="doi">10.1016/j.cell.2026.09.022</ELocationID>
+            </Article>
+        """)
+
+        when: "the loader applies the same fallback as fetchPubsFromPubMed.groovy"
+        def pages = article.Pagination.MedlinePgn.text()
+        if (!pages) {
+            def pii = article.ELocationID.find { it.@EIdType == 'pii' }?.text() ?: ''
+            pages = (pii ==~ /S\d{4}-\d{3}[\dXx]\(.*/) ? '' : pii
+        }
+
+        then: "pages stays empty so the refresh jobs can fill it in once PubMed assigns pages"
+        pages == ""
+    }
+
+    def "ELocationID pii fallback keeps other article ids, including long numeric and dotted ones"() {
+        when: "the loader applies the fallback to a pii"
+        def article = new XmlSlurper().parseText("""<Article><ELocationID EIdType="pii">${pii}</ELocationID></Article>""")
+        def pages = article.Pagination.MedlinePgn.text()
+        if (!pages) {
+            def p = article.ELocationID.find { it.@EIdType == 'pii' }?.text() ?: ''
+            pages = (p ==~ /S\d{4}-\d{3}[\dXx]\(.*/) ? '' : p
+        }
+
+        then:
+        pages == pii
+
+        where:
+        pii << ["dev205615", "e202603687", "492", "1800112", "gr.280355.124", "ENEURO.0408-19.2020"]
+    }
 }

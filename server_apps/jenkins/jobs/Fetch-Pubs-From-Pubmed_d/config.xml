@@ -45,7 +45,7 @@ http://fogbugz.zfin.org/default.asp?W1589</description>
       <caseSensitive>true</caseSensitive>
     </hudson.tasks.ArtifactArchiver>
     <hudson.tasks.BuildTrigger>
-      <childProjects>Update-Pub-Date_d</childProjects>
+      <childProjects>Update-Pub-Date_d,Update-Pub-Pages_d</childProjects>
       <threshold>
         <name>SUCCESS</name>
         <ordinal>0</ordinal>

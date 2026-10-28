@@ -1,0 +1,52 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description>Runs after a successful Fetch-Pubs-From-Pubmed_d. Re-fetches from PubMed the publications of the last 3 months (24 months on the 3rd of each month, as a longer sweep) that still have an empty volume or pages, or whose pages are an Elsevier PII placeholder (e.g. Epub-ahead-of-print pubs loaded before the issue was assigned, or article-number papers) and fills them in via fetchPubsFromPubMed.groovy -DfetchMode=update. Never overwrites a populated value with a blank. Pubs for which PubMed has no pagination at all are re-checked each run until they age out of the window.</description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <hudson.model.ParametersDefinitionProperty>
+      <parameterDefinitions>
+        <hudson.model.StringParameterDefinition>
+          <name>MONTHS</name>
+          <description>Number of months to go back. Leave blank for the default (3, or 24 on the 3rd of the month). Run once with 240 after ZFIN-10241 is deployed.</description>
+          <defaultValue></defaultValue>
+        </hudson.model.StringParameterDefinition>
+        <hudson.model.BooleanParameterDefinition>
+          <name>UpdateAuthors</name>
+          <description>Update Authors? Also overwrite the authors of the selected publications with PubMed's current authors. Leave unchecked for the daily run.</description>
+          <defaultValue>false</defaultValue>
+        </hudson.model.BooleanParameterDefinition>
+      </parameterDefinitions>
+    </hudson.model.ParametersDefinitionProperty>
+  </properties>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <customWorkspace>$TARGETROOT</customWorkspace>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>cd $TARGETROOT/server_apps/data_transfer/PUBMED &amp;&amp; ./updatePubPages.sh "$MONTHS" "$UpdateAuthors"</command>
+    </hudson.tasks.Shell>
+  </builders>
+  <publishers>
+    <hudson.tasks.ArtifactArchiver>
+      <artifacts>server_apps/data_transfer/PUBMED/loadSQL*.log</artifacts>
+      <allowEmptyArchive>true</allowEmptyArchive>
+      <onlyIfSuccessful>false</onlyIfSuccessful>
+    </hudson.tasks.ArtifactArchiver>
+  </publishers>
+  <buildWrappers>
+    <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.20">
+      <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+        <timeoutMinutes>60</timeoutMinutes>
+      </strategy>
+      <operationList>
+        <hudson.plugins.build__timeout.operations.AbortOperation/>
+      </operationList>
+    </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+  </buildWrappers>
+</project>

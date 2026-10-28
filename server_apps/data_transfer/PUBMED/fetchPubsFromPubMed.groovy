@@ -16,6 +16,12 @@ if (!(fetchMode in ['insert', 'update'])) {
     println "Error: fetchMode must be either 'insert' or 'update'"
     System.exit(1)
 }
+//in update mode, -DupdateAuthors=false leaves authors alone and only refreshes volume/pages
+def updateAuthors = System.getProperty('updateAuthors', 'true')
+if (!(updateAuthors in ['true', 'false'])) {
+    println "Error: updateAuthors must be either 'true' or 'false'"
+    System.exit(1)
+}
 //require ids if fetchMode is update
 if (fetchMode == 'update' && args.length < 1) {
     println "Error: When using fetchMode=update, you must provide IDs as command line arguments"
@@ -70,9 +76,13 @@ def processArticle = { CSVPrinter printer, GPathResult pubmedArticle, int idx ->
     // For article-number papers where <Pagination> is absent entirely
     // (e.g. Hum Mol Genet 2026;35(4):ddaf203 — pages live only in
     // <ELocationID EIdType="pii">), fall back to the pii ELocationID.
+    // Elsevier publishes ahead-of-print records whose only pii is the
+    // internal S0000-0000(26)00000-0 identifier, which is not a page number;
+    // skip it so the pages are filled in once PubMed assigns them.
     pages = article.Pagination.MedlinePgn.text()
     if (!pages) {
-        pages = article.ELocationID.find { it.@EIdType == 'pii' }?.text() ?: ''
+        pii = article.ELocationID.find { it.@EIdType == 'pii' }?.text() ?: ''
+        pages = (pii ==~ /S\d{4}-\d{3}[\dXx]\(.*/) ? '' : pii
     }
     row.add(pages)
 
@@ -170,7 +180,7 @@ if (fetchMode == 'update') {
     loadSqlFilename = "updateExistingPubs.sql"
 }
 
-dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql --echo-all -v ON_ERROR_STOP=1 " +
+dbaccessProc = ['/bin/bash', '-c', "${ZfinPropertiesEnum.PGBINDIR}/psql --echo-all -v ON_ERROR_STOP=1 -v updateAuthors=${updateAuthors} " +
         "${ZfinPropertiesEnum.DB_NAME} -f ${WORKING_DIR.absolutePath}/${loadSqlFilename} " +
         ">${WORKING_DIR.absolutePath}/loadSQLOutput.log 2> ${WORKING_DIR.absolutePath}/loadSQLError.log"].execute()
 dbaccessProc.waitFor()
