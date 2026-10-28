@@ -34,12 +34,11 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1095/WearyCatFace/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1096/XBones/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1097/YinYang/db.changelog.master.xml"/>
--->
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/ZipperMouthFace/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1098/Allamande/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1099/ChickenDance/db.changelog.master.xml"/>
 
-    <!-- No more sprint directories - releases only! -->
+    No more sprint directories - releases only!
     <include file="source/org/zfin/db/postGmakePostloaddb/1100/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1101/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1102/db.changelog.master.xml"/>
@@ -77,6 +76,11 @@
     <include file="source/org/zfin/db/postGmakePostloaddb/1134/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1135/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1136/db.changelog.master.xml"/>
+    Releases up to 1136 are commented out (2026-10): every database we run against has
+    applied them, and their large loadData files were removed from the repository.
+    A database restored from a dump older than release 1137 can no longer be updated
+    with this changelog. See README.md here for the removed files and how to get them back.
+-->
     <include file="source/org/zfin/db/postGmakePostloaddb/1137/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1138/db.changelog.master.xml"/>
     <include file="source/org/zfin/db/postGmakePostloaddb/1139/db.changelog.master.xml"/>
