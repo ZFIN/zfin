@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import useFetch from '../hooks/useFetch';
 import LoadingSpinner from '../components/LoadingSpinner';
 import GenericErrorMessage from '../components/GenericErrorMessage';
-import FeatureFlag from './FeatureFlag';
+import FeatureFlagTriState from './FeatureFlagTriState';
 
 const FeatureFlagsPerUser = ({
     url,
@@ -35,9 +35,9 @@ const FeatureFlagsPerUser = ({
                 <tr key={username}>
                     <td>{username}</td>
                     <td>
-                        <FeatureFlag
+                        <FeatureFlagTriState
                             name={flagname}
-                            enabled={allUserFlags[username][flagname] === 'ENABLED'}
+                            state={allUserFlags[username][flagname]}
                             url={editFlagsUrl + '?scope=person&person=' + username}
                         />
                     </td>

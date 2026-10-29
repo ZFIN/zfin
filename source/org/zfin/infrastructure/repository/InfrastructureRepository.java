@@ -161,6 +161,8 @@ public interface InfrastructureRepository {
 
     void setPersonalFeatureFlag(Person person, String flagName, boolean enabled);
 
+    void clearPersonalFeatureFlag(Person person, String flagName);
+
     void setFeatureFlag(String name, boolean enabled);
 
     /**
