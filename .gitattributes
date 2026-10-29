@@ -1,0 +1,6 @@
+# Store text files with LF line endings; git converts CRLF to LF on commit, on every machine (ZFIN-10473).
+* text=auto eol=lf
+
+# Windows scripts are checked out with CRLF (still stored with LF).
+*.bat text eol=crlf
+*.cmd text eol=crlf

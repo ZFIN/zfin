@@ -1,0 +1,11 @@
+# Editor settings (https://editorconfig.org), applied by IntelliJ out of the box and by VS Code with the
+# EditorConfig extension. CI checks them on the files each pull request changes (editorconfig-checker,
+# .pre-commit-config.yaml). Add a rule here and both editors and CI pick it up, e.g. insert_final_newline,
+# trim_trailing_whitespace, or indent_style/indent_size in a [*.java] section.
+root = true
+
+[*]
+end_of_line = lf
+
+[*.{bat,cmd}]
+end_of_line = crlf
