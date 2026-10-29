@@ -5,7 +5,6 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiConstructor;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Event;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.*;
@@ -117,7 +116,7 @@ class StructurePileTable extends ZfinFlexTable {
                 Label quality = new Label(nickName);
                 if (nickName.contains("ok"))
                     quality.addStyleName("phenotype-normal");
-                if (!structure.getExpressedTerm().isExpressionFound()){
+                if (!structure.getExpressedTerm().isExpressionFound()) {
                     quality.addStyleName("red");
                 }
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), quality);
@@ -128,7 +127,12 @@ class StructurePileTable extends ZfinFlexTable {
                 setWidget(rowIndex, HeaderName.QUALITY_TAG.getIndex(), not);
             }
             add.addClickHandler(new AddActionButtonListener(rowIndex, structure));
-            Label stage = new Label(structure.getStageRange());
+            Label stage = null;
+            if (structure.getStageRange() == null || structure.getEnd() == null) {
+                stage = new Label("No stage range provided for this structure");
+            } else {
+                stage = new Label(structure.getStageRange());
+            }
             setWidget(rowIndex, HeaderName.STAGE.getIndex(), stage);
             Button delete = new Button("X");
             String title = createDeleteButtonTitle(structure);
@@ -165,7 +169,7 @@ class StructurePileTable extends ZfinFlexTable {
             return;
         // if a radio button is clicked do not rotate
         if (cell == HeaderName.NOTHING.getIndex() || cell == HeaderName.REMOVE_FROM_EXPRESSION.getIndex() ||
-                cell == HeaderName.ADD.getIndex())
+            cell == HeaderName.ADD.getIndex())
             return;
 
         RadioButton nothing = (RadioButton) widget;
@@ -224,7 +228,7 @@ class StructurePileTable extends ZfinFlexTable {
                 suggestionBox.setVisible(true);
                 noStageOverlapTitle(selectedPileStructure.getExpressedTerm(), intersection);
                 curationRPCAsync.getTermsWithStageOverlap(selectedPileStructure, intersection,
-                        new StageOverlapTermsCallback(selectedPileStructure));
+                    new StageOverlapTermsCallback(selectedPileStructure));
                 // set action button to 'nothing'. We do not allow to add a structure without stage overlap.
                 nothing.setValue(true);
             }
