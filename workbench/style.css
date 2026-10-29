@@ -1,0 +1,143 @@
+/* Stylesheet for the Markdown notes in workbench/, for use with pandoc:
+ *
+ *   pandoc FILE.md -f gfm -t html5 --standalone --embed-resources \
+ *     --css workbench/style.css --metadata title="TITLE" -o FILE.html
+ *
+ * It overrides pandoc's default page (a 36em column), widens the page, lets wide
+ * tables scroll inside their own box, and follows the system light or dark setting.
+ */
+
+:root {
+  color-scheme: light dark;
+  --fg: #1d2a2e;
+  --fg-muted: #5a6a6f;
+  --bg: #ffffff;
+  --bg-soft: #f3f6f7;
+  --rule: #d3dde0;
+  --link: #0b5f6b;
+  --accent: #0c6a75;
+  --code-bg: #e9eff1;
+  --mark: #fff3c4;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fg: #e2edef;
+    --fg-muted: #94a9af;
+    --bg: #0f1a1d;
+    --bg-soft: #162428;
+    --rule: #2a3e43;
+    --link: #6fcfda;
+    --accent: #5cc4cf;
+    --code-bg: #1d3237;
+    --mark: #4a3d12;
+  }
+  /* screenshots are light pages; keep them from glaring on a dark background */
+  img { filter: brightness(0.92); }
+}
+
+html {
+  color: var(--fg);
+  background-color: var(--bg);
+}
+
+body {
+  max-width: min(1500px, 96vw);
+  margin: 0 auto;
+  padding: 32px clamp(16px, 4vw, 64px) 72px;
+  font-family: "Source Sans 3", "Segoe UI", system-ui, -apple-system, Helvetica, Arial, sans-serif;
+  font-size: 1.02rem;
+  line-height: 1.55;
+}
+
+/* text stays at a readable width even though the page is wide; tables and images use the full width */
+body > p, body > ul, body > ol, body > blockquote, body > h1, body > h2, body > h3, body > h4 {
+  max-width: 80ch;
+}
+
+h1, h2, h3, h4 {
+  line-height: 1.2;
+  margin-top: 2em;
+}
+h1 { margin-top: 0; font-size: 2rem; }
+h2 {
+  font-size: 1.5rem;
+  padding-bottom: 0.25em;
+  border-bottom: 2px solid var(--rule);
+}
+h3 { font-size: 1.15rem; }
+
+a { color: var(--link); }
+a:visited { color: var(--link); }
+
+hr { border: 0; border-top: 1px solid var(--rule); margin: 2.5em 0; }
+
+/* wide tables scroll sideways inside their own box instead of being cut off */
+table {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.2em 0;
+  font-size: 0.93rem;
+  border: 1px solid var(--rule);
+}
+thead { background: var(--bg-soft); }
+tbody { border-top: 0; border-bottom: 0; margin-top: 0; }
+th, td {
+  padding: 0.5em 0.75em;
+  vertical-align: top;
+  text-align: left;
+  border: 0;
+  border-bottom: 1px solid var(--rule);
+}
+th { border-top: 0; font-size: 0.85em; letter-spacing: 0.02em; }
+tr:last-child td { border-bottom: 0; }
+td code, th code { white-space: nowrap; }
+
+code, kbd, samp {
+  font-family: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  font-size: 0.86em;
+  background: var(--code-bg);
+  padding: 0.12em 0.35em;
+  border-radius: 3px;
+}
+pre {
+  background: var(--bg-soft);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  margin: 1.2em 0;
+}
+pre code { background: none; padding: 0; font-size: 0.88em; }
+
+blockquote {
+  margin: 1.2em 0;
+  padding: 0.1em 1em;
+  border-left: 4px solid var(--accent);
+  color: var(--fg-muted);
+}
+
+img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  margin: 1em 0 1.6em;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+nav#TOC { background: var(--bg-soft); border: 1px solid var(--rule); padding: 0.5em 1em; border-radius: 4px; }
+
+@media (max-width: 600px) {
+  body { padding: 16px; font-size: 0.98rem; }
+}
+
+@media print {
+  body { max-width: none; padding: 0; }
+  :root { color-scheme: light; }
+  img { filter: none; }
+}

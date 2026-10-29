@@ -295,7 +295,6 @@ public class NCBILoadIntegrationTest extends AbstractDangerousDatabaseTest {
         // Create database state before the load
         helper.beforeStateBuilder()
                 .withGene("ZDB-GENE-110913-43", "testgene1234")
-                .withMarkerAnnotationStatus("ZDB-GENE-110913-43", "Current")
                 .withDBLink("ZDB-GENE-110913-43", "12345678", FDCONT_NCBI_GENE_ID, "ZDB-PUB-020723-3")
                 .build();
 

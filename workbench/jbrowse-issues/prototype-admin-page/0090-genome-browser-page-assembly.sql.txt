@@ -1,0 +1,40 @@
+--liquibase formatted sql
+--changeset rtaylor:genome-browser-page-assembly
+
+-- Which assemblies each genome browser on the site may show. One row per browser (a page with two browsers has two
+-- slots) and assembly; a row means "on". The order in which assemblies are tried comes from assembly.a_order, so a
+-- page shows the first enabled assembly, newest first, on which the object has a landmark.
+-- The slot names are the keys of org.zfin.genomebrowser.GenomeBrowserSlot. Seeded with what the code does today.
+create table if not exists genome_browser_page_assembly (
+  gpa_slot     text   not null,
+  gpa_a_pk_id  bigint not null references assembly (a_pk_id),
+  primary key (gpa_slot, gpa_a_pk_id)
+);
+
+insert into genome_browser_page_assembly (gpa_slot, gpa_a_pk_id)
+select s.slot, a.a_pk_id
+  from (values
+    ('GENE_SEQUENCE', 'GRCz12tu'),
+    ('GENE_TRANSCRIPTS', 'GRCz11'),
+    ('PSEUDOGENE_SEQUENCE', 'GRCz12tu'),
+    ('PSEUDOGENE_TRANSCRIPTS', 'GRCz11'),
+    ('TRANSCRIPT_PAGE', 'GRCz11'),
+    ('CLONE', 'GRCz11'),
+    ('STR', 'GRCz12tu'),
+    ('STR', 'GRCz11'),
+    ('FEATURE', 'GRCz12tu'),
+    ('FEATURE', 'GRCz11'),
+    ('FEATURE', 'GRCz10'),
+    ('FEATURE', 'Zv9'),
+    ('MAPPING_DETAIL', 'GRCz12tu'),
+    ('MAPPING_DETAIL', 'GRCz11'),
+    ('BLAST_HIT', 'GRCz12tu'),
+    ('JBROWSE2_STANDALONE', 'GRCz11'),
+    ('NAV_LINK', 'GRCz12tu'),
+    ('FOOTER_LINK', 'GRCz11'),
+    ('RELATED_DATA_LINK', 'GRCz11')
+  ) as s (slot, assembly)
+  join assembly a on a.a_name = s.assembly
+on conflict do nothing;
+
+--rollback drop table genome_browser_page_assembly;
