@@ -33,7 +33,7 @@ Screenshots are in [`images/`](images/). Code references are to the `annotation-
 | 10 | Footer, **Genomics, ZFIN** | every page | Links to `/action/jbrowse2` (item 8). Present on production; I did not find it in the templates of this checkout. |
 | 11 | **Search "related data"** links | `/action/jbrowse/byName?name=<id>` | `RelatedDataService`, then `JBrowseController` redirects to the old JBrowse v1 on GRCz11. |
 | 12 | "Genome Browsers" **link rows** under items 1, 2, 3, 7 | same pages | `MappingService.getJBrowserBrowserLinks`: names links only for GRCz12tu and GRCz11. Links go to Amplify with `assembly=` in the URL, plus NCBI Map Viewer, Ensembl and UCSC. |
-| 13 | **BLAST** results (transcript hits) | not captured, see section 5 | `BlastResultMapper`: default build (GRCz12tu). |
+| 13 | **BLAST** results (transcript hits) | none: the image is built but no page renders it (checked on production 2026-10-28) | `BlastResultMapper`: default build (GRCz12tu), landmark from GRCz11. |
 
 The embedded images are the React component `Jbrowse2Image`. It takes `data-build` from the page and looks that name up in `config-jbrowse2.json`, which already lists four assemblies (**GRCz12tu, GRCz11, GRCz10, Zv9**) with 39 tracks that each name their assemblies. An unknown build falls back to the first assembly in the file. GRCz13ab is not in it.
 

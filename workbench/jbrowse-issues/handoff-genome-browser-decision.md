@@ -2,6 +2,8 @@
 
 Written 2026-10-24 for whoever continues the ZFIN-10529 follow-up work. The ticket's own requirements are met and are on branch `annotation-status-view`. What is left is one decision, **how a page picks its assembly for the genome browser**, plus the work that follows from it. This file is meant to be enough to make that call without reading the whole history.
 
+**Update 2026-10-28:** option B was explored with a prototype admin page, then reverted. The reworked table, a screenshot and the archived prototype source are in [`page-assembly-table.md`](page-assembly-table.md). The other options have not been ruled out, and the decision record at the end is still blank. That file also records the direction to move the browser data from code into the database.
+
 Read next, in this order if you have the time:
 
 1. [`genome-browser-issues.md`](genome-browser-issues.md): every place a browser appears, 29 production screenshots, 13 numbered issues. This is the evidence.

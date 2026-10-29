@@ -1,0 +1,121 @@
+<%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
+
+<z:devtoolsPage title="Genome Browser Assemblies">
+    <style>
+        #gba h1 { margin-bottom: .25em; }
+        #gba .note { background: #fff8e1; border: 1px solid #e0c36a; padding: .5em .75em; margin: .75em 0; max-width: 60em; }
+        #gba table { border-collapse: collapse; margin: 1em 0; }
+        #gba th, #gba td { border: 1px solid #ccc; padding: .3em .6em; text-align: center; vertical-align: top; }
+        #gba th { background: #f0f0f0; }
+        #gba td.left, #gba th.left { text-align: left; }
+        #gba .nobrowser { color: #999; background: #f7f7f7; }
+        #gba input[type=number] { width: 4em; }
+        #gba .rule { color: #555; font-size: 90%; max-width: 28em; }
+        #gba .status { color: #2a7a2a; margin-left: 1em; }
+    </style>
+    <div class="container" id="gba">
+        <h1>Genome Browser Assemblies</h1>
+        <div class="note">
+            Prototype. <b>Assembly ranking and "current"</b> are the real <code>assembly</code> columns
+            (<code>a_order</code>, <code>a_is_current</code>), so changing them affects the site now: the lowest
+            order is the newest, and "current" drives the annotation status.
+            <b>The page toggles</b> are saved to <code>genome_browser_page_assembly</code>, but no page reads them yet,
+            so they change nothing on the site. The rule they are meant to drive: a page shows the first enabled
+            assembly, in ranking order, on which the object has a landmark.
+            <span class="status" id="status"></span>
+        </div>
+
+        <h3>Assemblies</h3>
+        <table id="assemblies"></table>
+
+        <h3>Browsers</h3>
+        <p>One row per browser. A page with two browsers has two rows. Greyed assemblies have no browser build in the
+            code (<code>GenomeBrowserBuild</code>), so they cannot be switched on.</p>
+        <table id="slots"></table>
+    </div>
+
+    <script>
+        (function () {
+            var base = '/action/devtool/genome-browser-assemblies';
+            var state = null;
+
+            function post(path, body) {
+                return fetch(base + path, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(body)
+                }).then(function (r) {
+                    if (!r.ok) { throw new Error('Save failed: ' + r.status); }
+                    return r.json();
+                }).then(function (data) {
+                    state = data;
+                    render();
+                    var s = document.getElementById('status');
+                    s.textContent = 'Saved';
+                    setTimeout(function () { s.textContent = ''; }, 2000);
+                }).catch(function (e) {
+                    document.getElementById('status').textContent = e.message;
+                });
+            }
+
+            function el(tag, attrs, children) {
+                var e = document.createElement(tag);
+                Object.keys(attrs || {}).forEach(function (k) {
+                    if (k === 'text') { e.textContent = attrs[k]; }
+                    else if (k === 'className') { e.className = attrs[k]; }
+                    else { e[k] = attrs[k]; }
+                });
+                (children || []).forEach(function (c) { e.appendChild(c); });
+                return e;
+            }
+
+            function render() {
+                var at = document.getElementById('assemblies');
+                at.innerHTML = '';
+                at.appendChild(el('tr', {}, [
+                    el('th', {text: 'Assembly', className: 'left'}), el('th', {text: 'Order (lowest is newest)'}),
+                    el('th', {text: 'Current'}), el('th', {text: 'Browser build in code'})]));
+                state.assemblies.forEach(function (a) {
+                    var order = el('input', {type: 'number', value: a.order});
+                    order.addEventListener('change', function () {
+                        post('/assembly', {id: a.id, order: parseInt(order.value, 10)});
+                    });
+                    var cur = el('input', {type: 'checkbox', checked: a.current});
+                    cur.addEventListener('change', function () {
+                        post('/assembly', {id: a.id, current: cur.checked});
+                    });
+                    at.appendChild(el('tr', {}, [
+                        el('td', {text: a.name, className: 'left'}), el('td', {}, [order]),
+                        el('td', {}, [cur]), el('td', {text: a.hasBrowser ? 'yes' : 'no'})]));
+                });
+
+                var st = document.getElementById('slots');
+                st.innerHTML = '';
+                var head = [el('th', {text: 'Browser', className: 'left'}),
+                    el('th', {text: 'Example', className: 'left'})];
+                state.assemblies.forEach(function (a) { head.push(el('th', {text: a.name})); });
+                head.push(el('th', {text: 'Today the code does this', className: 'left'}));
+                st.appendChild(el('tr', {}, head));
+                state.slots.forEach(function (s) {
+                    var cells = [el('td', {text: s.label + (s.link ? ' (link)' : ''), className: 'left'}),
+                        el('td', {className: 'left'}, [el('a', {href: s.exampleUrl, text: s.exampleUrl, target: '_blank'})])];
+                    state.assemblies.forEach(function (a) {
+                        var box = el('input', {type: 'checkbox', checked: s.enabled.indexOf(a.id) >= 0,
+                            disabled: !a.hasBrowser && s.enabled.indexOf(a.id) < 0});
+                        box.addEventListener('change', function () {
+                            post('/toggle', {slot: s.key, assemblyId: a.id, enabled: box.checked});
+                        });
+                        cells.push(el('td', {className: a.hasBrowser ? '' : 'nobrowser'}, [box]));
+                    });
+                    cells.push(el('td', {text: s.currentRule, className: 'left rule'}));
+                    st.appendChild(el('tr', {}, cells));
+                });
+            }
+
+            fetch(base + '/data').then(function (r) { return r.json(); }).then(function (data) {
+                state = data;
+                render();
+            });
+        })();
+    </script>
+</z:devtoolsPage>

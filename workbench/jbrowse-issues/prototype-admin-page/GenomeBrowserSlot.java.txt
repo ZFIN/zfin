@@ -1,0 +1,66 @@
+package org.zfin.genomebrowser;
+
+/**
+ * Every place the site draws a genome browser, or links to one. A page with two browsers has two slots.
+ * The key is stored in genome_browser_page_assembly.gpa_slot. Used by the /devtool genome browser page only;
+ * the pages themselves do not read the table yet.
+ */
+public enum GenomeBrowserSlot {
+    GENE_SEQUENCE("Gene page: Sequences", false, "/ZDB-GENE-990415-72#sequences",
+            "Best assembly must be named GRCz12tu and the gene needs exactly one landmark on it."),
+    GENE_TRANSCRIPTS("Gene page: Transcripts", false, "/ZDB-GENE-990415-72#transcripts",
+            "Fixed on GRCz11 (TranscriptService)."),
+    PSEUDOGENE_SEQUENCE("Pseudogene page: Sequences", false, "/ZDB-GENEP-041008-30",
+            "First ZFIN_NCBI or NCBILoader location. The image is built whatever the assembly; only the links row checks for GRCz12tu."),
+    PSEUDOGENE_TRANSCRIPTS("Pseudogene page: Transcripts", false, "/ZDB-GENEP-041008-30",
+            "Fixed on GRCz11 (TranscriptService)."),
+    TRANSCRIPT_PAGE("Transcript and NTR pages: related transcripts", false, "/ZDB-TSCRIPT-090929-10936",
+            "Fixed on GRCz11 (TranscriptService)."),
+    CLONE("Clone page", false, "/ZDB-BAC-030616-1",
+            "Fixed on GRCz11 (CloneViewController)."),
+    STR("STR page (morpholino, CRISPR, TALEN)", false, "/ZDB-CRISPR-131024-1",
+            "Prefers GRCz12tu, falls back to GRCz11 for that STR."),
+    FEATURE("Feature page", false, "/ZDB-ALT-030922-2",
+            "The feature's first location decides: Zv9, GRCz10 or GRCz12tu get their own build, anything else GRCz11."),
+    MAPPING_DETAIL("Mapping detail", false, "/action/mapping/detail/ZDB-GENE-990415-72",
+            "First ZFIN location (GRCz12tu), otherwise the ZfinGbrowseStartEndLoader one (GRCz11)."),
+    BLAST_HIT("BLAST results: transcript hit", false, "/action/blast/blast-select",
+            "Not displayed today: BlastResultMapper builds an image (default build, GRCz11 landmark) but no blast JSP renders it."),
+    JBROWSE2_STANDALONE("Standalone JBrowse2", false, "/action/jbrowse2",
+            "GRCz11 only."),
+    NAV_LINK("Navigation: Genomics, Genome Browsers, ZFIN", true, "/",
+            "External Amplify JBrowse on GRCz12tu, fixed location in pageHeader.tag."),
+    FOOTER_LINK("Footer: Genomics, ZFIN", true, "/",
+            "Links to /action/jbrowse2 (GRCz11)."),
+    RELATED_DATA_LINK("Search: related data link", true, "/action/jbrowse/byName?name=ZDB-GENE-990415-72",
+            "Redirects to the old JBrowse v1 on GRCz11.");
+
+    private final String label;
+    private final boolean link;
+    private final String exampleUrl;
+    private final String currentRule;
+
+    GenomeBrowserSlot(String label, boolean link, String exampleUrl, String currentRule) {
+        this.label = label;
+        this.link = link;
+        this.exampleUrl = exampleUrl;
+        this.currentRule = currentRule;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    /** True for a link out to a browser rather than an embedded one. */
+    public boolean isLink() {
+        return link;
+    }
+
+    public String getExampleUrl() {
+        return exampleUrl;
+    }
+
+    public String getCurrentRule() {
+        return currentRule;
+    }
+}

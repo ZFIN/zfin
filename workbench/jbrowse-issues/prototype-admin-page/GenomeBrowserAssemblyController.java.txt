@@ -1,0 +1,112 @@
+package org.zfin.genomebrowser;
+
+import jakarta.persistence.Tuple;
+import org.hibernate.Session;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.zfin.framework.HibernateUtil;
+
+import java.util.*;
+
+/**
+ * Prototype developer page for choosing which assemblies each genome browser may show. Reads and writes
+ * assembly (a_order, a_is_current) and genome_browser_page_assembly. The pages that draw browsers do not
+ * read the table yet, so toggling a slot changes nothing on the site; the assembly columns do take effect.
+ */
+@Controller
+public class GenomeBrowserAssemblyController {
+
+    @RequestMapping("/devtool/genome-browser-assemblies")
+    public String page() {
+        return "dev-tools/genome-browser-assemblies";
+    }
+
+    @RequestMapping(value = "/devtool/genome-browser-assemblies/data", method = RequestMethod.GET)
+    @ResponseBody
+    public Map<String, Object> data() {
+        Session session = HibernateUtil.currentSession();
+
+        List<Map<String, Object>> assemblies = new ArrayList<>();
+        for (Tuple row : session.createNativeQuery(
+                "select a_pk_id, a_name, a_order, a_is_current from assembly order by a_order", Tuple.class).getResultList()) {
+            String name = row.get("a_name", String.class);
+            Map<String, Object> assembly = new LinkedHashMap<>();
+            assembly.put("id", row.get("a_pk_id", Number.class).longValue());
+            assembly.put("name", name);
+            assembly.put("order", row.get("a_order", Number.class).intValue());
+            assembly.put("current", row.get("a_is_current", Boolean.class));
+            // an assembly can only be switched on if the site has a browser build for it
+            assembly.put("hasBrowser", GenomeBrowserBuild.forAssembly(name).isPresent());
+            assemblies.add(assembly);
+        }
+
+        Map<String, List<Long>> enabledBySlot = new HashMap<>();
+        for (Tuple row : session.createNativeQuery(
+                "select gpa_slot, gpa_a_pk_id from genome_browser_page_assembly", Tuple.class).getResultList()) {
+            enabledBySlot.computeIfAbsent(row.get("gpa_slot", String.class), k -> new ArrayList<>())
+                    .add(row.get("gpa_a_pk_id", Number.class).longValue());
+        }
+
+        List<Map<String, Object>> slots = new ArrayList<>();
+        for (GenomeBrowserSlot slot : GenomeBrowserSlot.values()) {
+            Map<String, Object> entry = new LinkedHashMap<>();
+            entry.put("key", slot.name());
+            entry.put("label", slot.getLabel());
+            entry.put("link", slot.isLink());
+            entry.put("exampleUrl", slot.getExampleUrl());
+            entry.put("currentRule", slot.getCurrentRule());
+            entry.put("enabled", enabledBySlot.getOrDefault(slot.name(), List.of()));
+            slots.add(entry);
+        }
+
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("assemblies", assemblies);
+        result.put("slots", slots);
+        return result;
+    }
+
+    public record AssemblyChange(long id, Integer order, Boolean current) {
+    }
+
+    @RequestMapping(value = "/devtool/genome-browser-assemblies/assembly", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> saveAssembly(@RequestBody AssemblyChange change) {
+        HibernateUtil.createTransaction();
+        Session session = HibernateUtil.currentSession();
+        if (change.order() != null) {
+            session.createNativeQuery("update assembly set a_order = :v where a_pk_id = :id")
+                    .setParameter("v", change.order()).setParameter("id", change.id()).executeUpdate();
+        }
+        if (change.current() != null) {
+            session.createNativeQuery("update assembly set a_is_current = :v where a_pk_id = :id")
+                    .setParameter("v", change.current()).setParameter("id", change.id()).executeUpdate();
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+        return data();
+    }
+
+    public record SlotChange(String slot, long assemblyId, boolean enabled) {
+    }
+
+    @RequestMapping(value = "/devtool/genome-browser-assemblies/toggle", method = RequestMethod.POST)
+    @ResponseBody
+    public Map<String, Object> toggle(@RequestBody SlotChange change) {
+        // the slot name is stored as text, so reject anything the enum does not know
+        GenomeBrowserSlot slot = GenomeBrowserSlot.valueOf(change.slot());
+        HibernateUtil.createTransaction();
+        Session session = HibernateUtil.currentSession();
+        if (change.enabled()) {
+            session.createNativeQuery("insert into genome_browser_page_assembly (gpa_slot, gpa_a_pk_id) " +
+                            "values (:slot, :id) on conflict do nothing")
+                    .setParameter("slot", slot.name()).setParameter("id", change.assemblyId()).executeUpdate();
+        } else {
+            session.createNativeQuery("delete from genome_browser_page_assembly where gpa_slot = :slot and gpa_a_pk_id = :id")
+                    .setParameter("slot", slot.name()).setParameter("id", change.assemblyId()).executeUpdate();
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+        return data();
+    }
+}
