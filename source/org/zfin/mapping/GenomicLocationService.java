@@ -137,7 +137,9 @@ public class GenomicLocationService {
 		if (start > end) {
 			return "";
 		}
-		return new String(ref.getSubsequenceAt(chromosome, start, end).getBases());
+		// The NCBI FASTA is soft-masked: lower case marks repeat-masked regions, not different
+		// bases (BLAST ignores it). Store flanks upper-case so they're consistent and comparable.
+		return new String(ref.getSubsequenceAt(chromosome, start, end).getBases()).toUpperCase();
 	}
 
 	private IndexedFastaSequenceFile getIndexedFastaSequenceFile(String fullPath) {
@@ -210,7 +212,7 @@ public class GenomicLocationService {
 				String ftrChrom = ftrLoc.getChromosome();
 				int locStart = ftrLoc.getStartLocation();
 				int locEnd = ftrLoc.getEndLocation();
-				String refSeq = new String(getReferenceSequence(assembly, ftrChrom, locStart, locEnd).getBases());
+				String refSeq = new String(getReferenceSequence(assembly, ftrChrom, locStart, locEnd).getBases()).toUpperCase();
 				// create a new record
 				if (feature.getFeatureGenomicMutationDetail() == null) {
 					insertFeatureGenomeRecord(feature, refSeq);
