@@ -1,0 +1,5 @@
+# Output of reportMissingFigureImages.groovy (ZFIN-10520)
+missingFigureImageCandidates.txt
+missingFigureImagesReport.csv
+missingFigureImagesSummary.txt
+missingFigureImagesRun.log
