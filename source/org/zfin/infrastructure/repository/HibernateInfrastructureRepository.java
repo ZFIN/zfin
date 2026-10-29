@@ -658,6 +658,15 @@ public class HibernateInfrastructureRepository implements InfrastructureReposito
         session.save(flag);
     }
 
+    @Override
+    public void clearPersonalFeatureFlag(Person person, String flagName) {
+        try {
+            HibernateUtil.currentSession().delete(getPersonalFeatureFlag(person, flagName));
+        } catch (NoResultException e) {
+            // already neutral, nothing to remove
+        }
+    }
+
     public void setFeatureFlag(String name, boolean enabled) {
         FeatureFlag flag;
         Session session = HibernateUtil.currentSession();

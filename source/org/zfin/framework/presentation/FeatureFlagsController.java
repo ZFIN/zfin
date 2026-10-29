@@ -61,7 +61,11 @@ public class FeatureFlagsController {
             FeatureFlags.setFeatureFlagForGlobalScope(name, "true".equals(value));
         } else if ("person".equals(scope)) {
             String person = request.getParameter("person");
-            FeatureFlags.setFeatureFlagForPersonByUsername(person, name, "true".equals(value));
+            if ("unset".equals(value)) {
+                FeatureFlags.clearFeatureFlagForPersonByUsername(person, name);
+            } else {
+                FeatureFlags.setFeatureFlagForPersonByUsername(person, name, "true".equals(value));
+            }
         }
         HibernateUtil.flushAndCommitCurrentSession();
 
