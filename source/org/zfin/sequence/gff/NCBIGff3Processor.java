@@ -42,6 +42,7 @@ public class NCBIGff3Processor {
     // loaded Assembly differently from the Long-keyed instances Hibernate materializes when it
     // initializes Marker.assemblies -- so an assembly the gene already had went unrecognized.
     private static final Long GRCZ12TU_ASSEMBLY_ID = 1L;
+    private static final String GRCZ11_ASSEMBLY_NAME = "GRCz11";
 
     static {
         Configurator.setLevel("htsjdk.tribble.gff.Gff3Codec", org.apache.logging.log4j.Level.ERROR);
@@ -161,6 +162,11 @@ public class NCBIGff3Processor {
                         // Adding unconditionally duplicated the join row for those genes.
                         if (gene.getAssemblies() != null && !gene.getAssemblies().contains(grcz12tu)) {
                             gene.getAssemblies().add(grcz12tu);
+                        }
+                        // ZFIN-10531: GRCz11 is only the fallback for genes on no GRCz12
+                        // assembly, so it goes once the gene is placed on GRCz12tu.
+                        if (gene.getAssemblies() != null) {
+                            gene.getAssemblies().removeIf(a -> GRCZ11_ASSEMBLY_NAME.equals(a.getName()));
                         }
                         gene.setAnnotationStatusTerms(Set.of(annotationStatusTerm));
                         genomeLocation.setMarker(gene);
