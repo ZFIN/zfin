@@ -67,7 +67,8 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     }
 
     public void setFgmdSeqRef(String fgmdSeqRef) {
-        this.fgmdSeqRef = fgmdSeqRef;
+        // The columns have upper-case check constraints (ZFIN-10486).
+        this.fgmdSeqRef = fgmdSeqRef == null ? null : fgmdSeqRef.toUpperCase();
     }
 
     public String getFgmdSeqVar() {
@@ -75,7 +76,7 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     }
 
     public void setFgmdSeqVar(String fgmdSeqVar) {
-        this.fgmdSeqVar = fgmdSeqVar;
+        this.fgmdSeqVar = fgmdSeqVar == null ? null : fgmdSeqVar.toUpperCase();
     }
 
     public String getFgmdSequenceReferenceAccessionNumber() {
