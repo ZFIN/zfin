@@ -4,6 +4,7 @@ import useFetch from '../hooks/useFetch';
 import LoadingSpinner from '../components/LoadingSpinner';
 import GenericErrorMessage from '../components/GenericErrorMessage';
 import FeatureFlag from './FeatureFlag';
+import FeatureFlagTriState from './FeatureFlagTriState';
 
 const FeatureFlags = ({
     url,
@@ -33,7 +34,7 @@ const FeatureFlags = ({
                 <tr key={flag.name}>
                     <td>{flag.name}</td>
                     <td><FeatureFlag name={flag.name} enabled={flag.enabledForGlobalScope} url={url + '?scope=global'}/></td>
-                    <td><FeatureFlag name={flag.name} enabled={flag.enabledForPersonScope} url={url + '?scope=person'}/></td>
+                    <td><FeatureFlagTriState name={flag.name} state={flag.personScopeState} url={url + '?scope=person'}/></td>
                     <td><a className='btn btn-primary' href={'/action/devtool/feature-flags/per-user?flagname=' + flag.name}>More</a></td>
                 </tr>
             )}

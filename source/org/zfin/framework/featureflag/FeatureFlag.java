@@ -34,6 +34,10 @@ public class FeatureFlag {
         return FeatureFlags.isFlagEnabled(this);
     }
 
+    public FeatureFlags.FlagState getPersonScopeState() {
+        return FeatureFlags.isFlagEnabledForPersonScope(this);
+    }
+
     public boolean isEnabledForPersonScope() {
         return FeatureFlags.isFlagEnabledForPersonScope(this).equals(FeatureFlags.FlagState.ENABLED);
     }
