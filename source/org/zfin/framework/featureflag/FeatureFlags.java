@@ -129,6 +129,26 @@ public class FeatureFlags {
         getInfrastructureRepository().setPersonalFeatureFlag(person, flagName, value);
     }
 
+    public static void clearFeatureFlagForCurrentPerson(String flagName) {
+        Person currentUser = getCurrentSecurityUserNoGuest();
+        if (currentUser != null) {
+            clearFeatureFlagForPerson(currentUser, flagName);
+        }
+    }
+
+    public static void clearFeatureFlagForPersonByUsername(String username, String flagName) {
+        Person person = username == null ? null : getProfileRepository().getPersonByName(username);
+        if (person == null) {
+            clearFeatureFlagForCurrentPerson(flagName);
+        } else {
+            clearFeatureFlagForPerson(person, flagName);
+        }
+    }
+
+    public static void clearFeatureFlagForPerson(Person person, String flagName) {
+        getInfrastructureRepository().clearPersonalFeatureFlag(person, flagName);
+    }
+
     public static void setFeatureFlagForGlobalScope(String name, boolean enabled) {
         getInfrastructureRepository().setFeatureFlag(name, enabled);
     }
