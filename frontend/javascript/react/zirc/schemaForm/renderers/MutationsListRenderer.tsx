@@ -172,6 +172,7 @@ function MutationsListRenderer({ data, schema, config }: ControlProps) {
                                     readonly: true,
                                     mutationId: m.id,
                                     idPrefix: `mutation-${i + 1}`,
+                                    collapsibleSections: true,
                                     fieldStatus:
                                         outerCfg.mutationFieldStatus?.[String(m.id)] ?? {},
                                     sectionStatus:

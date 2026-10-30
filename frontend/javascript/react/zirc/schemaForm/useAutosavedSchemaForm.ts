@@ -272,7 +272,7 @@ export function useAutosavedSchemaForm<TDto extends object>(
         return () => window.clearTimeout(handle);
     }, [formDataKey]);
 
-    // Collapsing a card (e.g. the "Done" button) unmounts this hook's owner
+    // Collapsing a card (e.g. its "Collapse" button) unmounts this hook's owner
     // immediately, which runs the effect above's cleanup and cancels the
     // pending debounced PATCH — silently discarding an edit made in the
     // last AUTOSAVE_DEBOUNCE_MS. This effect's cleanup runs exactly once,

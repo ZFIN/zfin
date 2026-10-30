@@ -118,6 +118,7 @@ export function MutationEdit({ mutationId, submissionId, position }: MutationEdi
                     mutationId,
                     submissionId,
                     idPrefix: `mutation-${position}`,
+                    collapsibleSections: true,
                     recId: `ZIRC-MUT-${mutationId}`,
                     fieldStatus: statusPayload?.mutationFieldStatus?.[String(mutationId)] ?? {},
                     sectionStatus: statusPayload?.mutationSectionStatus?.[String(mutationId)] ?? {},

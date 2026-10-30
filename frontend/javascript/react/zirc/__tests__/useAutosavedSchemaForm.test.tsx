@@ -7,7 +7,7 @@ import { useAutosavedSchemaForm } from '../schemaForm/useAutosavedSchemaForm';
 import { FormFor } from '../api/formHelpers';
 
 /**
- * Regression coverage: collapsing a card ("Done") right after typing used to
+ * Regression coverage: collapsing a card ("Collapse") right after typing used to
  * unmount the editor before the 800ms autosave debounce fired, silently
  * discarding the edit — see useAutosavedSchemaForm.ts's unmount-flush
  * effect. These tests drive the hook directly (no JsonForms, no

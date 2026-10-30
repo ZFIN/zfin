@@ -182,6 +182,16 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
                         <li key={p.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <span>
+                                    <button
+                                        type='button'
+                                        className='btn btn-link p-0 mr-2 text-body'
+                                        onClick={() => toggle(p.id)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={`phenotype-${p.id}-body`}
+                                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} phenotype ${p.sortOrder ?? ''}`}
+                                    >
+                                        <i className={`fas fa-fw fa-caret-${isOpen ? 'down' : 'right'}`}/>
+                                    </button>
                                     <strong>Phenotype {p.sortOrder ?? ''}</strong>
                                     {summary && (
                                         <span className='ml-2 text-muted'>{summary}</span>
@@ -194,7 +204,7 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
                                         onClick={() => toggle(p.id)}
                                         aria-expanded={isOpen}
                                     >
-                                        {isOpen ? 'Done' : 'Edit'}
+                                        {isOpen ? 'Collapse' : 'Expand'}
                                     </button>
                                     <button
                                         type='button'
@@ -207,7 +217,9 @@ function PhenotypesListRenderer({ data, schema, config }: ControlProps) {
                                 </div>
                             </div>
                             {isOpen && (
-                                <PhenotypeEdit phenotypeId={p.id} mutationId={mutationId} />
+                                <div id={`phenotype-${p.id}-body`}>
+                                    <PhenotypeEdit phenotypeId={p.id} mutationId={mutationId} />
+                                </div>
                             )}
                         </li>
                     );

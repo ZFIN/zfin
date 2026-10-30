@@ -196,6 +196,16 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                         <li key={l.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <span>
+                                    <button
+                                        type='button'
+                                        className='btn btn-link p-0 mr-2 text-body'
+                                        onClick={() => toggle(l.id)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={`lesion-${l.id}-body`}
+                                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} lesion ${l.sortOrder ?? ''}`}
+                                    >
+                                        <i className={`fas fa-fw fa-caret-${isOpen ? 'down' : 'right'}`}/>
+                                    </button>
                                     <strong>Lesion {l.sortOrder ?? ''}</strong>
                                     {typeDisplay && (
                                         <span className='ml-2 text-muted'>{typeDisplay}</span>
@@ -208,7 +218,7 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                                         onClick={() => toggle(l.id)}
                                         aria-expanded={isOpen}
                                     >
-                                        {isOpen ? 'Done' : 'Edit'}
+                                        {isOpen ? 'Collapse' : 'Expand'}
                                     </button>
                                     <button
                                         type='button'
@@ -221,7 +231,9 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                                 </div>
                             </div>
                             {isOpen && (
-                                <LesionEdit lesionId={l.id} mutationId={mutationId} />
+                                <div id={`lesion-${l.id}-body`}>
+                                    <LesionEdit lesionId={l.id} mutationId={mutationId} />
+                                </div>
                             )}
                         </li>
                     );

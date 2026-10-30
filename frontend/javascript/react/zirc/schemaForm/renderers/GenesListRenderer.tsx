@@ -186,6 +186,16 @@ function GenesListRenderer({ data, schema, config }: ControlProps) {
                         <li key={g.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <span>
+                                    <button
+                                        type='button'
+                                        className='btn btn-link p-0 mr-2 text-body'
+                                        onClick={() => toggle(g.id)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={`gene-${g.id}-body`}
+                                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} gene ${g.sortOrder ?? ''}`}
+                                    >
+                                        <i className={`fas fa-fw fa-caret-${isOpen ? 'down' : 'right'}`}/>
+                                    </button>
                                     <strong>Gene {g.sortOrder ?? ''}</strong>
                                     {summary && (
                                         <span className='ml-2 text-muted'>{summary}</span>
@@ -198,7 +208,7 @@ function GenesListRenderer({ data, schema, config }: ControlProps) {
                                         onClick={() => toggle(g.id)}
                                         aria-expanded={isOpen}
                                     >
-                                        {isOpen ? 'Done' : 'Edit'}
+                                        {isOpen ? 'Collapse' : 'Expand'}
                                     </button>
                                     <button
                                         type='button'
@@ -211,7 +221,9 @@ function GenesListRenderer({ data, schema, config }: ControlProps) {
                                 </div>
                             </div>
                             {isOpen && (
-                                <GeneEdit geneId={g.id} mutationId={mutationId} />
+                                <div id={`gene-${g.id}-body`}>
+                                    <GeneEdit geneId={g.id} mutationId={mutationId} />
+                                </div>
                             )}
                         </li>
                     );
