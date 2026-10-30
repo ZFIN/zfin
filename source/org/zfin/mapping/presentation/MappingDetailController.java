@@ -239,7 +239,7 @@ public class MappingDetailController {
 
 
         List<FeatureGenomeLocation> featureLocationList = getLinkageRepository().getFeatureLocations(marker);
-        Collections.sort(featureLocationList);
+        sortFeatureLocations(featureLocationList);
         filterFeatureLocationsToRemoveOlderAssemblies(featureLocationList);
         deduplicateFeatureLocations(featureLocationList);
         removeOutlierChromosomeLocations(featureLocationList);
@@ -324,6 +324,28 @@ public class MappingDetailController {
         if (hasGRCz12tu) {
             locations.removeIf(location -> location.getSource() == ZFIN);
         }
+    }
+
+    private static final List<String> ASSEMBLIES_NEWEST_FIRST =
+        List.of(GenomeLocation.GRCZ12TU, GenomeLocation.GRCZ11, GenomeLocation.GRCZ10, GenomeLocation.ZV9);
+
+    /**
+     * Order the Physical Mapping table by feature, then assembly (newest first), then source.
+     * The table only prints the feature name when it differs from the previous row, so all of a
+     * feature's rows must be adjacent. Sorting on source alone (GenomeLocation's natural order)
+     * split them apart once lifted GRCz12tu rows were sourced 'ZFIN' instead of 'DirectSubmission'
+     * (ZFIN-10501): every DIRECT row sorted ahead of every ZFIN row, grouping the table by assembly.
+     */
+    private void sortFeatureLocations(List<FeatureGenomeLocation> featureLocations) {
+        featureLocations.sort(Comparator
+            .comparing((FeatureGenomeLocation loc) -> loc.getFeature().getAbbreviationOrder(),
+                Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(loc -> loc.getFeature().getZdbID())
+            .thenComparingInt(loc -> {
+                int rank = ASSEMBLIES_NEWEST_FIRST.indexOf(loc.getAssembly());
+                return rank < 0 ? ASSEMBLIES_NEWEST_FIRST.size() : rank;
+            })
+            .thenComparing(Comparator.naturalOrder()));
     }
 
     private void filterFeatureLocationsToRemoveOlderAssemblies(List<FeatureGenomeLocation> featureLocations) {
