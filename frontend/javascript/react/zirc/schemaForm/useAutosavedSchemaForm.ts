@@ -121,6 +121,16 @@ function collectControlFlags(uiSchema: UISchemaElement | undefined): ControlFlag
     return { skipPaths, mirrorKeys, refreshPaths };
 }
 
+/**
+ * The value a mirror-synced key takes from the entity. A missing child
+ * collection becomes [], as before; a server-derived scalar the entity sends
+ * as null (ZFIN-10543's alleleLabInstitution) stays null rather than turning
+ * into an empty list.
+ */
+function mirrored(ent: Record<string, unknown>, key: string): unknown {
+    return ent[key] === undefined ? [] : ent[key];
+}
+
 export function useAutosavedSchemaForm<TDto extends object>(
     opts: UseAutosavedSchemaFormOptions<TDto>,
 ): UseAutosavedSchemaFormResult<TDto> {
@@ -165,18 +175,18 @@ export function useAutosavedSchemaForm<TDto extends object>(
     // list renderers see the new rows without triggering the autosave diff.
     // One effect for all such keys, keyed on their combined JSON.
     const ent = entity as Record<string, unknown> | undefined;
-    const mirrorKey = JSON.stringify(flags.mirrorKeys.map((k) => ent?.[k] ?? []));
+    const mirrorKey = JSON.stringify(flags.mirrorKeys.map((k) => (ent ? mirrored(ent, k) : [])));
     React.useEffect(() => {
         if (!ent || formData == null || flags.mirrorKeys.length === 0) {return;}
         setFormData((d) => {
             if (d == null) {return d;}
             const next = { ...d } as Record<string, unknown>;
-            for (const k of flags.mirrorKeys) {next[k] = ent[k] ?? [];}
+            for (const k of flags.mirrorKeys) {next[k] = mirrored(ent, k);}
             return next as FormFor<TDto>;
         });
         if (lastSavedRef.current != null) {
             const ref = { ...lastSavedRef.current } as Record<string, unknown>;
-            for (const k of flags.mirrorKeys) {ref[k] = ent[k] ?? [];}
+            for (const k of flags.mirrorKeys) {ref[k] = mirrored(ent, k);}
             lastSavedRef.current = ref as FormFor<TDto>;
         }
     }, [mirrorKey]);

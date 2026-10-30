@@ -28,6 +28,9 @@ export type AggregateConfig = {
     idConfigKey: string;
     /** config key under which the parent id is exposed to renderers. */
     parentConfigKey: string;
+    /** Prefix of the comments/audit recId (ZIRC-GENE-{id}); must match the
+     *  one the server's Updates rows and the view-mode cards use. */
+    recIdPrefix: string;
 };
 
 export const AGGREGATES: Record<AggregateKind, AggregateConfig> = {
@@ -39,6 +42,7 @@ export const AGGREGATES: Record<AggregateKind, AggregateConfig> = {
         parentCacheKey: mutationKey,
         idConfigKey: 'assayId',
         parentConfigKey: 'mutationId',
+        recIdPrefix: 'ZIRC-GA-',
     },
     gene: {
         schemaQueryKey: 'gene-form-schema',
@@ -48,6 +52,7 @@ export const AGGREGATES: Record<AggregateKind, AggregateConfig> = {
         parentCacheKey: mutationKey,
         idConfigKey: 'geneId',
         parentConfigKey: 'mutationId',
+        recIdPrefix: 'ZIRC-GENE-',
     },
     lesion: {
         schemaQueryKey: 'lesion-form-schema',
@@ -57,6 +62,7 @@ export const AGGREGATES: Record<AggregateKind, AggregateConfig> = {
         parentCacheKey: mutationKey,
         idConfigKey: 'lesionId',
         parentConfigKey: 'mutationId',
+        recIdPrefix: 'ZIRC-LESION-',
     },
     phenotype: {
         schemaQueryKey: 'phenotype-form-schema',
@@ -66,5 +72,6 @@ export const AGGREGATES: Record<AggregateKind, AggregateConfig> = {
         parentCacheKey: mutationKey,
         idConfigKey: 'phenotypeId',
         parentConfigKey: 'mutationId',
+        recIdPrefix: 'ZIRC-PHEN-',
     },
 };

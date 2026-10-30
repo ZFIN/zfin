@@ -28,7 +28,9 @@ import java.util.List;
 @With
 @Builder(access = AccessLevel.PRIVATE)
 public record Options(
-        // Layout-on-Group hint: "plain" drops the table wrapper.
+        // Layout-on-Group hint: "plain" drops the table wrapper; "subsection"
+        // renders a Group nested in another as a subheading + rows of the
+        // parent's table.
         String layout,
         // Per-control widget dispatch (e.g. "yesNoRadio", "selectWithOther").
         String widget,

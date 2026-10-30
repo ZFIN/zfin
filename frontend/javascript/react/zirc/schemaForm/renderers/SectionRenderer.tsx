@@ -46,8 +46,8 @@ function SectionRenderer({
     // sections that share the same label.
     const sectionId = view.idPrefix ? `${view.idPrefix}-${slug}` : slug;
     const headingId = `${sectionId}-heading`;
-    const isPlain =
-        (layout.options as { layout?: string } | undefined)?.layout === 'plain';
+    const layoutOption = (layout.options as { layout?: string } | undefined)?.layout;
+    const isPlain = layoutOption === 'plain';
 
     const children = (layout.elements ?? []).map((child, index) => (
         <ResolvedJsonFormsDispatch
@@ -60,6 +60,23 @@ function SectionRenderer({
             cells={cells}
         />
     ));
+
+    // A Group nested inside another section's table (e.g. Veterinarian under
+    // Additional Info): a subheading row followed by its Control rows, all
+    // inside the parent's <tbody>. No section status/history/comments — those
+    // are tracked per top-level section.
+    if (layoutOption === 'subsection') {
+        return (
+            <>
+                <tr id={sectionId}>
+                    <th colSpan={2} scope='colgroup' className='pt-3'>
+                        <h3 className='h6 font-weight-bold mb-0'>{label}</h3>
+                    </th>
+                </tr>
+                {children}
+            </>
+        );
+    }
 
     const sectionStatus = view.sectionStatus[label];
 

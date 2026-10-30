@@ -7,6 +7,17 @@ contract from PR #1875) and
 [`reference/zirc-followup-zfin-10304-status-history.md`](zirc-followup-zfin-10304-status-history.md)
 (the original ZFIN-10304 follow-up plan).
 
+> **ZFIN-10543 update:** the detail and edit pages are now one page.
+> `/line-submission/{id}` mounts `LineSubmissionDetail` with
+> `SchemaForm mode='edit'`: fields autosave in place and their edit-mode rows
+> carry the status badge, history and comment icons (`FieldAccessories`).
+> Mutations are collapsible cards that mount `MutationEdit` inline; the
+> gene / lesion / assay / phenotype editors inside read their recId and status
+> from `StatusPayloadContext`. `/line-submission/{id}/edit` and
+> `/mutation/{id}/edit` redirect to the page (the latter to `#mutation-N`);
+> `/line-submission/new` still uses `LineSubmissionEdit` until the first save.
+> The diagram below predates this change.
+
 ## One-page picture
 
 ```

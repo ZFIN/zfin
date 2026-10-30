@@ -12,6 +12,7 @@ import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
+import { FieldAccessories } from '../../components/FieldAccessories';
 
 type VendorCatalogOptions = {
     /** Sibling field holding the vendor; the bound field is the catalog number. */
@@ -99,7 +100,9 @@ function VendorCatalogRenderer({
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
+                <StatusBadge status={view.fieldStatus[fieldName]}/>
                 <label htmlFor={catalogId} className='mb-0'>{label}</label>
+                <FieldAccessories view={view} fieldName={fieldName} label={label ?? fieldName} uischema={uischema}/>
             </th>
             <td>
                 <div className='d-flex align-items-center' style={{ gap: 8, flexWrap: 'wrap' }}>

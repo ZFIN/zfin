@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { JsonForms } from '@jsonforms/react';
-import { queryClient } from '../queryClient';
 import { MutationDTO } from '../api/types';
 import { FormFor } from '../api/formHelpers';
-import { useMutationById } from '../api/queries';
+import { lineSubmissionKey, mutationKey, useMutationById } from '../api/queries';
 import { useAutosavedSchemaForm } from '../schemaForm/useAutosavedSchemaForm';
 import { SaveStatusBadge } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from '../schemaForm/renderers/SectionRenderer';
@@ -21,21 +20,16 @@ import { phenotypesListRendererEntry } from '../schemaForm/renderers/PhenotypesL
 import { autocompleteRendererEntry } from '../schemaForm/renderers/AutocompleteRenderer';
 import { nucleotideSequenceRendererEntry } from '../schemaForm/renderers/NucleotideSequenceRenderer';
 import { StatusRefetchContext } from '../statusRefetchContext';
-import { fetchStatusPayload, perEntityStatusConfig, type StatusPayload } from '../statusPayload';
+import { perEntityStatusConfig } from '../statusPayload';
+import { StatusPayloadContext } from '../statusPayloadContext';
 
 export type MutationEditProps = {
-    // From data-mutation-id on the JSP mount.
-    mutationId?: string;
+    mutationId: number;
     submissionId?: string;
+    /** 1-based position on the submission; scopes the section anchors
+     *  (#mutation-2-general) the left nav links to. */
+    position: number;
 };
-
-export default function MutationEdit(props: MutationEditProps) {
-    return (
-        <QueryClientProvider client={queryClient}>
-            <MutationEditInner {...props} />
-        </QueryClientProvider>
-    );
-}
 
 type FormDataShape = FormFor<MutationDTO>;
 
@@ -63,47 +57,45 @@ export const mutationRenderers = [
     nucleotideSequenceRendererEntry,
 ];
 
-function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
-    const idNum = mutationId ? Number(mutationId) : null;
-    const mutationQuery = useMutationById(idNum);
+/**
+ * Inline editor for one mutation, mounted in an expanded card of the
+ * submission page's MutationsListRenderer (ZFIN-10543). Mutations used to be
+ * edited on their own page, /mutation/{id}/edit, which now redirects to the
+ * card. Status and its refresh come from the submission page's contexts
+ * instead of a fetch of its own.
+ */
+export function MutationEdit({ mutationId, submissionId, position }: MutationEditProps) {
+    const mutationQuery = useMutationById(mutationId);
+    const qc = useQueryClient();
+    const statusPayload = React.useContext(StatusPayloadContext);
+    const refetchStatus = React.useContext(StatusRefetchContext);
 
     // The hook derives its autosave skip-set + mirror-keys from the
     // uiSchema's managesOwnPersistence flags (assays/genes/lesions/
-    // phenotypes are flagged server-side). No parent to refresh — the
-    // mutation edit page is its own route, not an inline card.
-    // Server-computed status for the parent submission. The assay / gene /
-    // lesion / phenotype list renderers read their per-entity slices out of the
-    // JsonForms config; without this the page supplied none and every badge
-    // rendered blank, so e.g. a too-short primer (ZFIN-10407) was invisible
-    // here and only showed on the submission detail page.
-    const [statusPayload, setStatusPayload] = React.useState<StatusPayload | null>(null);
-    const refetchStatus = React.useCallback(() => {
-        if (!submissionId) {return;}
-        fetchStatusPayload(submissionId)
-            .then(setStatusPayload)
-            .catch((e) => console.error('Status fetch failed', e));
-    }, [submissionId]);
+    // phenotypes are flagged server-side). A save refreshes the mutation's
+    // own cached GET (so reopening the card reseeds from the server), the
+    // submission (its card header shows allele, protocol and type), the
+    // history icons, and the page's status, since a saved edit can move a
+    // badge (e.g. the primer reaching 10bp, ZFIN-10407).
+    const onSaved = React.useCallback(() => {
+        qc.invalidateQueries({ queryKey: mutationKey(mutationId) });
+        if (submissionId) {
+            qc.invalidateQueries({ queryKey: lineSubmissionKey(submissionId) });
+        }
+        qc.invalidateQueries({ queryKey: ['zirc', 'audit'] });
+        refetchStatus();
+    }, [qc, mutationId, submissionId, refetchStatus]);
 
     const { formData, setFormData, status, errorMessage, schemaQuery } =
         useAutosavedSchemaForm<MutationDTO>({
             entity: mutationQuery.data,
-            entityId: idNum,
+            entityId: mutationId,
             schemaQueryKey: 'mutation-form-schema',
             schemaEndpoint: '/mutations/form-schema',
             patchEndpointFor: (id) => `/mutations/${id}`,
+            onSaved,
         });
 
-    React.useEffect(() => { refetchStatus(); }, [refetchStatus]);
-
-    // A saved edit can move a badge (e.g. the primer reaching 10bp), so pull
-    // the recomputed status once the autosave settles.
-    React.useEffect(() => {
-        if (status === 'saved') {refetchStatus();}
-    }, [status, refetchStatus]);
-
-    if (!idNum) {
-        return <div className='alert alert-danger'>Missing mutation id.</div>;
-    }
     if (schemaQuery.isLoading || mutationQuery.isLoading || formData == null) {
         return <p className='text-muted'>Loading…</p>;
     }
@@ -112,25 +104,27 @@ function MutationEditInner({ mutationId, submissionId }: MutationEditProps) {
     }
 
     return (
-        <StatusRefetchContext.Provider value={refetchStatus}>
-            <div>
-                <div className='d-flex justify-content-end mb-1'>
-                    <SaveStatusBadge status={status} message={errorMessage} />
-                </div>
-                <JsonForms
-                    schema={schemaQuery.data.schema}
-                    uischema={schemaQuery.data.uiSchema}
-                    data={formData}
-                    renderers={mutationRenderers}
-                    cells={[]}
-                    config={{
-                        mutationId: idNum,
-                        submissionId,
-                        ...perEntityStatusConfig(statusPayload),
-                    }}
-                    onChange={({ data }) => setFormData(data as FormDataShape)}
-                />
+        <div>
+            <div className='d-flex justify-content-end mb-1'>
+                <SaveStatusBadge status={status} message={errorMessage} />
             </div>
-        </StatusRefetchContext.Provider>
+            <JsonForms
+                schema={schemaQuery.data.schema}
+                uischema={schemaQuery.data.uiSchema}
+                data={formData}
+                renderers={mutationRenderers}
+                cells={[]}
+                config={{
+                    mutationId,
+                    submissionId,
+                    idPrefix: `mutation-${position}`,
+                    recId: `ZIRC-MUT-${mutationId}`,
+                    fieldStatus: statusPayload?.mutationFieldStatus?.[String(mutationId)] ?? {},
+                    sectionStatus: statusPayload?.mutationSectionStatus?.[String(mutationId)] ?? {},
+                    ...perEntityStatusConfig(statusPayload),
+                }}
+                onChange={({ data }) => setFormData(data as FormDataShape)}
+            />
+        </div>
     );
 }

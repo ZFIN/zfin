@@ -37,6 +37,7 @@ import org.zfin.zirc.service.SchemaSections;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -103,10 +104,12 @@ public class ZircDashboardController {
         Map<String, List<String>> mutationSubSubSections = new LinkedHashMap<>();
         Map<String, FieldStatus> mutationSubSectionStatus = new LinkedHashMap<>();
         Map<String, Map<String, FieldStatus>> mutationSubSubSectionStatus = new LinkedHashMap<>();
+        // Same order as the Groups in ZircMutationFormSchema.uiSchema(), so the
+        // nav lists them in the order the card renders them.
         List<String> mutationInnerGroups = List.of(
-                "General", "Mutagenesis", "Lethality",
+                "General", "Mutagenesis",
                 "Genes", "Lesions", "Genotyping Assays", "Phenotypes",
-                "Publications");
+                "Lethality", "Publications");
         if (submission.getMutations() != null) {
             int i = 1;
             for (Mutation mut : submission.getMutations()) {
@@ -462,72 +465,36 @@ public class ZircDashboardController {
         return "zirc/line-submission-edit";
     }
 
+    /**
+     * The edit page was merged into the submission page (ZFIN-10543), which
+     * now edits in place. Kept as a redirect so bookmarks and links keep
+     * working.
+     */
     @GetMapping("/line-submission/{zdbID}/edit")
-    public String editLineSubmission(@PathVariable String zdbID, Model model) {
-        LineSubmission submission = HibernateUtil.currentSession().get(LineSubmission.class, zdbID);
-        if (submission == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Line submission " + zdbID + " not found");
-        }
-        model.addAttribute("submission", submission);
-        String label = (submission.getName() != null && !submission.getName().isBlank())
-                ? submission.getName() : zdbID;
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Line Submission: " + label);
-        return "zirc/line-submission-edit";
+    public String editLineSubmission(@PathVariable String zdbID) {
+        return "redirect:/action/zirc/line-submission/" + zdbID;
     }
 
-    // ─────────────────────────────────────────────────────────────────────
-    // Mutations: editor sub-page + per-field save + add/remove.
-    // The parent line submission's edit page links here; mutations get their
-    // own URL because the per-mutation field set is large enough that
-    // expanding inline on the parent would be unwieldy.
-    // ─────────────────────────────────────────────────────────────────────
-
+    /**
+     * Mutations used to be edited on their own page; they are now collapsible
+     * cards on the submission page (ZFIN-10543). Redirect to the card, whose
+     * anchor (#mutation-N, N the 1-based position) also opens it.
+     */
     @GetMapping("/mutation/{mutationId}/edit")
-    public String editMutation(@PathVariable Long mutationId, Model model) {
+    public String editMutation(@PathVariable Long mutationId) {
         Mutation mutation = HibernateUtil.currentSession().get(Mutation.class, mutationId);
         if (mutation == null) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Mutation " + mutationId + " not found");
         }
-        model.addAttribute("mutation", mutation);
-        model.addAttribute("submission", mutation.getLineSubmission());
-        String label = (mutation.getAlleleDesignation() != null && !mutation.getAlleleDesignation().isBlank())
-                ? mutation.getAlleleDesignation()
-                : "Mutation #" + mutation.getSortOrder();
-        model.addAttribute(LookupStrings.DYNAMIC_TITLE, "Edit Mutation: " + label);
-        return "zirc/mutation-edit";
-    }
-
-    /**
-     * Person autocomplete for the "add submitter" modal on the
-     * line-submission detail page. Returns a list of
-     * {label, value, fullName, zdbID} entries suitable for jQuery UI
-     * autocomplete. The React app uses /api/zirc/autocomplete/persons
-     * instead; this endpoint stays only because the legacy detail JSP
-     * still mounts the jQuery UI modal.
-     */
-    @GetMapping("/persons/search")
-    @ResponseBody
-    public List<Map<String, String>> searchPersons(@RequestParam(value = "term", required = false) String term) {
-        if (term == null || term.isBlank()) {
-            return Collections.emptyList();
-        }
-        List<Person> people = HibernateUtil.currentSession()
-                .createQuery(
-                    "from Person where lower(fullName) like :q order by fullName",
-                    Person.class)
-                .setParameter("q", "%" + term.toLowerCase() + "%")
-                .setMaxResults(20)
-                .list();
-        List<Map<String, String>> out = new ArrayList<>();
-        for (Person p : people) {
-            Map<String, String> entry = new HashMap<>();
-            entry.put("label", p.getFullName() + " (" + p.getZdbID() + ")");
-            entry.put("value", p.getFullName());
-            entry.put("zdbID", p.getZdbID());
-            entry.put("fullName", p.getFullName());
-            out.add(entry);
-        }
-        return out;
+        LineSubmission submission = mutation.getLineSubmission();
+        // Cards are numbered in LineSubmissionDTO's order (by sortOrder).
+        List<Long> ids = submission.getMutations().stream()
+                .sorted(Comparator.comparing(Mutation::getSortOrder,
+                        Comparator.nullsLast(Comparator.naturalOrder())))
+                .map(Mutation::getId)
+                .toList();
+        int position = ids.indexOf(mutationId) + 1;
+        return "redirect:/action/zirc/line-submission/" + submission.getZdbID() + "#mutation-" + position;
     }
 
     /**

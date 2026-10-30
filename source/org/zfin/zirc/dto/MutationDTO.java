@@ -11,6 +11,7 @@ import org.zfin.zirc.entity.Phenotype;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public record MutationDTO(
         @NotNull Long id,
@@ -24,6 +25,11 @@ public record MutationDTO(
         // the UI displays it directly) or when the referenced Feature can't
         // be resolved. Read-only — not part of the form schema.
         String alleleName,
+        // ZFIN-10543: lab of origin and institution of that same Feature, e.g.
+        // "Westerfield Lab, Oregon" -- shown in place of the free-text
+        // institution when alleleInZfin=true. Null otherwise. Read-only and
+        // server-derived; the form never PATCHes it.
+        String alleleLabInstitution,
         Boolean alleleInZfin,
         String mutationType,
         String mutationDiscoverer,
@@ -92,6 +98,7 @@ public record MutationDTO(
                         .map(PhenotypeSummaryDTO::of)
                         .toList();
         String alleleName = null;
+        String alleleLabInstitution = null;
         // Resolve a display label only when the curator picked an existing
         // ZFIN feature (alleleInZfin=true → alleleDesignation stores the
         // ZDB-ID returned by the /features autocomplete). Free-text designations
@@ -102,6 +109,7 @@ public record MutationDTO(
             Feature f = HibernateUtil.currentSession().get(Feature.class, m.getAlleleDesignation());
             if (f != null) {
                 alleleName = f.getAbbreviation();
+                alleleLabInstitution = labAndInstitution(f);
             }
         }
         return new MutationDTO(
@@ -110,6 +118,7 @@ public record MutationDTO(
                 m.getSortOrder(),
                 m.getAlleleDesignation(),
                 alleleName,
+                alleleLabInstitution,
                 m.getAlleleInZfin(),
                 m.getMutationType(),
                 m.getMutationDiscoverer(),
@@ -132,5 +141,33 @@ public record MutationDTO(
                 genes,
                 lesions,
                 phenotypes);
+    }
+
+    /**
+     * "Westerfield Lab, Oregon": the Feature's lab of origin (its int_data_source
+     * organization; at most one per feature) and the institution of its line
+     * designation (feature_prefix.fp_institute_display). Either part may be
+     * missing; null when both are.
+     */
+    static String labAndInstitution(Feature f) {
+        String labs = f.getSources() == null ? null : f.getSources().stream()
+                .map(s -> s.getOrganization() == null ? null : s.getOrganization().getName())
+                .filter(n -> n != null && !n.isBlank())
+                .sorted()
+                .collect(Collectors.joining("; "));
+        String institute = f.getFeaturePrefix() == null ? null : f.getFeaturePrefix().getInstitute();
+        return labAndInstitution(labs, institute);
+    }
+
+    static String labAndInstitution(String labs, String institute) {
+        boolean hasLabs = labs != null && !labs.isBlank();
+        boolean hasInstitute = institute != null && !institute.isBlank();
+        if (hasLabs && hasInstitute) {
+            return labs.trim() + ", " + institute.trim();
+        }
+        if (hasLabs) {
+            return labs.trim();
+        }
+        return hasInstitute ? institute.trim() : null;
     }
 }
