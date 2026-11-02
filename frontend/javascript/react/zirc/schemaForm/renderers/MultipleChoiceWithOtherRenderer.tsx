@@ -12,6 +12,7 @@ import { viewConfigFrom, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
+import { FieldAccessories } from '../../components/FieldAccessories';
 
 type ReasonsObject = {
     reasons?: string[];
@@ -97,7 +98,9 @@ function MultipleChoiceWithOtherRenderer({
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id='fr-label-reasons'>
+                <StatusBadge status={view.fieldStatus['reasons']}/>
                 <label htmlFor='fr-reasons' className='mb-0'>{labelText}</label>
+                <FieldAccessories view={view} fieldName='reasons' label={labelText} uischema={uischema}/>
             </th>
             <td>
                 <fieldset className='border-0 p-0 m-0' aria-labelledby='fr-label-reasons'>

@@ -95,7 +95,7 @@ describe('lesion conditional reveals', () => {
         // The separate read-only rows are gone, not merely relabelled.
         assert.equal(screen.queryByLabelText('Deletion size (bp)'), null);
         assert.equal(screen.queryByLabelText('Insertion size (bp)'), null);
-        assert.equal(screen.queryByLabelText('Lesion size (bp)'), null);
+        assert.equal(screen.queryByLabelText('Variant size (bp)'), null);
         indel.cleanupFetch();
         cleanup();
 
@@ -104,9 +104,9 @@ describe('lesion conditional reveals', () => {
             deletedSequence: 'CACCAGAATGAAA',
         });
         await waitFor(() => {
-            assert.ok(screen.getByText('Lesion size: 13 bp'));
+            assert.ok(screen.getByText('Variant size: 13 bp'));
         });
-        assert.equal(screen.queryByLabelText('Lesion size (bp)'), null);
+        assert.equal(screen.queryByLabelText('Variant size (bp)'), null);
         deletion.cleanupFetch();
     });
 
@@ -115,7 +115,7 @@ describe('lesion conditional reveals', () => {
         // row is not the redundancy the others were.
         const h = lesionForm({ lesionType: 'point_mutation' });
         await waitFor(() => {
-            assert.ok(screen.getByLabelText('Lesion size (bp)'));
+            assert.ok(screen.getByLabelText('Variant size (bp)'));
         });
         h.cleanupFetch();
     });

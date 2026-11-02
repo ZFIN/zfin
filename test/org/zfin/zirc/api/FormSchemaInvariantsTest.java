@@ -88,7 +88,10 @@ public class FormSchemaInvariantsTest {
                 // alleleDesignation holds a ZDB-ID; it's display-only, never
                 // in the form schema.
                 Set.of("id", "lineSubmissionId", "sortOrder", "alleleName"),
-                Set.of("/assays", "/genes", "/lesions", "/phenotypes")));
+                // alleleLabInstitution (ZFIN-10543) is in the schema so the
+                // General section can show it, but it is server-derived from
+                // the selected Feature and never PATCHed.
+                Set.of("/assays", "/genes", "/lesions", "/phenotypes", "/alleleLabInstitution")));
     }
 
     @Test

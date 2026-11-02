@@ -13,6 +13,7 @@ import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
+import { FieldAccessories } from '../../components/FieldAccessories';
 import { ValueDisplay } from '../../components/ValueDisplay';
 
 /**
@@ -142,6 +143,7 @@ function RowControlRenderer({
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
+                <StatusBadge status={view.fieldStatus[fieldName]}/>
                 <label htmlFor={inputId} className='mb-0'>
                     {label}{required ? ' *' : ''}
                 </label>
@@ -157,6 +159,7 @@ function RowControlRenderer({
                         (info)
                     </a>
                 )}
+                <FieldAccessories view={view} fieldName={fieldName} label={label ?? fieldName} uischema={uischema}/>
             </th>
             <td>
                 <div style={{ maxWidth: boxWidth }}>

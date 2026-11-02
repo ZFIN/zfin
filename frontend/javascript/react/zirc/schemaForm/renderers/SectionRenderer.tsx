@@ -20,6 +20,11 @@ import { FieldComments } from '../../components/FieldComments';
  * the row-style Control renderers. Groups whose uiSchema sets
  * options.layout = 'plain' get a plain <div> wrapper instead — for sections
  * like Mutations whose body is a list of cards, not a table of fields.
+ *
+ * When the view config sets collapsibleSections (the sections inside a
+ * mutation card), a labelled section's heading carries a caret that hides
+ * and shows its body. The body stays mounted while collapsed, so an
+ * in-progress edit or a nested editor's pending autosave is not dropped.
  */
 function SectionRenderer({
     uischema,
@@ -31,10 +36,6 @@ function SectionRenderer({
     cells,
     config,
 }: LayoutProps) {
-    // Hidden by a uiSchema rule (e.g. the per-assayType groups in the assay
-    // schema). Without this gate, group-level rules are silently ignored —
-    // unlike Controls, which inherit rule handling from withJsonFormsControlProps.
-    if (visible === false) {return null;}
     const layout = uischema as GroupLayout;
     const label = layout.label ?? schema?.title ?? '';
     const view = viewConfigFrom(config);
@@ -46,8 +47,28 @@ function SectionRenderer({
     // sections that share the same label.
     const sectionId = view.idPrefix ? `${view.idPrefix}-${slug}` : slug;
     const headingId = `${sectionId}-heading`;
-    const isPlain =
-        (layout.options as { layout?: string } | undefined)?.layout === 'plain';
+    const bodyId = `${sectionId}-body`;
+    const layoutOption = (layout.options as { layout?: string } | undefined)?.layout;
+    const isPlain = layoutOption === 'plain';
+    const collapsible = view.collapsibleSections && !!label && layoutOption !== 'subsection';
+
+    const [open, setOpen] = React.useState(true);
+    // A left-nav link (#mutation-2-genes) to a collapsed section opens it.
+    React.useEffect(() => {
+        if (!collapsible) {return undefined;}
+        const openFromHash = () => {
+            if (window.location.hash === `#${sectionId}`) {setOpen(true);}
+        };
+        openFromHash();
+        window.addEventListener('hashchange', openFromHash);
+        return () => window.removeEventListener('hashchange', openFromHash);
+    }, [collapsible, sectionId]);
+
+    // Hidden by a uiSchema rule (e.g. the per-assayType groups in the assay
+    // schema). Without this gate, group-level rules are silently ignored —
+    // unlike Controls, which inherit rule handling from withJsonFormsControlProps.
+    // Checked after the hooks above so their call order never changes.
+    if (visible === false) {return null;}
 
     const children = (layout.elements ?? []).map((child, index) => (
         <ResolvedJsonFormsDispatch
@@ -61,7 +82,32 @@ function SectionRenderer({
         />
     ));
 
+    // A Group nested inside another section's table (e.g. Veterinarian under
+    // Additional Info): a subheading row followed by its Control rows, all
+    // inside the parent's <tbody>. No section status/history/comments — those
+    // are tracked per top-level section.
+    if (layoutOption === 'subsection') {
+        return (
+            <>
+                <tr id={sectionId}>
+                    <th colSpan={2} scope='colgroup' className='pt-3'>
+                        <h3 className='h6 font-weight-bold mb-0'>{label}</h3>
+                    </th>
+                </tr>
+                {children}
+            </>
+        );
+    }
+
     const sectionStatus = view.sectionStatus[label];
+
+    const body = isPlain ? (
+        <div>{children}</div>
+    ) : (
+        <table className='table table-borderless'>
+            <tbody>{children}</tbody>
+        </table>
+    );
 
     // Headless groups are used as visibility/layout containers inside the
     // inline aggregate editors (Lesion/Gene/Assay/Phenotype) where inner
@@ -76,6 +122,18 @@ function SectionRenderer({
         <section className='section' {...sectionProps}>
             {label && (
                 <h2 id={headingId} className='heading'>
+                    {collapsible && (
+                        <button
+                            type='button'
+                            className='btn btn-link p-0 mr-1 text-body'
+                            onClick={() => setOpen((o) => !o)}
+                            aria-expanded={open}
+                            aria-controls={bodyId}
+                            aria-label={`${open ? 'Collapse' : 'Expand'} ${label}`}
+                        >
+                            <i className={`fas fa-fw fa-caret-${open ? 'down' : 'right'}`}/>
+                        </button>
+                    )}
                     {sectionStatus && <StatusBadge status={sectionStatus}/>}
                     {label}
                     <FieldHistory
@@ -94,13 +152,7 @@ function SectionRenderer({
                     )}
                 </h2>
             )}
-            {isPlain ? (
-                <div>{children}</div>
-            ) : (
-                <table className='table table-borderless'>
-                    <tbody>{children}</tbody>
-                </table>
-            )}
+            {collapsible ? <div id={bodyId} hidden={!open}>{body}</div> : body}
         </section>
     );
 }

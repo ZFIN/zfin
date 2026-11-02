@@ -212,6 +212,16 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
                         <li key={a.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <span>
+                                    <button
+                                        type='button'
+                                        className='btn btn-link p-0 mr-2 text-body'
+                                        onClick={() => toggle(a.id)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={`assay-${a.id}-body`}
+                                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} assay ${a.sortOrder ?? ''}`}
+                                    >
+                                        <i className={`fas fa-fw fa-caret-${isOpen ? 'down' : 'right'}`}/>
+                                    </button>
                                     <strong>Assay {a.sortOrder ?? ''}</strong>
                                     {typeDisplay && (
                                         <span className='ml-2 text-muted'>{typeDisplay}</span>
@@ -224,7 +234,7 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
                                         onClick={() => toggle(a.id)}
                                         aria-expanded={isOpen}
                                     >
-                                        {isOpen ? 'Done' : 'Edit'}
+                                        {isOpen ? 'Collapse' : 'Expand'}
                                     </button>
                                     <button
                                         type='button'
@@ -237,7 +247,9 @@ function AssaysListRenderer({ data, schema, config }: ControlProps) {
                                 </div>
                             </div>
                             {isOpen && (
-                                <AssayEdit assayId={a.id} mutationId={mutationId} />
+                                <div id={`assay-${a.id}-body`}>
+                                    <AssayEdit assayId={a.id} mutationId={mutationId} />
+                                </div>
                             )}
                         </li>
                     );
