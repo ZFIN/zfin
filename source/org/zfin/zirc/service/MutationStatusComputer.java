@@ -151,7 +151,7 @@ public final class MutationStatusComputer {
         bySection.put("General",           general);
         bySection.put("Mutagenesis",       mutagenesis);
         bySection.put("Genes",             genesSection);
-        bySection.put("Lesions",           lesionsSection);
+        bySection.put("Variants",           lesionsSection);
         bySection.put("Genotyping Assays", assaysSection);
         bySection.put("Phenotypes",        phenotypesSection);
         bySection.put("Lethality",         FieldStatus.COMPLETE);

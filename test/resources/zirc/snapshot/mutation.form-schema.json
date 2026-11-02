@@ -86,7 +86,7 @@
           "type" : "object"
         },
         "maxItems" : 10,
-        "title" : "Lesions",
+        "title" : "Variants",
         "type" : "array"
       },
       "lethalityAdditionalInfo" : {
@@ -379,7 +379,7 @@
         "scope" : "#/properties/lesions",
         "type" : "Control"
       } ],
-      "label" : "Lesions",
+      "label" : "Variants",
       "options" : {
         "layout" : "plain"
       },

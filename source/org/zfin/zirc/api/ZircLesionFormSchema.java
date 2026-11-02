@@ -114,10 +114,10 @@ public final class ZircLesionFormSchema {
     public static JsonSchema schema() {
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         // General
-        properties.put("lesionType",            StringSchema.of("Lesion Type", 255));
+        properties.put("lesionType",            StringSchema.of("Variant Type", 255));
         properties.put("additionalInfo",        StringSchema.of("Additional Info", 5000));
         // Sizing
-        properties.put("lesionSizeBp",          new NumberSchema("Lesion size (bp)", Boolean.TRUE));
+        properties.put("lesionSizeBp",          new NumberSchema("Variant size (bp)", Boolean.TRUE));
         properties.put("insertionSizeBp",       new NumberSchema("Insertion size (bp)", Boolean.TRUE));
         // Sequence specifics
         properties.put("nucleotideChange",      StringSchema.of("Nucleotide change", 2000));
@@ -199,7 +199,7 @@ public final class ZircLesionFormSchema {
                                 Options.of().withMulti(true)
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withSizeLabel("Lesion size"), null)
+                                        .withSizeLabel("Variant size"), null)
                 )),
                 groupRevealedFor(List.of("indel"), List.of(
                         new Control("#/properties/deletedSequence",
@@ -231,7 +231,7 @@ public final class ZircLesionFormSchema {
                                 Options.of()
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withHelpText("At least 20 nt directly preceding the lesion / transgene.")
+                                        .withHelpText("At least 20 nt directly preceding the variant / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null),
@@ -239,7 +239,7 @@ public final class ZircLesionFormSchema {
                                 Options.of()
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withHelpText("At least 20 nt directly following the lesion / transgene.")
+                                        .withHelpText("At least 20 nt directly following the variant / transgene.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)

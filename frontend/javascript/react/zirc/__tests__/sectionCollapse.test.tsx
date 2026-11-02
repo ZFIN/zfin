@@ -4,7 +4,7 @@ import { act, cleanup, fireEvent, screen } from '@testing-library/react';
 import { renderForm, stringSchema } from './renderHelpers';
 
 /**
- * The sections inside a mutation card (Genes, Lesions, Genotyping Assays, ...)
+ * The sections inside a mutation card (Genes, Variants, Genotyping Assays, ...)
  * collapse from their heading (ZFIN-10543). The toggle is opt-in through the
  * view config's collapsibleSections, which only the mutation editors set, so
  * the submission's own sections keep a plain heading.

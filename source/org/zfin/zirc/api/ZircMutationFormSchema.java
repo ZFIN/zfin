@@ -295,7 +295,7 @@ public final class ZircMutationFormSchema {
                         null),
                 // Lesions: same inline-expand pattern; the per-lesion
                 // form has the lesion-type matrix.
-                new Group("Lesions",
+                new Group("Variants",
                         List.of(new Control("#/properties/lesions",
                                 Options.of().withWidget("lesionsList").withManagesOwnPersistence(true), null)),
                         Options.of().withLayout("plain"),
@@ -450,7 +450,7 @@ public final class ZircMutationFormSchema {
         itemProps.put("id",         NumberSchema.of());
         itemProps.put("sortOrder",  NumberSchema.of());
         itemProps.put("lesionType", StringSchema.nullable());
-        return new ArraySchema("Lesions", ObjectSchema.of(itemProps),
+        return new ArraySchema("Variants", ObjectSchema.of(itemProps),
                 10, null);
     }
 

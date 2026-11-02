@@ -156,7 +156,7 @@ public class ZircAuditQueryService {
     private static final Map<String, String> CONTAINER_CHILD_KIND_BY_PARENT_AND_SECTION = Map.of(
             "submission|Mutations",        "mutation",
             "mutation|Genes",              "gene",
-            "mutation|Lesions",            "lesion",
+            "mutation|Variants",           "lesion",
             "mutation|Genotyping Assays",  "assay",
             "mutation|Phenotypes",         "phenotype");
 

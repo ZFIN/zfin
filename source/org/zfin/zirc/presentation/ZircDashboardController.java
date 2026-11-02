@@ -108,7 +108,7 @@ public class ZircDashboardController {
         // nav lists them in the order the card renders them.
         List<String> mutationInnerGroups = List.of(
                 "General", "Mutagenesis",
-                "Genes", "Lesions", "Genotyping Assays", "Phenotypes",
+                "Genes", "Variants", "Genotyping Assays", "Phenotypes",
                 "Lethality", "Publications");
         if (submission.getMutations() != null) {
             int i = 1;
@@ -298,7 +298,7 @@ public class ZircDashboardController {
                 Map<String, Map<String, String>> msec = perMutationSectionStatus.get(mid);
                 mergeFieldOverlayIntoSections(msec, perMutationFieldStatus.get(mid), mutationSections);
                 mergeChildOverall(msec, "Genes",             childOveralls(mut.getGenes(),            geneOverall));
-                mergeChildOverall(msec, "Lesions",           childOveralls(mut.getLesions(),          lesionOverall));
+                mergeChildOverall(msec, "Variants",          childOveralls(mut.getLesions(),          lesionOverall));
                 mergeChildOverall(msec, "Genotyping Assays", childOveralls(mut.getGenotypingAssays(), assayOverall));
                 mergeChildOverall(msec, "Phenotypes",        childOveralls(mut.getPhenotypes(),       phenotypeOverall));
                 Map<String, String> overall = overallFromSections(msec);
@@ -684,7 +684,7 @@ public class ZircDashboardController {
     private static final java.util.Set<String> TOP_LEVEL_SECTION_SLUGS = java.util.Set.of(
             "overview", "mutations", "linked-features", "background", "additional-info");
     private static final java.util.Set<String> MUTATION_SECTION_SLUGS = java.util.Set.of(
-            "mutation", "overview", "genes", "lesions",
+            "mutation", "overview", "genes", "variants",
             "genotyping-assays", "phenotypes", "lethality", "publications");
     private static final java.util.Map<String, String> SECTION_SLUG_TO_LABEL = java.util.Map.ofEntries(
             java.util.Map.entry("overview",          "Overview"),
@@ -693,7 +693,7 @@ public class ZircDashboardController {
             java.util.Map.entry("background",        "Background"),
             java.util.Map.entry("additional-info",   "Additional Info"),
             java.util.Map.entry("genes",             "Genes"),
-            java.util.Map.entry("lesions",           "Lesions"),
+            java.util.Map.entry("variants",          "Variants"),
             java.util.Map.entry("genotyping-assays", "Genotyping Assays"),
             java.util.Map.entry("phenotypes",        "Phenotypes"),
             java.util.Map.entry("lethality",         "Lethality"),
