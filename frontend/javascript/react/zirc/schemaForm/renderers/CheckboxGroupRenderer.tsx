@@ -12,6 +12,7 @@ import { viewConfigFrom, leafOf, commentsEnabled } from '../useViewConfig';
 import { StatusBadge } from '../../components/StatusBadge';
 import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
+import { FieldAccessories } from '../../components/FieldAccessories';
 
 type CheckboxGroupOptions = {
     standardValues?: string[];
@@ -97,7 +98,9 @@ function CheckboxGroupRenderer({
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
+                <StatusBadge status={view.fieldStatus[fieldName]}/>
                 {label}
+                <FieldAccessories view={view} fieldName={fieldName} label={label ?? fieldName} uischema={uischema}/>
             </th>
             <td>
                 <fieldset className='border-0 p-0 m-0' aria-labelledby={labelId}>

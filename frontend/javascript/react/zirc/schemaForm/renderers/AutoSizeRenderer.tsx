@@ -63,7 +63,7 @@ function AutoSizeRenderer({ path, label, uischema, visible, config }: ControlPro
     return (
         <tr>
             <th className='text-nowrap pr-3' scope='row' style={{ width: '1%' }} id={labelId}>
-                {view.readonly && <StatusBadge status={view.fieldStatus[fieldName]}/>}
+                <StatusBadge status={view.fieldStatus[fieldName]}/>
                 {view.readonly
                     ? displayLabel
                     : <label htmlFor={inputId} className='mb-0'>{displayLabel}</label>}

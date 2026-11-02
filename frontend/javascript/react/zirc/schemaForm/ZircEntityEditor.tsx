@@ -6,6 +6,9 @@ import { useAutosavedSchemaForm } from './useAutosavedSchemaForm';
 import { SaveStatusBadge } from '../components/SaveStatusBadge';
 import { AGGREGATES, AggregateKind } from './aggregateRegistry';
 import { fieldRenderers } from './fieldRenderers';
+import { StatusPayloadContext } from '../statusPayloadContext';
+import { StatusRefetchContext } from '../statusRefetchContext';
+import type { PerEntityStatus } from '../statusPayload';
 
 /**
  * One schema-driven editor for any per-mutation aggregate (assay, gene,
@@ -49,13 +52,19 @@ export function ZircEntityEditor<TDto extends object>({
 }: ZircEntityEditorProps<TDto>) {
     const cfg = AGGREGATES[kind];
     const qc = useQueryClient();
+    const statusPayload = React.useContext(StatusPayloadContext);
+    const refetchStatus = React.useContext(StatusRefetchContext);
 
     // Every successful save invalidates this entity's own cached GET, so a
     // later remount (e.g. reopening a collapsed card) re-fetches instead of
-    // reseeding the form from the pre-edit cached response.
+    // reseeding the form from the pre-edit cached response. The same save can
+    // move a status badge and adds an audit row, so the page's status payload
+    // and the history icons' lookups are refreshed too.
     const onSaved = React.useCallback(() => {
         qc.invalidateQueries({ queryKey: cfg.selfCacheKey(entityId) });
-    }, [qc, cfg, entityId]);
+        qc.invalidateQueries({ queryKey: ['zirc', 'audit'] });
+        refetchStatus();
+    }, [qc, cfg, entityId, refetchStatus]);
 
     const onRefreshParent = React.useCallback(() => {
         if (parentId != null) {
@@ -74,9 +83,17 @@ export function ZircEntityEditor<TDto extends object>({
             onRefreshParent,
         });
 
+    // Same recId and per-entity status slices the view-mode cards pass, so
+    // the edit rows show badges, history and comments for this entity.
+    const statusOf = (suffix: 'FieldStatus' | 'SectionStatus') =>
+        ((statusPayload as Record<string, unknown> | null)?.[`${kind}${suffix}`] as
+            PerEntityStatus | undefined)?.[String(entityId)] ?? {};
     const config: Record<string, unknown> = {
         [cfg.idConfigKey]: entityId,
         [cfg.parentConfigKey]: parentId,
+        recId: `${cfg.recIdPrefix}${entityId}`,
+        fieldStatus: statusOf('FieldStatus'),
+        sectionStatus: statusOf('SectionStatus'),
     };
 
     if (schemaQuery.isLoading || entityQuery.isLoading || formData == null) {

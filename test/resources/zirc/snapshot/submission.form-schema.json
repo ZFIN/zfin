@@ -57,9 +57,49 @@
             "title" : "Husbandry Info",
             "type" : [ "string", "null" ]
           },
+          "technicalTransferAddress" : {
+            "maxLength" : 2000,
+            "title" : "Address",
+            "type" : [ "string", "null" ]
+          },
+          "technicalTransferEmail" : {
+            "maxLength" : 255,
+            "title" : "Email",
+            "type" : [ "string", "null" ]
+          },
+          "technicalTransferName" : {
+            "maxLength" : 255,
+            "title" : "Name",
+            "type" : [ "string", "null" ]
+          },
+          "technicalTransferPhone" : {
+            "maxLength" : 255,
+            "title" : "Phone",
+            "type" : [ "string", "null" ]
+          },
           "unreportedFeaturesDetails" : {
             "maxLength" : 5000,
             "title" : "Unreported Features Details",
+            "type" : [ "string", "null" ]
+          },
+          "veterinarianAddress" : {
+            "maxLength" : 2000,
+            "title" : "Address",
+            "type" : [ "string", "null" ]
+          },
+          "veterinarianEmail" : {
+            "maxLength" : 255,
+            "title" : "Email",
+            "type" : [ "string", "null" ]
+          },
+          "veterinarianName" : {
+            "maxLength" : 255,
+            "title" : "Name",
+            "type" : [ "string", "null" ]
+          },
+          "veterinarianPhone" : {
+            "maxLength" : 255,
+            "title" : "Phone",
             "type" : [ "string", "null" ]
           }
         },
@@ -268,6 +308,50 @@
         },
         "scope" : "#/properties/additionalInfo/properties/additionalInfo",
         "type" : "Control"
+      }, {
+        "elements" : [ {
+          "scope" : "#/properties/additionalInfo/properties/veterinarianName",
+          "type" : "Control"
+        }, {
+          "scope" : "#/properties/additionalInfo/properties/veterinarianEmail",
+          "type" : "Control"
+        }, {
+          "options" : {
+            "multi" : true
+          },
+          "scope" : "#/properties/additionalInfo/properties/veterinarianAddress",
+          "type" : "Control"
+        }, {
+          "scope" : "#/properties/additionalInfo/properties/veterinarianPhone",
+          "type" : "Control"
+        } ],
+        "label" : "Veterinarian",
+        "options" : {
+          "layout" : "subsection"
+        },
+        "type" : "Group"
+      }, {
+        "elements" : [ {
+          "scope" : "#/properties/additionalInfo/properties/technicalTransferName",
+          "type" : "Control"
+        }, {
+          "scope" : "#/properties/additionalInfo/properties/technicalTransferEmail",
+          "type" : "Control"
+        }, {
+          "options" : {
+            "multi" : true
+          },
+          "scope" : "#/properties/additionalInfo/properties/technicalTransferAddress",
+          "type" : "Control"
+        }, {
+          "scope" : "#/properties/additionalInfo/properties/technicalTransferPhone",
+          "type" : "Control"
+        } ],
+        "label" : "Technical Transfer",
+        "options" : {
+          "layout" : "subsection"
+        },
+        "type" : "Group"
       } ],
       "label" : "Additional Info",
       "type" : "Group"

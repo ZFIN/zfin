@@ -78,7 +78,15 @@ public final class LineSubmissionStatusComputer {
         SINGLE_ALLELIC              ("singleAllelic"),
         HUSBANDRY_INFO              ("husbandryInfo"),
         UNREPORTED_FEATURES_DETAILS ("unreportedFeaturesDetails"),
-        ADDITIONAL_INFO             ("additionalInfo");
+        ADDITIONAL_INFO             ("additionalInfo"),
+        VETERINARIAN_NAME           ("veterinarianName"),
+        VETERINARIAN_EMAIL          ("veterinarianEmail"),
+        VETERINARIAN_ADDRESS        ("veterinarianAddress"),
+        VETERINARIAN_PHONE          ("veterinarianPhone"),
+        TECHNICAL_TRANSFER_NAME     ("technicalTransferName"),
+        TECHNICAL_TRANSFER_EMAIL    ("technicalTransferEmail"),
+        TECHNICAL_TRANSFER_ADDRESS  ("technicalTransferAddress"),
+        TECHNICAL_TRANSFER_PHONE    ("technicalTransferPhone");
 
         private final String path;
 
@@ -150,7 +158,11 @@ public final class LineSubmissionStatusComputer {
                 Field.MATERNAL_BACKGROUND, Field.PATERNAL_BACKGROUND,
                 Field.BACKGROUND_CHANGEABLE, Field.BACKGROUND_CHANGE_CONCERNS));
         bySection.put("Additional Info", rollup(byField,
-                Field.ADDITIONAL_INFO, Field.UNREPORTED_FEATURES_DETAILS));
+                Field.ADDITIONAL_INFO, Field.UNREPORTED_FEATURES_DETAILS,
+                Field.VETERINARIAN_NAME, Field.VETERINARIAN_EMAIL,
+                Field.VETERINARIAN_ADDRESS, Field.VETERINARIAN_PHONE,
+                Field.TECHNICAL_TRANSFER_NAME, Field.TECHNICAL_TRANSFER_EMAIL,
+                Field.TECHNICAL_TRANSFER_ADDRESS, Field.TECHNICAL_TRANSFER_PHONE));
 
         FieldStatus overall = FieldStatus.COMPLETE;
         for (FieldStatus st : bySection.values()) overall = overall.worse(st);

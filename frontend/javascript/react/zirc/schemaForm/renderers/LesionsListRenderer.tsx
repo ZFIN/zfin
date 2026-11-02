@@ -46,7 +46,7 @@ function LesionDetailCard({
     return (
         <div className='card mb-2'>
             <div className='card-header py-1'>
-                <strong>{summary.lesionType ? humanize(summary.lesionType) : `Lesion ${n}`}</strong>
+                <strong>{summary.lesionType ? humanize(summary.lesionType) : `Variant ${n}`}</strong>
             </div>
             <div className='card-body py-2'>
                 {q.isLoading && <p className='text-muted small mb-0'>Loading…</p>}
@@ -86,7 +86,7 @@ function LesionDetailCard({
  *
  * <p>{@code mutationId} arrives via JsonForms' {@code config} prop,
  * threaded by MutationEdit. {@code schema.maxItems} drives the
- * "+ Add lesion" disabled-at-capacity state.
+ * "+ Add variant" disabled-at-capacity state.
  */
 function LesionsListRenderer({ data, schema, config }: ControlProps) {
     const lesions = (data as LesionSummaryDTO[] | undefined) ?? [];
@@ -104,13 +104,13 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
     });
     if (view.readonly) {
         if (lesions.length === 0) {
-            return <p className='text-muted small mb-0'>No lesions.</p>;
+            return <p className='text-muted small mb-0'>No variants.</p>;
         }
         if (lesionSchema.isLoading) {
-            return <p className='text-muted small'>Loading lesion details…</p>;
+            return <p className='text-muted small'>Loading variant details…</p>;
         }
         if (lesionSchema.isError || !lesionSchema.data) {
-            return <div className='alert alert-warning'>Failed to load lesion form schema.</div>;
+            return <div className='alert alert-warning'>Failed to load variant form schema.</div>;
         }
         const outerCfg = (config ?? {}) as {
             lesionFieldStatus?: Record<string, Record<string, unknown>>;
@@ -136,7 +136,7 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
     const maxItems = (schema as { maxItems?: number } | undefined)?.maxItems;
     const atCapacity = maxItems != null && lesions.length >= maxItems;
     const capTitle = atCapacity
-        ? `Maximum ${maxItems} lesions per mutation.`
+        ? `Maximum ${maxItems} variants per mutation.`
         : undefined;
 
     const toggle = (id: number) => {
@@ -165,14 +165,14 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
     const handleDelete = (lesionId: number) => {
         if (!mutationId) {return;}
         // eslint-disable-next-line no-alert
-        if (!window.confirm('Delete this lesion? This action cannot be undone.')) {return;}
+        if (!window.confirm('Delete this variant? This action cannot be undone.')) {return;}
         deleteLesion.mutate({ mutationId, lesionId });
     };
 
     if (lesions.length === 0) {
         return (
             <div>
-                <p className='text-muted'>No lesions recorded for this mutation.</p>
+                <p className='text-muted'>No variants recorded for this mutation.</p>
                 <button
                     type='button'
                     className='btn btn-sm btn-outline-secondary'
@@ -180,7 +180,7 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                     disabled={!mutationId || addLesion.isPending || atCapacity}
                     title={capTitle}
                 >
-                    + Add lesion
+                    + Add variant
                 </button>
             </div>
         );
@@ -196,7 +196,17 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                         <li key={l.id} className='border rounded p-2 mb-2'>
                             <div className='d-flex justify-content-between align-items-center'>
                                 <span>
-                                    <strong>Lesion {l.sortOrder ?? ''}</strong>
+                                    <button
+                                        type='button'
+                                        className='btn btn-link p-0 mr-2 text-body'
+                                        onClick={() => toggle(l.id)}
+                                        aria-expanded={isOpen}
+                                        aria-controls={`lesion-${l.id}-body`}
+                                        aria-label={`${isOpen ? 'Collapse' : 'Expand'} variant ${l.sortOrder ?? ''}`}
+                                    >
+                                        <i className={`fas fa-fw fa-caret-${isOpen ? 'down' : 'right'}`}/>
+                                    </button>
+                                    <strong>Variant {l.sortOrder ?? ''}</strong>
                                     {typeDisplay && (
                                         <span className='ml-2 text-muted'>{typeDisplay}</span>
                                     )}
@@ -208,7 +218,7 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                                         onClick={() => toggle(l.id)}
                                         aria-expanded={isOpen}
                                     >
-                                        {isOpen ? 'Done' : 'Edit'}
+                                        {isOpen ? 'Collapse' : 'Expand'}
                                     </button>
                                     <button
                                         type='button'
@@ -221,7 +231,9 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                                 </div>
                             </div>
                             {isOpen && (
-                                <LesionEdit lesionId={l.id} mutationId={mutationId} />
+                                <div id={`lesion-${l.id}-body`}>
+                                    <LesionEdit lesionId={l.id} mutationId={mutationId} />
+                                </div>
                             )}
                         </li>
                     );
@@ -234,7 +246,7 @@ function LesionsListRenderer({ data, schema, config }: ControlProps) {
                 disabled={!mutationId || addLesion.isPending || atCapacity}
                 title={capTitle}
             >
-                + Add lesion
+                + Add variant
             </button>
         </div>
     );

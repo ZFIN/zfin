@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { JsonForms } from '@jsonforms/react';
 import type { JsonSchema, UISchemaElement } from '@jsonforms/core';
 import { api } from '../api/client';
 import { LineSubmissionDTO } from '../api/types';
 import { diffLeaves } from '../api/formHelpers';
-import { useCreateLineSubmission } from '../api/queries';
+import { lineSubmissionKey, useCreateLineSubmission } from '../api/queries';
 import { SaveStatusBadge, SaveStatus } from '../components/SaveStatusBadge';
 import { sectionRendererEntry } from './renderers/SectionRenderer';
 import { rowControlRendererEntry } from './renderers/RowControlRenderer';
@@ -18,6 +18,7 @@ import { mutationsListRendererEntry } from './renderers/MutationsListRenderer';
 import { linkedFeaturesListRendererEntry } from './renderers/LinkedFeaturesListRenderer';
 import { publicationsListRendererEntry } from './renderers/PublicationsListRenderer';
 import type { FieldStatus } from '../components/StatusBadge';
+import { StatusRefetchContext } from '../statusRefetchContext';
 
 type FormData = Record<string, unknown>;
 
@@ -95,6 +96,14 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
                 unreportedFeaturesDetails: '',
                 husbandryInfo: '',
                 additionalInfo: '',
+                veterinarianName: '',
+                veterinarianEmail: '',
+                veterinarianAddress: '',
+                veterinarianPhone: '',
+                technicalTransferName: '',
+                technicalTransferEmail: '',
+                technicalTransferAddress: '',
+                technicalTransferPhone: '',
             },
         };
     }
@@ -117,6 +126,14 @@ function initialDataFromSubmission(submission: LineSubmissionDTO | null): FormDa
             unreportedFeaturesDetails: submission.unreportedFeaturesDetails ?? '',
             husbandryInfo: submission.husbandryInfo ?? '',
             additionalInfo: submission.additionalInfo ?? '',
+            veterinarianName: submission.veterinarianName ?? '',
+            veterinarianEmail: submission.veterinarianEmail ?? '',
+            veterinarianAddress: submission.veterinarianAddress ?? '',
+            veterinarianPhone: submission.veterinarianPhone ?? '',
+            technicalTransferName: submission.technicalTransferName ?? '',
+            technicalTransferEmail: submission.technicalTransferEmail ?? '',
+            technicalTransferAddress: submission.technicalTransferAddress ?? '',
+            technicalTransferPhone: submission.technicalTransferPhone ?? '',
         },
     };
 }
@@ -167,9 +184,11 @@ export function SchemaForm({
     const submissionIdRef = React.useRef<string | null>(submission?.zdbID ?? null);
     const lastSavedRef = React.useRef<FormData | null>(null);
     const create = useCreateLineSubmission();
+    const qc = useQueryClient();
+    const refetchStatus = React.useContext(StatusRefetchContext);
 
     // Seed once per submission identity (null counts as a valid identity —
-    // /new gets the empty-defaults shape, /edit gets the server's shape).
+    // /new gets the empty-defaults shape, an existing submission the server's).
     React.useEffect(() => {
         if (formData !== null) {return;}
         const seed = initialDataFromSubmission(submission);
@@ -231,7 +250,7 @@ export function SchemaForm({
                     window.history.replaceState(
                         {},
                         '',
-                        `/action/zirc/line-submission/${id}/edit`,
+                        `/action/zirc/line-submission/${id}`,
                     );
                 }
                 for (const [path, value] of changes) {
@@ -242,6 +261,13 @@ export function SchemaForm({
                 }
                 lastSavedRef.current = formData;
                 setStatus('saved');
+                // On the merged page a save can move a status badge, adds an
+                // audit row behind a history icon, and may change what the
+                // header shows (line name). Refresh all three; the refetched
+                // submission only overwrites the server-managed lists here.
+                qc.invalidateQueries({ queryKey: lineSubmissionKey(id) });
+                qc.invalidateQueries({ queryKey: ['zirc', 'audit'] });
+                refetchStatus();
             } catch (e: unknown) {
                 setStatus('error');
                 setErrorMessage(e instanceof Error ? e.message : 'Save failed');

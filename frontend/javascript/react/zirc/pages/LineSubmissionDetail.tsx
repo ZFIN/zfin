@@ -9,7 +9,15 @@ import { ChangeHistoryPanel } from '../components/ChangeHistoryPanel';
 import { StatusRefetchContext } from '../statusRefetchContext';
 import { fetchStatusPayload, type StatusPayload } from '../statusPayload';
 import { HistoryFocusContext, type HistoryFocus } from '../historyFocusContext';
+import { StatusPayloadContext } from '../statusPayloadContext';
 
+/**
+ * The line submission page (ZFIN-10543): the former read-only detail page and
+ * the edit page merged into one. Fields are edited in place with autosave,
+ * next to the status badges, history and comment icons the detail page had,
+ * and each mutation is a collapsible card with its editor inside. /edit and
+ * /mutation/{id}/edit redirect here.
+ */
 export type LineSubmissionDetailProps = {
     submissionId: string;
     // The JSP serializes the status + audit maps that ZircDashboardController
@@ -59,7 +67,8 @@ function LineSubmissionDetailInner({
         }
     }, [statusPayloadElementId]);
 
-    // Reactive copy so a comment change can refresh the badges in place.
+    // Reactive copy so a save or a comment change can refresh the badges in
+    // place.
     const [payload, setPayload] = React.useState<StatusPayload>(initialPayload);
 
     // Right-panel focus dispatched by FieldHistory icon clicks. Until the
@@ -71,7 +80,8 @@ function LineSubmissionDetailInner({
     );
 
     // Re-pull the server-computed status (incl. the open-comment IN_PROGRESS
-    // overlay + section/overall rollups) without a full page reload. The
+    // overlay + section/overall rollups) without a full page reload. Called
+    // after every autosave and after a comment is posted or closed. The
     // status endpoint lives under /action/zirc (not the /action/api/zirc api
     // client base), so we fetch it directly.
     const refetchStatus = React.useCallback(() => {
@@ -93,48 +103,50 @@ function LineSubmissionDetailInner({
     const submission = query.data ?? null;
     return (
         <StatusRefetchContext.Provider value={refetchStatus}>
-            <HistoryFocusContext.Provider value={historyCtx}>
-                {submission && (
-                    <>
-                        <LineSubmissionHeader submission={submission}/>
-                        <StatusOverviewBar
-                            submission={submission}
-                            sectionStatus={payload.sectionStatus}
-                        />
-                    </>
-                )}
-                {/* Two-column layout: schema-driven form on the left/center,
+            <StatusPayloadContext.Provider value={payload}>
+                <HistoryFocusContext.Provider value={historyCtx}>
+                    {submission && (
+                        <>
+                            <LineSubmissionHeader submission={submission}/>
+                            <StatusOverviewBar
+                                submission={submission}
+                                sectionStatus={payload.sectionStatus}
+                            />
+                        </>
+                    )}
+                    {/* Two-column layout: the editable form on the left/center,
                     Change History panel pinned to the right. The right column
                     is fixed-width; the left column flexes to fill the rest so
                     the existing renderers don't reflow. */}
-                <div className='d-flex' style={{ gap: '1rem', alignItems: 'flex-start' }}>
-                    <div style={{ flex: '1 1 auto', minWidth: 0 }}>
-                        <SchemaForm
-                            submission={submission}
-                            mode='view'
-                            fieldStatus={payload.fieldStatus}
-                            sectionStatus={payload.sectionStatus}
-                            mutationFieldStatus={payload.mutationFieldStatus}
-                            mutationSectionStatus={payload.mutationSectionStatus}
-                            mutationOverallStatus={payload.mutationOverallStatus}
-                            geneFieldStatus={payload.geneFieldStatus}
-                            geneSectionStatus={payload.geneSectionStatus}
-                            lesionFieldStatus={payload.lesionFieldStatus}
-                            lesionSectionStatus={payload.lesionSectionStatus}
-                            assayFieldStatus={payload.assayFieldStatus}
-                            assaySectionStatus={payload.assaySectionStatus}
-                            phenotypeFieldStatus={payload.phenotypeFieldStatus}
-                            phenotypeSectionStatus={payload.phenotypeSectionStatus}
-                        />
+                    <div className='d-flex' style={{ gap: '1rem', alignItems: 'flex-start' }}>
+                        <div style={{ flex: '1 1 auto', minWidth: 0 }}>
+                            <SchemaForm
+                                submission={submission}
+                                mode='edit'
+                                fieldStatus={payload.fieldStatus}
+                                sectionStatus={payload.sectionStatus}
+                                mutationFieldStatus={payload.mutationFieldStatus}
+                                mutationSectionStatus={payload.mutationSectionStatus}
+                                mutationOverallStatus={payload.mutationOverallStatus}
+                                geneFieldStatus={payload.geneFieldStatus}
+                                geneSectionStatus={payload.geneSectionStatus}
+                                lesionFieldStatus={payload.lesionFieldStatus}
+                                lesionSectionStatus={payload.lesionSectionStatus}
+                                assayFieldStatus={payload.assayFieldStatus}
+                                assaySectionStatus={payload.assaySectionStatus}
+                                phenotypeFieldStatus={payload.phenotypeFieldStatus}
+                                phenotypeSectionStatus={payload.phenotypeSectionStatus}
+                            />
+                        </div>
+                        <div style={{ flex: '0 0 22rem' }}>
+                            <ChangeHistoryPanel
+                                submissionId={submissionId}
+                                fieldSectionMap={payload.fieldSectionMap ?? {}}
+                            />
+                        </div>
                     </div>
-                    <div style={{ flex: '0 0 22rem' }}>
-                        <ChangeHistoryPanel
-                            submissionId={submissionId}
-                            fieldSectionMap={payload.fieldSectionMap ?? {}}
-                        />
-                    </div>
-                </div>
-            </HistoryFocusContext.Provider>
+                </HistoryFocusContext.Provider>
+            </StatusPayloadContext.Provider>
         </StatusRefetchContext.Provider>
     );
 }

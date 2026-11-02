@@ -143,6 +143,10 @@ public final class ZircMutationFormSchema {
         properties.put("mutationType",               StringSchema.of("Mutation Type", 255));
         properties.put("mutationDiscoverer",         StringSchema.of("Discoverer", 255));
         properties.put("mutationInstitution",        StringSchema.of("Institution", 255));
+        // ZFIN-10543: the existing feature's lab of origin + institution, shown in
+        // place of mutationInstitution when alleleInZfin is true. Server-derived
+        // (MutationDTO.alleleLabInstitution), never written by the form.
+        properties.put("alleleLabInstitution",       StringSchema.readOnly("Institution"));
         // Mutagenesis
         properties.put("mutagenesisStage",           StringSchema.of("Mutagenesis Stage", 255));
         properties.put("mutagenesisProtocol",        StringSchema.of("Mutagenesis Protocol", 255));
@@ -227,8 +231,18 @@ public final class ZircMutationFormSchema {
                         new Control("#/properties/mutationDiscoverer",
                                 Options.of().withPlaceholder("Person who first identified the mutation"),
                                 null),
+                        // Free text unless the allele is an existing ZFIN record;
+                        // then the record's own lab and institution are shown
+                        // instead (ZFIN-10543). The free text stays stored either
+                        // way, so switching back to "No" brings it back.
                         new Control("#/properties/mutationInstitution",
-                                Options.of().withPlaceholder("Lab / institution"), null)
+                                Options.of().withPlaceholder("Lab / institution"), hideIfInZfin),
+                        new Control("#/properties/alleleLabInstitution",
+                                Options.of()
+                                        .withHelpText("Lab of origin and institution of the selected ZFIN allele.")
+                                        .withComments(false)
+                                        .withManagesOwnPersistence(true),
+                                showIfInZfin)
                 )),
                 Group.of("Mutagenesis", List.of(
                         new Control("#/properties/mutagenesisStage",
@@ -281,7 +295,7 @@ public final class ZircMutationFormSchema {
                         null),
                 // Lesions: same inline-expand pattern; the per-lesion
                 // form has the lesion-type matrix.
-                new Group("Lesions",
+                new Group("Variants",
                         List.of(new Control("#/properties/lesions",
                                 Options.of().withWidget("lesionsList").withManagesOwnPersistence(true), null)),
                         Options.of().withLayout("plain"),
@@ -436,7 +450,7 @@ public final class ZircMutationFormSchema {
         itemProps.put("id",         NumberSchema.of());
         itemProps.put("sortOrder",  NumberSchema.of());
         itemProps.put("lesionType", StringSchema.nullable());
-        return new ArraySchema("Lesions", ObjectSchema.of(itemProps),
+        return new ArraySchema("Variants", ObjectSchema.of(itemProps),
                 10, null);
     }
 

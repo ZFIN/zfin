@@ -17,6 +17,11 @@ export type ViewConfig = {
     /** When set, SectionRenderer prefixes its DOM id with this string + '-'. */
     idPrefix: string;
     /**
+     * When true, labelled sections get an expand/collapse toggle on their
+     * heading (the sections inside a mutation card: Genes, Lesions, ...).
+     */
+    collapsibleSections: boolean;
+    /**
      * recId for the comments + audit APIs. Submission level: the ZDB-ID
      * directly. Nested aggregates: ZIRC-MUT-{id}, ZIRC-GENE-{id}, etc.
      * Renderers pass this + the leaf-field name to {@code FieldComments}
@@ -40,6 +45,7 @@ export function viewConfigFrom(config: unknown): ViewConfig {
         fieldStatus: cfg.fieldStatus ?? {},
         sectionStatus: cfg.sectionStatus ?? {},
         idPrefix: cfg.idPrefix ?? '',
+        collapsibleSections: !!cfg.collapsibleSections,
         recId: cfg.recId ?? null,
         displayLabels: cfg.displayLabels ?? {},
     };

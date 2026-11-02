@@ -84,6 +84,18 @@ public final class ZircFormSchema {
         additionalInfo.put("unreportedFeaturesDetails", StringSchema.of("Unreported Features Details", 5000));
         additionalInfo.put("husbandryInfo",             StringSchema.of("Husbandry Info", 5000));
         additionalInfo.put("additionalInfo",            StringSchema.of("Additional Info", 5000));
+        // Veterinarian / Technical Transfer contacts. Kept flat under
+        // additionalInfo with prefixed keys (not nested name/email/... objects):
+        // row ids, field status and field history are keyed by the leaf name,
+        // so a bare "name" would collide with the line's own /name.
+        additionalInfo.put("veterinarianName",          StringSchema.of("Name", 255));
+        additionalInfo.put("veterinarianEmail",         StringSchema.of("Email", 255));
+        additionalInfo.put("veterinarianAddress",       StringSchema.of("Address", 2000));
+        additionalInfo.put("veterinarianPhone",         StringSchema.of("Phone", 255));
+        additionalInfo.put("technicalTransferName",     StringSchema.of("Name", 255));
+        additionalInfo.put("technicalTransferEmail",    StringSchema.of("Email", 255));
+        additionalInfo.put("technicalTransferAddress",  StringSchema.of("Address", 2000));
+        additionalInfo.put("technicalTransferPhone",    StringSchema.of("Phone", 255));
 
         Map<String, JsonSchema> properties = new LinkedHashMap<>();
         properties.put("name",            StringSchema.of("Line Name", 255));
@@ -168,9 +180,27 @@ public final class ZircFormSchema {
                                         .withPlaceholder("Husbandry-specific information, e.g. special feeding regime"),
                                 null),
                         new Control("#/properties/additionalInfo/properties/additionalInfo",
-                                Options.of().withMulti(true), null)
+                                Options.of().withMulti(true), null),
+                        contactSubsection("Veterinarian", "veterinarian"),
+                        contactSubsection("Technical Transfer", "technicalTransfer")
                 ))
         ));
+    }
+
+    /**
+     * Name / Email / Address / Phone rows under a subheading inside the
+     * Additional Info section. The "subsection" layout renders as rows of the
+     * parent section's table rather than a section of its own.
+     */
+    private static Group contactSubsection(String label, String keyPrefix) {
+        String base = "#/properties/additionalInfo/properties/" + keyPrefix;
+        return new Group(label, List.of(
+                Control.of(base + "Name"),
+                Control.of(base + "Email"),
+                new Control(base + "Address", Options.of().withMulti(true), null),
+                Control.of(base + "Phone")),
+                Options.of().withLayout("subsection"),
+                null);
     }
 
     /**
@@ -195,7 +225,15 @@ public final class ZircFormSchema {
             field("/additionalInfo/unreportedFeaturesDetails", LineSubmission::getUnreportedFeaturesDetails,
                                                                                                 (s, v) -> s.setUnreportedFeaturesDetails(text(v))),
             field("/additionalInfo/husbandryInfo",  LineSubmission::getHusbandryInfo,           (s, v) -> s.setHusbandryInfo(text(v))),
-            field("/additionalInfo/additionalInfo", LineSubmission::getAdditionalInfo,          (s, v) -> s.setAdditionalInfo(text(v)))
+            field("/additionalInfo/additionalInfo", LineSubmission::getAdditionalInfo,          (s, v) -> s.setAdditionalInfo(text(v))),
+            field("/additionalInfo/veterinarianName",         LineSubmission::getVeterinarianName,         (s, v) -> s.setVeterinarianName(text(v))),
+            field("/additionalInfo/veterinarianEmail",        LineSubmission::getVeterinarianEmail,        (s, v) -> s.setVeterinarianEmail(text(v))),
+            field("/additionalInfo/veterinarianAddress",      LineSubmission::getVeterinarianAddress,      (s, v) -> s.setVeterinarianAddress(text(v))),
+            field("/additionalInfo/veterinarianPhone",        LineSubmission::getVeterinarianPhone,        (s, v) -> s.setVeterinarianPhone(text(v))),
+            field("/additionalInfo/technicalTransferName",    LineSubmission::getTechnicalTransferName,    (s, v) -> s.setTechnicalTransferName(text(v))),
+            field("/additionalInfo/technicalTransferEmail",   LineSubmission::getTechnicalTransferEmail,   (s, v) -> s.setTechnicalTransferEmail(text(v))),
+            field("/additionalInfo/technicalTransferAddress", LineSubmission::getTechnicalTransferAddress, (s, v) -> s.setTechnicalTransferAddress(text(v))),
+            field("/additionalInfo/technicalTransferPhone",   LineSubmission::getTechnicalTransferPhone,   (s, v) -> s.setTechnicalTransferPhone(text(v)))
     );
 
     // ─── schema builders ────────────────────────────────────────────────────

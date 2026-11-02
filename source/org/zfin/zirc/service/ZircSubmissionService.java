@@ -859,7 +859,7 @@ public class ZircSubmissionService {
     public Lesion getRequiredLesionById(Long lesionId) {
         Lesion lesion = repository.getLesion(lesionId);
         if (lesion == null) {
-            throw new ZircEntityNotFoundException("Lesion " + lesionId + " not found");
+            throw new ZircEntityNotFoundException("Variant " + lesionId + " not found");
         }
         return lesion;
     }
@@ -869,7 +869,7 @@ public class ZircSubmissionService {
         int existing = mutation.getLesions() == null ? 0 : mutation.getLesions().size();
         if (existing >= MAX_LESIONS_PER_MUTATION) {
             throw new IllegalArgumentException(
-                    "Maximum " + MAX_LESIONS_PER_MUTATION + " lesions per mutation.");
+                    "Maximum " + MAX_LESIONS_PER_MUTATION + " variants per mutation.");
         }
         HibernateUtil.createTransaction();
         Lesion lesion = new Lesion();

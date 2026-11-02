@@ -1,5 +1,10 @@
 <%@ include file="/WEB-INF/jsp-include/tag-import.jsp" %>
 
+<%-- New line submissions only. Existing ones are edited on the submission page
+     (line-submission-detail-react.jsp); /line-submission/{id}/edit redirects
+     there (ZFIN-10543). After the first save creates the row, the URL switches
+     to that page's. --%>
+
 <c:set var="OVERVIEW"           value="Overview"/>
 <c:set var="MUTATIONS"          value="Mutations"/>
 <c:set var="LINKED_FEATURES"    value="Linked Features"/>
@@ -8,45 +13,26 @@
 
 <c:set var="sections" value="${[OVERVIEW, MUTATIONS, LINKED_FEATURES, BACKGROUND, ADDITIONAL]}"/>
 
-<c:set var="isNewSubmission" value="${empty submission.zdbID}"/>
-<c:set var="entityLabel" value="${not empty submission.name
-    ? submission.name
-    : (isNewSubmission ? 'New Line Submission' : submission.zdbID)}"/>
-<c:choose>
-    <c:when test="${isNewSubmission}"><c:set var="pageTitle" value="New Line Submission"/></c:when>
-    <c:otherwise><c:set var="pageTitle" value="Edit Line Submission: ${entityLabel}"/></c:otherwise>
-</c:choose>
+<z:dataPage sections="${sections}" title="New Line Submission">
 
-<z:dataPage sections="${sections}" title="${pageTitle}">
-
-    <jsp:attribute name="entityName">${entityLabel}</jsp:attribute>
+    <jsp:attribute name="entityName">New Line Submission</jsp:attribute>
 
     <jsp:attribute name="pageBar">
         <nav class="navbar navbar-light admin text-center border-bottom">
             <a class="col-sm" href="/action/zirc/dashboard">Dashboard</a>
-            <c:choose>
-                <c:when test="${isNewSubmission}">
-                    <span class="col-sm">Detail</span>
-                </c:when>
-                <c:otherwise>
-                    <a class="col-sm" href="/action/zirc/line-submission/${submission.zdbID}">Detail</a>
-                </c:otherwise>
-            </c:choose>
-            <span class="col-sm">Edit</span>
+            <span class="col-sm">New Submission</span>
         </nav>
     </jsp:attribute>
 
     <jsp:body>
 
-        <div class="small text-uppercase text-muted">${isNewSubmission ? 'New Line Submission' : 'Edit Line Submission'}</div>
-        <h1>${entityLabel}</h1>
+        <div class="small text-uppercase text-muted">New Line Submission</div>
+        <h1>New Line Submission</h1>
 
         <%-- Single mount; the React component renders the section <section> blocks
-             with anchor IDs that match the dataPage side nav. data-submission-id
-             is empty for /new — the component creates the row on first save. --%>
-        <div class="__react-root" id="LineSubmissionEdit"
-             data-submission-id="${not empty submission.zdbID ? submission.zdbID : ''}"></div>
-
+             with anchor IDs that match the dataPage side nav. The component
+             creates the row on first save. --%>
+        <div class="__react-root" id="LineSubmissionEdit" data-submission-id=""></div>
 
     </jsp:body>
 </z:dataPage>

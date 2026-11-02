@@ -19,6 +19,14 @@ export interface LineSubmissionDTO {
     unreportedFeaturesDetails: string | null;
     husbandryInfo: string | null;
     additionalInfo: string | null;
+    veterinarianName: string | null;
+    veterinarianEmail: string | null;
+    veterinarianAddress: string | null;
+    veterinarianPhone: string | null;
+    technicalTransferName: string | null;
+    technicalTransferEmail: string | null;
+    technicalTransferAddress: string | null;
+    technicalTransferPhone: string | null;
     reasons: string[];
     reasonsOther: string | null;
     mutations: MutationDTO[];
@@ -36,6 +44,7 @@ export interface MutationDTO {
     sortOrder: number;
     alleleDesignation: string | null;
     alleleName: string | null;
+    alleleLabInstitution: string | null;
     alleleInZfin: boolean | null;
     mutationType: string | null;
     mutationDiscoverer: string | null;
