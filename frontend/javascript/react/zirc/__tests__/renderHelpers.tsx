@@ -6,6 +6,12 @@ import type { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
 import { fieldRenderers } from '../schemaForm/fieldRenderers';
 import { VocabularyTermDTO } from '../api/types';
 
+// global-jsdom installs jsdom's File and Blob but leaves Node's own FormData in
+// place, and Node's FormData doesn't recognise a jsdom File: append() stores it
+// as the string "[object File]". Use jsdom's FormData so an uploaded file
+// reaches the request as a File, as it does in a browser.
+globalThis.FormData = window.FormData;
+
 /**
  * Test harness for the schema-driven renderers.
  *
