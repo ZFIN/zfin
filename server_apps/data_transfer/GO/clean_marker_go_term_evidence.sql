@@ -131,58 +131,45 @@ DELETE FROM marker_go_term_evidence WHERE mrkrgoev_zdb_id IN (SELECT old_mrkrgoe
 
 drop table if exists tmp_mgte_duplicates;
 
+-- compute the hash at creation time and keep only rows whose hash appears more than once
 create temp table tmp_mgte_duplicates as
-select '' as _hash, * from marker_go_term_evidence join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id;
+select * from (
+                  select h.*,
+                         count(*)             over (partition by _hash) as _dupe_count,
+                         min(mrkrgoev_zdb_id) over (partition by _hash) as _keep_id
+                  from (
+                           select md5(row(
+                               mrkrgoev_mrkr_zdb_id, mrkrgoev_source_zdb_id, mrkrgoev_evidence_code,
+                               mrkrgoev_notes, mrkrgoev_contributed_by, mrkrgoev_modified_by,
+                               mrkrgoev_gflag_name, mrkrgoev_term_zdb_id, mrkrgoev_annotation_organization,
+                               mrkrgoev_annotation_organization_created_by, mrkrgoev_external_load_date,
+                               mrkrgoev_protein_dblink_zdb_id, mrkrgoev_relation_term_zdb_id,
+                               mrkrgoev_relation_qualifier, mrkrgoev_tag_submit_format,
+                               mrkrgoev_protein_accession, infgrmem_inferred_from, infgrmem_notes)::text) as _hash,
+                                  *
+                           from marker_go_term_evidence
+                                    join inference_group_member on mrkrgoev_zdb_id = infgrmem_mrkrgoev_zdb_id
+                       ) h
+              ) d
+where _dupe_count > 1;
 
-update tmp_mgte_duplicates set _hash =
-                                   md5(row(
-                                       mrkrgoev_mrkr_zdb_id,
-                                       mrkrgoev_source_zdb_id,
-                                       mrkrgoev_evidence_code,
-                                       mrkrgoev_notes,
-                                       mrkrgoev_contributed_by,
-                                       mrkrgoev_modified_by,
-                                       mrkrgoev_gflag_name,
-                                       mrkrgoev_term_zdb_id,
-                                       mrkrgoev_annotation_organization,
-                                       mrkrgoev_annotation_organization_created_by,
-                                       mrkrgoev_external_load_date,
-                                       mrkrgoev_protein_dblink_zdb_id,
-                                       mrkrgoev_relation_term_zdb_id,
-                                       mrkrgoev_relation_qualifier,
-                                       mrkrgoev_tag_submit_format,
-                                       mrkrgoev_protein_accession,
-                                       infgrmem_inferred_from,
-                                       infgrmem_notes)::text);
+-- the slimmed-down table: just the IDs to delete
+create temp table tmp_mgte_to_delete as
+select distinct mrkrgoev_zdb_id
+from tmp_mgte_duplicates
+where mrkrgoev_zdb_id <> _keep_id;
 
 
-delete from tmp_mgte_duplicates where _hash not in (
-    select _hash from tmp_mgte_duplicates group by _hash having count(*) > 1
-);
+alter table tmp_mgte_to_delete add primary key (mrkrgoev_zdb_id);
+analyze tmp_mgte_to_delete;
 
--- Now we have a table of only duplicates.  We need to delete all but one of each set of duplicates.
--- We can keep the row with the min value for mrkrgoev_zdb_id
--- Let's start with inference_group_member
-delete from inference_group_member
-    where infgrmem_mrkrgoev_zdb_id in (
-        select mrkrgoev_zdb_id from tmp_mgte_duplicates tmd
-        where mrkrgoev_zdb_id not in (
-            select min(mrkrgoev_zdb_id) from tmp_mgte_duplicates tmd2
-            where tmd._hash = tmd2._hash
-            group by _hash
-        )
-    );
+delete from inference_group_member igm
+    using tmp_mgte_to_delete d
+where igm.infgrmem_mrkrgoev_zdb_id = d.mrkrgoev_zdb_id;
 
--- Now delete from marker_go_term_evidence (this time we can use the ID instead of the compound key)
-delete from marker_go_term_evidence
-where mrkrgoev_zdb_id in (
-    select mrkrgoev_zdb_id from tmp_mgte_duplicates tmd
-    where mrkrgoev_zdb_id not in (
-        select min(mrkrgoev_zdb_id) from tmp_mgte_duplicates tmd2
-        where tmd._hash = tmd2._hash
-        group by _hash
-    )
-);
+delete from marker_go_term_evidence m
+    using tmp_mgte_to_delete d
+where m.mrkrgoev_zdb_id = d.mrkrgoev_zdb_id;
 
 -- Export the results to CSV files for record-keeping.
 --
