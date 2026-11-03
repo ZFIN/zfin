@@ -24,6 +24,7 @@ import org.zfin.profile.repository.ProfileRepository;
 import org.zfin.profile.service.ProfileService;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
+import org.zfin.publication.PublicationFileSource;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.publication.PublicationTrackingStatus;
 import org.zfin.publication.PublicationType;
@@ -120,7 +121,9 @@ public class SubmissionFormController {
             publicationRepository.addPublicationFile(
                     publication,
                     publicationRepository.getPublicationFileTypeByName(PublicationFileType.Name.OTHER),
-                    formBean.getDataFile());
+                    formBean.getDataFile(),
+                    PublicationFileSource.ZEBRASHARE_SUBMISSION,
+                    ProfileService.getCurrentSecurityUser());
         } catch (IOException  e) {
             LOG.error(e);
             return "zebrashare/new-submission";

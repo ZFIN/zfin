@@ -1,9 +1,23 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Look for files that are associated with publication but have zero file size on the server (ie. empty files).</description>
+    <description>Report problems with publication files: empty files, publications with several Original Articles, and the same file recorded more than once. Fix flags are off by default; each repairs one specific case and logs it to the updates table.</description>
     <keepDependencies>false</keepDependencies>
     <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_EMPTY_SUPERSEDED_ORIGINAL</name>
+                    <description>Delete an empty Original Article row when the same publication has a non-empty Original Article.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_EMPTY_PROMOTE_ZDBID_PDF</name>
+                    <description>Delete an empty Original Article row when the publication has no non-empty Original Article but has a non-empty ZDB-PUB-xxxx.pdf of another type, and promote that file to Original Article.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
         <jenkins.model.BuildDiscarderProperty>
             <strategy class="hudson.tasks.LogRotator">
                 <daysToKeep>-1</daysToKeep>
@@ -29,13 +43,16 @@
             <command><![CDATA[
 export ARTIFACTS_DIR=`pwd`
 echo "ARTIFACTS_DIR: $ARTIFACTS_DIR"
-cd $SOURCEROOT && gradle findEmptyPublicationFilesTask
+TASK_ARGS=""
+if [ "$FIX_EMPTY_SUPERSEDED_ORIGINAL" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-empty-superseded-original"; fi
+if [ "$FIX_EMPTY_PROMOTE_ZDBID_PDF" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-empty-promote-zdbid-pdf"; fi
+cd $SOURCEROOT && gradle findPublicationFileIssuesTask -PtaskArgs="$TASK_ARGS"
             ]]></command>
         </hudson.tasks.Shell>
     </builders>
     <publishers>
         <hudson.tasks.ArtifactArchiver>
-            <artifacts>empty_publication_files.csv</artifacts>
+            <artifacts>publication_file_issues.csv,fixed_publication_files.csv</artifacts>
             <latestOnly>false</latestOnly>
             <allowEmptyArchive>true</allowEmptyArchive>
         </hudson.tasks.ArtifactArchiver>
@@ -45,8 +62,8 @@ cd $SOURCEROOT && gradle findEmptyPublicationFilesTask
                 <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
                     <email>
                         <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
-                        <subject>Found empty files</subject>
-                        <body>Empty files found from scan for publication files without any contents.</body>
+                        <subject>Publication file issues found</subject>
+                        <body>The publication file scan found issues (empty files, multiple Original Articles, or duplicate file rows). See publication_file_issues.csv.</body>
                         <sendToDevelopers>false</sendToDevelopers>
                         <sendToRequester>false</sendToRequester>
                         <includeCulprits>false</includeCulprits>

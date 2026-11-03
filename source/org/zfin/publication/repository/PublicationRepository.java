@@ -380,7 +380,10 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationFile getOriginalArticle(Publication publication);
 
-    PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file) throws IOException;
+    void logPublicationFileUpdate(Publication publication, Person person, String comment, String oldValue, String newValue);
+
+    PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file,
+                                       PublicationFileSource source, Person person) throws IOException;
 
     CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto);
 

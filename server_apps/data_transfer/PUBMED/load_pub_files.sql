@@ -18,15 +18,24 @@ delete from tmp_files_to_load
                       where pf_pub_zdb_id = pub_zdb_id
                       and pf_original_file_name = filename_no_path);
 
-insert into publication_file (pf_pub_zdb_id,
-            pf_file_name,
-            pf_file_type_id,
-            pf_original_file_name)
- select pub_zdb_id,
-        filename,
-        3,
-        filename_no_path
-   from tmp_files_to_load;
+with added as (
+  insert into publication_file (pf_pub_zdb_id,
+              pf_file_name,
+              pf_file_type_id,
+              pf_original_file_name,
+              pf_source)
+   select pub_zdb_id,
+          filename,
+          3,
+          filename_no_path,
+          'PMC_LOADER'
+     from tmp_files_to_load
+  returning pf_pub_zdb_id, pf_file_name
+)
+insert into updates (rec_id, field_name, new_value, comments, upd_when)
+ select pf_pub_zdb_id, 'publication file', pf_file_name || ' (Supplemental Material)',
+        'Add file (PMC loader)', now()
+   from added;
 
 --rollback work ;
 
