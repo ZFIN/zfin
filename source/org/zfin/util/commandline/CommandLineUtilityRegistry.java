@@ -59,6 +59,15 @@ public class CommandLineUtilityRegistry {
                        <user> may be a login name, e-mail, or ZDB person ID""",
                 true);
 
+        // Prune old Solr replication snapshots. Pure filesystem work (no database), and the
+        // replacement for the cleanup-solr-backup-files ant target dropped by the Solr 9 upgrade.
+        register("solr-cleanup-snapshots",
+                "org.zfin.solr.admin.SolrSnapshotCleanup",
+                "Delete Solr snapshots older than the retention window, keeping the newest few",
+                """
+                solr-cleanup-snapshots [--location <dir>] [--keep-days <n>] [--keep-min <n>] [--dry-run]
+                       Defaults to $SOLR_UNLOADS_PATH/$INSTANCE, 14 days, keeping the 2 newest.""");
+
         // Add more utilities as they are discovered/created.
     }
 
@@ -94,7 +103,7 @@ public class CommandLineUtilityRegistry {
         System.out.println();
 
         UTILITIES.values().forEach(util -> {
-            System.out.printf("  %-20s %s\n", util.name, util.description);
+            System.out.printf("  %-24s %s\n", util.name, util.description);
         });
 
         System.out.println();
