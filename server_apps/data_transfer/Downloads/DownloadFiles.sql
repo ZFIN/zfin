@@ -1093,19 +1093,6 @@ order by 1;
 \copy (select * from interpro) to './downloadsStaging/interpro.txt' with delimiter as '	' null as '';
 drop view interpro;
 
---! echo "'./downloadsStaging/pfam.txt' with delimiter as '	' null as '';"
-create view pfam as
-select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
- from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
- where mrkr_zdb_id = dblink_linked_recid
-  and fdbcont_fdb_db_id = fdb_db_pk_id
-  and szm_object_type = mrkr_type
-  and dblink_fdbcont_zdb_id = fdbcont_zdb_id
-  and fdb_db_name = 'Pfam'
-order by 1;
-\copy (select * from pfam) to './downloadsStaging/pfam.txt' with delimiter as '	' null as '';
-drop view pfam;
-
 --! echo "'./downloadsStaging/genpept.txt' with delimiter as '	' null as '';"
 create view genpept as
 select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num from marker, db_link, foreign_db_contains, foreign_db, so_zfin_mapping
