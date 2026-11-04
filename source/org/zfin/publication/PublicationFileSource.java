@@ -6,9 +6,19 @@ package org.zfin.publication;
  */
 public enum PublicationFileSource {
     /** Uploaded by a curator on the publication page. */
-    CURATOR_UPLOAD,
+    CURATOR_UPLOAD("Curator upload"),
     /** Fetched by the PMC Open Access loader (getPDFandImages.groovy). */
-    PMC_LOADER,
+    PMC_LOADER("PMC loader"),
     /** Attached to a ZebraShare submission. */
-    ZEBRASHARE_SUBMISSION
+    ZEBRASHARE_SUBMISSION("ZebraShare submission");
+
+    private final String label;
+
+    PublicationFileSource(String label) {
+        this.label = label;
+    }
+
+    public String getLabel() {
+        return label;
+    }
 }

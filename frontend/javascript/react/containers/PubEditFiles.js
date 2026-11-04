@@ -58,13 +58,14 @@ const PubEditFiles = ({ pubId }) => {
                         <th>File</th>
                         <th>Entered in DB</th>
                         <th>Modified on disk</th>
+                        <th>Added by</th>
                         <th width='75px' />
                     </tr>
                 </thead>
                 <tbody>
                     {!value.results.length === 0 &&
                         <tr>
-                            <td className='text-muted text-center' colSpan='5'>No files yet.</td>
+                            <td className='text-muted text-center' colSpan='6'>No files yet.</td>
                         </tr>
                     }
                     {value.results.map(file => (

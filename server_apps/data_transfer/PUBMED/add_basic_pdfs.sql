@@ -42,6 +42,8 @@ with added as (
    select pub_zdb_id, filename, 1, filename_no_path, 'PMC_LOADER'
     from tmp_pdf_to_load
    where not exists (select 'x' from publication_file where pub_zdb_id = pf_pub_zdb_id and pf_file_name = filename and pf_file_type_id = 1)
+  -- publication_file_pub_file_name_uq: a publication records a stored file once
+  on conflict (pf_pub_zdb_id, pf_file_name) do nothing
   returning pf_pub_zdb_id, pf_file_name
 )
 insert into updates (rec_id, field_name, new_value, comments, upd_when)

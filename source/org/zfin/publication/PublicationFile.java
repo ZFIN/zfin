@@ -63,6 +63,11 @@ public class PublicationFile implements Comparable<PublicationFile> {
     @JsonView(View.Default.class)
     private long size;
 
+    /** For display: the uploading person's name, else the source label, else null. Not persisted. */
+    @Transient
+    @JsonView(View.Default.class)
+    private String addedBy;
+
     @JsonView(View.Default.class)
     public String getFullPath() {
         return ZfinPropertiesEnum.PDF_LOAD + "/" + fileName;

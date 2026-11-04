@@ -5,6 +5,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,6 +18,7 @@ import org.zfin.framework.presentation.InvalidWebRequestException;
 import org.zfin.properties.ZfinPropertiesEnum;
 import org.zfin.publication.Publication;
 import org.zfin.publication.PublicationFile;
+import org.zfin.publication.PublicationFileExistsException;
 import org.zfin.publication.PublicationFileSource;
 import org.zfin.publication.PublicationFileType;
 import org.zfin.profile.service.ProfileService;
@@ -24,6 +28,7 @@ import java.io.File;
 import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/publication")
@@ -51,6 +56,11 @@ public class PublicationFileController {
             file.setSize(fileOnDisk.length());
             file.setDateEntered(pf.getDateEntered());
             file.setModifiedOnDisk(fileOnDisk.exists() ? new java.util.Date(fileOnDisk.lastModified()) : null);
+            if (pf.getPerson() != null && pf.getPerson().getFullName() != null) {
+                file.setAddedBy(pf.getPerson().getFullName());
+            } else if (pf.getSource() != null) {
+                file.setAddedBy(pf.getSource().getLabel());
+            }
             return file;
         }).toList());
         response.setTotal(publication.getFiles().size());
@@ -69,19 +79,28 @@ public class PublicationFileController {
         return response;
     }
 
+    /** 409 so the page can ask whether to replace the existing file and resend the upload with replace=true. */
+    @ExceptionHandler(PublicationFileExistsException.class)
+    public ResponseEntity<Map<String, String>> handleFileExists(PublicationFileExistsException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(Map.of("code", "FILE_EXISTS", "message", e.getMessage()));
+    }
+
     @ResponseBody
     @RequestMapping(value = "/{id}/files", method = RequestMethod.POST)
     @JsonView(View.Default.class)
     public JsonResultResponse<PublicationFile> addPublicationFile(@PathVariable String id,
                                                                   @RequestParam int fileType,
                                                                   @RequestParam MultipartFile file,
+                                                                  @RequestParam(defaultValue = "false") boolean replace,
                                                                   HttpServletRequest request) {
         Publication publication = publicationRepository.getPublication(id);
         PublicationFileType type = publicationRepository.getPublicationFileType(fileType);
 
         try {
             publicationRepository.addPublicationFile(publication, type, file,
-                    PublicationFileSource.CURATOR_UPLOAD, ProfileService.getCurrentSecurityUser());
+                    PublicationFileSource.CURATOR_UPLOAD, ProfileService.getCurrentSecurityUser(), replace);
         } catch (IOException e) {
             LOG.error("Error processing pub file", e);
             throw new InvalidWebRequestException("Error processing file");

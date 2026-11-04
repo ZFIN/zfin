@@ -16,6 +16,7 @@ const PubFileRow = ({ file, onEdit }) => {
             <td><a href={file.fullPath}>{file.originalFileName}</a></td>
             <td className='text-nowrap'>{formatTime(file.dateEntered)}</td>
             <td className='text-nowrap'>{file.modifiedOnDisk ? formatTime(file.modifiedOnDisk) : <span className='text-danger'>missing</span>}</td>
+            <td>{file.addedBy}</td>
             <td><a className='show-on-hover' href='#' onClick={handleEditClick}>Edit</a></td>
         </tr>
     )
@@ -27,6 +28,7 @@ PubFileRow.propTypes = {
         originalFileName: PropTypes.string,
         dateEntered: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
         modifiedOnDisk: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+        addedBy: PropTypes.string,
         type: PropTypes.shape({
             id: PropTypes.number,
             name: PropTypes.string,

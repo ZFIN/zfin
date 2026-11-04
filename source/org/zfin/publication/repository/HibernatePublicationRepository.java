@@ -1763,12 +1763,37 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
     }
 
     public PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file,
-                                              PublicationFileSource source, Person person) throws IOException {
+                                              PublicationFileSource source, Person person,
+                                              boolean replaceExisting) throws IOException {
         Transaction tx = HibernateUtil.createTransaction();
+        PublicationFile existingArticle = type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE
+                ? getOriginalArticle(publication) : null;
+
+        // publication_file_pub_file_name_uq: a publication records a stored file once. A replaced Original
+        // Article is handled below (the page already warns about it); anything else needs confirmation.
+        String storedName = publicationService.getStoredFileName(publication, file.getOriginalFilename(), type);
+        List<PublicationFile> sameFile = HibernateUtil.currentSession()
+                .createQuery("from PublicationFile where publication = :publication and fileName = :fileName", PublicationFile.class)
+                .setParameter("publication", publication)
+                .setParameter("fileName", storedName)
+                .list().stream()
+                .filter(f -> existingArticle == null || f.getId() != existingArticle.getId())
+                .toList();
+        if (!sameFile.isEmpty()) {
+            if (!replaceExisting) {
+                tx.rollback();
+                throw new PublicationFileExistsException(file.getOriginalFilename());
+            }
+            for (PublicationFile old : sameFile) {
+                logPublicationFileUpdate(publication, person, "Replace file", describeFile(old), null);
+                HibernateUtil.currentSession().delete(old);
+            }
+            HibernateUtil.currentSession().flush();
+        }
+
         if (type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
             // if there already is an original article for this pub, we need to delete that
             // record because there can be only one of those.
-            PublicationFile existingArticle = getOriginalArticle(publication);
             if (existingArticle != null) {
                 logPublicationFileUpdate(publication, person, "Replace Original Article",
                         existingArticle.getFileName(), null);

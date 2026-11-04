@@ -30,6 +30,8 @@ with added as (
           filename_no_path,
           'PMC_LOADER'
      from tmp_files_to_load
+  -- publication_file_pub_file_name_uq: a publication records a stored file once
+  on conflict (pf_pub_zdb_id, pf_file_name) do nothing
   returning pf_pub_zdb_id, pf_file_name
 )
 insert into updates (rec_id, field_name, new_value, comments, upd_when)

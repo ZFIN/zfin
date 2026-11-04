@@ -123,7 +123,8 @@ public class SubmissionFormController {
                     publicationRepository.getPublicationFileTypeByName(PublicationFileType.Name.OTHER),
                     formBean.getDataFile(),
                     PublicationFileSource.ZEBRASHARE_SUBMISSION,
-                    ProfileService.getCurrentSecurityUser());
+                    ProfileService.getCurrentSecurityUser(),
+                    false);
         } catch (IOException  e) {
             LOG.error(e);
             return "zebrashare/new-submission";
