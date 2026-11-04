@@ -157,5 +157,27 @@ where gg.sfclg_assembly = 'GRCz11'
         where gg.sfclg_data_zdb_id = g.ma_mrkr_zdb_id
           and g.ma_a_pk_id =3
     )
+  -- ZFIN-10531: GRCz11 is only the fallback for genes on no GRCz12 assembly.
+  and not exists (
+        select * from marker_assembly as g
+        join assembly as a on a.a_pk_id = g.ma_a_pk_id
+        where gg.sfclg_data_zdb_id = g.ma_mrkr_zdb_id
+          and a.a_name like 'GRCz12%'
+    )
 on conflict (ma_mrkr_zdb_id, ma_a_pk_id) do nothing;
+
+-- ZFIN-10531: a gene placed on a GRCz12 assembly shows that, not GRCz11, so drop
+-- the GRCz11 association of any gene that gained a GRCz12 one -- in this run or
+-- earlier (the GFF3 load adds GRCz12tu too).
+\echo remove GRCz11 from genes that are on a GRCz12 assembly
+delete from marker_assembly as ma
+using assembly as a
+where a.a_pk_id = ma.ma_a_pk_id
+  and a.a_name = 'GRCz11'
+  and exists (
+        select * from marker_assembly as z12
+        join assembly as a12 on a12.a_pk_id = z12.ma_a_pk_id
+        where z12.ma_mrkr_zdb_id = ma.ma_mrkr_zdb_id
+          and a12.a_name like 'GRCz12%'
+    );
 
