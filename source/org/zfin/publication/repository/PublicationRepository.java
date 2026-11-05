@@ -380,7 +380,16 @@ public interface PublicationRepository extends PaginationParameter {
 
     PublicationFile getOriginalArticle(Publication publication);
 
-    PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file) throws IOException;
+    void logPublicationFileUpdate(Publication publication, Person person, String comment, String oldValue, String newValue);
+
+    /**
+     * Stores the uploaded file and records it. If the publication already has a file stored under the same
+     * name, throws {@link org.zfin.publication.PublicationFileExistsException} unless replaceExisting is
+     * true, in which case the existing row is deleted (and logged) first.
+     */
+    PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file,
+                                       PublicationFileSource source, Person person,
+                                       boolean replaceExisting) throws IOException;
 
     CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto);
 
