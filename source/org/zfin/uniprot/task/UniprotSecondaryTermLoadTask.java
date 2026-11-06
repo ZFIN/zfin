@@ -354,6 +354,8 @@ public class UniprotSecondaryTermLoadTask extends AbstractScriptWrapper {
         pipeline.setContext(context);
     }
 
+    // TODO-BY: 2027-02-06 remove the interpro2go / ec2go / kw2go logic (these flags, the download and
+    // handler gating, and the related SecondaryTermLoadService code) now that Load-GPAD-GO-Central_m owns GO annotations.
     /**
      * Whether to keep deriving interpro2go / ec2go GO annotations in this load.
      * Env {@code LOAD_INTERPRO2GO_EC2GO}; defaults to true (current behaviour).
