@@ -1,0 +1,31 @@
+# Repository hygiene checks (https://pre-commit.com), run by .github/workflows/hygiene.yml on the files each pull
+# request or push to main changes. To grow the rules, add a hook here, or a setting to .editorconfig.
+#
+# Run locally (core.hooksPath is .githooks, so `pre-commit install` is not used):
+#     pip install pre-commit
+#     pre-commit run --from-ref origin/main --to-ref HEAD     # files changed on this branch
+#     pre-commit run --all-files                              # everything
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files   # large files belong in Git LFS or outside the repo
+        args: [--maxkb=1024, --enforce-all]
+      - id: check-case-conflict       # names that differ only in case break checkouts on macOS
+      - id: check-merge-conflict      # leftover <<<<<<< / >>>>>>> markers
+        args: [--assume-in-merge]
+
+  - repo: https://github.com/editorconfig-checker/editorconfig-checker.python
+    rev: 3.11.1
+    hooks:
+      - id: editorconfig-checker      # the rules in .editorconfig
+        alias: ec
+
+  - repo: local
+    hooks:
+      - id: no-crlf-in-repo
+        name: no file stored with CRLF line endings (whole repo)
+        language: unsupported
+        entry: bash -c 'crlf=$(git ls-files --eol | grep "^i/\(crlf\|mixed\)"); [ -z "$crlf" ] || { echo "$crlf"; exit 1; }'
+        pass_filenames: false
+        always_run: true
