@@ -24,6 +24,9 @@
     dblink+domain refresh and protein matching are NOT part of this and keep running
     regardless of cutover, since DANRE-mod supplies none of it.
   </description>
+  <!-- TODO-BY: 2027-02-06 once Load-GPAD-GO-Central_m has run cleanly in production, strip the *2go logic
+       (interpro2go, ec2go, kw2go handlers, the LOAD_INTERPRO2GO_EC2GO / LOAD_KW2GO flags and these
+       parameters) out of the UniProt secondary term load. See UniprotSecondaryTermLoadTask. -->
   <keepDependencies>false</keepDependencies>
 
   <properties>
@@ -38,14 +41,14 @@
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>LOAD_INTERPRO2GO_EC2GO</name>
-          <description>Keep deriving interpro2go and ec2go GO annotations in this load (default: yes). Uncheck once the unified DANRE-mod GO load supplies them (ZFIN-10344). Since ZFIN-10418 this also gates the EC dblink handlers, because EC dblinks are the input to the ec2go derivation and have no other consumer -- unchecking freezes the EC dblinks along with the annotations. WARNING: unchecking this alone DUPLICATES rather than replaces -- the DANRE-mod load writes the same content under the GOA organization while these rows are owned by UniProt, so the cutover must also purge gafOrganization='UniProt'. Existing rows are left frozen (neither refreshed nor pruned) while unchecked.</description>
-          <defaultValue>true</defaultValue>
+          <description>Keep deriving interpro2go and ec2go GO annotations in this load (default: no -- the unified DANRE-mod GO load, Load-GPAD-GO-Central_m, now supplies them; ZFIN-10344). Check only to temporarily resume the legacy derivation. Since ZFIN-10418 this also gates the EC dblink handlers, because EC dblinks are the input to the ec2go derivation and have no other consumer -- unchecking freezes the EC dblinks along with the annotations. WARNING: unchecking this alone DUPLICATES rather than replaces -- the DANRE-mod load writes the same content under the GOA organization while these rows are owned by UniProt, so the cutover must also purge gafOrganization='UniProt'. Existing rows are left frozen (neither refreshed nor pruned) while unchecked.</description>
+          <defaultValue>false</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>
         <hudson.model.BooleanParameterDefinition>
           <name>LOAD_KW2GO</name>
-          <description>Keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load (default: yes). kw2go has no successor in either DANRE file -- GO retired GO_REF:0000004 -- and is being dropped at cutover: uncheck this together with enabling Load-GPAD-GO-Central_m and its RUN_KW2GO_PURGE.</description>
-          <defaultValue>true</defaultValue>
+          <description>Keep deriving UniProtKB-Keyword (kw2go) GO annotations in this load (default: no). kw2go has no successor in either DANRE file -- GO retired GO_REF:0000004 -- and is dropped at cutover, together with enabling Load-GPAD-GO-Central_m and its RUN_KW2GO_PURGE.</description>
+          <defaultValue>false</defaultValue>
           <trim>true</trim>
         </hudson.model.BooleanParameterDefinition>
       </parameterDefinitions>
