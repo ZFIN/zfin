@@ -377,7 +377,8 @@ public final class SolrAdminClient {
     /**
      * Trigger an async replication backup and poll {@code details.backup}
      * until it reports success/failed for this snapshot. The snapshot lands at
-     * {@code <location>/snapshot.<name>/}; {@code location} must be under a
+     * {@code <location>/snapshot.<name>/}, which is then packed into
+     * {@code snapshot.<name>.tar.gz} (directory removed); {@code location} must be under a
      * path Solr is allowed to write to (the {@code solr.allowPaths} sysprop).
      */
     public void backup(String location, String name) throws Exception {
@@ -393,6 +394,42 @@ public final class SolrAdminClient {
         // snapshotName is the bare NAME (no prefix); pass the on-disk dir so the poll can fail fast if Solr never creates it.
         awaitSnapshot("details", new String[]{"details", "backup"}, name, "backup",
             location, name, new File(location, "snapshot." + name));
+        archiveSnapshot(new File(location), name);
+    }
+
+    /**
+     * Pack {@code <location>/snapshot.<name>/} into {@code snapshot.<name>.tar.gz}
+     * (entries rooted at {@code snapshot.<name>/}), written under a temp name and
+     * renamed so a partial archive is never mistaken for a snapshot; then remove
+     * the directory.
+     */
+    private static void archiveSnapshot(File location, String name) throws Exception {
+        String dirName = "snapshot." + name;
+        File tmp = new File(location, dirName + ".tar.gz.tmp");
+        File archive = new File(location, dirName + ".tar.gz");
+        runTar(location, "-czf", tmp.getName(), dirName);
+        java.nio.file.Files.move(tmp.toPath(), archive.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+        deleteRecursively(new File(location, dirName));
+        logger.info("snapshot archived: {} ({})", archive, humanSize(archive.length()));
+    }
+
+    private static void runTar(File workDir, String... args) throws Exception {
+        java.util.List<String> cmd = new java.util.ArrayList<>();
+        cmd.add("tar");
+        cmd.addAll(java.util.Arrays.asList(args));
+        Process p = new ProcessBuilder(cmd).directory(workDir).redirectErrorStream(true).start();
+        String out = new String(p.getInputStream().readAllBytes());
+        if (p.waitFor() != 0) {
+            throw new RuntimeException("command failed: " + String.join(" ", cmd) + "\n" + out);
+        }
+    }
+
+    private static void deleteRecursively(File f) {
+        File[] kids = f.listFiles();
+        if (kids != null) {
+            for (File k : kids) deleteRecursively(k);
+        }
+        f.delete();
     }
 
     /**
@@ -402,6 +439,25 @@ public final class SolrAdminClient {
      */
     public void restore(String location, String name) throws Exception {
         name = stripSnapshotPrefix(name);
+        // Snapshots are stored as snapshot.<name>.tar.gz; Solr needs the directory,
+        // so unpack it for the restore and clean it up afterwards. A pre-existing
+        // directory (legacy snapshot) is used as-is and left alone.
+        File dir = new File(location, "snapshot." + name);
+        File archive = new File(location, "snapshot." + name + ".tar.gz");
+        boolean extracted = false;
+        if (!dir.isDirectory() && archive.isFile()) {
+            logger.info("extracting {}", archive);
+            runTar(new File(location), "-xzf", archive.getName());
+            extracted = true;
+        }
+        try {
+            restoreFromDir(location, name);
+        } finally {
+            if (extracted) deleteRecursively(dir);
+        }
+    }
+
+    private void restoreFromDir(String location, String name) throws Exception {
         get(new URIBuilder(coreBaseUrl + "replication")
             .addParameter("command", "restore")
             .addParameter("location", location)
