@@ -694,12 +694,13 @@ task getLatestSolrUnload() {
         // wrong format" vs "directory empty / missing entirely".
         def cmd = "ssh ${env['SSH_USER']}@${env['SSH_HOST']} ls -1 ${remoteDir}/ 2>/dev/null"
         def entries = cmd.execute().text.trim().tokenize('\n')
-        def snapshots = entries.findAll { it.startsWith('snapshot.') }
+        // Snapshots are snapshot.<ts>.tar.gz archives; ignore .tmp partials and any legacy dirs.
+        def snapshots = entries.findAll { it.startsWith('snapshot.') && it.endsWith('.tar.gz') }
         def legacy    = entries - snapshots
         if (!snapshots) {
             if (legacy) {
                 throw new GradleException(
-                    "no snapshot.* dirs at ${remoteDir} on ${env['SSH_HOST']}, but ${legacy.size()} " +
+                    "no snapshot.*.tar.gz files at ${remoteDir} on ${env['SSH_HOST']}, but ${legacy.size()} " +
                     "non-snapshot dir(s) are present (e.g. ${legacy[0]}). The backup format changed " +
                     "in ZFIN-10171 — the legacy full-SOLR_HOME dumps under this path can no longer be " +
                     "restored. Cutover: run Index-Faceted-Search-Step-2-Solr under Solr 9 first to " +
@@ -775,7 +776,7 @@ task getLatestPostgresFilesTrunk() {
 
 // Restore the most recent snapshot.<NAME> dir from the local solrunloadspath
 // into the running Solr container via /replication?command=restore. Pass
-// -DsolrDump=<path/to/snapshot.NAME> to restore that exact snapshot dir from
+// -DsolrDump=<path/to/snapshot.NAME.tar.gz> to restore that exact snapshot dir from
 // anywhere instead (mirrors loaddb's -DB=<dump>).
 task getLatestSolrIndex() {
     doLast {
@@ -794,19 +795,19 @@ task getLatestSolrIndex() {
             //`location`) and the snapshot name; the scan below is skipped.
             def dumpDir = new File(System.getProperty("solrDump"))
             location = dumpDir.parent
-            selectedName = dumpDir.name.replaceFirst(/^snapshot\./, '')
+            selectedName = dumpDir.name.replaceFirst(/^snapshot\./, '').replaceFirst(/\.tar\.gz$/, '')
             println "Restoring Solr ${dumpDir.name} from ${location}"
         } else {
             def baseDir = new File(location)
             if (!baseDir.isDirectory()) {
                 throw new GradleException("no snapshots at ${baseDir}; run `gradle getsolr` first")
             }
-            def all = baseDir.listFiles().findAll { it.isDirectory() }
-            def snaps = all.findAll { it.name.startsWith('snapshot.') }
+            def all = baseDir.listFiles().toList()
+            def snaps = all.findAll { it.isFile() && it.name.startsWith('snapshot.') && it.name.endsWith('.tar.gz') }
             if (!snaps) {
                 // Distinguish "directory empty" from "directory has legacy
                 // pre-Solr-9 dumps which can't be restored via /replication."
-                def legacy = all.findAll { !it.name.startsWith('snapshot.') }
+                def legacy = all.findAll { it.isDirectory() && !it.name.startsWith('snapshot.') }
                 if (legacy) {
                     throw new GradleException(
                         "no snapshot.* dirs in ${baseDir}, but ${legacy.size()} legacy dump dir(s) " +
@@ -816,10 +817,10 @@ task getLatestSolrIndex() {
                         "`gradle getsolr`."
                     )
                 }
-                throw new GradleException("no snapshot.* dirs in ${baseDir}; run `gradle getsolr` first")
+                throw new GradleException("no snapshot.*.tar.gz files in ${baseDir}; run `gradle getsolr` first")
             }
             snaps.sort { -it.lastModified() }
-            selectedName = snaps[0].name.replaceFirst(/^snapshot\./, '')
+            selectedName = snaps[0].name.replaceFirst(/^snapshot\./, '').replaceFirst(/\.tar\.gz$/, '')
             println "Latest snapshot: ${snaps[0].name} -> restoring as ${selectedName}"
         }
         // Run the restore in a forked JVM via the SolrSnapshotTool. We deliberately
