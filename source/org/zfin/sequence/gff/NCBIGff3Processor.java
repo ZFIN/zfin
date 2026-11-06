@@ -8,9 +8,7 @@ import org.hibernate.SessionFactory;
 import org.zfin.datatransfer.service.DownloadService;
 import org.zfin.framework.HibernateSessionCreator;
 import org.zfin.framework.HibernateUtil;
-import org.zfin.framework.VocabularyTerm;
 import org.zfin.framework.api.Pagination;
-import org.zfin.framework.services.VocabularyService;
 import org.zfin.mapping.GenomeLocation;
 import org.zfin.mapping.MarkerGenomeLocation;
 import org.zfin.marker.Marker;
@@ -27,7 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.zfin.framework.services.VocabularyEnum.NCBI_ANNOTATION_STATUS;
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
 import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 import static org.zfin.sequence.gff.Gff3NcbiService.createBatch;
@@ -104,8 +101,6 @@ public class NCBIGff3Processor {
         }
     }
 
-    private final VocabularyService vocabularyService = new VocabularyService();
-
     /**
      * @return the number of batches that failed to commit
      */
@@ -113,8 +108,6 @@ public class NCBIGff3Processor {
         Assembly grcz12tu = assemblyDAO.find(GRCZ12TU_ASSEMBLY_ID);
         List<Gff3Ncbi> filteredResultSet = getZfinGeneRecords();
         System.out.println("1-1 ZFIN-NCBI-Gene Records in ZFIN found: " + filteredResultSet.size());
-
-        VocabularyTerm annotationStatusTerm = vocabularyService.getVocabularyTerm(NCBI_ANNOTATION_STATUS, "Current");
 
         Collection<List<Gff3Ncbi>> batchedFilteredResults = createBatch(filteredResultSet);
         List<MarkerGenomeLocation> locationList = getSequenceRepository().getAllGenomeLocations(GenomeLocation.Source.NCBI_LOADER);
@@ -162,7 +155,6 @@ public class NCBIGff3Processor {
                         if (gene.getAssemblies() != null && !gene.getAssemblies().contains(grcz12tu)) {
                             gene.getAssemblies().add(grcz12tu);
                         }
-                        gene.setAnnotationStatusTerms(Set.of(annotationStatusTerm));
                         genomeLocation.setMarker(gene);
                         genomeLocation.setAssembly(grcz12tu.getName());
                         genomeLocation.setChromosome(gff3Ncbi.getChromosome());
