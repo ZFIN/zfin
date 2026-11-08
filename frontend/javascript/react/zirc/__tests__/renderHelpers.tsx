@@ -6,6 +6,17 @@ import type { JsonFormsRendererRegistryEntry } from '@jsonforms/core';
 import { fieldRenderers } from '../schemaForm/fieldRenderers';
 import { VocabularyTermDTO } from '../api/types';
 
+// global-jsdom only installs the jsdom globals Node doesn't already define, so
+// which File/Blob/FormData a test gets depends on the Node version: Node 18 has
+// a global FormData but no File (jsdom File + Node FormData), Node 20+ has both
+// (Node File + Node FormData). A FormData only recognises its own File class;
+// any mix makes append() store the file as the string "[object File]". Take all
+// three from jsdom so an upload reaches the request as a File on every Node
+// version, as it does in a browser.
+globalThis.File = window.File;
+globalThis.Blob = window.Blob;
+globalThis.FormData = window.FormData;
+
 /**
  * Test harness for the schema-driven renderers.
  *
@@ -89,8 +100,13 @@ export function renderForm(opts: HarnessOptions): Harness {
     );
     // retry:false so an error-path test fails fast instead of backing off, and
     // gcTime:0 so one test's vocabulary can't be served from cache to the next.
+    // Mutations get gcTime:0 too: their default is a 5-minute timer per finished
+    // upload, which holds the test process open for 5 minutes after the last test.
     const queryClient = new QueryClient({
-        defaultOptions: { queries: { retry: false, gcTime: 0, staleTime: 0 } },
+        defaultOptions: {
+            queries: { retry: false, gcTime: 0, staleTime: 0 },
+            mutations: { gcTime: 0 },
+        },
     });
 
     let current: Record<string, unknown> = opts.data ?? {};
