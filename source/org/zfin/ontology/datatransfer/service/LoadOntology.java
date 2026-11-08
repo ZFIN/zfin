@@ -92,6 +92,9 @@ public class LoadOntology extends AbstractValidateDataReportTask {
     private Map<String, List<List<String>>> dataMap = new HashMap<>(20);
     private OntologyMetadata oboMetadata;
     private static final ChoiceFormat termChoice = new ChoiceFormat("0#terms| 1#term| 2#terms");
+    // Size of tmp_syns.synonym (varchar(255)) in handleSynonyms.sql. The database
+    // is SQL_ASCII, so that limit is in bytes, not characters.
+    static final int MAX_SYNONYM_BYTES = 255;
 
     // if true then only import if a new file is encountered
     // if false always load the obo file.
@@ -949,9 +952,7 @@ public class LoadOntology extends AbstractValidateDataReportTask {
                             if (isChebiSynonym)
                                 continue;
                             // Make sure not to create distinct synonyms per these three keys.
-                            String synonymText = synonym.getText().trim().replaceAll(" +", " ");
-                            if (synonymText.length() > 255)
-                                synonymText = synonymText.substring(0, 255);
+                            String synonymText = truncateToUtf8Bytes(synonym.getText().trim().replaceAll(" +", " "), MAX_SYNONYM_BYTES);
                             String synonymKey = term.getID() + ":" + synonymText;
                             if (synonymKeySet.contains(synonymKey))
                                 continue;
@@ -1202,6 +1203,27 @@ public class LoadOntology extends AbstractValidateDataReportTask {
         String revision = comment.substring(startOfRevision + revName.length());
         int endOfRevision = revision.indexOf("$");
         return revision.substring(0, endOfRevision).trim();
+    }
+
+    /**
+     * Cut text to at most maxBytes bytes of UTF-8 without splitting a character.
+     * Cutting by characters is not enough: names like "α-D-Man-(1→2)" use 2-3
+     * bytes per character, so 255 characters can exceed a 255-byte column.
+     */
+    public static String truncateToUtf8Bytes(String text, int maxBytes) {
+        if (text == null)
+            return null;
+        int bytes = 0;
+        int end = 0;
+        while (end < text.length()) {
+            int codePoint = text.codePointAt(end);
+            int size = codePoint < 0x80 ? 1 : codePoint < 0x800 ? 2 : codePoint < 0x10000 ? 3 : 4;
+            if (bytes + size > maxBytes)
+                break;
+            bytes += size;
+            end += Character.charCount(codePoint);
+        }
+        return text.substring(0, end);
     }
 
     public void setLogger(Logger log) {
