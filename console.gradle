@@ -382,6 +382,19 @@ task runPriorityPipeline(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'org.zfin.datatransfer.PriorityPipelineTask'
     systemProperty "priority.useAuth", System.getProperty("priority.useAuth", "false")
+    if (System.getProperty("priority.baseUrl")) {
+        systemProperty "priority.baseUrl", System.getProperty("priority.baseUrl")
+    }
+}
+
+// ZFIN-10365: send curator-validated indexing priorities to the ABC.
+// gradle submitPriorityValidation --args="<report.tsv> [--apply]" -Dpriority.baseUrl=https://stage-literature-rest.alliancegenome.org
+task submitPriorityValidation(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.PriorityValidationSubmitTask'
+    if (System.getProperty("priority.baseUrl")) {
+        systemProperty "priority.baseUrl", System.getProperty("priority.baseUrl")
+    }
 }
 
 task checkFeatureGeneAttributionTask(type: JavaExec) {
