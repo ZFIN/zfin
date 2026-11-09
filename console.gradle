@@ -209,9 +209,11 @@ task createEnsemblTranscriptFastaFile(type: JavaExec) {
     doFirst { workingDir.mkdirs() }
 }
 
-task findEmptyPublicationFilesTask(type: JavaExec) {
+task findPublicationFileIssuesTask(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
-    main = 'org.zfin.publication.FindEmptyPublicationFilesTask'
+    main = 'org.zfin.publication.FindPublicationFileIssuesTask'
+    // gradle findPublicationFileIssuesTask -PtaskArgs="--fix-empty-superseded-original"
+    args = project.hasProperty('taskArgs') ? project.property('taskArgs').toString().split(/\s+/).findAll { it } : []
 }
 
 task generateSitemapTask(type: JavaExec) {

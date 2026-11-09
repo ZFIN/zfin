@@ -10,17 +10,26 @@ const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSucces
     const [files, setFiles] = useState(null);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState('');
+    const [conflict, setConflict] = useState('');
     const {getRootProps, getInputProps, isDragActive} = useDropzone({
-        onDrop: setFiles,
+        onDrop: (dropped) => { setFiles(dropped); setConflict(''); },
         multiple: false,
     });
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
+        return upload(false);
+    };
+
+    const upload = async (replace) => {
         setSaving(true);
+        setConflict('');
         const form = new FormData();
         form.append('fileType', type);
         form.append('file', files[0]);
+        if (replace) {
+            form.append('replace', 'true');
+        }
         try {
             // special handling for binary form data
             const response = await http.post(`/action/publication/${pubId}/files`, null, {
@@ -33,7 +42,11 @@ const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSucces
             setError('');
             onSuccess(response)
         } catch (error) {
-            if (error.status === 413) {
+            if (error.status === 409) {
+                // a file with this name already exists: ask inline, and resend with replace=true on "Replace"
+                setConflict(error.responseJSON ? error.responseJSON.message : 'A file with this name already exists.');
+                setError('');
+            } else if (error.status === 413) {
                 setError(uploadTooLargeMessage(error.responseText, files[0].size));
             } else {
                 setError(error.responseJSON ? error.responseJSON.message : 'Something went wrong');
@@ -47,7 +60,7 @@ const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSucces
             <div className='form-group row'>
                 <label className='col-md-2 col-form-label'>Type</label>
                 <div className='col-md-3'>
-                    <select className='form-control' value={type} onChange={e => setType(e.target.value)}>
+                    <select className='form-control' value={type} onChange={e => { setType(e.target.value); setConflict(''); }}>
                         <option value='' />
                         {fileTypeOptions.map(option => (
                             <option key={option.id} value={option.id}>{option.name}</option>
@@ -89,6 +102,19 @@ const PubFileUpload = ({ pubId, fileTypeOptions, pubHasOriginalArticle, onSucces
                         Save
                     </LoadingButton>
                     {error && <span className='text-danger'> {error}</span>}
+                    {conflict &&
+                        <div className='alert alert-warning mt-2'>
+                            {conflict} Do you want to replace it?
+                            {' '}
+                            <button type='button' className='btn btn-sm btn-warning' onClick={() => upload(true)}>
+                                Replace
+                            </button>
+                            {' '}
+                            <button type='button' className='btn btn-sm btn-link' onClick={() => setConflict('')}>
+                                Cancel
+                            </button>
+                        </div>
+                    }
                 </div>
             </div>
         </form>
