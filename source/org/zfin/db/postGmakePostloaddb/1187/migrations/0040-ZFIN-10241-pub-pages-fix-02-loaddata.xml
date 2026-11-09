@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet author="rtaylor" id="ZFIN-10241-pub-pages-fix-load">
+        <loadData file="source/org/zfin/db/postGmakePostloaddb/1187/csvs/0040-ZFIN-10241-pub-pages-fix.csv"
+                  tableName="stg_pub_pages_fix" encoding="UTF-8" quotchar='"'>
+            <column header="zdb_id" name="zdb_id" type="String"/>
+            <column header="old_pages" name="old_pages" type="String"/>
+            <column header="new_pages" name="new_pages" type="String"/>
+        </loadData>
+    </changeSet>
+</databaseChangeLog>
