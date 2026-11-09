@@ -323,6 +323,21 @@ public class PublicationService {
         return suggestions.stream().toList();
     }
 
+    /**
+     * The path, relative to the loadup directory, that an uploaded file is stored under (and recorded as
+     * publication_file.pf_file_name): an Original Article is always {@code <year>/<zdbId>/<zdbId>.pdf}.
+     */
+    public String getStoredFileName(Publication publication, String fileName, PublicationFileType fileType) {
+        String pubYear = Integer.toString(publication.getEntryDate().get(Calendar.YEAR));
+        String storedFileName = publication.getZdbID() + "/" + publication.getZdbID();
+        if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
+            storedFileName += ".pdf";
+        } else {
+            storedFileName += "-" + fileName;
+        }
+        return pubYear + File.separator + storedFileName;
+    }
+
     public PublicationFile processPublicationFile(Publication publication, String fileName, PublicationFileType fileType, InputStream fileData) throws IOException {
         File fileRoot = new File(ZfinPropertiesEnum.LOADUP_FULL_PATH.toString());
 
@@ -343,19 +358,14 @@ public class PublicationService {
             }
         }
 
-        String storedFileName = publication.getZdbID() + "/" + publication.getZdbID();
-        if (fileType.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
-            storedFileName += ".pdf";
-        } else {
-            storedFileName += "-" + fileName;
-        }
+        String storedFileName = getStoredFileName(publication, fileName, fileType);
 
-        File destination = new File(yearDirectory, storedFileName);
+        File destination = new File(fileRoot, storedFileName);
         Files.copy(fileData, destination.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
         PublicationFile pubFile = new PublicationFile();
         pubFile.setType(fileType);
-        pubFile.setFileName(pubYear + File.separator + storedFileName);
+        pubFile.setFileName(storedFileName);
         pubFile.setOriginalFileName(fileName);
         pubFile.setPublication(publication);
         return pubFile;

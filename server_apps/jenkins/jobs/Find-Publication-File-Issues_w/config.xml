@@ -1,0 +1,143 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description>Report problems with publication files: empty files, publications with several Original Articles, the same file recorded more than once, and files named for another publication. The build is UNSTABLE when issues are found and FAILED only when the scan itself errors. Fix flags are off by default; each repairs one specific case and logs it to the updates table.</description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_EMPTY_SUPERSEDED_ORIGINAL</name>
+                    <description>Delete an empty Original Article row when the same publication has a non-empty Original Article.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_EMPTY_PROMOTE_ZDBID_PDF</name>
+                    <description>Delete an empty Original Article row when the publication has no non-empty Original Article but has a non-empty ZDB-PUB-xxxx.pdf of another type, and promote that file to Original Article.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_IDENTICAL_ORIGINALS</name>
+                    <description>When a publication has several Original Article rows whose files are byte-identical (same md5), delete all but the lowest-id row. Files on disk are not removed; rows with differing files are left alone.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>FIX_DUPLICATE_FILES</name>
+                    <description>When the same stored file is recorded more than once for a publication with the same type, delete all but the lowest-id row. The file on disk is not removed; rows for the same file with different types are left alone.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>CHECK_IDENTICAL_CONTENT</name>
+                    <description>Report identical content (md5): files of different names on one publication, and the same file on more than one publication. Reads the size of every publication file and hashes those whose size is shared, so it can be slow. Report only; changes nothing.</description>
+                    <defaultValue>false</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>-1</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>-1</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <builders>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+export ARTIFACTS_DIR=`pwd`
+echo "ARTIFACTS_DIR: $ARTIFACTS_DIR"
+TASK_ARGS=""
+if [ "$FIX_EMPTY_SUPERSEDED_ORIGINAL" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-empty-superseded-original"; fi
+if [ "$FIX_EMPTY_PROMOTE_ZDBID_PDF" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-empty-promote-zdbid-pdf"; fi
+if [ "$FIX_IDENTICAL_ORIGINALS" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-identical-originals"; fi
+if [ "$FIX_DUPLICATE_FILES" = "true" ]; then TASK_ARGS="$TASK_ARGS --fix-duplicate-files"; fi
+if [ "$CHECK_IDENTICAL_CONTENT" = "true" ]; then TASK_ARGS="$TASK_ARGS --check-identical-content"; fi
+rm -f publication_file_issues.csv publication_file_issues.xlsx fixed_publication_files.csv fixed_publication_files.xlsx
+cd $SOURCEROOT && gradle findPublicationFileIssuesTask -PtaskArgs="$TASK_ARGS"
+# The task exits 0 when it only finds issues, and fails (so the build FAILS) on an unexpected error.
+# Issues in the report (more than the header line) mean UNSTABLE: exit 3 (see unstableReturn).
+cd "$ARTIFACTS_DIR"
+if [ "$(wc -l < publication_file_issues.csv)" -gt 1 ]; then
+  echo "Publication file issues found: marking the build UNSTABLE"
+  exit 3
+fi
+            ]]></command>
+            <unstableReturn>3</unstableReturn>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>publication_file_issues.csv,publication_file_issues.xlsx,fixed_publication_files.csv,fixed_publication_files.xlsx</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList></recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>Publication file scan failed</subject>
+                        <body>The publication file scan failed unexpectedly. Build: ${BUILD_URL} Build log: ${BUILD_URL}console</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>true</attachBuildLog>
+                        <compressBuildLog>true</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                <hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>Publication file issues found</subject>
+                        <body>The publication file scan found issues (empty files, multiple Original Articles, duplicate file rows, or files named for another publication). Build: ${BUILD_URL} See the attached publication_file_issues.xlsx, or ${BUILD_URL}artifact/publication_file_issues.csv</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>false</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern>publication_file_issues.xlsx</attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.UnstableTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers>
+        <hudson.plugins.build__timeout.BuildTimeoutWrapper plugin="build-timeout@1.20">
+            <strategy class="hudson.plugins.build_timeout.impl.AbsoluteTimeOutStrategy">
+                <timeoutMinutes>10</timeoutMinutes>
+            </strategy>
+            <operationList>
+                <hudson.plugins.build__timeout.operations.AbortOperation/>
+            </operationList>
+        </hudson.plugins.build__timeout.BuildTimeoutWrapper>
+    </buildWrappers>
+</project>

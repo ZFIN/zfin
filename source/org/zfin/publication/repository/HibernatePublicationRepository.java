@@ -1762,21 +1762,65 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
             .uniqueResult();
     }
 
-    public PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file) throws IOException {
+    public PublicationFile addPublicationFile(Publication publication, PublicationFileType type, MultipartFile file,
+                                              PublicationFileSource source, Person person,
+                                              boolean replaceExisting) throws IOException {
         Transaction tx = HibernateUtil.createTransaction();
+        PublicationFile existingArticle = type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE
+                ? getOriginalArticle(publication) : null;
+
+        // publication_file_pub_file_name_uq: a publication records a stored file once. A replaced Original
+        // Article is handled below (the page already warns about it); anything else needs confirmation.
+        String storedName = publicationService.getStoredFileName(publication, file.getOriginalFilename(), type);
+        List<PublicationFile> sameFile = HibernateUtil.currentSession()
+                .createQuery("from PublicationFile where publication = :publication and fileName = :fileName", PublicationFile.class)
+                .setParameter("publication", publication)
+                .setParameter("fileName", storedName)
+                .list().stream()
+                .filter(f -> existingArticle == null || f.getId() != existingArticle.getId())
+                .toList();
+        if (!sameFile.isEmpty()) {
+            if (!replaceExisting) {
+                tx.rollback();
+                throw new PublicationFileExistsException(file.getOriginalFilename());
+            }
+            for (PublicationFile old : sameFile) {
+                logPublicationFileUpdate(publication, person, "Replace file", describeFile(old), null);
+                HibernateUtil.currentSession().delete(old);
+            }
+            HibernateUtil.currentSession().flush();
+        }
+
         if (type.getName() == PublicationFileType.Name.ORIGINAL_ARTICLE) {
             // if there already is an original article for this pub, we need to delete that
             // record because there can be only one of those.
-            PublicationFile existingArticle = getOriginalArticle(publication);
             if (existingArticle != null) {
+                logPublicationFileUpdate(publication, person, "Replace Original Article",
+                        existingArticle.getFileName(), null);
                 HibernateUtil.currentSession().delete(existingArticle);
                 HibernateUtil.currentSession().flush();
             }
         }
         PublicationFile pubFile = publicationService.processPublicationFile(publication, file.getOriginalFilename(), type, file.getInputStream());
+        pubFile.setSource(source);
+        pubFile.setPerson(person);
         HibernateUtil.currentSession().save(pubFile);
+        HibernateUtil.currentSession().flush();
+        HibernateUtil.currentSession().refresh(pubFile); // picks up the DB-assigned pf_date_entered
+        logPublicationFileUpdate(publication, person, "Add file", null, describeFile(pubFile));
         tx.commit();
         return pubFile;
+    }
+
+    /** Audit trail for publication files: one row in the updates table keyed by the publication. */
+    public void logPublicationFileUpdate(Publication publication, Person person, String comment,
+                                         String oldValue, String newValue) {
+        RepositoryFactory.getInfrastructureRepository()
+                .insertUpdatesTable(publication.getZdbID(), person, "publication file", oldValue, newValue, comment);
+    }
+
+    public String describeFile(PublicationFile file) {
+        return file.getFileName() + " (" + file.getType().getName().toString() + ")";
     }
 
     public CorrespondenceSentMessage addSentCorrespondence(Publication publication, CorrespondenceDTO dto) {
