@@ -94,15 +94,20 @@ delete from tmp_new_pubs where pubtype='preprint';
 \copy (select * from tmp_new_pubs) to 'existingPublicationsUpdating.txt' delimiter '|';
 \copy (select zdb_id, pmid, title from tmp_new_pubs) to 'updatedPubSummary.txt' delimiter '|';
 
--- Refresh authors plus volume/pages for existing publications.
+-- Refresh authors plus volume/pages for existing publications. Authors are left
+-- alone when the loader is run with -DupdateAuthors=false (psql variable updateAuthors).
 -- COALESCE+NULLIF: never overwrite an existing populated value with a blank
 -- string from PubMed (avoids regressing data on a transient empty response),
--- but do refresh when PubMed has new info — needed because Epub-ahead-of-print
+-- but do refresh pages when PubMed has new info — needed because Epub-ahead-of-print
 -- pubs are inserted without volume/pages and would otherwise stay empty
 -- forever once the journal issue is published.
+-- Volume is only filled when empty: older ZFIN records hold the issue as well
+-- ('29(11)'), and PubMed's volume alone ('29') would drop it.
 UPDATE publication
-SET authors    = t.authors,
-    pub_volume = COALESCE(NULLIF(t.volume, ''), publication.pub_volume),
+SET authors    = CASE WHEN :'updateAuthors' = 'true'
+                      THEN COALESCE(NULLIF(t.authors, ''), publication.authors)
+                      ELSE publication.authors END,
+    pub_volume = COALESCE(NULLIF(publication.pub_volume, ''), NULLIF(t.volume, ''), publication.pub_volume),
     pub_pages  = COALESCE(NULLIF(t.pages,  ''), publication.pub_pages)
 FROM tmp_pubs t
 WHERE t.pmid = accession_no;
