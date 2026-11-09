@@ -17,9 +17,10 @@ SELECT m.mrkr_zdb_id AS zdb_id,
               AND mr.mrel_type = 'gene produces transcript'
        ) THEN 'MISSING' ELSE '' END AS rnacentral,
        CASE WHEN EXISTS (
-           SELECT 1 FROM marker_annotation_status
-            WHERE mas_mrkr_zdb_id = m.mrkr_zdb_id
-              AND mas_vt_pk_id = 13
+           SELECT 1 FROM marker_annotation_status_derived d
+             JOIN vocabulary_term vt ON vt.vt_id = d.mas_vt_pk_id
+            WHERE d.mas_mrkr_zdb_id = m.mrkr_zdb_id
+              AND vt.vt_name = 'Not in current annotation release'
        ) THEN 'YES' ELSE '' END AS not_in_current_release
 FROM marker m
 WHERE m.mrkr_type = 'GENE'
@@ -36,7 +37,8 @@ WHERE m.mrkr_type = 'GENE'
             WHERE mr.mrel_mrkr_1_zdb_id = m.mrkr_zdb_id
               AND mr.mrel_type = 'gene produces transcript')
        OR EXISTS (
-           SELECT 1 FROM marker_annotation_status
-            WHERE mas_mrkr_zdb_id = m.mrkr_zdb_id
-              AND mas_vt_pk_id = 13))
+           SELECT 1 FROM marker_annotation_status_derived d
+             JOIN vocabulary_term vt ON vt.vt_id = d.mas_vt_pk_id
+            WHERE d.mas_mrkr_zdb_id = m.mrkr_zdb_id
+              AND vt.vt_name = 'Not in current annotation release'))
 ORDER BY m.mrkr_abbrev;

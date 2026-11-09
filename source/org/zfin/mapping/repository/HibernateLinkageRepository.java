@@ -227,12 +227,20 @@ public class HibernateLinkageRepository implements LinkageRepository {
         return list;
     }
 
+    /**
+     * The genome locations of the features that are alleles of the marker, on every assembly the assembly
+     * table lists, newest assembly first for each feature (assembly.a_order, lowest first). A new assembly
+     * needs a row in the assembly table, not a change here.
+     */
     public List<FeatureGenomeLocation> getFeatureLocations(Marker marker) {
         String queryString = """
-            select  loc from FeatureGenomeLocation loc,FeatureMarkerRelationship fmrel
+            select loc
+            from FeatureGenomeLocation loc, FeatureMarkerRelationship fmrel, Assembly asm
             where fmrel.marker = :marker and
-            fmrel.type  = :relation and
-            loc.feature = fmrel.feature and loc.assembly in ('GRCz12tu','GRCz11','GRCz10','Zv9') order by loc.feature.abbreviationOrder asc,substring(loc.assembly,4) desc
+            fmrel.type = :relation and
+            loc.feature = fmrel.feature and
+            loc.assembly = asm.name
+            order by loc.feature.abbreviationOrder asc, asm.order asc
             """;
         Query<FeatureGenomeLocation> query1 = HibernateUtil.currentSession().createQuery(queryString, FeatureGenomeLocation.class);
         query1.setParameter("marker", marker);
