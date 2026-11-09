@@ -58,19 +58,6 @@ public class NCBILoadIntegrationTestHelper {
         createMarkerRelationship(vega.geneId, id, "gene produces transcript");
     }
 
-    private void createMarkerStatusForGene(String gene, String status) {
-        String sql = """
-                    INSERT INTO marker_annotation_status (mas_mrkr_zdb_id, mas_vt_pk_id)
-                    SELECT ?, vt_id
-                    FROM vocabulary_term
-                    WHERE vt_name = ?
-                    """;
-        HibernateUtil.currentSession().createNativeQuery(sql)
-                .setParameter(1, gene)
-                .setParameter(2, status)
-                .executeUpdate();
-    }
-
     private void createMarkerRelationship(String geneId, String id, String mrelType) {
         String mrelID = createActiveDataID("MREL");
         String sql = """
@@ -229,7 +216,8 @@ public class NCBILoadIntegrationTestHelper {
         HibernateUtil.currentSession().createNativeQuery(sql)
                 .executeUpdate();
 
-        sql = "DELETE FROM marker_annotation_status";
+        // The annotation status is worked out from this list, so a test starts with only its own entries.
+        sql = "DELETE FROM external_resource.ncbi_not_in_current_release";
         HibernateUtil.currentSession().createNativeQuery(sql)
                 .executeUpdate();
 
@@ -405,7 +393,7 @@ public class NCBILoadIntegrationTestHelper {
                 SELECT
                     vt_name
                 FROM
-                    marker_annotation_status
+                    marker_annotation_status_derived
                     LEFT JOIN vocabulary_term ON mas_vt_pk_id = vt_id
                 WHERE
                     mas_mrkr_zdb_id = ?
@@ -429,7 +417,6 @@ public class NCBILoadIntegrationTestHelper {
         private final List<String> gene2AccessionLines = new ArrayList<>();
         private final List<String> gene2VegaLines = new ArrayList<>();
         private final List<String> notInCurrentReleaseLines = new ArrayList<>();
-        private final Map<String, String> markerStatuses = new HashMap<>();
         private final Map<String, String> refSeqEntries = new HashMap<>();
 
         public BeforeStateBuilder(NCBILoadIntegrationTestHelper helper) {
@@ -549,10 +536,6 @@ public class NCBILoadIntegrationTestHelper {
                 helper.createVegaLink(vega);
             }
 
-            for (Map.Entry<String, String> entry : markerStatuses.entrySet()) {
-                helper.createMarkerStatusForGene(entry.getKey(), entry.getValue());
-            }
-
             session.getTransaction().commit();
 
             // Setup test files
@@ -596,11 +579,6 @@ public class NCBILoadIntegrationTestHelper {
 
         public BeforeStateBuilder withNotInCurrentReleaseFile(String number) {
             this.notInCurrentReleaseLines.add(number);
-            return this;
-        }
-
-        public BeforeStateBuilder withMarkerAnnotationStatus(String geneId, String status) {
-            this.markerStatuses.put(geneId, status);
             return this;
         }
 

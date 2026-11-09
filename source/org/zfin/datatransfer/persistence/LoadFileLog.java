@@ -52,4 +52,9 @@ public class LoadFileLog {
     @Column(name = "lfl_table_name")
     private String tableName;
 
+    /** The file this run read. The load name, source and table name above are older copies of its facts. */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "lfl_lf_id")
+    private LoadFile loadFile;
+
 }

@@ -127,7 +127,6 @@ BEGIN
                  ('int_data_source', 'ids_data_zdb_id'),
                  ('int_data_supplier', 'idsup_data_zdb_id'),
                  ('mapped_marker', 'marker_id'),
-                 ('marker_annotation_status', 'mas_mrkr_zdb_id'),
                  ('marker_assembly', 'ma_mrkr_zdb_id'),
                  ('marker_go_term_evidence', 'mrkrgoev_mrkr_zdb_id'),
                  ('marker_history', 'mhist_mrkr_zdb_id'),

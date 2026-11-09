@@ -260,6 +260,7 @@ sources with very different staleness behaviour:
 corrected — that is ZFIN-10461, addressed by `reconcileNcbiGenomeLocations()`. `NCBIStartEndLoader`
 cannot go stale by construction, which is why the reconciliation deliberately excludes it.
 
-`marker_annotation_status` is rebuilt wholesale by `loadNCBIgeneAccs.sql` purely from NCBI Gene
-db_links, so it follows them exactly. It is marker-keyed, not db_link-keyed — joining it onto every
+The annotation status is not stored. The view `marker_annotation_status_derived` works it out from the gene's NCBI Gene
+db_links, `external_resource.ncbi_not_in_current_release`, `load_publication` and the gene's `NCBILoader` locations on
+current assemblies, so it follows them exactly. It is marker-keyed, not db_link-keyed — joining it onto every
 db_link row of a gene turns one gene-level change into ~17 reported changes.

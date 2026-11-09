@@ -24,9 +24,13 @@ mkdir $pth/$dirname
 
 echo "pg_dump starting"
 
-# Exclude data (but keep structure) for tables in the external_resource schema.
-# These tables are large mirrors of external data that get reloaded from their sources.
-${PGBINDIR}/pg_dump -Fc ${DBNAME} --exclude-table-data='external_resource.*' -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
+# Leave out the rows, but not the structure or comments, of the tables that load_file marks
+# lf_exclude_from_dump: mirrors of external data that the loads recreate. Every other table is dumped with its
+# rows, including ncbi_not_in_current_release, which the annotation status of every gene depends on.
+# If load_file cannot be read, nothing is excluded.
+set excludes = ( `${SOURCEROOT}/server_apps/DB_maintenance/dump_exclude_args.sh ${DBNAME}` )
+echo "pg_dump leaves out the rows of: $excludes"
+${PGBINDIR}/pg_dump -Fc ${DBNAME} $excludes -f $pth/$dirname/`date +"%Y.%m.%d.1"`.bak
 
 if ($? != "0") then
   /bin/rm -rf $pth/$dirname

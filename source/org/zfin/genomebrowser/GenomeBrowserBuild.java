@@ -49,6 +49,11 @@ public enum GenomeBrowserBuild {
 
     public String getJBrowsePath() {return jBrowsePath;}
 
+    /** The build whose assembly has this name, if there is a browser for it. */
+    public static java.util.Optional<GenomeBrowserBuild> forAssembly(String assemblyName) {
+        return java.util.Arrays.stream(values()).filter(build -> build.value.equals(assemblyName)).findFirst();
+    }
+
     public static GenomeBrowserBuild getBySource(GenomeLocation.Source source) {
         return switch (source) {
             case ZFIN_NCBI -> CURRENT;

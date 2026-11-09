@@ -7,7 +7,7 @@
 --   * the GRCz12tu genome location    <- sequence_feature_chromosome_location_generated
 --                                        (source NCBILoader)
 --   * the gene -> GRCz12tu link       <- marker_assembly       (has_assembly_link)
---   * the NCBI annotation status      <- marker_annotation_status (annotation_status)
+--   * the NCBI annotation status      <- marker_annotation_status_derived (annotation_status)
 --
 -- The two flattened columns are rendered as text rather than dropped, so a gene that gains its
 -- marker_assembly row or its annotation status shows up as an update rather than as an
@@ -53,6 +53,6 @@ LEFT JOIN marker mk ON mk.mrkr_zdb_id = loc.sfclg_data_zdb_id
 LEFT JOIN marker_assembly ma
       ON ma.ma_mrkr_zdb_id = loc.sfclg_data_zdb_id
      AND ma.ma_a_pk_id = asm.a_pk_id
-LEFT JOIN marker_annotation_status mas ON mas.mas_mrkr_zdb_id = loc.sfclg_data_zdb_id
+LEFT JOIN marker_annotation_status_derived mas ON mas.mas_mrkr_zdb_id = loc.sfclg_data_zdb_id
 LEFT JOIN vocabulary_term vt ON vt.vt_id = mas.mas_vt_pk_id
 WHERE loc.sfclg_location_source = 'NCBILoader';
