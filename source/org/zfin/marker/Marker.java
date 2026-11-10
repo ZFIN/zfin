@@ -874,6 +874,22 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
         return assemblies.stream().sorted(Comparator.comparing(Assembly::getOrder)).toList();
     }
 
+    /**
+     * The assemblies for the Genome Assembly field of the gene page summary (ZFIN-10531): the
+     * gene's current assemblies (a_is_current: GRCz12tu, GRCz12ab, ...) if it is on any, otherwise
+     * its older ones (GRCz11), newest first; empty if it has no assembly ("Unknown").
+     * <p>
+     * marker_assembly keeps every assembly a gene was placed on, so a gene on GRCz12tu usually
+     * still has its GRCz11 link; only the display drops it.
+     */
+    public List<Assembly> getDisplayAssemblies() {
+        if (CollectionUtils.isEmpty(assemblies)) {
+            return List.of();
+        }
+        List<Assembly> current = getAllAssemblies().stream().filter(Assembly::isCurrent).toList();
+        return current.isEmpty() ? getAllAssemblies() : current;
+    }
+
     @JsonView(View.SequenceAPI.class)
     public String getAnnotationStatus() {
         if (cachedAnnotationStatus == null) {
