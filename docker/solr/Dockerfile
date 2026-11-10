@@ -40,6 +40,13 @@ RUN chmod 755 /opt/solr/server/solr/configsets/site_index/lib \
  && chmod 755 /docker-entrypoint-initdb.d/sync-config.sh \
  && chown -R solr:solr /opt/zfin-solr
 
+# Wrapper entrypoint that sets umask 002 before handing off to the upstream
+# entrypoint (see the script for why). CMD is restated because setting ENTRYPOINT
+# resets the inherited CMD.
+COPY --chown=solr:solr --chmod=755 umask-entrypoint.sh /usr/local/bin/umask-entrypoint.sh
+ENTRYPOINT ["umask-entrypoint.sh"]
+CMD ["solr-foreground"]
+
 #eMudhra CA certificate compromise fix
 RUN sed -i \
   -e 's|^mozilla/emSign_ECC_Root_CA_-_G3.crt|!&|' \

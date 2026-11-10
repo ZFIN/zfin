@@ -199,7 +199,7 @@ If the failure is DIH-side, `dataimport?command=status` on the running Solr will
 
 ## Snapshot / restore
 
-The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm/` under the **backing-up instance's own** subdir, `<base>/${INSTANCE}/` (where `<base>` is the container mount `/opt/zfin/unloads/solr`). Restore is the mirror: `loadsolr`/`getsolr` read the shared production snapshot from `<base>/zfindb/` by default (override with `-PsolrSourceInstance=<name>`). Backing up per-instance means a stage/dev index build never clobbers the `zfindb` snapshot everyone restores from. Snapshots sit directly in the instance dir, alongside any legacy pre-9 full-SOLR_HOME dumps; the two are told apart by the `snapshot.` prefix, since the legacy dumps can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`.
+The orchestrator does **not** snapshot. The ant target `build-solr-index-jenkins` still calls `backup-solr-index` after `solrReindex`, which runs `gradle solrBackup` (the `org.zfin.solr.admin.SolrSnapshotTool` tool) to call `/replication?command=backup&name=YYYY.MM.DD-HH.mm`. That produces `snapshot.YYYY.MM.DD-HH.mm.tar.gz` (Solr writes the directory; the tool then packs it and removes the dir; restore unpacks it temporarily) under the **backing-up instance's own** subdir, `<base>/${INSTANCE}/` (where `<base>` is the container mount `/opt/zfin/unloads/solr`). Restore is the mirror: `loadsolr`/`getsolr` read the shared production snapshot from `<base>/zfindb/` by default (override with `-PsolrSourceInstance=<name>`). Backing up per-instance means a stage/dev index build never clobbers the `zfindb` snapshot everyone restores from. Snapshots sit directly in the instance dir, alongside any legacy pre-9 full-SOLR_HOME dumps; the two are told apart by the `snapshot.` prefix, since the legacy dumps can't be restored via `/replication` — see the cutover guards in `getLatestSolrIndex`/`getLatestSolrUnload`.
 
 ### GoCD deployment pipeline
 
@@ -209,7 +209,7 @@ The GoCD deploy step runs:
 docker compose run --rm compile bash -lc "gradle getLatestSolrIndex"
 ```
 
-`getLatestSolrIndex` is in the top-level `build.gradle`. It picks the newest `snapshot.*` dir, then shells `ant restore-solr-index -DsolrIndex=<name>`, which calls `/replication?command=restore`.
+`getLatestSolrIndex` is in the top-level `build.gradle`. It picks the newest `snapshot.*.tar.gz`, then shells `ant restore-solr-index -DsolrIndex=<name>`, which calls `/replication?command=restore`.
 
 **The orchestrator cutover does not change this contract.** The snapshot is a Lucene file dump; it doesn't carry information about whether a given doc was emitted by DIH or by a `SolrIndexer`. As long as Jenkins keeps producing `snapshot.*` directories at the same path, the GoCD step works unchanged. We confirmed this against the lab cutover — the snapshot taken after a mixed DIH+Java orchestrator run restores cleanly via the existing flow.
 

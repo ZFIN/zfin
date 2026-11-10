@@ -33,7 +33,7 @@
     </target>
 
     <target name="restore-solr-index"
-            description="Restore the latest Solr snapshot via gradle loadsolr. Pass -DsolrDump=&lt;path/to/snapshot.NAME&gt; to restore a specific snapshot instead.">
+            description="Restore the latest Solr snapshot via gradle loadsolr. Pass -DsolrDump=&lt;path/to/snapshot.NAME.tar.gz&gt; to restore a specific snapshot instead.">
         <!-- Default to empty so an unset solrDump passes -DsolrDump= (falsy in
              loadsolr, which then auto-selects the latest snapshot). -->
         <property name="solrDump" value=""/>
