@@ -8,15 +8,19 @@
 -- server_apps/data_transfer/PUBMED/updatePubPages.sh, or add it to the reviewed list
 -- once PubMed confirms the value is genuine.
 --
--- Every row returned is an error.  Three patterns are reported:
---   concatenated  START + END + START-END   e.g. 535953845359-5384
---   repeated      a value written twice     e.g. 104591104591
---   elsevier_pii  Elsevier PII placeholder  e.g. S0000-0000(26)00000-0
+-- Every row returned is an error.  Four patterns are reported:
+--   concatenated     START + END + START-END   e.g. 535953845359-5384
+--   repeated         a value written twice     e.g. 104591104591
+--   elsevier_pii     Elsevier PII placeholder  e.g. S0000-0000(26)00000-0
+--   end_before_start numeric range whose end is lower than its start and not shorter
+--                    than it, e.g. 5953-5862 (PubMed: 5853-62).  An abbreviated end such
+--                    as 625-38 is normal and not reported.
 -- The first two came from the old loader reading Pagination.text(); the third is
 -- what the loader stored when MedlinePgn was empty.
 --
--- Only publications with a PMID are checked: those defects came from the PubMed
--- loader, so a publication without a PMID cannot have them.
+-- Publications without a PMID are checked too: doubled values turned up there as well
+-- ('e107621e107621'; Crossref has 'e107621').  For those, and for a PMID that PubMed no
+-- longer serves, compare with Crossref by DOI.
 --
 -- The reviewed list below holds publications that were checked and left as they are.
 -- Each entry is a (zdb_id, pub_pages) pair, so the publication is reported again if
@@ -57,15 +61,9 @@ WITH reviewed (zdb_id, pub_pages) AS (VALUES
   ('ZDB-PUB-250613-13', '5050'),
   ('ZDB-PUB-260410-11', '4848'),
   ('ZDB-PUB-260414-19', '3131'),
-  -- PMID not found in PubMed
-  ('ZDB-PUB-240203-8', '3131'),
-  ('ZDB-PUB-240203-9', '2727'),
-  ('ZDB-PUB-240305-4', '6262'),
-  ('ZDB-PUB-240404-1', '8989'),
-  ('ZDB-PUB-240605-8', '129129'),
-  ('ZDB-PUB-240703-5', '172172'),
-  ('ZDB-PUB-240703-6', '172172'),
-  ('ZDB-PUB-240802-8', '192192'),
+  -- Not in PubMed and no DOI to check against; left as they are
+  ('ZDB-PUB-020123-6', '2020'),
+  ('ZDB-PUB-961014-1078', '1212'),
   -- PubMed has no pagination, only the Elsevier PII
   ('ZDB-PUB-260701-7', 'S2451-9456(26)00194-7'),
   ('ZDB-PUB-260716-9', 'S2090-1232(26)00545-X'),
@@ -93,13 +91,18 @@ SELECT
   CASE
     WHEN p.pub_pages ~ '^S[0-9]{4}-[0-9]{3}[0-9Xx]\(' THEN 'elsevier_pii'
     WHEN p.pub_pages ~ '^([A-Za-z0-9.]+?)([A-Za-z0-9.]+)\1-\2$' THEN 'concatenated'
+    WHEN p.pub_pages ~ '^[0-9]+-[0-9]+$'
+         AND length(split_part(p.pub_pages, '-', 2)) >= length(split_part(p.pub_pages, '-', 1))
+         AND split_part(p.pub_pages, '-', 2)::numeric < split_part(p.pub_pages, '-', 1)::numeric THEN 'end_before_start'
     ELSE 'repeated'
   END AS problem
 FROM publication p
   LEFT JOIN journal j ON j.jrnl_zdb_id = p.pub_jrnl_zdb_id
-WHERE p.accession_no IS NOT NULL
-  AND p.pub_pages IS NOT NULL
+WHERE p.pub_pages IS NOT NULL
   AND (p.pub_pages ~ '^S[0-9]{4}-[0-9]{3}[0-9Xx]\('
+       OR (p.pub_pages ~ '^[0-9]+-[0-9]+$'
+           AND length(split_part(p.pub_pages, '-', 2)) >= length(split_part(p.pub_pages, '-', 1))
+           AND split_part(p.pub_pages, '-', 2)::numeric < split_part(p.pub_pages, '-', 1)::numeric)
        OR p.pub_pages ~ '^([A-Za-z0-9.]+?)([A-Za-z0-9.]+)\1-\2$'
        OR (length(p.pub_pages) % 2 = 0
            AND length(p.pub_pages) >= 4
