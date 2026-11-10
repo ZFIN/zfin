@@ -24,20 +24,18 @@
         <zfin2:displayLocation entity="${formBean.marker}" longDetail="true"/>
     </z:attributeListItem>
 
+    <%-- ZFIN-10531: current assemblies (GRCz12tu, GRCz12ab, ...), or GRCz11 only for a gene on none of them --%>
     <z:attributeListItem label="Genome Assembly">
         <c:choose>
-            <c:when test="${empty formBean.marker.latestAssembly}">
+            <c:when test="${empty formBean.marker.displayAssemblies}">
                 Unknown
             </c:when>
-            <c:when test="${ zfn:isRoot()}">
+            <c:otherwise>
                 <ul class="comma-separated">
-                    <c:forEach var="assembly" items="${formBean.marker.allAssemblies}" varStatus="loop">
-                        <li id="previous-name-${loop.index}">${assembly.name}</li>
+                    <c:forEach var="assembly" items="${formBean.marker.displayAssemblies}" varStatus="loop">
+                        <li id="genome-assembly-${loop.index}">${assembly.name}</li>
                     </c:forEach>
                 </ul>
-            </c:when>
-            <c:otherwise>
-                ${formBean.marker.latestAssembly.name}
             </c:otherwise>
         </c:choose>
     </z:attributeListItem>
