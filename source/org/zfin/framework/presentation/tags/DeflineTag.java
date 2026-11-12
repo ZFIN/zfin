@@ -47,7 +47,7 @@ public class DeflineTag extends TagSupport {
 
     public String replaceEndargsWithLink(String defline) {
         String patternString = "(gene:)(ENSDARG*[^\\s]+)";
-        String replacementString = "<a href=http://www.ensembl.org/Danio_rerio/geneview?gene=$2>$1$2</a>";
+        String replacementString = "<a href=https://www.ensembl.org/feature-explorer/GCA_000002035.4/gene:$2?view=transcripts>$1$2</a>";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(defline);
         String output = matcher.replaceFirst(replacementString);
