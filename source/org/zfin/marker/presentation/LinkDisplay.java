@@ -49,10 +49,10 @@ public class LinkDisplay implements ProvidesLink {
     }
 
     /**
-     * False for links to the retired Vega site (vega.sanger.ac.uk); those are shown as plain text.
+     * False when the database has no URL prefix (fdb_db_query is empty); those are shown as plain text.
      */
     public boolean isHyperlinked() {
-        return urlPrefix == null || !urlPrefix.contains("vega.sanger.ac.uk");
+        return urlPrefix != null && !urlPrefix.isEmpty();
     }
 
     @Override
