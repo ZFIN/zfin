@@ -34,7 +34,7 @@ public class AccessionPresentation implements Serializable {
                 if (accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null) {
                     sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix());
                 }
-                sb.append("\"/>");
+                sb.append("\">");
                 sb.append(accession.getNumber());
                 sb.append("</a>");
             } else {
