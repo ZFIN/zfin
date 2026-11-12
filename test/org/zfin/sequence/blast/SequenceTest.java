@@ -39,7 +39,7 @@ public class SequenceTest {
 
         int index2 =
                 outputDefline.indexOf(
-                        "<a href=http://www.ensembl.org/Danio_rerio/geneview?gene=ENSDARG00000045045>gene:ENSDARG00000045045</a>"
+                        "<a href=https://www.ensembl.org/feature-explorer/GCA_000002035.4/gene:ENSDARG00000045045?view=transcripts>gene:ENSDARG00000045045</a>"
                 );
         assertEquals("indexes should be equal", index1, index2);
     }

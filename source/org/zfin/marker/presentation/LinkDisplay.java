@@ -48,6 +48,13 @@ public class LinkDisplay implements ProvidesLink {
         }
     }
 
+    /**
+     * False when the database has no URL prefix (fdb_db_query is empty); those are shown as plain text.
+     */
+    public boolean isHyperlinked() {
+        return urlPrefix != null && !urlPrefix.isEmpty();
+    }
+
     @Override
     public String getLink() {
         if (urlPrefix == null || urlPrefix.isEmpty()) {
