@@ -48,6 +48,13 @@ public class LinkDisplay implements ProvidesLink {
         }
     }
 
+    /**
+     * False for links to the retired Vega site (vega.sanger.ac.uk); those are shown as plain text.
+     */
+    public boolean isHyperlinked() {
+        return urlPrefix == null || !urlPrefix.contains("vega.sanger.ac.uk");
+    }
+
     @Override
     public String getLink() {
         if (urlPrefix == null || urlPrefix.isEmpty()) {
