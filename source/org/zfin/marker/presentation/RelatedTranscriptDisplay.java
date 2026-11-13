@@ -15,6 +15,8 @@ public class RelatedTranscriptDisplay  {
     private List<RelatedMarker> withdrawnTranscripts;
     private Marker gene;
     private GenomeBrowserImage gbrowseImage;
+    /** Names of the current assemblies (assembly.a_is_current), in assembly.a_order. */
+    private List<String> currentAssemblyNames = new ArrayList<>();
 
     public RelatedTranscriptDisplay() {
         transcripts = new ArrayList<>();
@@ -38,6 +40,33 @@ public class RelatedTranscriptDisplay  {
         }
 
         return TranscriptService.getSortedTranscripts(transcripts, false);
+    }
+
+    /** Non-withdrawn transcripts annotated on a current assembly. */
+    public List<RelatedMarker> getCurrentTranscripts() {
+        List<RelatedMarker> all = getNonWithdrawnTranscripts();
+        if (all == null) {
+            return List.of();
+        }
+        return all.stream().filter(RelatedMarker::isOnCurrentAssembly).toList();
+    }
+
+    /** Non-withdrawn transcripts not on a current assembly (the GRCz11 Ensembl set and older). */
+    public List<RelatedMarker> getArchivedTranscripts() {
+        List<RelatedMarker> all = getNonWithdrawnTranscripts();
+        if (all == null) {
+            return null;
+        }
+        return all.stream().filter(rm -> !rm.isOnCurrentAssembly()).toList();
+    }
+
+    /** "GRCz13ab, GRCz12ab, and GRCz12tu" */
+    public String getCurrentAssembliesDisplay() {
+        int n = currentAssemblyNames.size();
+        if (n <= 2) {
+            return String.join(" and ", currentAssemblyNames);
+        }
+        return String.join(", ", currentAssemblyNames.subList(0, n - 1)) + ", and " + currentAssemblyNames.get(n - 1);
     }
 
     public List<RelatedMarker> getWithdrawnTranscripts() {

@@ -1,0 +1,149 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<project>
+    <actions/>
+    <description><![CDATA[Load the Ensembl transcripts (ENSDARTs) of the current assemblies (GRCz12tu, GRCz12ab, GRCz13ab) as ZDB-TSCRIPTs, from the cDNA FASTA Ensembl publishes for each assembly.
+
+This is not the GRCz11 transcript load. That one is Update-Length-For-Ensembl-Transcript, which reads the GRCz11 cdna and ncrna files from Ensembl's current_fasta, updates the lengths of the existing GRCz11 ENSDARTs and adds missing ones, naming them <gene symbol>-2xx. This job reads the newer assemblies' files and names each transcript by its ENSDART. The two do not touch each other's transcripts: GRCz11 ENSDARTs (ENSDART00000...) are not in these files.
+
+By default the job downloads the files listed as load_files of the "Ensembl Transcripts" load. Upload a FASTA (.gz / .bgz accepted) to use that instead; it is then logged against the generic manual-upload load_file (upload://manual). The assembly of a file is read from its header lines. GRCz13ab has no file yet: Ensembl has not published it.
+
+Each transcript becomes a marker named by its lower-case ENSDART, with a gene-produces-transcript relationship from the gene that carries the ENSDARG for that assembly (the Ensembl(<assembly>) db_links from Load-Ensembl-Mapping, so run that first), an Ensembl_Trans db_link with the length tied to the assembly, and an attribution to the publication given below. Nothing is deleted or changed, and rerunning adds nothing new.
+
+The xref.tsv Ensembl publishes beside each FASTA is used only for a report (ensembl_transcript_xref_report.csv): for transcripts no gene carries, the ZFIN gene Ensembl names for the ENSDARG and whether using it would work. ZFIN transcripts on an assembly that the file no longer has are listed as NOT_IN_FILE; nothing is withdrawn or deleted.
+
+The HTML report (ensembl_transcript_load_report.html) shows summary tables and a table for each kind of outcome, each with a note on what to do about it, up to 10000 rows per table; the CSV has every one.
+
+Left out, and listed with the reason in the report: ENSDARGs no gene carries (or more than one does), names already used by another marker, and biotypes with no ZFIN transcript type. The summary counts the skipped biotypes; give BIOTYPE_OVERRIDES to load them.
+
+DRY_RUN is on by default: the run reports what it would do and writes nothing. Run it once like that, read the summary, then run again with DRY_RUN off.]]></description>
+    <keepDependencies>false</keepDependencies>
+    <properties>
+        <jenkins.model.BuildDiscarderProperty>
+            <strategy class="hudson.tasks.LogRotator">
+                <daysToKeep>-1</daysToKeep>
+                <numToKeep>-1</numToKeep>
+                <artifactDaysToKeep>-1</artifactDaysToKeep>
+                <artifactNumToKeep>-1</artifactNumToKeep>
+            </strategy>
+        </jenkins.model.BuildDiscarderProperty>
+        <hudson.model.ParametersDefinitionProperty>
+            <parameterDefinitions>
+                <hudson.model.FileParameterDefinition>
+                    <name>TRANSCRIPT_FASTA_UPLOAD</name>
+                    <description>Optional. An Ensembl cDNA FASTA to load instead of downloading the load_files of the Ensembl Transcripts load.</description>
+                </hudson.model.FileParameterDefinition>
+                <hudson.model.FileParameterDefinition>
+                    <name>XREF_UPLOAD</name>
+                    <description>Optional. The Ensembl xref.tsv(.gz) that goes with an uploaded FASTA, for the xref report. Downloaded FASTAs get theirs automatically.</description>
+                </hudson.model.FileParameterDefinition>
+                <hudson.model.ChoiceParameterDefinition>
+                    <name>ASSEMBLY</name>
+                    <description>Load only the file(s) for this assembly. Blank loads every file.</description>
+                    <choices class="java.util.Arrays$ArrayList">
+                        <a class="string-array">
+                            <string></string>
+                            <string>GRCz12tu</string>
+                            <string>GRCz12ab</string>
+                            <string>GRCz13ab</string>
+                        </a>
+                    </choices>
+                </hudson.model.ChoiceParameterDefinition>
+                <hudson.model.StringParameterDefinition>
+                    <name>ATTRIBUTION_PUB_ID</name>
+                    <description>Required. ZDB-PUB ID of the publication the new transcripts and their relationships are attributed to.</description>
+                    <defaultValue></defaultValue>
+                    <trim>true</trim>
+                </hudson.model.StringParameterDefinition>
+                <hudson.model.StringParameterDefinition>
+                    <name>BIOTYPE_OVERRIDES</name>
+                    <description>Optional. Comma-separated biotype=ZFIN transcript type pairs for Ensembl biotypes the load has no type for, e.g. lncRNA=lincRNA,vault_RNA=ncRNA. Biotypes left out are skipped and counted in the summary.</description>
+                    <defaultValue></defaultValue>
+                    <trim>true</trim>
+                </hudson.model.StringParameterDefinition>
+                <hudson.model.BooleanParameterDefinition>
+                    <name>DRY_RUN</name>
+                    <description>Only report what would be loaded; write nothing to the database. Turn off to load.</description>
+                    <defaultValue>true</defaultValue>
+                </hudson.model.BooleanParameterDefinition>
+            </parameterDefinitions>
+        </hudson.model.ParametersDefinitionProperty>
+    </properties>
+    <scm class="hudson.scm.NullSCM"/>
+    <canRoam>true</canRoam>
+    <disabled>false</disabled>
+    <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+    <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+    <triggers>
+        <hudson.triggers.TimerTrigger>
+            <spec></spec>
+        </hudson.triggers.TimerTrigger>
+    </triggers>
+    <concurrentBuild>false</concurrentBuild>
+    <customWorkspace>$TARGETROOT</customWorkspace>
+    <builders>
+        <hudson.tasks.Shell>
+            <command><![CDATA[
+set -e
+# Jenkins puts an uploaded file in $WORKSPACE/TRANSCRIPT_FASTA_UPLOAD; without one the load_files are downloaded.
+# Keep a copy of an upload with the results.
+[ -s "$WORKSPACE/TRANSCRIPT_FASTA_UPLOAD" ] && cp "$WORKSPACE/TRANSCRIPT_FASTA_UPLOAD" "$WORKSPACE/ensembl_transcript_input.fa.gz"
+[ -s "$WORKSPACE/XREF_UPLOAD" ] && cp "$WORKSPACE/XREF_UPLOAD" "$WORKSPACE/ensembl_transcript_input.xref.tsv.gz"
+cd $SOURCEROOT && gradle loadEnsemblTranscripts
+]]></command>
+        </hudson.tasks.Shell>
+    </builders>
+    <publishers>
+        <hudson.tasks.ArtifactArchiver>
+            <artifacts>ensembl_transcript_load_report.html,ensembl_transcript_load_summary.txt,ensembl_transcript_load_report.csv,ensembl_transcript_xref_report.csv,ensembl_transcript_input.fa.gz,ensembl_transcript_input.xref.tsv.gz</artifacts>
+            <latestOnly>false</latestOnly>
+            <allowEmptyArchive>true</allowEmptyArchive>
+        </hudson.tasks.ArtifactArchiver>
+        <hudson.plugins.emailext.ExtendedEmailPublisher plugin="email-ext@2.35.1">
+            <recipientList></recipientList>
+            <configuredTriggers>
+                <hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                    <email>
+                        <recipientList>@FAILURE-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>$PROJECT_DEFAULT_CONTENT</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>true</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern></attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>project</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.FailureTrigger>
+                <hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+                    <email>
+                        <recipientList>@SUCCESS-RECIPIENT-LIST@</recipientList>
+                        <subject>$PROJECT_DEFAULT_SUBJECT</subject>
+                        <body>${FILE,path=&quot;ensembl_transcript_load_summary.txt&quot;}</body>
+                        <sendToDevelopers>false</sendToDevelopers>
+                        <sendToRequester>true</sendToRequester>
+                        <includeCulprits>false</includeCulprits>
+                        <sendToRecipientList>true</sendToRecipientList>
+                        <attachmentsPattern>ensembl_transcript_load_report.html,ensembl_transcript_load_report.csv</attachmentsPattern>
+                        <attachBuildLog>false</attachBuildLog>
+                        <compressBuildLog>false</compressBuildLog>
+                        <replyTo></replyTo>
+                        <contentType>text/plain</contentType>
+                    </email>
+                </hudson.plugins.emailext.plugins.trigger.SuccessTrigger>
+            </configuredTriggers>
+            <contentType>default</contentType>
+            <defaultSubject>[Jenkins][${INSTANCE}]: ${PROJECT_NAME}: ${BUILD_STATUS}</defaultSubject>
+            <defaultContent>$DEFAULT_CONTENT</defaultContent>
+            <attachmentsPattern></attachmentsPattern>
+            <presendScript></presendScript>
+            <attachBuildLog>false</attachBuildLog>
+            <compressBuildLog>false</compressBuildLog>
+            <replyTo>${DB_OWNER}@zfin.org</replyTo>
+            <saveOutput>false</saveOutput>
+        </hudson.plugins.emailext.ExtendedEmailPublisher>
+    </publishers>
+    <buildWrappers/>
+</project>
