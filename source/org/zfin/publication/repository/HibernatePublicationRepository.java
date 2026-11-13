@@ -57,6 +57,7 @@ import org.zfin.sequence.MarkerDBLink;
 import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.stream.Collectors.groupingBy;
 import static org.zfin.database.HibernateUpgradeHelper.setTupleResultTransformer;
@@ -528,6 +529,326 @@ public class HibernatePublicationRepository extends PaginationUtil implements Pu
         markers.addAll(getMarkersPulledThroughFeatures(pubID));
         markers.addAll(getMarkersPulledThroughSTRs(pubID));
         return new ArrayList<>(markers.stream().sorted(Comparator.comparing(Marker::getAbbreviation)).toList());
+    }
+
+    /**
+     * The foreign_db_contains IDs of the NCBI Gene database and of the RefSeq sequence databases
+     * (RNA, polypeptide, genomic), each mapped to the type label shown in the publication page's
+     * NCBI links table. The IDs are passed to the queries below as literal values rather than a
+     * sub-select: only then can the planner estimate how selective they are and start from the
+     * publication's attributions for an ordinary publication (a few ms) instead of scanning db_link.
+     */
+    private Map<String, String> getNcbiLinkTypeByFdbcontID() {
+        String sql = """
+            select fc.fdbcont_zdb_id,
+                   case when f.fdb_db_name = 'Gene' then 'NCBI Gene' else 'RefSeq ' || dt.fdbdt_data_type end
+              from foreign_db_contains fc
+              join foreign_db f on f.fdb_db_pk_id = fc.fdbcont_fdb_db_id
+              join foreign_db_data_type dt on dt.fdbdt_pk_id = fc.fdbcont_fdbdt_id
+             where f.fdb_db_name = 'Gene'
+                or (f.fdb_db_name = 'RefSeq' and dt.fdbdt_super_type = 'sequence')
+            """;
+        List<Object[]> rows = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class).list();
+        Map<String, String> typeByFdbcontID = new LinkedHashMap<>();
+        rows.forEach(row -> typeByFdbcontID.put((String) row[0], (String) row[1]));
+        return typeByFdbcontID;
+    }
+
+    /**
+     * Counts of the publication's NCBI Gene and RefSeq links per type, assembly and db_link ID
+     * date, in one pass over its links. Each facet's counts honour all active filters except that
+     * facet's own selection (so its other values stay selectable), and every value the publication
+     * has is listed, with 0 where the other filters exclude all its links. Assemblies follow the
+     * same per-type rule as the table: the gene's (marker_assembly) for NCBI Gene links, the
+     * link's own (db_link_assembly) for RefSeq.
+     */
+    public PublicationNcbiLinkFacets getNcbiLinkFacets(String pubID, PublicationNcbiLinkFilter filter) {
+        Map<String, String> typeByFdbcontID = getNcbiLinkTypeByFdbcontID();
+        Map<String, Long> types = new TreeMap<>();
+        Map<String, Long> assemblies = new LinkedHashMap<>();
+        Map<String, Long> dblinkDates = new TreeMap<>(Comparator.reverseOrder());
+        if (typeByFdbcontID.isEmpty()) {
+            return new PublicationNcbiLinkFacets(types, assemblies, dblinkDates);
+        }
+        NcbiLinkConditions conditions = buildNcbiLinkConditions(pubID, typeByFdbcontID, filter);
+        String sql = """
+            with links as materialized (
+                select d.dblink_zdb_id, d.dblink_linked_recid, d.dblink_fdbcont_zdb_id,
+                       f.fdb_db_name = 'Gene' as is_gene,
+                       %s as text_ok, %s as type_ok, %s as date_ok, %s as assembly_ok
+                %s),
+            link_assembly as materialized (
+                select l.dblink_zdb_id, ma.ma_a_pk_id as a_pk_id, l.text_ok and l.type_ok and l.date_ok as others_ok
+                  from links l
+                  join marker_assembly ma on ma.ma_mrkr_zdb_id = l.dblink_linked_recid
+                 where l.is_gene
+                union all
+                select l.dblink_zdb_id, dla.dbla_a_pk_id, l.text_ok and l.type_ok and l.date_ok
+                  from links l
+                  join db_link_assembly dla on dla.dbla_dblink_zdb_id = l.dblink_zdb_id
+                 where not l.is_gene)
+            select 'type' as facet, dblink_fdbcont_zdb_id as value,
+                   count(*) filter (where text_ok and date_ok and assembly_ok) as n, 0 as sort_order
+              from links group by dblink_fdbcont_zdb_id
+            union all
+            select 'date', split_part(dblink_zdb_id, '-', 3),
+                   count(*) filter (where text_ok and type_ok and assembly_ok), 0
+              from links group by split_part(dblink_zdb_id, '-', 3)
+            union all
+            select 'assembly', a.a_name, count(*) filter (where la.others_ok), min(a.a_order)
+              from link_assembly la join assembly a on a.a_pk_id = la.a_pk_id group by a.a_name
+            union all
+            select 'none', null, count(*) filter (where text_ok and type_ok and date_ok), count(*)
+              from links l where not exists (select 1 from link_assembly la where la.dblink_zdb_id = l.dblink_zdb_id)
+             order by 1, 4
+            """.formatted(orTrue(conditions.text()), orTrue(conditions.type()), orTrue(conditions.date()),
+                          orTrue(conditions.assembly()), NCBI_LINK_FROM);
+        NativeQuery<Tuple> query = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class);
+        conditions.bind(query);
+        for (Tuple row : query.list()) {
+            String value = row.get("value", String.class);
+            long count = ((Number) row.get("n")).longValue();
+            switch (row.get("facet", String.class)) {
+                case "type" -> types.merge(typeByFdbcontID.get(value), count, Long::sum);
+                case "assembly" -> assemblies.put(value, count);
+                case "date" -> {
+                    String isoDate = PublicationNcbiLinkFilter.idDateToIsoDate(value);
+                    if (isoDate != null) {
+                        dblinkDates.merge(isoDate, count, Long::sum);
+                    }
+                }
+                case "none" -> {
+                    // sort_order holds the unfiltered number of links without an assembly:
+                    // list the option whenever the publication has such links
+                    if (((Number) row.get("sort_order")).longValue() > 0) {
+                        assemblies.put(PublicationNcbiLinkFilter.NO_ASSEMBLY, count);
+                    }
+                }
+                default -> throw new IllegalStateException("Unexpected facet " + row.get("facet"));
+            }
+        }
+        return new PublicationNcbiLinkFacets(types, assemblies, dblinkDates);
+    }
+
+    private static String orTrue(String condition) {
+        return condition == null ? "true" : "(" + condition + ")";
+    }
+
+    public boolean hasNcbiLinks(String pubID) {
+        Set<String> fdbcontIDs = getNcbiLinkTypeByFdbcontID().keySet();
+        if (fdbcontIDs.isEmpty()) {
+            return false;
+        }
+        String sql = """
+            select exists (select 1
+                             from record_attribution r
+                             join db_link d on d.dblink_zdb_id = r.recattrib_data_zdb_id
+                            where r.recattrib_source_zdb_id = :pubID
+                              and d.dblink_fdbcont_zdb_id in (:fdbcontIDs))
+            """;
+        return HibernateUtil.currentSession().createNativeQuery(sql, Boolean.class)
+            .setParameter("pubID", pubID)
+            .setParameterList("fdbcontIDs", fdbcontIDs)
+            .uniqueResult();
+    }
+
+    /**
+     * NCBI Gene and RefSeq db_links attributed to the publication, one row per link, ordered by
+     * ZFIN ID and accession. Assemblies are per gene (marker_assembly) for NCBI Gene links and per
+     * link (db_link_assembly) for RefSeq; the assembly filter follows the same rule.
+     */
+    public PaginationResult<PublicationNcbiLink> getNcbiLinksByPublication(String pubID,
+                                                                           PublicationNcbiLinkFilter filter,
+                                                                           Pagination pagination) {
+        Map<String, String> typeByFdbcontID = getNcbiLinkTypeByFdbcontID();
+        if (typeByFdbcontID.isEmpty()) {
+            return new PaginationResult<>(0, new ArrayList<>());
+        }
+        NcbiLinkConditions conditions = buildNcbiLinkConditions(pubID, typeByFdbcontID, filter);
+        String sql = """
+            select page.*,
+                   case when page.db_name = 'Gene'
+                        then (select string_agg(a.a_name, ', ' order by a.a_order)
+                                from marker_assembly ma
+                                join assembly a on a.a_pk_id = ma.ma_a_pk_id
+                               where ma.ma_mrkr_zdb_id = page.zdb_id)
+                        else (select string_agg(a.a_name, ', ' order by a.a_order)
+                                from db_link_assembly dla
+                                join assembly a on a.a_pk_id = dla.dbla_a_pk_id
+                               where dla.dbla_dblink_zdb_id = page.dblink_id)
+                   end as assemblies
+              from (select d.dblink_zdb_id as dblink_id,
+                           d.dblink_linked_recid as zdb_id,
+                           (select m.mrkr_abbrev from marker m where m.mrkr_zdb_id = d.dblink_linked_recid) as symbol,
+                           d.dblink_acc_num as accession,
+                           d.dblink_fdbcont_zdb_id as fdbcont_id,
+                           f.fdb_db_name as db_name,
+                           f.fdb_db_query || d.dblink_acc_num || coalesce(f.fdb_url_suffix, '') as url,
+                           split_part(d.dblink_zdb_id, '-', 3) as dblink_id_date,
+                           to_char(r.recattrib_created_at, 'YYYY-MM-DD') as attribution_date,
+                           count(*) over () as total
+                      %s %s
+                     order by d.dblink_linked_recid, d.dblink_acc_num
+                     limit :limit offset :offset) page
+             order by page.zdb_id, page.accession
+            """.formatted(NCBI_LINK_FROM, conditions.allAsAnd());
+        NativeQuery<Tuple> query = HibernateUtil.currentSession().createNativeQuery(sql, Tuple.class);
+        conditions.bind(query);
+        List<Tuple> rows = query
+            .setParameter("limit", pagination.getLimit())
+            .setParameter("offset", pagination.getStart())
+            .list();
+        List<PublicationNcbiLink> links = rows.stream()
+            .map(row -> new PublicationNcbiLink(
+                row.get("dblink_id", String.class),
+                row.get("zdb_id", String.class),
+                row.get("symbol", String.class),
+                row.get("accession", String.class),
+                typeByFdbcontID.get(row.get("fdbcont_id", String.class)),
+                row.get("url", String.class),
+                row.get("assemblies", String.class),
+                PublicationNcbiLinkFilter.idDateToIsoDate(row.get("dblink_id_date", String.class)),
+                row.get("attribution_date", String.class)))
+            .toList();
+        int total = rows.isEmpty() ? countNcbiLinks(conditions, pagination)
+                                   : ((Number) rows.get(0).get("total")).intValue();
+        return new PaginationResult<>(total, new ArrayList<>(links));
+    }
+
+    /**
+     * All of the publication's NCBI Gene and RefSeq links; the filter conditions are added to it.
+     * Aliases d (db_link) and f (foreign_db) are what the conditions refer to.
+     */
+    private static final String NCBI_LINK_FROM = """
+          from record_attribution r
+          join db_link d on d.dblink_zdb_id = r.recattrib_data_zdb_id
+          join foreign_db_contains fc on fc.fdbcont_zdb_id = d.dblink_fdbcont_zdb_id
+          join foreign_db f on f.fdb_db_pk_id = fc.fdbcont_fdb_db_id
+         where r.recattrib_source_zdb_id = :pubID
+           and d.dblink_fdbcont_zdb_id in (:fdbcontIDs)
+        """;
+
+    /**
+     * The SQL condition of each active filter (null when that filter is not set) and the values of
+     * all named parameters, including those of {@link #NCBI_LINK_FROM}. Kept per filter so that
+     * the facet counts can leave out a facet's own filter.
+     */
+    private record NcbiLinkConditions(Map<String, Object> parameters, String text, String type, String date,
+                                      String assembly) {
+
+        String allAsAnd() {
+            return Stream.of(text, type, date, assembly)
+                .filter(Objects::nonNull)
+                .map(condition -> " and (" + condition + ")\n")
+                .collect(Collectors.joining());
+        }
+
+        void bind(NativeQuery<?> query) {
+            parameters.forEach((name, value) -> {
+                if (value instanceof Collection<?> values) {
+                    query.setParameterList(name, values);
+                } else {
+                    query.setParameter(name, value);
+                }
+            });
+        }
+    }
+
+    private static NcbiLinkConditions buildNcbiLinkConditions(String pubID, Map<String, String> typeByFdbcontID,
+                                                              PublicationNcbiLinkFilter filter) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("pubID", pubID);
+        parameters.put("fdbcontIDs", new ArrayList<>(typeByFdbcontID.keySet()));
+
+        List<String> textConditions = new ArrayList<>();
+        if (filter.zdbID() != null) {
+            textConditions.add("d.dblink_linked_recid ilike :zdbIDPattern");
+            parameters.put("zdbIDPattern", "%" + filter.zdbID() + "%");
+        }
+        if (filter.symbol() != null) {
+            textConditions.add("""
+                exists (select 1 from marker m
+                         where m.mrkr_zdb_id = d.dblink_linked_recid and m.mrkr_abbrev ilike :symbolPattern)""");
+            parameters.put("symbolPattern", "%" + filter.symbol() + "%");
+        }
+        if (filter.accession() != null) {
+            textConditions.add("d.dblink_acc_num ilike :accessionPattern");
+            parameters.put("accessionPattern", "%" + filter.accession() + "%");
+        }
+        String text = textConditions.isEmpty() ? null : String.join(" and ", textConditions);
+
+        String type = null;
+        if (!filter.types().isEmpty()) {
+            List<String> typeFdbcontIDs = typeByFdbcontID.entrySet().stream()
+                .filter(entry -> filter.types().contains(entry.getValue()))
+                .map(Map.Entry::getKey)
+                .toList();
+            if (typeFdbcontIDs.isEmpty()) {
+                type = "false";
+            } else {
+                type = "d.dblink_fdbcont_zdb_id in (:typeFdbcontIDs)";
+                parameters.put("typeFdbcontIDs", typeFdbcontIDs);
+            }
+        }
+
+        String date = null;
+        if (!filter.dblinkDates().isEmpty()) {
+            List<String> idDates = filter.dblinkDates().stream()
+                .map(PublicationNcbiLinkFilter::isoDateToIdDate)
+                .filter(Objects::nonNull)
+                .toList();
+            if (idDates.isEmpty()) {
+                date = "false";
+            } else {
+                date = "split_part(d.dblink_zdb_id, '-', 3) in (:dblinkIdDates)";
+                parameters.put("dblinkIdDates", idDates);
+            }
+        }
+
+        String assembly = null;
+        if (!filter.assemblies().isEmpty()) {
+            List<String> assemblyNames = filter.assemblies().stream()
+                .filter(name -> !PublicationNcbiLinkFilter.NO_ASSEMBLY.equals(name))
+                .toList();
+            List<String> alternatives = new ArrayList<>();
+            if (!assemblyNames.isEmpty()) {
+                alternatives.add(ncbiLinkAssemblyExists("and a.a_name in (:assemblyNames)"));
+                parameters.put("assemblyNames", assemblyNames);
+            }
+            if (filter.assemblies().contains(PublicationNcbiLinkFilter.NO_ASSEMBLY)) {
+                alternatives.add("not " + ncbiLinkAssemblyExists(""));
+            }
+            assembly = String.join(" or ", alternatives);
+        }
+        return new NcbiLinkConditions(parameters, text, type, date, assembly);
+    }
+
+    /**
+     * Whether the link has an assembly matching {@code assemblyCondition}: the gene's assemblies
+     * for NCBI Gene links, the link's own for RefSeq.
+     */
+    private static String ncbiLinkAssemblyExists(String assemblyCondition) {
+        return """
+            (case when f.fdb_db_name = 'Gene'
+                  then exists (select 1 from marker_assembly ma join assembly a on a.a_pk_id = ma.ma_a_pk_id
+                                where ma.ma_mrkr_zdb_id = d.dblink_linked_recid %1$s)
+                  else exists (select 1 from db_link_assembly dla join assembly a on a.a_pk_id = dla.dbla_a_pk_id
+                                where dla.dbla_dblink_zdb_id = d.dblink_zdb_id %1$s)
+             end)""".formatted(assemblyCondition);
+    }
+
+    /**
+     * Total for a page past the end of the result (the window count is not available when the
+     * page itself is empty); 0 when nothing matches at all.
+     */
+    private int countNcbiLinks(NcbiLinkConditions conditions, Pagination pagination) {
+        if (pagination.getStart() == 0) {
+            return 0;
+        }
+        NativeQuery<Long> query = HibernateUtil.currentSession()
+            .createNativeQuery("select count(*) " + NCBI_LINK_FROM + conditions.allAsAnd(), Long.class);
+        conditions.bind(query);
+        return query.uniqueResult().intValue();
     }
 
     public List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType) {
