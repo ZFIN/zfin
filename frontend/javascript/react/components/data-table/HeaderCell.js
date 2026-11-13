@@ -13,6 +13,11 @@ const HeaderCell = ({column, filterValue, onFilterChange, supplementalData, sele
         onFilterChange(column.filterName, newValue);
     }
     const filterText = 'enter keyword'
+    const optionCounts = column.filterOptionCountsFromSupplementalData && supplementalData &&
+        supplementalData[column.filterOptionCountsFromSupplementalData];
+    const optionDisplay = optionCounts ?
+        option => (optionCounts[option] === undefined ? option : `${option} [${optionCounts[option].toLocaleString()}]`) :
+        selectionFilterDisplay;
     const toggleFilter = () => setFilterOpen(prev => !prev);
 
     return (
@@ -24,13 +29,13 @@ const HeaderCell = ({column, filterValue, onFilterChange, supplementalData, sele
             )}
             {filterOpen && (
                 column.filterOptions ?
-                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange} displayFunction={selectionFilterDisplay}/> :
+                    <CheckboxListFilter options={column.filterOptions} value={filterValue} onChange={handleFilterChange} displayFunction={optionDisplay}/> :
                     column.filterOptionFromSupplementalData ?
                         <CheckboxListFilter
                             options={supplementalData[column.filterOptionFromSupplementalData]}
                             value={filterValue}
                             onChange={handleFilterChange}
-                            displayFunction={selectionFilterDisplay}
+                            displayFunction={optionDisplay}
                         /> :
                         <TextBoxFilter value={filterValue} onChange={handleFilterChange} placeholder={filterText}/>
             )
