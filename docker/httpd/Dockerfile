@@ -1,4 +1,4 @@
-FROM fedora:latest
+FROM fedora:43
 
 # Install Apache
 RUN yum -y update
