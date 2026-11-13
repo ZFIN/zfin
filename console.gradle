@@ -492,3 +492,13 @@ task loadEnsemblMapping(type: JavaExec) {
     workingDir = file(System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT') ?: projectDir)
     doFirst { workingDir.mkdirs() }
 }
+
+// Loads Ensembl transcripts (ENSDARTs) of the current assemblies as ZDB-TSCRIPTs (Load-Ensembl-Transcripts-z12ab-z12tu-z13ab job).
+// Reads TRANSCRIPT_FASTA_UPLOAD from $WORKSPACE (Jenkins) or TRANSCRIPT_FASTA; with neither, downloads the
+// "Ensembl Transcripts" load_files. Writes its report to TARGETROOT, which is the Jenkins workspace.
+task loadEnsemblTranscripts(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'org.zfin.datatransfer.ensembl.LoadEnsemblTranscriptsTask'
+    workingDir = file(System.getProperty('job.output.basedir') ?: System.getenv('TARGETROOT') ?: projectDir)
+    doFirst { workingDir.mkdirs() }
+}

@@ -12,6 +12,13 @@ import org.hibernate.Session;
  */
 public final class LoadFileRegistry {
 
+    /**
+     * The {@code lf_source} of the load_file a load uses for a file someone uploads by hand (a Jenkins file
+     * parameter, say) instead of the file it normally downloads. It is not a URL. Every load that accepts an
+     * upload has its own row with this source; load_file is unique on load and source, so they do not clash.
+     */
+    public static final String MANUAL_UPLOAD_SOURCE = "upload://manual";
+
     private LoadFileRegistry() {
     }
 

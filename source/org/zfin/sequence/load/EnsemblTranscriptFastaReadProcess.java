@@ -117,7 +117,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
      *   - miscellaneous non-coding                          → ncRNA
      *   - all *_pseudogene flavours                         → pseudogenic transcript
      */
-    static final Map<String, TranscriptType.Type> BIOTYPE_TO_ZFIN_TYPE;
+    public static final Map<String, TranscriptType.Type> BIOTYPE_TO_ZFIN_TYPE;
     static {
         Map<String, TranscriptType.Type> m = new HashMap<>();
         // Protein-coding (and coding variants Ensembl tags separately)
