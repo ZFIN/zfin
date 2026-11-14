@@ -1,17 +1,17 @@
 <?xml version='1.1' encoding='UTF-8'?>
 <project>
     <actions/>
-    <description>Load Ensembl gene IDs (ENSDARGs) for the newer assemblies (GRCz12tu, GRCz12ab, GRCz13ab) into db_link, from a z11 to z12 mapping file.&lt;br/&gt;
-&lt;br/&gt;
-Each ENSDARG becomes a db_link on the mapping's gene under the Ensembl(&amp;lt;assembly&amp;gt;) reference database, with a db_link_assembly row for that assembly and an attribution to the publication given below. Nothing is deleted or changed, and rerunning a file adds nothing new.&lt;br/&gt;
-&lt;br/&gt;
-Only unambiguous accessions are loaded. Left out, and listed with the reason in ensembl_mapping_load_report.csv: rows the file flags in its conflict column, ENSDARGs given to more than one gene (in the file, or already in the database), genes not in the database, and malformed cells. ensembl_mapping_load_summary.txt has the counts.&lt;br/&gt;
-&lt;br/&gt;
-The file is a CSV with columns zdb_id and any of z12tu, z12ab, z13ab (z11 and other columns are ignored); .gz is accepted.&lt;br/&gt;
-&lt;br/&gt;
-The mapping built for ZFIN-10493 is an example of the format. The scripts that generate it (map_ensembl_z11_z12.py), with the inputs, the generated mapping (z11_z12_mapping_v2.csv) and a report on the method and findings, are attached to that issue as z11_z12_report_and_breakdown_v2.zip.&lt;br/&gt;
-&lt;br/&gt;
-DRY_RUN is on by default: the run reports what it would do and writes nothing. Run it once like that, read the summary, then run again with DRY_RUN off.</description>
+    <description><![CDATA[Load Ensembl gene IDs (ENSDARGs) for the newer assemblies (GRCz12tu, GRCz12ab, GRCz13ab) into db_link, from a z11 to z12 mapping file.
+
+Each ENSDARG becomes a db_link on the mapping's gene under the Ensembl(<assembly>) reference database, with a db_link_assembly row for that assembly and an attribution to the publication given below. Nothing is deleted or changed, and rerunning a file adds nothing new.
+
+Only unambiguous accessions are loaded. Left out, and listed with the reason in ensembl_mapping_load_report.csv: rows the file flags in its conflict column, ENSDARGs given to more than one gene (in the file, or already in the database), genes not in the database, and malformed cells. ensembl_mapping_load_summary.txt has the counts.
+
+The file is a CSV with columns zdb_id and any of z12tu, z12ab, z13ab (z11 and other columns are ignored); .gz is accepted.
+
+The mapping built for ZFIN-10493 is an example of the format. The scripts that generate it (map_ensembl_z11_z12.py), with the inputs, the generated mapping (z11_z12_mapping_v2.csv) and a report on the method and findings, are attached to that issue as z11_z12_report_and_breakdown_v2.zip.
+
+DRY_RUN is on by default: the run reports what it would do and writes nothing. Run it once like that, read the summary, then run again with DRY_RUN off.]]></description>
     <keepDependencies>false</keepDependencies>
     <properties>
         <jenkins.model.BuildDiscarderProperty>

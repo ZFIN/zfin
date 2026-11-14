@@ -7,6 +7,9 @@ import org.zfin.marker.Marker;
 import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.MarkerRelationshipType;
 import org.zfin.sequence.TranscriptDBLink;
+import org.zfin.sequence.gff.Assembly;
+
+import java.util.Comparator;
 
 import java.util.List;
 
@@ -26,6 +29,25 @@ public class RelatedMarker implements Comparable {
     private List<TranscriptDBLink> displayedSequenceDBLinks; // if a marker has ONE associated sequence
 
     private boolean hasHavanna;
+
+    /**
+     * Assemblies the transcript's displayed sequence links (db_link_assembly) are annotated against.
+     * Empty for the older GRCz11 Ensembl transcripts, which carry no assembly rows.
+     */
+    private List<Assembly> assemblies = List.of();
+
+    /** Assembly names, highest ranking (lowest a_order) first. */
+    public List<String> getAssemblyNames() {
+        return assemblies.stream()
+            .sorted(Comparator.comparing(Assembly::getOrder))
+            .map(Assembly::getName)
+            .toList();
+    }
+
+    /** True when the transcript is annotated on at least one current assembly (assembly.a_is_current). */
+    public boolean isOnCurrentAssembly() {
+        return assemblies.stream().anyMatch(Assembly::isCurrent);
+    }
 
     public void setMarkerRelationshipType(MarkerRelationshipType markerRelationshipType) {
         this.markerRelationshipType = markerRelationshipType;

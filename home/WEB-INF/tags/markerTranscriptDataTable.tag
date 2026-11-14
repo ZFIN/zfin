@@ -2,6 +2,7 @@
 
 <%@ attribute name="transcripts" required="true" type="java.util.Collection" %>
 <%@ attribute name="unlinkedTranscript" required="false" type="org.zfin.marker.Marker" %>
+<%@ attribute name="showAssembly" required="false" type="java.lang.Boolean" description="add a Genome Assembly column; transcripts with no assembly rows are GRCz11" %>
 
 <z:dataTable collapse="true" hasData="${!empty transcripts}">
     <thead>
@@ -12,6 +13,7 @@
                 <th>Accession</th>
             </authz:authorize>
             <th>Annotation Method</th>
+            <c:if test="${showAssembly}"><th>Genome Assembly</th></c:if>
             <th width="10%">Has Havana Data</th>
             <th class="text-right">Length (nt)</th>
             <th>Analysis <a class="popup-link info-popup-link" href="/ZFIN/help_files/sequence_tools_help.html"></a></th>
@@ -47,6 +49,9 @@
                     </td>
                 </authz:authorize>
                 <td>${transcript.marker.annotationMethod.name}</td>
+                <c:if test="${showAssembly}">
+                    <td>${empty transcript.assemblyNames ? 'GRCz11' : fn:join(transcript.assemblyNames.toArray(), ', ')}</td>
+                </c:if>
                 <td><c:if test="${transcript.hasHavanna}"><i class="fas fa-check"></i></c:if></td>
                 <td class="text-right"><fmt:formatNumber type="number" maxFractionDigits="2" value="${transcript.marker.length}"/> nt</td>
                 <td>
