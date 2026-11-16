@@ -47,7 +47,7 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
             // (FeatureGenomicMutationDetail with lazy associations) attached every
             // row to the persistence context, and the session-close cascade walk
             // ground the JVM to a halt over the full dataset.
-            String sql = "select fgmd.fgmd_feature_zdb_id, " +
+            String sql = "select fvar.var_feature_zdb_id, " +
                     "       f.feature_abbrev, " +
                     "       f.feature_type, " +
                     "       sfcl.sfcl_assembly, " +
@@ -56,11 +56,12 @@ public class CheckSequenceOfReferenceDriftTask extends AbstractValidateDataRepor
                     "       sfcl.sfcl_end_position, " +
                     "       fgmd.fgmd_sequence_of_reference " +
                     "  from feature_genomic_mutation_detail fgmd " +
-                    "  join feature f on f.feature_zdb_id = fgmd.fgmd_feature_zdb_id " +
+                    "  join variant fvar on fvar.var_zdb_id = fgmd.fgmd_variant_zdb_id " +
+                    "  join feature f on f.feature_zdb_id = fvar.var_feature_zdb_id " +
                     "  left join sequence_feature_chromosome_location sfcl " +
-                    "         on sfcl.sfcl_feature_zdb_id = fgmd.fgmd_feature_zdb_id " +
+                    "         on sfcl.sfcl_feature_zdb_id = fvar.var_feature_zdb_id " +
                     " where fgmd.fgmd_sequence_of_reference is not null " +
-                    " order by fgmd.fgmd_feature_zdb_id";
+                    " order by fvar.var_feature_zdb_id";
 
             NativeQuery<Object[]> query = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class);
             GenomicLocationService glService = new GenomicLocationService();

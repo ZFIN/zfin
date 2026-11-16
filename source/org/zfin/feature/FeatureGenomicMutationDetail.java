@@ -26,8 +26,9 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     @Column(name = "fgmd_zdb_id")
     private String zdbID;
     @ManyToOne
-    @JoinColumn(name = "fgmd_feature_zdb_id")
-    private Feature feature;
+    @JoinColumn(name = "fgmd_variant_zdb_id", nullable = false)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Variant variant;
     @Column(name = "fgmd_sequence_of_reference")
     private String fgmdSeqRef;
     @Column(name = "fgmd_sequence_of_variation")
@@ -45,12 +46,22 @@ public class FeatureGenomicMutationDetail implements Cloneable {
     private Set<VariantNote> externalNotes;
 
 
-    public Feature getFeature() {
-        return feature;
+    public Variant getVariant() {
+        return variant;
     }
 
+    public void setVariant(Variant variant) {
+        this.variant = variant;
+    }
+
+    /** The feature, reached through the variant (ZFIN-10622). */
+    public Feature getFeature() {
+        return variant == null ? null : variant.getFeature();
+    }
+
+    /** Attaches this detail to the feature's primary variant (Variant 1), creating it if needed. */
     public void setFeature(Feature feature) {
-        this.feature = feature;
+        this.variant = feature == null ? null : feature.getOrCreatePrimaryVariant();
     }
 
 

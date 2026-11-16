@@ -146,7 +146,6 @@ BEGIN
                  ('unique_location', 'ul_data_zdb_id'),
                  ('updates', 'rec_id'),
                  ('url_ref', 'urlref_data_zdb_id'),
-                 ('variant_flanking_sequence', 'vfseq_data_zdb_id'),
                  ('xpat_exp_details_generated', 'xedg_gene_zdb_id'),
                  ('zdb_replaced_data', 'zrepld_new_zdb_id'),
                  ('zmap_pub_pan_mark', 'zdb_id')

@@ -122,30 +122,14 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.EAGER)
     private Set<FeatureDBLink> dbLinks;
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
+    // ZFIN-10622: the genomic, DNA, transcript and protein mutation details belong to a variant.
+    // A feature has one variant (Variant 1), a Complex feature several.
+    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @SortNatural
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private SortedSet<FeatureTranscriptMutationDetail> featureTranscriptMutationDetailSet;
-
-    //I followed the same mapping for feature protein mutation details and dna mutation details(Prita)
-    //I added the SAVE_UPDATE cascade type to ensure updates, inserts and deletes. (case 14286)
-
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet;
+    private SortedSet<Variant> variants = new TreeSet<>();
 
     @Transient
     private FeatureProteinMutationDetail featureProteinMutationDetail;
-
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet;
-
-
-    @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = true)
-
-    @Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
-    private Set<FeatureGenomicMutationDetail> featureGenomicMutationDetailSet;
 
     @OneToMany(mappedBy = "feature", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST, orphanRemoval = false)
     private Set<SecondaryFeature> secondaryFeatureSet;
@@ -242,6 +226,50 @@ public class Feature implements EntityNotes, EntityZdbID {
 
     public void setType(FeatureTypeEnum type) {
         this.type = type;
+        // a non-Complex feature's only variant has the feature's own type
+        if (variants != null && variants.size() == 1) {
+            variants.first().setVariantType(primaryVariantType());
+        }
+    }
+
+    public SortedSet<Variant> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(SortedSet<Variant> variants) {
+        this.variants = variants;
+    }
+
+    /**
+     * Variant 1, or null if the feature has no variant yet. The single-detail accessors below
+     * (getFeatureDnaMutationDetail() etc.) work on this variant: it is the only one for every
+     * feature except a Complex one.
+     */
+    public Variant getPrimaryVariant() {
+        if (variants == null) {
+            return null;
+        }
+        return variants.stream()
+                .filter(v -> v.getVariantNumber() == Variant.PRIMARY_VARIANT_NUMBER)
+                .findFirst()
+                .orElse(null);
+    }
+
+    public Variant getOrCreatePrimaryVariant() {
+        Variant primary = getPrimaryVariant();
+        if (primary == null) {
+            primary = new Variant(this, Variant.PRIMARY_VARIANT_NUMBER, primaryVariantType());
+            if (variants == null) {
+                variants = new TreeSet<>();
+            }
+            variants.add(primary);
+        }
+        return primary;
+    }
+
+    // A Complex feature's variants each have their own type; any other feature's variant has the feature's type.
+    private FeatureTypeEnum primaryVariantType() {
+        return type == FeatureTypeEnum.COMPLEX_SUBSTITUTION ? null : type;
     }
 
     @JsonView(View.FeatureAPI.class)
@@ -360,77 +388,54 @@ public class Feature implements EntityNotes, EntityZdbID {
         return null;
     }
 
-    public SortedSet<FeatureTranscriptMutationDetail> getFeatureTranscriptMutationDetailSet() {
-        return featureTranscriptMutationDetailSet;
-    }
+    // The detail accessors below work on the primary variant (Variant 1). The set getters return
+    // that variant's live collection (callers remove from it), or an empty set without a variant.
 
-    public void setFeatureTranscriptMutationDetailSet(SortedSet<FeatureTranscriptMutationDetail> mutationDetailSet) {
-        this.featureTranscriptMutationDetailSet = mutationDetailSet;
+    public SortedSet<FeatureTranscriptMutationDetail> getFeatureTranscriptMutationDetailSet() {
+        Variant primary = getPrimaryVariant();
+        return primary == null ? Collections.emptySortedSet() : primary.getFeatureTranscriptMutationDetailSet();
     }
 
     public FeatureProteinMutationDetail getFeatureProteinMutationDetail() {
-        if (CollectionUtils.isEmpty(featureProteinMutationDetailSet))
-            return null;
-        return featureProteinMutationDetailSet.stream().findAny().get();
+        Variant primary = getPrimaryVariant();
+        return primary == null ? null : primary.getFeatureProteinMutationDetail();
     }
 
     public void setFeatureProteinMutationDetail(FeatureProteinMutationDetail featureProteinMutationDetail) {
-        if (featureProteinMutationDetailSet == null)
-            featureProteinMutationDetailSet = new HashSet<>();
-        featureProteinMutationDetailSet.clear();
-        featureProteinMutationDetailSet.add(featureProteinMutationDetail);
+        getOrCreatePrimaryVariant().setFeatureProteinMutationDetail(featureProteinMutationDetail);
     }
 
     public Set<FeatureProteinMutationDetail> getFeatureProteinMutationDetailSet() {
-        return featureProteinMutationDetailSet;
-    }
-
-    public void setFeatureProteinMutationDetailSet(Set<FeatureProteinMutationDetail> featureProteinMutationDetailSet) {
-        this.featureProteinMutationDetailSet = featureProteinMutationDetailSet;
+        Variant primary = getPrimaryVariant();
+        return primary == null ? Collections.emptySet() : primary.getFeatureProteinMutationDetailSet();
     }
 
     public FeatureDnaMutationDetail getFeatureDnaMutationDetail() {
-        if (CollectionUtils.isEmpty(featureDnaMutationDetailSet))
-            return null;
-        return featureDnaMutationDetailSet.stream().findAny().get();
+        Variant primary = getPrimaryVariant();
+        return primary == null ? null : primary.getFeatureDnaMutationDetail();
     }
 
     public void setFeatureDnaMutationDetail(FeatureDnaMutationDetail featureDnaMutationDetail) {
-        if (featureDnaMutationDetailSet == null)
-            featureDnaMutationDetailSet = new HashSet<>();
-        featureDnaMutationDetailSet.clear();
-        featureDnaMutationDetailSet.addAll(Collections.singleton(featureDnaMutationDetail));
+        getOrCreatePrimaryVariant().setFeatureDnaMutationDetail(featureDnaMutationDetail);
     }
 
     public Set<FeatureDnaMutationDetail> getFeatureDnaMutationDetailSet() {
-        return featureDnaMutationDetailSet;
+        Variant primary = getPrimaryVariant();
+        return primary == null ? Collections.emptySet() : primary.getFeatureDnaMutationDetailSet();
     }
-
-    public void setFeatureDnaMutationDetailSet(Set<FeatureDnaMutationDetail> featureDnaMutationDetailSet) {
-        this.featureDnaMutationDetailSet = featureDnaMutationDetailSet;
-    }
-
 
     public FeatureGenomicMutationDetail getFeatureGenomicMutationDetail() {
-        if (CollectionUtils.isEmpty(featureGenomicMutationDetailSet))
-            return null;
-        return featureGenomicMutationDetailSet.stream().findAny().get();
+        Variant primary = getPrimaryVariant();
+        return primary == null ? null : primary.getFeatureGenomicMutationDetail();
     }
 
-    public void setFeatureGenomicMutationDetail(FeatureGenomicMutationDetail FeatureGenomicMutationDetail) {
-        if (featureGenomicMutationDetailSet == null)
-            featureGenomicMutationDetailSet = new HashSet<>();
-        featureGenomicMutationDetailSet.clear();
-        featureGenomicMutationDetailSet.addAll(Collections.singleton(FeatureGenomicMutationDetail));
+    public void setFeatureGenomicMutationDetail(FeatureGenomicMutationDetail featureGenomicMutationDetail) {
+        getOrCreatePrimaryVariant().setFeatureGenomicMutationDetail(featureGenomicMutationDetail);
     }
 
     public Set<FeatureGenomicMutationDetail> getFeatureGenomicMutationDetailSet() {
-        return featureGenomicMutationDetailSet;
-    }
-
-
-    public void setFeatureGenomicMutationDetailSet(Set<FeatureGenomicMutationDetail> FeatureGenomicMutationDetailSet) {
-        this.featureGenomicMutationDetailSet = FeatureGenomicMutationDetailSet;
+        Variant primary = getPrimaryVariant();
+        return primary == null ? Collections.emptySet() : primary.getFeatureGenomicMutationDetailSet();
     }
 
     public Genotype getSingleRelatedGenotype() {
@@ -681,9 +686,7 @@ public class Feature implements EntityNotes, EntityZdbID {
     }
 
     public void addMutationDetailTranscript(FeatureTranscriptMutationDetail detail) {
-        if (featureTranscriptMutationDetailSet == null)
-            featureTranscriptMutationDetailSet = new TreeSet<>();
-        featureTranscriptMutationDetailSet.add(detail);
+        getOrCreatePrimaryVariant().addTranscriptMutationDetail(detail);
     }
 
     public Set<SecondaryFeature> getSecondaryFeatureSet() {

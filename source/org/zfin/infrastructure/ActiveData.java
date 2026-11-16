@@ -274,6 +274,7 @@ public class ActiveData implements ZdbID {
         TGCONSTRCT(DeleteConstructRule.class),
         TSCRIPT,
         URLREF,
+        VAR,
         XPAT,
         XPATINF,
         XPATRES,

@@ -94,7 +94,7 @@ public class FlankSeqProcessor {
                     } else {
                         logger.debug("Feature " + feature.getZdbID() + " has no location on a supported assembly");
                         //This means that we may need to delete variant sequences for this feature if they exist.
-                        VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
+                        VariantSequence vrSeq = featureRepository.getVariantSequence(feature);
                         FeatureGenomicMutationDetail fgmd = feature.getFeatureGenomicMutationDetail();
                         if (fgmd == null && vrSeq != null) {
                             //We need to delete the variant sequence as there is no genomic mutation detail associated with this feature.
@@ -195,7 +195,7 @@ public class FlankSeqProcessor {
         if (!result.wroteAnything()) {
             return;
         }
-        VariantSequence current = featureRepository.getFeatureVariant(feature);
+        VariantSequence current = featureRepository.getVariantSequence(feature);
         this.updated.add(List.of(result + ": " + feature.getZdbID(),
                 current != null ? current.getVfsLeftEnd() : "",
                 current != null ? current.getVfsRightEnd() : ""));

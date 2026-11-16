@@ -103,7 +103,7 @@ public class FeatureDetailController {
         form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
         form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getVariantSequence(feature));
         form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
         if (feature.getAbbreviation().startsWith("hi")) {
             form.setAaLink(FeatureService.getAALink(feature));
@@ -112,7 +112,7 @@ public class FeatureDetailController {
         form.setZircGenoLink(FeatureService.getZIRCGenoLink(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
         form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getVariantSequence(feature));
         form.setVarType(FeatureService.getVarType(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);

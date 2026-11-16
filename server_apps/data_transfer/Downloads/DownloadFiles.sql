@@ -2434,12 +2434,13 @@ INSERT INTO tmp_mutation_details
     fpmd_protein_position_end,
     prot_db.fdb_db_display_name || ':' || fpmd_sequence_of_reference_accession_number
   FROM feature
-  LEFT OUTER JOIN feature_dna_mutation_detail ON feature_zdb_id = fdmd_feature_zdb_id
+  LEFT OUTER JOIN variant ON feature_zdb_id = var_feature_zdb_id
+  LEFT OUTER JOIN feature_dna_mutation_detail ON var_zdb_id = fdmd_variant_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids dna_term ON dna_term.zdb_id = fdmd_dna_mutation_term_zdb_id
   LEFT OUTER JOIN foreign_db_contains dna_dbc ON fdmd_fdbcont_zdb_id = dna_dbc.fdbcont_zdb_id
   LEFT OUTER JOIN foreign_db dna_db ON dna_db.fdb_db_pk_id = dna_dbc.fdbcont_fdb_db_id
   LEFT OUTER JOIN tmp_term_names_and_ids localization_term ON localization_term.zdb_id = fdmd_gene_localization_term_zdb_id
-  LEFT OUTER JOIN feature_protein_mutation_detail ON feature_zdb_id = fpmd_feature_zdb_id
+  LEFT OUTER JOIN feature_protein_mutation_detail ON var_zdb_id = fpmd_variant_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids protein_term ON protein_term.zdb_id = fpmd_protein_consequence_term_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids wt_aa ON wt_aa.zdb_id = fpmd_wt_protein_term_zdb_id
   LEFT OUTER JOIN tmp_term_names_and_ids mut_aa ON mut_aa.zdb_id = fpmd_mutant_or_stop_protein_term_zdb_id
@@ -2485,11 +2486,13 @@ select feature_zdb_id,  (SELECT STRING_AGG(distinct display, ',') ) as transcrip
                      ,  (SELECT STRING_AGG(nvl(ftmd_exon_number::varchar,null), ',') ) as transcript_exonNumber
                      ,  (SELECT STRING_AGG(nvl(ftmd_intron_number::varchar,null), ',') ) as transcript_intronNumber
 from feature
-                                       full join feature_transcript_mutation_detail on feature_zdb_id = ftmd_feature_zdb_id
+                                       full join variant on feature_zdb_id = var_feature_zdb_id
+                                       full join feature_transcript_mutation_detail on var_zdb_id = ftmd_variant_zdb_id
                                        full join term on term_zdb_id = ftmd_transcript_consequence_term_zdb_id
                                        full join tmp_term_names_and_ids on term_ont_id = ont_id
 
-where ftmd_feature_zdb_id = feature_zdb_id
+where var_feature_zdb_id = feature_zdb_id
+  and ftmd_variant_zdb_id = var_zdb_id
 group by feature_zdb_id
 ;
 

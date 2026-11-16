@@ -3,6 +3,7 @@ package org.zfin.mapping;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.zfin.feature.Variant;
 
 @Entity
 @Table(name = "variant_flanking_sequence")
@@ -23,8 +24,11 @@ public class VariantSequence {
     )
     private String zdbID;
 
-    @Column(name = "vfseq_data_zdb_id")
-    private String vseqDataZDB;
+    /** The variant whose mutation this flanking sequence surrounds (ZFIN-10622). */
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vfseq_variant_zdb_id", nullable = false)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Variant variant;
 
     @Column(name = "vfseq_sequence")
     private String vfsTargetSequence;

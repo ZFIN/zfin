@@ -40,8 +40,9 @@ select feature_zdb_id,
             then 'yes'
             else 'no'
        end as submitted_to_alliance
-  from feature, feature_genomic_mutation_detail
- where fgmd_feature_zdb_id = feature_zdb_id
+  from feature, variant, feature_genomic_mutation_detail
+ where var_feature_zdb_id = feature_zdb_id
+   and fgmd_variant_zdb_id = var_zdb_id
    and ((feature_type in ('POINT_MUTATION', 'INDEL', 'MNV')
          and (coalesce(fgmd_sequence_of_reference, '') = ''
               or coalesce(fgmd_sequence_of_variation, '') = ''))

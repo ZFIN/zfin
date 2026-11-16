@@ -7,7 +7,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_dna_mutation_detail ON fdmd_dna_mutation_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = fdmd_feature_zdb_id
+	  join variant on var_zdb_id = fdmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = fdmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_obsolete = 't'
@@ -19,7 +20,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_protein_mutation_detail ON fpmd_protein_consequence_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = fpmd_feature_zdb_id
+	  join variant on var_zdb_id = fpmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = fpmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_obsolete = 't'
@@ -31,7 +33,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_transcript_mutation_detail ON ftmd_transcript_consequence_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = ftmd_feature_zdb_id
+	  join variant on var_zdb_id = ftmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = ftmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_obsolete = 't';
@@ -46,7 +49,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_dna_mutation_detail ON fdmd_dna_mutation_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = fdmd_feature_zdb_id
+	  join variant on var_zdb_id = fdmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = fdmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_secondary = 't'
@@ -58,7 +62,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_protein_mutation_detail ON fpmd_protein_consequence_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = fpmd_feature_zdb_id
+	  join variant on var_zdb_id = fpmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = fpmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_secondary = 't'
@@ -70,7 +75,8 @@ SELECT term_zdb_id,
        recattrib_source_zdb_id
 FROM   term
        join feature_transcript_mutation_detail ON ftmd_transcript_consequence_term_zdb_id = term_zdb_id
-	  join feature on feature_zdb_id = ftmd_feature_zdb_id
+	  join variant on var_zdb_id = ftmd_variant_zdb_id
+	  join feature on feature_zdb_id = var_feature_zdb_id
 	  join Record_attribution on recattrib_data_zdb_id = ftmd_zdb_id
 WHERE  term_ontology = 'sequence'
 	  AND term_is_secondary = 't';

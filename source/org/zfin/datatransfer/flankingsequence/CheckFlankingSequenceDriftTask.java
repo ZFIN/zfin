@@ -342,8 +342,8 @@ public class CheckFlankingSequenceDriftTask extends AbstractValidateDataReportTa
         int skippedNoCoords = 0;
         int skippedUnsupportedAssembly = 0;
 
-        // variant_flanking_sequence has one row per feature (FeatureRepository.getFeatureVariant()
-        // relies on that too), joined to the feature's location on whichever assembly ranks
+        // variant_flanking_sequence has one row per variant (FeatureRepository.getVariantSequence()
+        // reads the primary variant's), joined to the feature's location on whichever assembly ranks
         // highest by the assembly table's a_order -- the same source of truth
         // getLocationByFeature() uses, as a window function so this is one query rather than one
         // per feature. sfcl_zdb_id breaks a_order ties so the row picked here matches the one
@@ -353,7 +353,7 @@ public class CheckFlankingSequenceDriftTask extends AbstractValidateDataReportTa
         String sql = """
                 with candidate as (
                     select vfseq.vfseq_zdb_id,
-                           vfseq.vfseq_data_zdb_id,
+                           f.feature_zdb_id,
                            vfseq.vfseq_five_prime_flanking_sequence,
                            vfseq.vfseq_three_prime_flanking_sequence,
                            vfseq.vfseq_variation,
@@ -363,9 +363,10 @@ public class CheckFlankingSequenceDriftTask extends AbstractValidateDataReportTa
                            fgmd.fgmd_sequence_of_reference,
                            fgmd.fgmd_sequence_of_variation
                       from variant_flanking_sequence vfseq
-                      join feature f on f.feature_zdb_id = vfseq.vfseq_data_zdb_id
+                      join variant fvar on fvar.var_zdb_id = vfseq.vfseq_variant_zdb_id
+                      join feature f on f.feature_zdb_id = fvar.var_feature_zdb_id
                       left join feature_genomic_mutation_detail fgmd
-                             on fgmd.fgmd_feature_zdb_id = vfseq.vfseq_data_zdb_id
+                             on fgmd.fgmd_variant_zdb_id = fvar.var_zdb_id
                      where f.feature_type in (:featureTypes)
                 ),
                 ranked_location as (
@@ -383,9 +384,9 @@ public class CheckFlankingSequenceDriftTask extends AbstractValidateDataReportTa
                            ) as rows_on_assembly
                       from sequence_feature_chromosome_location sfcl
                       join assembly a on a.a_name = sfcl.sfcl_assembly
-                      join candidate c on c.vfseq_data_zdb_id = sfcl.sfcl_feature_zdb_id
+                     where sfcl.sfcl_feature_zdb_id in (select feature_zdb_id from candidate)
                 )
-                select c.vfseq_data_zdb_id,
+                select c.feature_zdb_id,
                        c.feature_abbrev,
                        c.feature_type,
                        loc.sfcl_assembly,
@@ -406,8 +407,8 @@ public class CheckFlankingSequenceDriftTask extends AbstractValidateDataReportTa
                        ) as submitter_provided
                   from candidate c
                   left join ranked_location loc
-                         on loc.sfcl_feature_zdb_id = c.vfseq_data_zdb_id and loc.rn = 1
-                 order by c.vfseq_data_zdb_id
+                         on loc.sfcl_feature_zdb_id = c.feature_zdb_id and loc.rn = 1
+                 order by c.feature_zdb_id
                 """;
 
         NativeQuery<Object[]> query = HibernateUtil.currentSession().createNativeQuery(sql, Object[].class);

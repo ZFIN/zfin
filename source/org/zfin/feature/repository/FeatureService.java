@@ -208,7 +208,7 @@ public class FeatureService {
     }
 
     public static List<PublicationAttribution> getFlankSeqAttr(Feature feature) {
-        VariantSequence varSeq = RepositoryFactory.getFeatureRepository().getFeatureVariant(feature);
+        VariantSequence varSeq = RepositoryFactory.getFeatureRepository().getVariantSequence(feature);
         if (varSeq == null) {
             return null;
         }

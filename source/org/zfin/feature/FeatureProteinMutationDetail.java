@@ -20,8 +20,9 @@ public class FeatureProteinMutationDetail implements Cloneable {
     @Column(name = "fpmd_zdb_id")
     private String zdbID;
     @ManyToOne
-    @JoinColumn(name = "fpmd_feature_zdb_id")
-    private Feature feature;
+    @JoinColumn(name = "fpmd_variant_zdb_id", nullable = false)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Variant variant;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fpmd_protein_consequence_term_zdb_id")
     private ProteinConsequence proteinConsequence;
@@ -45,12 +46,22 @@ public class FeatureProteinMutationDetail implements Cloneable {
     @JoinColumn(name = "fpmd_mutant_or_stop_protein_term_zdb_id")
     private AminoAcidTerm mutantAminoAcid;
 
-    public Feature getFeature() {
-        return feature;
+    public Variant getVariant() {
+        return variant;
     }
 
+    public void setVariant(Variant variant) {
+        this.variant = variant;
+    }
+
+    /** The feature, reached through the variant (ZFIN-10622). */
+    public Feature getFeature() {
+        return variant == null ? null : variant.getFeature();
+    }
+
+    /** Attaches this detail to the feature's primary variant (Variant 1), creating it if needed. */
     public void setFeature(Feature feature) {
-        this.feature = feature;
+        this.variant = feature == null ? null : feature.getOrCreatePrimaryVariant();
     }
 
     public ProteinConsequence getProteinConsequence() {

@@ -112,7 +112,7 @@ public interface FeatureRepository {
 
     FeatureAssay getFeatureAssay(Feature feature);
 
-    VariantSequence getFeatureVariant(Feature feature);
+    VariantSequence getVariantSequence(Feature feature);
 
     String getAALink(Feature feature);
 

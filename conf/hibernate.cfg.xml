@@ -184,6 +184,7 @@
         <mapping class="org.zfin.feature.ProteinConsequence"/>
         <mapping class="org.zfin.feature.SecondaryFeature"/>
         <mapping class="org.zfin.feature.TranscriptConsequence"/>
+        <mapping class="org.zfin.feature.Variant"/>
         <mapping class="org.zfin.fish.WarehouseSummary"/>
         <mapping class="org.zfin.figure.presentation.ExpressionTableRow"/>
         <mapping class="org.zfin.framework.featureflag.FeatureFlag"/>
