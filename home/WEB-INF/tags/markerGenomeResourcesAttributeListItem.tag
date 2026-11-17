@@ -15,7 +15,13 @@
         </c:forEach>
         <ul class="comma-separated" ${hasSecondary ? 'data-toggle="collapse"' : ''} data-show="${primaryCount}">
             <c:forEach var="link" items="${links}">
-                <li><a href="${link.link}">${link.displayName}</a> ${link.attributionLink}</li>
+                <li>
+                    <c:choose>
+                        <c:when test="${link.hyperlinked}"><a href="${link.link}">${link.displayName}</a></c:when>
+                        <c:otherwise>${link.displayName}</c:otherwise>
+                    </c:choose>
+                    ${link.attributionLink}
+                </li>
             </c:forEach>
         </ul>
     </z:ifHasData>

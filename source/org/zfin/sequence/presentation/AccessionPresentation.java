@@ -25,14 +25,16 @@ public class AccessionPresentation implements Serializable {
     public static String getLink(Accession accession) {
         StringBuilder sb = new StringBuilder("");
         if (accession != null) {
-            if (accession.getReferenceDatabase() != null) {
+            String urlPrefix = accession.getReferenceDatabase() == null ? null
+                    : accession.getReferenceDatabase().getForeignDB().getDbUrlPrefix();
+            if (urlPrefix != null && !urlPrefix.isEmpty()) {
                 sb.append("<a href=\"");
-                sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlPrefix());
+                sb.append(urlPrefix);
                 sb.append(accession.getNumber());
                 if (accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix() != null) {
                     sb.append(accession.getReferenceDatabase().getForeignDB().getDbUrlSuffix());
                 }
-                sb.append("\"/>");
+                sb.append("\">");
                 sb.append(accession.getNumber());
                 sb.append("</a>");
             } else {
