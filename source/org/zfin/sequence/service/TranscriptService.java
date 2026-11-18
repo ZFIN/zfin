@@ -3,6 +3,8 @@ package org.zfin.sequence.service;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.zfin.sequence.gff.Assembly;
+import org.zfin.sequence.gff.AssemblyDAO;
 import org.zfin.Species;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.genomebrowser.GenomeBrowserTrack;
@@ -109,6 +111,10 @@ public class TranscriptService {
         RelatedTranscriptDisplay rtd = new RelatedTranscriptDisplay();
         rtd.setGene(gene);
         Set<RelatedMarker> relatedTranscripts = getRelatedTranscripts(gene);
+        rtd.setCurrentAssemblyNames(new AssemblyDAO().findAllSortedAssemblies().stream()
+            .filter(Assembly::isCurrent)
+            .map(Assembly::getName)
+            .toList());
 
         for (RelatedMarker rm : relatedTranscripts) {
             Transcript transcript = convertMarkerToTranscript(rm.getMarker());
@@ -119,6 +125,11 @@ public class TranscriptService {
             } else {
                 rm.setDisplayedSequenceDBLinks(transcriptDisplayGroups.stream().filter(transcriptDBLink -> transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.ENSEMBL_TRANS)).toList());
             }
+            rm.setAssemblies(rm.getDisplayedSequenceDBLinks().stream()
+                .filter(link -> link.getAssemblies() != null)
+                .flatMap(link -> link.getAssemblies().stream())
+                .distinct()
+                .toList());
             rm.setHasHavanna(transcriptDisplayGroups.stream().anyMatch(transcriptDBLink -> transcriptDBLink.getReferenceDatabase().getForeignDB().getDbName().equals(ForeignDB.AvailableName.VEGA_TRANS)));
             rtd.add(rm);
         }
