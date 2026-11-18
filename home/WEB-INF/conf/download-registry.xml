@@ -570,9 +570,10 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <Category>
                 Sequence Data
             </Category>
-            <Description>(Only associations with 1:1 relationships between ZFIN marker IDs and Ensembl IDs are stored in
-                ZFIN.
-                All associations can be obtained using BioMart http://www.ensembl.org/biomart/martview)
+            <Description>One row per marker per assembly; the Assembly column (last column) says which assembly the
+                Ensembl ID belongs to (GRCz11, GRCz12tu, GRCz12ab, GRCz13ab). GRCz12 and GRCz13 IDs are 1:1 between ZFIN
+                marker IDs and Ensembl IDs within an assembly.
+                All associations can be obtained using BioMart http://www.ensembl.org/biomart/martview
             </Description>
             <WikiLink></WikiLink>
             <FileName>ensembl_1_to_1</FileName>
@@ -580,16 +581,42 @@ select mrkr_zdb_id, mrkr_abbrev, atb_type, atb_hviso_name, atb_ltiso_name,
             <FileFormat>tsv</FileFormat>
             <Query>
                 <![CDATA[
-                select mrkr_zdb_id, mrkr_abbrev,dblink_acc_num
-                from marker, db_link
+                select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num,
+                       substring(fdb_db_name from 'Ensembl\((.*)\)')
+                from marker, db_link, so_zfin_mapping, foreign_db_contains, foreign_db
                 where mrkr_zdb_id = dblink_linked_recid
-                and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
+                and szm_object_type = mrkr_type
+                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                and fdbcont_fdb_db_id = fdb_db_pk_id
+                and fdb_db_name = 'Ensembl(GRCz11)'
+                union all
+                select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num,
+                       substring(fdb_db_name from 'Ensembl\((.*)\)')
+                from (select dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id,
+                             count(*) over (partition by dblink_fdbcont_zdb_id, dblink_linked_recid) as per_marker,
+                             count(*) over (partition by dblink_fdbcont_zdb_id, dblink_acc_num) as per_accession
+                        from db_link
+                       where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id
+                                                         from foreign_db_contains, foreign_db
+                                                        where fdbcont_fdb_db_id = fdb_db_pk_id
+                                                          and fdb_db_name in ('Ensembl(GRCz12tu)', 'Ensembl(GRCz12ab)', 'Ensembl(GRCz13ab)')
+                                                          and fdbcont_organism_common_name = 'Zebrafish')) as links,
+                     marker, so_zfin_mapping, foreign_db_contains, foreign_db
+                where mrkr_zdb_id = dblink_linked_recid
+                and szm_object_type = mrkr_type
+                and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+                and fdbcont_fdb_db_id = fdb_db_pk_id
+                and fdb_db_name in ('Ensembl(GRCz12tu)', 'Ensembl(GRCz12ab)', 'Ensembl(GRCz13ab)')
+                and fdbcont_organism_common_name = 'Zebrafish'
+                and per_marker = 1
+                and per_accession = 1
                 ]]>
             </Query>
-            <Column id="1" unique="true">ZFIN ID</Column>
+            <Column id="1">ZFIN ID</Column>
             <Column id="2">Gene SO ID</Column>
             <Column id="3">Symbol</Column>
             <Column id="4">Ensembl ID</Column>
+            <Column id="5">Assembly</Column>
         </Download>
         <Download orderIndex="40">
             <Name>
