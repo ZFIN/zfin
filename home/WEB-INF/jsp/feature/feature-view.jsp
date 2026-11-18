@@ -49,11 +49,19 @@
         </z:section>
 
         <z:section title="${VARIANTS}" >
-            <jsp:include page="feature-view-variants.jsp"/>
+            <c:choose>
+                <%-- A Complex feature with several variants shows a full block per variant. --%>
+                <c:when test="${!empty formBean.variantDisplays}">
+                    <jsp:include page="feature-view-variant-blocks.jsp"/>
+                </c:when>
+                <c:otherwise>
+                    <jsp:include page="feature-view-variants.jsp"/>
 
-            <z:section title="Effect on DNA/cDNA, transcript, protein (from publications)">
-                <jsp:include page="feature-view-mut-details.jsp"/>
-            </z:section>
+                    <z:section title="Effect on DNA/cDNA, transcript, protein (from publications)">
+                        <jsp:include page="feature-view-mut-details.jsp"/>
+                    </z:section>
+                </c:otherwise>
+            </c:choose>
         </z:section>
 
         <z:section title="${SEQUENCES}" infoPopup="/action/feature/flank-seq">

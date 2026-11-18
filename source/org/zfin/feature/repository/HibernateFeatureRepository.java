@@ -828,6 +828,19 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.getResultList().stream().findFirst().orElse(null);
     }
 
+    @Override
+    public List<FeatureLocation> getVariantLocations(Feature feature) {
+        String hql = """
+            select fl from FeatureLocation fl
+            join fetch fl.variant v
+            where fl.feature = :feature
+            order by v.variantNumber, fl.assembly desc, fl.zdbID
+            """;
+        return HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class)
+            .setParameter("feature", feature)
+            .getResultList();
+    }
+
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {
         return currentSession().createQuery("select fgm from FeatureGenomicMutationDetail fgm", FeatureGenomicMutationDetail.class).list();
     }
