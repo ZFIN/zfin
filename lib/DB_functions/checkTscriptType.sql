@@ -4,7 +4,7 @@ declare typeName transcript_type.tscriptt_type%TYPE;
 begin
 typeName = (select tscriptt_type from transcript_type, transcript where vTscriptZdbId = tscript_mrkr_zdb_id and tscript_type_id = tscriptt_pk_id);
 
-if (typeName not in ('aberrant processed transcript', 'pseudogenic transcript', 'lincRNA',
+if (typeName not in ('aberrant processed transcript', 'pseudogenic transcript', 'lincRNA', 'lncRNA',
    	     	    	       'piRNA', 'miRNA', 'pre miRNA', 'rRNA', 'snRNA', 'scRNA',
 			       'snoRNA', 'tRNA', 'ncRNA')
      and vMrelType = 'transcript targets gene')

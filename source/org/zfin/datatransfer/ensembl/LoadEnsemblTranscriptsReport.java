@@ -52,7 +52,7 @@ class LoadEnsemblTranscriptsReport {
         NOTES.put(Action.AMBIGUOUS_GENE, "More than one gene carries this ENSDARG for the assembly, so the gene is not "
                 + "certain. A curator has to fix the db_links.");
         NOTES.put(Action.UNMAPPED_BIOTYPE, "The Ensembl biotype has no ZFIN transcript type. Once curators decide one, give it "
-                + "in BIOTYPE_OVERRIDES (for example lncRNA=lincRNA) and run again.");
+                + "in BIOTYPE_OVERRIDES (for example vault_RNA=ncRNA) and run again.");
         NOTES.put(Action.NAME_TAKEN, "A marker already has this transcript's name (the lower-case ENSDART) but is not its "
                 + "transcript. A curator has to resolve the clash.");
         NOTES.put(Action.REJECTED, "A FASTA header line could not be used (no ENSDART, assembly, gene or biotype, or an "
@@ -77,7 +77,8 @@ class LoadEnsemblTranscriptsReport {
     }
 
     void write(File output, boolean dryRun, String pubId, Map<String, String> biotypeOverrides, String files,
-               List<ReportLine> report, List<XrefLine> xrefReport, Map<String, Integer> unmappedBiotypes) throws IOException {
+               List<ReportLine> report, List<XrefLine> xrefReport, Map<String, Integer> unmappedBiotypes,
+               List<String> xrefUrls) throws IOException {
         Report html = new Report()
                 .meta(new Report.Meta()
                         .title("Ensembl Transcript Load" + (dryRun ? " (dry run)" : ""))
@@ -107,7 +108,7 @@ class LoadEnsemblTranscriptsReport {
             }
         }
         if (!xrefReport.isEmpty()) {
-            root.addChild(xrefNode(xrefReport));
+            root.addChild(xrefNode(xrefReport, xrefUrls));
         }
         html.root(root);
         new ReportWriter().write(html, output);
@@ -127,6 +128,7 @@ class LoadEnsemblTranscriptsReport {
             boolean oneGene = !line.gene().contains(" ");
             if (loaded) {
                 table.addRow("ensdart", line.ensdart(), "ensdarg", line.ensdarg(), "gene", line.gene(),
+                        "geneType", line.geneType(), "transcriptType", line.transcriptType(),
                         "assembly", line.assembly(), "transcript", line.detail());
             } else {
                 table.addRow("ensdart", line.ensdart(), "ensdarg", line.ensdarg(), "gene", oneGene ? line.gene() : "",
@@ -142,14 +144,30 @@ class LoadEnsemblTranscriptsReport {
                 .addTable(table);
     }
 
-    private ReportNode xrefNode(List<XrefLine> xrefReport) {
+    private ReportNode xrefNode(List<XrefLine> xrefReport, List<String> xrefUrls) {
+        StringBuilder file = new StringBuilder();
+        for (String url : xrefUrls) {
+            file.append(file.length() == 0 ? "" : ", ").append("<a href=\"").append(url).append("\">").append(url.substring(url.lastIndexOf('/') + 1)).append("</a>");
+        }
+        String xrefFile = xrefUrls.isEmpty() ? "the uploaded xref file"
+                : "the xref file Ensembl publishes beside the FASTA (" + file + ")";
         ReportNode node = new ReportNode()
                 .id("xref")
                 .title("Xref report")
                 .count(xrefReport.size())
-                .body(Report.Body.text("Nothing here was loaded. For transcripts left out because no gene carries their "
-                        + "ENSDARG, what the xref file Ensembl publishes beside the FASTA says about the ZFIN gene. "
-                        + "Using it would also mean adding the ENSDARG to the gene, as Load-Ensembl-Mapping does."));
+                .body(Report.Body.html("<p>Nothing here was loaded. These are the transcripts left out because no gene in "
+                        + "ZFIN carries their ENSDARG. The tables show what we would have loaded if we used the ENSDARG to "
+                        + "ZFIN gene mapping in " + xrefFile + ".</p>"
+                        + "<p>WOULD_ADD: a clean mapping. Ensembl names one ZFIN gene, the gene exists, and it has no other "
+                        + "ENSDARG for the assembly. "
+                        + "GENE_HAS_OTHER_ENSDARG: the gene exists but already carries a different ENSDARG for the "
+                        + "assembly, so using the xref would give the gene a second one. Someone has to decide whether the "
+                        + "old ENSDARG is stale or both are right. "
+                        + "The other outcomes are explained below.</p>"
+                        + "<p>To load these transcripts, the ENSDARGs have to get into ZFIN's db_link table first, because "
+                        + "the loader finds a transcript's gene through the gene's ENSDARG db_link. That means changing "
+                        + "the Load-Ensembl-Mapping job, which is what adds ENSDARGs to genes, and then running this "
+                        + "load again.</p>"));
         for (XrefOutcome outcome : XrefOutcome.values()) {
             List<XrefLine> lines = xrefReport.stream().filter(l -> l.outcome() == outcome).toList();
             if (lines.isEmpty()) {
@@ -230,22 +248,25 @@ class LoadEnsemblTranscriptsReport {
     private Report.Definitions definitions() {
         return new Report.Definitions()
                 .field("ensdart", Report.FieldDef.link("ENSDART", "https://www.ensembl.org/id/{value}"))
+                .field("ensdarg", Report.FieldDef.link("ENSDARG", "https://www.ensembl.org/id/{value}"))
                 .field("zdbID", Report.FieldDef.link("ZDB ID", "https://zfin.org/{value}"))
                 .tableSchema(SCHEMA_LOADED, new Report.TableSchema()
                         .addColumn(ReportTable.Column.of("ensdart", "ENSDART", "ensdart"))
-                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG"))
+                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG", "ensdarg"))
                         .addColumn(ReportTable.Column.of("gene", "Gene", "zdbID"))
+                        .addColumn(ReportTable.Column.of("geneType", "Gene type"))
+                        .addColumn(ReportTable.Column.of("transcriptType", "Transcript type"))
                         .addColumn(ReportTable.Column.of("assembly", "Assembly"))
                         .addColumn(ReportTable.Column.of("transcript", "Transcript", "zdbID")))
                 .tableSchema(SCHEMA_TRANSCRIPTS, new Report.TableSchema()
                         .addColumn(ReportTable.Column.of("ensdart", "ENSDART", "ensdart"))
-                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG"))
+                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG", "ensdarg"))
                         .addColumn(ReportTable.Column.of("gene", "Gene", "zdbID"))
                         .addColumn(ReportTable.Column.of("assembly", "Assembly"))
                         .addColumn(ReportTable.Column.of("detail", "Detail")))
                 .tableSchema(SCHEMA_XREF, new Report.TableSchema()
                         .addColumn(ReportTable.Column.of("ensdart", "ENSDART", "ensdart"))
-                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG"))
+                        .addColumn(ReportTable.Column.of("ensdarg", "ENSDARG", "ensdarg"))
                         .addColumn(ReportTable.Column.of("biotype", "Biotype"))
                         .addColumn(ReportTable.Column.of("assembly", "Assembly"))
                         .addColumn(ReportTable.Column.of("gene", "ZFIN gene (xref)", "zdbID"))

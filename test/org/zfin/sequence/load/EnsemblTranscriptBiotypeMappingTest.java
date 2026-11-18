@@ -56,6 +56,7 @@ public class EnsemblTranscriptBiotypeMappingTest {
         assertEquals(SNORNA,   m.get("snoRNA"));
         assertEquals(SNORNA,   m.get("scaRNA"));   // scaRNA is a class of snoRNA
         assertEquals(LINCRNA,  m.get("lincRNA"));
+        assertEquals(LNCRNA,   m.get("lncRNA"));
         assertEquals(ANTISENSE, m.get("antisense"));
     }
 

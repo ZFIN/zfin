@@ -113,7 +113,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
      *   - Mt_rRNA, rRNA                                     → rRNA
      *   - Mt_tRNA                                           → tRNA
      *   - miRNA / snRNA / snoRNA / scaRNA                   → miRNA / snRNA / snoRNA / snoRNA
-     *   - lincRNA, antisense                                → lincRNA / antisense
+     *   - lincRNA, lncRNA, antisense                        → lincRNA / lncRNA / antisense
      *   - miscellaneous non-coding                          → ncRNA
      *   - all *_pseudogene flavours                         → pseudogenic transcript
      */
@@ -143,6 +143,7 @@ public class EnsemblTranscriptFastaReadProcess extends EnsemblTranscriptBase {
         m.put("scaRNA",                               SNORNA);
         // Long non-coding
         m.put("lincRNA",                              LINCRNA);
+        m.put("lncRNA",                               LNCRNA);   // GRCz12 files label long non-coding RNA lncRNA (ZFIN-10613)
         m.put("antisense",                            ANTISENSE);
         // Miscellaneous non-coding
         m.put("misc_RNA",                             NCRNA);

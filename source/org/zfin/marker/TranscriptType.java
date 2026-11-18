@@ -58,6 +58,7 @@ public class TranscriptType implements Comparable<TranscriptType> {
         ABERRANT_PROCESSED_TRANSCRIPT("aberrant processed transcript"),
         ANTISENSE("antisense"),
         LINCRNA("lincRNA"),
+        LNCRNA("lncRNA"),
         MRNA("mRNA"),
         MIRNA("miRNA"),
         NCRNA("ncRNA"),

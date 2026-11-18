@@ -78,7 +78,7 @@ import java.util.regex.Pattern;
  *   from its headers).</li>
  *   <li>{@code ATTRIBUTION_PUB_ID}: required, the ZDB-PUB ID the new records are attributed to.</li>
  *   <li>{@code BIOTYPE_OVERRIDES}: optional, {@code biotype=ZFIN type} pairs, comma separated, e.g.
- *   {@code lncRNA=lincRNA,vault_RNA=ncRNA}.</li>
+ *   {@code vault_RNA=ncRNA,Y_RNA=ncRNA}.</li>
  *   <li>{@code DRY_RUN}: anything but {@code false} only reports what would be done (the default).</li>
  * </ul>
  * Writes {@code ensembl_transcript_load_report.html} (an HTML report, see
@@ -131,7 +131,16 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
         }
     }
 
-    record ReportLine(Action action, String ensdart, String ensdarg, String gene, String assembly, String detail) {
+    /**
+     * One transcript's outcome. The two type columns are only filled for transcripts that have a gene (the loaded
+     * ones): the ZFIN transcript type, and the marker type of the gene it hangs from, so a report reader can scan for
+     * a transcript type that does not fit its gene.
+     */
+    record ReportLine(Action action, String ensdart, String ensdarg, String gene, String assembly, String detail,
+                      String transcriptType, String geneType) {
+        ReportLine(Action action, String ensdart, String ensdarg, String gene, String assembly, String detail) {
+            this(action, ensdart, ensdarg, gene, assembly, detail, "", "");
+        }
     }
 
     /** A FASTA to load and where it came from. */
@@ -222,7 +231,7 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
         return null;
     }
 
-    /** {@code lncRNA=lincRNA,vault_RNA=ncRNA} -> biotype to ZFIN transcript type name. */
+    /** {@code vault_RNA=ncRNA,Y_RNA=ncRNA} -> biotype to ZFIN transcript type name. */
     static Map<String, String> parseOverrides(String text) {
         Map<String, String> overrides = new LinkedHashMap<>();
         for (String pair : text.split(",")) {
@@ -257,6 +266,7 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
         StringBuilder fileSummaries = new StringBuilder();
         Map<String, Integer> unmappedBiotypes = new TreeMap<>();
         List<XrefLine> xrefReport = new ArrayList<>();
+        List<String> xrefUrls = new ArrayList<>();
         try {
             requirePublication(session);
             Map<String, Long> typeIds = transcriptTypeIds(session);
@@ -281,6 +291,8 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
                 EnsemblXrefFile xref = input.xref() == null ? null : EnsemblXrefFile.read(input.xref());
                 if (xref == null) {
                     fileSummaries.append("  no xref file, so no xref report for ").append(assembly).append('\n');
+                } else if (!input.uploaded()) {
+                    xrefUrls.add(xrefUrl(input.source()));
                 }
                 session.doWork(connection -> load(connection, fasta, xref, assembly, biotypeTypeIds, report, xrefReport, unmappedBiotypes));
                 fileSummaries.append("  ").append(report.size() - before).append(" report lines\n");
@@ -299,7 +311,7 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
         writeXrefReport(xrefReport);
         writeSummary(report, xrefReport, fileSummaries.toString(), unmappedBiotypes);
         new LoadEnsemblTranscriptsReport().write(outputDirectory.resolve(HTML_REPORT_FILE).toFile(), dryRun, pubId, biotypeOverrides,
-                fileSummaries.toString(), report, xrefReport, unmappedBiotypes);
+                fileSummaries.toString(), report, xrefReport, unmappedBiotypes, xrefUrls);
     }
 
     private void requirePublication(Session session) {
@@ -364,9 +376,14 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
         return inputs;
     }
 
+    /** Where Ensembl publishes the xref file that goes with a FASTA: beside it. */
+    private static String xrefUrl(String fastaSource) {
+        return fastaSource.substring(0, fastaSource.lastIndexOf('/') + 1) + "xref.tsv.gz";
+    }
+
     /** The xref.tsv.gz beside a downloaded FASTA, or null (with a note in the log) if it cannot be had. */
     private Path downloadXref(DownloadService downloads, String fastaSource, int n) {
-        String xrefSource = fastaSource.substring(0, fastaSource.lastIndexOf('/') + 1) + "xref.tsv.gz";
+        String xrefSource = xrefUrl(fastaSource);
         File local = outputDirectory.resolve("ensembl_transcripts_" + n + ".xref.tsv.gz").toFile();
         try {
             downloads.downloadFileIfChanged(local, new URL(xrefSource));
@@ -502,11 +519,33 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
                 """, transcriptFdbcont, assemblyId)) {
             onAssembly.put(row[0], row[1]);
         }
+        // the marker type of each gene carrying an ENSDARG, and the type name of each transcript, for the report
+        Map<String, String> geneTypes = new HashMap<>();
+        for (String[] row : query(c, """
+                select distinct mrkr_zdb_id, mrkr_type from marker join db_link on dblink_linked_recid = mrkr_zdb_id
+                 where dblink_fdbcont_zdb_id = ?
+                """, geneFdbcont)) {
+            geneTypes.put(row[0], row[1]);
+        }
+        Map<String, String> typeNameById = new HashMap<>();
+        for (String[] row : query(c, "select tscriptt_pk_id, tscriptt_type from transcript_type")) {
+            typeNameById.put(row[0], row[1]);
+        }
+        Map<String, String> typeNameByTranscript = new HashMap<>();
+        for (String[] row : query(c, "select tscript_mrkr_zdb_id, tscriptt_type from transcript join transcript_type on tscript_type_id = tscriptt_pk_id")) {
+            typeNameByTranscript.put(row[0], row[1]);
+        }
         Map<String, Set<String>> ensdargsByGene = new HashMap<>();
         genesByEnsdarg.forEach((ensdarg, genes) -> genes.forEach(g -> ensdargsByGene.computeIfAbsent(g, k -> new TreeSet<>()).add(ensdarg)));
         Map<String, String> zfinGenes = new HashMap<>();
         if (xref != null) {
-            for (String[] row : query(c, "select mrkr_zdb_id, mrkr_abbrev from marker where mrkr_zdb_id like 'ZDB-GENE%'")) {
+            // genes by marker type, not by ZDB ID prefix: lncRNA, miRNA and the other RNA genes are ZDB-LNCRNAG-..., ZDB-MIRNAG-...
+            for (String[] row : query(c, """
+                    select mrkr_zdb_id, mrkr_abbrev from marker
+                     where mrkr_type in ('GENE', 'GENEP')
+                        or mrkr_type in (select mtgrpmem_mrkr_type from marker_type_group_member
+                                          where mtgrpmem_mrkr_type_group = 'RNAGENE')
+                    """)) {
                 zfinGenes.put(row[0], row[1]);
             }
         }
@@ -617,13 +656,11 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
                 if (attribute(insAttribution, attributed, transcript)) {
                     changed = true;
                 }
-                if (created) {
-                    report.add(new ReportLine(Action.ADDED, e.ensdart(), e.ensdarg(), gene, assembly, transcript));
-                } else if (changed) {
-                    report.add(new ReportLine(Action.ASSEMBLY_OR_ATTRIBUTION_ADDED, e.ensdart(), e.ensdarg(), gene, assembly, transcript));
-                } else {
-                    report.add(new ReportLine(Action.ALREADY_LOADED, e.ensdart(), e.ensdarg(), gene, assembly, transcript));
-                }
+                // a new transcript has the type just mapped from the biotype; an existing one keeps the type it has
+                String transcriptType = created ? typeNameById.get(String.valueOf(typeId)) : typeNameByTranscript.getOrDefault(transcript, "");
+                String geneType = geneTypes.getOrDefault(gene, "");
+                Action action = created ? Action.ADDED : changed ? Action.ASSEMBLY_OR_ATTRIBUTION_ADDED : Action.ALREADY_LOADED;
+                report.add(new ReportLine(action, e.ensdart(), e.ensdarg(), gene, assembly, transcript, transcriptType, geneType));
             }
         }
 
@@ -691,9 +728,10 @@ public class LoadEnsemblTranscriptsTask extends AbstractScriptWrapper {
     private void writeReport(List<ReportLine> report) throws IOException {
         try (Writer writer = Files.newBufferedWriter(outputDirectory.resolve(REPORT_FILE));
              CSVPrinter printer = new CSVPrinter(writer, CSVFormat.DEFAULT)) {
-            printer.printRecord("action", "ensdart", "ensdarg", "gene", "assembly", "detail");
+            printer.printRecord("action", "ensdart", "ensdarg", "gene", "gene_type", "transcript_type", "assembly", "detail");
             for (ReportLine line : report) {
-                printer.printRecord(line.action(), line.ensdart(), line.ensdarg(), line.gene(), line.assembly(), line.detail());
+                printer.printRecord(line.action(), line.ensdart(), line.ensdarg(), line.gene(), line.geneType(), line.transcriptType(),
+                        line.assembly(), line.detail());
             }
         }
     }
