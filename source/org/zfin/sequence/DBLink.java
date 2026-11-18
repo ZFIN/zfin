@@ -20,7 +20,6 @@ import org.zfin.sequence.gff.Assembly;
 
 import java.text.NumberFormat;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -123,18 +122,13 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     }
 
     /**
-     * Get blastable databases according to FogBugz 4244
-     * From fogbugz 4244.
-     * For RNA seqs:
+     * Get blastable databases according to FogBugz 4244, without Ensembl (ZFIN-10602).
+     * For RNA and genomic sequences:
      * <p/>
-     * > 25000 we should see MegaBlast and Ensembl
-     * < 25001 we should see ZFIN BLAST, NCBI BLAST, Ensembl, UCSC BLAT
+     * > 25000 we should see MegaBLAST only
+     * <= 25000 we should see every related tool except MegaBLAST (ZFIN BLAST, NCBI BLAST, UCSC BLAT)
      * <p/>
-     * For Genomic seqs:
-     * <p/>
-     * > 200000 we should see MegaBlast only
-     * < 200000 and > 25000 MegaBLAST and Ensembl only
-     * < 200000 and < 25000 ZFIN BLAST, NCBI BLAST, Ensembl
+     * Other data types (e.g. polypeptide) are not filtered.
      *
      * @return List of blastable databases
      */
@@ -142,50 +136,16 @@ public abstract class DBLink implements EntityAttribution, EntityZdbID {
     public List<Database> getBlastableDatabases() {
 
         List<Database> blastableDatabases = referenceDatabase.getOrderedRelatedBlastDB();
-
-        for (Iterator<Database> iterator = blastableDatabases.iterator(); iterator.hasNext(); ) {
-            Database database = iterator.next();
-            if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.RNA) {
-                // only ensembl and megablast allowed for large values
-                if (length != null && length > 25000
-                    &&
-                    (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                     &&
-                     database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
-                    )
-                ) {
-                    iterator.remove();
-//                    blastableDatabases.remove(i);
-                } else
-                    // don't have megablast for small values
-                    if (length != null && length <= 25000 && database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST) {
-                        iterator.remove();
-//                        blastableDatabases.remove(i);
-                    }
-            } else if (referenceDatabase.getForeignDBDataType().getDataType() == ForeignDBDataType.DataType.GENOMIC) {
-                // only megablast for very large
-                if (length != null && length > 200000 && database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST) {
-                    iterator.remove();
-//                    blastableDatabases.remove(i);
-                }
-                // only megablast and ensembl for medium
-                else if (length != null && length <= 200000 && length > 25000 &&
-                         (database.getAbbrev() != Database.AvailableAbbrev.ENSEMBL
-                          &&
-                          database.getAbbrev() != Database.AvailableAbbrev.MEGA_BLAST
-                         )
-                ) {
-                    iterator.remove();
-//                    blastableDatabases.remove(i);
-                } else
-                    // don't have megablast for small values
-                    if (length != null && length <= 25000 && database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST) {
-                        iterator.remove();
-//                        blastableDatabases.remove(i);
-                    }
-            }
-            // do we need to handle other types?
+        ForeignDBDataType.DataType dataType = referenceDatabase.getForeignDBDataType().getDataType();
+        if (length == null
+            || (dataType != ForeignDBDataType.DataType.RNA && dataType != ForeignDBDataType.DataType.GENOMIC)) {
+            return blastableDatabases;
         }
+
+        boolean largeSequence = length > 25000;
+        // large sequences: only MegaBLAST; small sequences: everything but MegaBLAST
+        blastableDatabases.removeIf(database ->
+            (database.getAbbrev() == Database.AvailableAbbrev.MEGA_BLAST) != largeSequence);
         return blastableDatabases;
     }
 

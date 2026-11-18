@@ -10,10 +10,7 @@
     function jump(){
         var thisForm =  document.getElementById("externalBlast") ;
 
-        // added a hack for ensembl to prevent it to send the post to its mirror.  We only want this
-        // for the post as using the mirror behavior is correct
-        thisForm.action='${blastBean.database.location}${ (blastBean.database.abbrev
-        eq "ENSEMBL" ? "&redirect=mirror" : "" )}' ;
+        thisForm.action='${blastBean.database.location}' ;
 //        alert(thisForm) ;
         //            handles internal blast here
         if(thisForm.action == '' ){
