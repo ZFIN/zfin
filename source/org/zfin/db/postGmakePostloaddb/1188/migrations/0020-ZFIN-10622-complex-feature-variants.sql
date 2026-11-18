@@ -126,3 +126,88 @@ SELECT fgmd_zdb_id, 'ZDB-PUB-220901-7' FROM new_genomic_detail;
 --rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT s.sfcl_zdb_id FROM sequence_feature_chromosome_location s JOIN variant v ON v.var_zdb_id = s.sfcl_variant_zdb_id WHERE v.var_feature_zdb_id = 'ZDB-ALT-230227-4');
 --rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT g.fgmd_zdb_id FROM feature_genomic_mutation_detail g JOIN variant v ON v.var_zdb_id = g.fgmd_variant_zdb_id WHERE v.var_feature_zdb_id = 'ZDB-ALT-230227-4');
 --rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT var_zdb_id FROM variant WHERE var_feature_zdb_id = 'ZDB-ALT-230227-4');
+
+
+-- ─── bns497 and bns426: DNA, transcript and protein details per variant ──
+-- From ZDB-PUB-220901-7: the deletions are described in the Methods (tal1 bns497 "-7 bp
+-- (out-of-frame) ... premature termination codon after R228 ... truncate the protein sequence
+-- by 97 amino acids", fourth exon; etsrp bns426 "-9 bp (in-frame) ... loss of D265 G266 and
+-- W267", sixth exon); the point mutations are in Fig. S11. Positions are on the RefSeq
+-- transcripts and proteins, checked against their sequences: tal1 NM_213237.1 / NP_998402.1
+-- (324 aa), etsrp NM_001037375.1 / NP_001032452.1 (366 aa). Exon numbers count exon 1, which
+-- is 5' UTR in both, so the paper's "sixth exon" of etsrp (coding exons) is exon 7 here.
+--
+--   bns497 V1  c.683_689del (GTCTGGC)  exon 4  frameshift_variant, stop_gained   p.Arg228ProfsTer2: Arg228>Pro, 97 aa lost
+--   bns497 V2  c.706T>C                exon 4  missense_variant                  p.Phe236Leu (after V1's stop at codon 229)
+--   bns426 V1  c.795_803del (TGGCTGGGA) exon 7 inframe_deletion                  p.Asp265_Trp267del, 3 aa removed
+--   bns426 V2  c.768C>T                exon 7  (synonymous: no ZFIN transcript consequence term; protein unchanged, p.Cys256=)
+--changeset cmpich:ZFIN-10622-bns497-bns426-mutation-details
+--preconditions onFail:HALT onError:HALT
+--precondition-sql-check expectedResult:4 SELECT count(*) FROM variant WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4')
+--precondition-sql-check expectedResult:0 SELECT count(*) FROM feature_dna_mutation_detail JOIN variant ON var_zdb_id = fdmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4')
+--precondition-sql-check expectedResult:0 SELECT count(*) FROM feature_transcript_mutation_detail JOIN variant ON var_zdb_id = ftmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4')
+--precondition-sql-check expectedResult:0 SELECT count(*) FROM feature_protein_mutation_detail JOIN variant ON var_zdb_id = fpmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4')
+WITH vocab AS (
+    SELECT t.term_ont_id, t.term_zdb_id
+      FROM mutation_detail_controlled_vocabulary
+      JOIN term t ON t.term_zdb_id = mdcv_term_zdb_id
+), new_dna AS (
+    INSERT INTO feature_dna_mutation_detail (
+        fdmd_zdb_id, fdmd_variant_zdb_id, fdmd_dna_mutation_term_zdb_id,
+        fdmd_dna_sequence_of_reference_accession_number, fdmd_fdbcont_zdb_id,
+        fdmd_dna_position_start, fdmd_dna_position_end, fdmd_number_removed_dna_base_pairs,
+        fdmd_deleted_sequence, fdmd_exon_number, fdmd_gene_localization_term_zdb_id)
+    SELECT get_id_and_insert_active_data('FDMD'), v.var_zdb_id,
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = d.dna_term),
+           d.accession, 'ZDB-FDBCONT-040412-38',      -- RefSeq RNA
+           d.position_start, d.position_end, d.removed, d.deleted_sequence, d.exon,
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = 'SO:0000147')   -- exon
+      FROM (VALUES ('ZDB-ALT-230227-6', 1, NULL,         'NM_213237.1',    683, 689, 7,    'GTCTGGC',   4),
+                   ('ZDB-ALT-230227-6', 2, 'SO:1000013', 'NM_213237.1',    706, 706, NULL, NULL,        4),   -- T_to_C_transition
+                   ('ZDB-ALT-230227-4', 1, NULL,         'NM_001037375.1', 795, 803, 9,    'TGGCTGGGA', 7),
+                   ('ZDB-ALT-230227-4', 2, 'SO:1000011', 'NM_001037375.1', 768, 768, NULL, NULL,        7))   -- C_to_T_transition
+           AS d (feature_zdb_id, variant_number, dna_term, accession, position_start, position_end, removed, deleted_sequence, exon)
+      JOIN variant v ON v.var_feature_zdb_id = d.feature_zdb_id AND v.var_variant_number = d.variant_number
+    RETURNING fdmd_zdb_id
+), new_transcript AS (
+    INSERT INTO feature_transcript_mutation_detail (
+        ftmd_zdb_id, ftmd_variant_zdb_id, ftmd_transcript_consequence_term_zdb_id, ftmd_exon_number)
+    SELECT get_id_and_insert_active_data('FTMD'), v.var_zdb_id,
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = t.consequence), t.exon
+      FROM (VALUES ('ZDB-ALT-230227-6', 1, 'SO:0001589', 4),   -- frameshift_variant
+                   ('ZDB-ALT-230227-6', 1, 'SO:0001587', 4),   -- stop_gained
+                   ('ZDB-ALT-230227-6', 2, 'SO:0001583', 4),   -- missense_variant
+                   ('ZDB-ALT-230227-4', 1, 'SO:0001822', 7))   -- inframe_deletion
+           AS t (feature_zdb_id, variant_number, consequence, exon)
+      JOIN variant v ON v.var_feature_zdb_id = t.feature_zdb_id AND v.var_variant_number = t.variant_number
+    RETURNING ftmd_zdb_id
+), new_protein AS (
+    INSERT INTO feature_protein_mutation_detail (
+        fpmd_zdb_id, fpmd_variant_zdb_id, fpmd_protein_consequence_term_zdb_id,
+        fpmd_sequence_of_reference_accession_number, fpmd_fdbcont_zdb_id,
+        fpmd_protein_position_start, fpmd_protein_position_end,
+        fpmd_wt_protein_term_zdb_id, fpmd_mutant_or_stop_protein_term_zdb_id,
+        fpmd_number_amino_acids_removed)
+    SELECT get_id_and_insert_active_data('FPMD'), v.var_zdb_id,
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = p.consequence),
+           p.accession, 'ZDB-FDBCONT-040412-39',      -- RefSeq Polypeptide
+           p.position_start, p.position_end,
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = p.wt_aa),
+           (SELECT term_zdb_id FROM vocab WHERE term_ont_id = p.mutant_aa),
+           p.removed
+      FROM (VALUES ('ZDB-ALT-230227-6', 1, 'SO:0001617', 'NP_998402.1',    228, 228, 'SO:0001451', 'SO:0001439', 97),    -- polypeptide_truncation, arginine > proline
+                   ('ZDB-ALT-230227-6', 2, 'SO:0001606', 'NP_998402.1',    236, 236, 'SO:0001441', 'SO:0001437', NULL),  -- amino_acid_substitution, phenylalanine > leucine
+                   ('ZDB-ALT-230227-4', 1, 'SO:0001604', 'NP_001032452.1', 265, 267, NULL,         NULL,         3))     -- amino_acid_deletion
+           AS p (feature_zdb_id, variant_number, consequence, accession, position_start, position_end, wt_aa, mutant_aa, removed)
+      JOIN variant v ON v.var_feature_zdb_id = p.feature_zdb_id AND v.var_variant_number = p.variant_number
+    RETURNING fpmd_zdb_id
+)
+INSERT INTO record_attribution (recattrib_data_zdb_id, recattrib_source_zdb_id)
+SELECT fdmd_zdb_id, 'ZDB-PUB-220901-7' FROM new_dna
+UNION ALL
+SELECT ftmd_zdb_id, 'ZDB-PUB-220901-7' FROM new_transcript
+UNION ALL
+SELECT fpmd_zdb_id, 'ZDB-PUB-220901-7' FROM new_protein;
+--rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT fdmd_zdb_id FROM feature_dna_mutation_detail JOIN variant ON var_zdb_id = fdmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4'));
+--rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT ftmd_zdb_id FROM feature_transcript_mutation_detail JOIN variant ON var_zdb_id = ftmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4'));
+--rollback DELETE FROM zdb_active_data WHERE zactvd_zdb_id IN (SELECT fpmd_zdb_id FROM feature_protein_mutation_detail JOIN variant ON var_zdb_id = fpmd_variant_zdb_id WHERE var_feature_zdb_id IN ('ZDB-ALT-230227-6', 'ZDB-ALT-230227-4'));
