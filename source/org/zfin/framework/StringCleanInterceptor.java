@@ -52,7 +52,10 @@ public class StringCleanInterceptor extends EmptyInterceptor {
             if (fields != null) {
                 for (Field field : fields) {
                     // modifier = 9 means static field
-                    if (field.getType() == String.class && !Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())) {
+                    if (field.getType() == String.class && !Modifier.isFinal(field.getModifiers()) && !Modifier.isStatic(field.getModifiers())
+                        // transient fields are not persisted and often have no bean accessor
+                        // (e.g. Marker.cachedAnnotationStatus), which only produced log noise
+                        && !Modifier.isTransient(field.getModifiers())) {
                         runSetter(field, state, processState(runGetter(field, state)));
                     }
                 }
