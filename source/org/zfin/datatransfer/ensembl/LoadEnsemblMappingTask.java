@@ -36,8 +36,10 @@ import java.util.regex.Pattern;
  *   <li>a {@code record_attribution} to the publication given for this load.</li>
  * </ul>
  * Only unambiguous accessions are loaded: an ENSDARG the file gives to several genes, or that is already linked to
- * a different gene, is skipped, as are rows the file flags as conflicts, unknown genes and malformed cells. Every
- * omission is listed in the report with its reason.
+ * a different gene, is skipped, as are rows the file flags as conflicts, unknown genes and malformed cells. Rows
+ * whose z11 ID is known only from NCBI ({@code z11_source=ncbi}) and that Ensembl does not corroborate
+ * ({@code is_match_to_xref} of {@code no_xref} or {@code mismatch}) are skipped too, with a warning in the summary.
+ * Every omission is listed in the report with its reason.
  *
  * <p>Nothing is ever deleted or changed, so a rerun of the same file adds nothing, and an existing link that lacks
  * its assembly or attribution gets just that. The z11 column is not loaded: z11 links already exist.
@@ -70,6 +72,7 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
         NO_SUCH_GENE,
         REJECTED,
         HELD_CONFLICT,
+        HELD_NCBI_ONLY_UNCORROBORATED,
         AMBIGUOUS_IN_FILE,
         AMBIGUOUS_IN_DB;
 
@@ -206,6 +209,13 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
         for (EnsemblMappingFile.Conflict c : mapping.conflicts()) {
             report.add(new ReportLine(Action.HELD_CONFLICT, c.zdbId(), c.ensdarg(), c.assemblyName(),
                     "line " + c.lineNumber() + ": " + c.conflict()));
+        }
+
+        for (EnsemblMappingFile.Unsupported u : mapping.unsupported()) {
+            report.add(new ReportLine(Action.HELD_NCBI_ONLY_UNCORROBORATED, u.zdbId(), u.ensdarg(), u.assemblyName(),
+                    "line " + u.lineNumber() + ": WARNING not loaded: z11_source=" + u.z11Source()
+                            + " (only NCBI links this gene to the z11 ID) and is_match_to_xref=" + u.xref()
+                            + " (Ensembl does not confirm it)"));
         }
 
         for (EnsemblMappingFile.Ambiguous a : mapping.ambiguous()) {
@@ -345,6 +355,16 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
                     text.append(String.format("  %-32s %d%n", action, count));
                 }
             }
+        }
+        List<EnsemblMappingFile.Unsupported> unsupported = mapping.unsupported();
+        if (!unsupported.isEmpty()) {
+            long rows = unsupported.stream().map(EnsemblMappingFile.Unsupported::lineNumber).distinct().count();
+            long genes = unsupported.stream().map(EnsemblMappingFile.Unsupported::zdbId).distinct().count();
+            text.append("\nWARNING: ").append(rows).append(" rows (").append(unsupported.size()).append(" associations, ")
+                    .append(genes).append(" genes) were NOT loaded because only NCBI links the gene to its z11 ID\n")
+                    .append("(z11_source=ncbi) and Ensembl does not confirm it (is_match_to_xref=no_xref or mismatch).\n")
+                    .append("They are listed as ").append(Action.HELD_NCBI_ONLY_UNCORROBORATED).append(" in ")
+                    .append(REPORT_FILE).append(" for curator review.\n");
         }
         text.append("\nPer-row detail: ").append(REPORT_FILE).append('\n');
         Files.writeString(outputDirectory.resolve(SUMMARY_FILE), text.toString());
