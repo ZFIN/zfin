@@ -33,7 +33,8 @@ import java.util.zip.GZIPInputStream;
  *
  * <p>When the file has {@code z11_source} and {@code is_match_to_xref} columns, rows whose z11 ID is known only
  * from NCBI ({@code z11_source=ncbi}) and that Ensembl does not corroborate ({@code is_match_to_xref} of
- * {@code no_xref} or {@code mismatch}) are not loaded; they are kept in {@link #unsupported()}.
+ * {@code no_xref} or {@code mismatch}) are not loaded; they are kept in {@link #unsupported()}. Each entry carries the
+ * row's {@code ncbi_gene_id} values so the load can compare them with the gene's NCBI Gene ID in the database.
  *
  * <p>Only unambiguous accessions end up in {@link #entries()}. Everything else is kept, with the reason, in
  * {@link #rejected()} (unusable cell), {@link #conflicts()} (flagged by the file) or {@link #ambiguous()} (the
@@ -65,7 +66,7 @@ public class EnsemblMappingFile {
     private static final Pattern GENE_ZDB_ID = Pattern.compile("ZDB-[A-Z]+-\\d{6}-\\d+");
 
     /** One gene -> ENSDARG -> assembly association to load. */
-    public record Entry(String zdbId, String ensdarg, String assemblyName, long lineNumber) {
+    public record Entry(String zdbId, String ensdarg, String assemblyName, long lineNumber, Set<String> ncbiGeneIds) {
     }
 
     /** A mapping cell that was not usable, with the reason. */
@@ -157,6 +158,12 @@ public class EnsemblMappingFile {
         String conflict = hasConflictColumn ? value(record, "conflict") : "";
         String z11Source = hasEvidenceColumns ? value(record, Z11_SOURCE) : "";
         String xref = hasEvidenceColumns ? value(record, XREF_MATCH) : "";
+        Set<String> ncbiGeneIds = new TreeSet<>();
+        for (String id : value(record, "ncbi_gene_id").split("\\|")) {
+            if (!id.trim().isEmpty()) {
+                ncbiGeneIds.add(id.trim());
+            }
+        }
         boolean ncbiOnlyUncorroborated = Z11_SOURCE_NCBI.equals(z11Source) && UNCORROBORATED_XREF.contains(xref);
         for (String column : assemblyColumnsPresent) {
             String ensdarg = value(record, column);
@@ -192,7 +199,7 @@ public class EnsemblMappingFile {
                 unsupported.add(new Unsupported(line, zdbId, ensdarg, assemblyName, z11Source, xref));
                 continue;
             }
-            Entry entry = new Entry(zdbId, ensdarg, assemblyName, line);
+            Entry entry = new Entry(zdbId, ensdarg, assemblyName, line, ncbiGeneIds);
             if (unique.putIfAbsent(zdbId + "|" + ensdarg + "|" + assemblyName, entry) != null) {
                 duplicateCount++;
             }

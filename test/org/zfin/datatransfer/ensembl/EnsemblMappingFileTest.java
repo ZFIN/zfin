@@ -78,6 +78,12 @@ public class EnsemblMappingFileTest {
     }
 
     @Test
+    public void entriesCarryTheRowsNcbiGeneIds() throws IOException {
+        EnsemblMappingFile file = read("ENSDARG00000000001,ENSDARG00160013050,,ZDB-GENE-030616-55,111|222,\n", false);
+        assertEquals(java.util.Set.of("111", "222"), file.entries().get(0).ncbiGeneIds());
+    }
+
+    @Test
     public void repeatedAssociationsAreLoadedOnce() throws IOException {
         EnsemblMappingFile file = read(
                 "ENSDARG00000000001,ENSDARG00160013050,,ZDB-GENE-030616-55,1,\n"
