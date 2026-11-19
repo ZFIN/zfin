@@ -744,6 +744,17 @@ public class Feature implements EntityNotes, EntityZdbID {
     public String getDisplayType() {
         if (type.equals(FeatureTypeEnum.TRANSGENIC_INSERTION) && hasAlleleOfRelationship())
             return "Allele caused by " + type.getTypeDisplay();
+        if (type.equals(FeatureTypeEnum.COMPLEX_SUBSTITUTION)) {
+            // ZFIN-10622: name the types of the variants a Complex feature is made of, in variant
+            // order, e.g. "Allele with multiple variants: Small Deletion, Point Mutation".
+            String variantTypes = variants == null ? "" : variants.stream()
+                    .map(Variant::getVariantType)
+                    .filter(Objects::nonNull)
+                    .map(FeatureTypeEnum::getDisplay)
+                    .collect(Collectors.joining(", "));
+            if (!variantTypes.isEmpty())
+                return type.getTypeDisplay() + ": " + variantTypes;
+        }
         return type.getTypeDisplay();
     }
 
