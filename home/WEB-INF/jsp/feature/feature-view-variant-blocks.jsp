@@ -17,9 +17,9 @@
             <z:attributeListItem label="Variant Location">
                 <c:set var="location" value="${variant.location}"/>
                 <c:if test="${!empty location}">
-                    Chr ${location.chromosome}: ${location.startLocation}
+                    Chr ${location.chromosome}: <fmt:formatNumber value="${location.startLocation}" pattern="##,###"/>
                     <c:if test="${!empty location.endLocation && location.startLocation != location.endLocation}">
-                        - ${location.endLocation}
+                        - <fmt:formatNumber value="${location.endLocation}" pattern="##,###"/>
                     </c:if>
                     <c:if test="${!empty location.assembly}">
                         (${location.assembly})
