@@ -140,7 +140,7 @@ public final class ZircMutationFormSchema {
         // General
         properties.put("alleleDesignation",          StringSchema.of("Allele Designation", 255));
         properties.put("alleleInZfin",               BooleanSchema.nullable("ZFIN Record Established"));
-        properties.put("mutationType",               StringSchema.of("Mutation Type", 255));
+        properties.put("mutationType",               StringSchema.of("Allele Type", 255));
         properties.put("mutationDiscoverer",         StringSchema.of("Discoverer", 255));
         properties.put("mutationInstitution",        StringSchema.of("Institution", 255));
         // ZFIN-10543: the existing feature's lab of origin + institution, shown in
