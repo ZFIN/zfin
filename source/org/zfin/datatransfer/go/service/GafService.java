@@ -142,6 +142,10 @@ public class GafService {
 
             // find genes based on uniprot ID via marker relations
             try {
+                if (term == null) {
+                    // e.g. an obsolete or unknown GO id in the incoming file: reject the row, don't abort the load
+                    throw new GafValidationError("GO term not found in ZFIN ontology[" + oboId + "] for [" + gafEntry.getEntryId() + "]", gafEntry);
+                }
                 if (isTermInRestrictedSubset(gafEntry.getEvidenceCode(), term)) {
                     gafJobData.addSubsetFailureEntry(gafEntry);
                     throw new GafValidationError("Can not use term in a \"Do Not Annotate\" subset[" + gafEntry.getEntryId() + "]", gafEntry);
