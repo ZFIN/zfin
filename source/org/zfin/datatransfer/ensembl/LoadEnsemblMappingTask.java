@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -36,8 +37,12 @@ import java.util.regex.Pattern;
  *   <li>a {@code record_attribution} to the publication given for this load.</li>
  * </ul>
  * Only unambiguous accessions are loaded: an ENSDARG the file gives to several genes, or that is already linked to
- * a different gene, is skipped, as are rows the file flags as conflicts, unknown genes and malformed cells. Every
- * omission is listed in the report with its reason.
+ * a different gene, is skipped, as are rows the file flags as conflicts, unknown genes and malformed cells. Rows
+ * whose z11 ID is known only from NCBI ({@code z11_source=ncbi}) and that Ensembl does not corroborate
+ * ({@code is_match_to_xref} of {@code no_xref} or {@code mismatch}) are skipped too, as are genes whose NCBI Gene ID in
+ * the file differs from the one ZFIN has, and genes with neither an NCBI Gene ID nor a GRCz11 Ensembl ID in ZFIN. Each
+ * kind of skip has its own report category and a warning in the summary.
+ * Every omission is listed in the report with its reason.
  *
  * <p>Nothing is ever deleted or changed, so a rerun of the same file adds nothing, and an existing link that lacks
  * its assembly or attribution gets just that. The z11 column is not loaded: z11 links already exist.
@@ -70,6 +75,9 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
         NO_SUCH_GENE,
         REJECTED,
         HELD_CONFLICT,
+        HELD_NCBI_ONLY_UNCORROBORATED,
+        HELD_NCBI_ID_DISAGREES,
+        HELD_NO_NCBI_OR_Z11_IN_DB,
         AMBIGUOUS_IN_FILE,
         AMBIGUOUS_IN_DB;
 
@@ -208,6 +216,13 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
                     "line " + c.lineNumber() + ": " + c.conflict()));
         }
 
+        for (EnsemblMappingFile.Unsupported u : mapping.unsupported()) {
+            report.add(new ReportLine(Action.HELD_NCBI_ONLY_UNCORROBORATED, u.zdbId(), u.ensdarg(), u.assemblyName(),
+                    "line " + u.lineNumber() + ": WARNING not loaded: z11_source=" + u.z11Source()
+                            + " (only NCBI links this gene to the z11 ID) and is_match_to_xref=" + u.xref()
+                            + " (Ensembl does not confirm it)"));
+        }
+
         for (EnsemblMappingFile.Ambiguous a : mapping.ambiguous()) {
             report.add(new ReportLine(Action.AMBIGUOUS_IN_FILE, a.zdbId(), a.ensdarg(), a.assemblyName(),
                     "line " + a.lineNumber() + ": the file gives this ENSDARG to " + a.genes().size() + " genes: " + String.join(" ", a.genes())));
@@ -247,10 +262,40 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
             existingAttributions.add((String) id);
         }
 
+        // the gene's NCBI Gene IDs and whether it has a GRCz11 Ensembl ID, as ZFIN already records them
+        Map<String, Set<String>> dbNcbiIds = new HashMap<>();
+        Set<String> genesWithZ11 = new HashSet<>();
+        for (Tuple row : session.createNativeQuery("""
+                select dblink_linked_recid, dblink_acc_num, fdb_db_name
+                  from db_link
+                  join foreign_db_contains on fdbcont_zdb_id = dblink_fdbcont_zdb_id
+                  join foreign_db on fdb_db_pk_id = fdbcont_fdb_db_id
+                 where fdbcont_organism_common_name = 'Zebrafish'
+                   and fdb_db_name in ('Gene', 'Ensembl(GRCz11)')
+                """, Tuple.class).list()) {
+            if ("Gene".equals(row.get(2, String.class))) {
+                dbNcbiIds.computeIfAbsent(row.get(0, String.class), k -> new TreeSet<>()).add(row.get(1, String.class));
+            } else {
+                genesWithZ11.add(row.get(0, String.class));
+            }
+        }
+
         for (EnsemblMappingFile.Entry entry : mapping.entries()) {
             if (!markers.contains(entry.zdbId())) {
                 report.add(new ReportLine(Action.NO_SUCH_GENE, entry.zdbId(), entry.ensdarg(), entry.assemblyName(),
                         "line " + entry.lineNumber() + ": no marker with this ZDB ID"));
+                continue;
+            }
+            Set<String> dbNcbi = dbNcbiIds.getOrDefault(entry.zdbId(), Set.of());
+            if (dbNcbi.isEmpty() && !genesWithZ11.contains(entry.zdbId())) {
+                report.add(new ReportLine(Action.HELD_NO_NCBI_OR_Z11_IN_DB, entry.zdbId(), entry.ensdarg(), entry.assemblyName(),
+                        "line " + entry.lineNumber() + ": WARNING not loaded: the gene has neither an NCBI Gene ID nor a GRCz11 Ensembl ID in ZFIN, so nothing in ZFIN corroborates this mapping"));
+                continue;
+            }
+            if (!dbNcbi.isEmpty() && !entry.ncbiGeneIds().isEmpty() && Collections.disjoint(dbNcbi, entry.ncbiGeneIds())) {
+                report.add(new ReportLine(Action.HELD_NCBI_ID_DISAGREES, entry.zdbId(), entry.ensdarg(), entry.assemblyName(),
+                        "line " + entry.lineNumber() + ": WARNING not loaded: ZFIN has NCBI Gene ID " + String.join(" ", dbNcbi)
+                                + " for this gene but the mapping file has " + String.join(" ", entry.ncbiGeneIds())));
                 continue;
             }
             String fdbcontId = fdbcontIds.get(entry.assemblyName());
@@ -344,6 +389,23 @@ public class LoadEnsemblMappingTask extends AbstractScriptWrapper {
                 if (count != null) {
                     text.append(String.format("  %-32s %d%n", action, count));
                 }
+            }
+        }
+        Map<Action, String> warnings = new LinkedHashMap<>();
+        warnings.put(Action.HELD_NCBI_ONLY_UNCORROBORATED,
+                "only NCBI links the gene to its z11 ID (z11_source=ncbi) and Ensembl does not confirm it (is_match_to_xref=no_xref or mismatch)");
+        warnings.put(Action.HELD_NCBI_ID_DISAGREES,
+                "the NCBI Gene ID in the mapping file differs from the one ZFIN has for the gene");
+        warnings.put(Action.HELD_NO_NCBI_OR_Z11_IN_DB,
+                "the gene has neither an NCBI Gene ID nor a GRCz11 Ensembl ID in ZFIN, so nothing in ZFIN corroborates the mapping");
+        for (Map.Entry<Action, String> warning : warnings.entrySet()) {
+            List<ReportLine> held = report.stream().filter(l -> l.action() == warning.getKey()).toList();
+            if (!held.isEmpty()) {
+                long genes = held.stream().map(ReportLine::zdbId).distinct().count();
+                text.append("\nWARNING: ").append(held.size()).append(" associations (").append(genes)
+                        .append(" genes) were NOT loaded: ").append(warning.getValue()).append(".\n")
+                        .append("They are listed as ").append(warning.getKey()).append(" in ").append(REPORT_FILE)
+                        .append(" for curator review.\n");
             }
         }
         text.append("\nPer-row detail: ").append(REPORT_FILE).append('\n');

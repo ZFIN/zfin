@@ -5,7 +5,7 @@
 &lt;br/&gt;
 Each ENSDARG becomes a db_link on the mapping's gene under the Ensembl(&amp;lt;assembly&amp;gt;) reference database, with a db_link_assembly row for that assembly and an attribution to the publication given below. Nothing is deleted or changed, and rerunning a file adds nothing new.&lt;br/&gt;
 &lt;br/&gt;
-Only unambiguous accessions are loaded. Left out, and listed with the reason in ensembl_mapping_load_report.csv: rows the file flags in its conflict column, ENSDARGs given to more than one gene (in the file, or already in the database), genes not in the database, and malformed cells. ensembl_mapping_load_summary.txt has the counts.&lt;br/&gt;
+Only unambiguous accessions are loaded. Left out, and listed with the reason in ensembl_mapping_load_report.csv: rows the file flags in its conflict column, rows whose z11 ID is known only from NCBI (z11_source = ncbi) and that Ensembl does not confirm (is_match_to_xref = no_xref or mismatch; the summary warns when any are skipped), genes whose NCBI Gene ID in the file differs from the one in ZFIN, genes with neither an NCBI Gene ID nor a GRCz11 Ensembl ID in ZFIN, ENSDARGs given to more than one gene (in the file, or already in the database), genes not in the database, and malformed cells. ensembl_mapping_load_summary.txt has the counts.&lt;br/&gt;
 &lt;br/&gt;
 The file is a CSV with columns zdb_id and any of z12tu, z12ab, z13ab (z11 and other columns are ignored); .gz is accepted.&lt;br/&gt;
 &lt;br/&gt;
