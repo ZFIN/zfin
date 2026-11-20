@@ -43,7 +43,8 @@ RUN chmod 755 /opt/solr/server/solr/configsets/site_index/lib \
 # Wrapper entrypoint that sets umask 002 before handing off to the upstream
 # entrypoint (see the script for why). CMD is restated because setting ENTRYPOINT
 # resets the inherited CMD.
-COPY --chown=solr:solr --chmod=755 umask-entrypoint.sh /usr/local/bin/umask-entrypoint.sh
+COPY --chown=solr:solr umask-entrypoint.sh /usr/local/bin/umask-entrypoint.sh
+RUN chmod 755 /usr/local/bin/umask-entrypoint.sh
 ENTRYPOINT ["umask-entrypoint.sh"]
 CMD ["solr-foreground"]
 
