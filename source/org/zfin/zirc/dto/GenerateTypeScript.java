@@ -1,6 +1,7 @@
 package org.zfin.zirc.dto;
 
 import jakarta.validation.constraints.NotNull;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
@@ -13,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Generates {@code frontend/javascript/react/zirc/api/types.ts} from the
@@ -29,6 +31,8 @@ import java.util.List;
  *   <li>{@code String}, {@code char} → {@code string}</li>
  *   <li>{@code Long}/{@code Integer}/{@code Double}/{@code int}/{@code long}/{@code double} → {@code number}</li>
  *   <li>{@code Boolean}/{@code boolean} → {@code boolean}</li>
+ *   <li>Value types in {@link #VALUE_TYPES} → reference to the named type alias
+ *       emitted for it (e.g. {@link YesNoUnknown} → {@code YesNoUnknown})</li>
  *   <li>{@code Instant}/{@code LocalDate}/{@code LocalDateTime} → {@code string} (ISO-8601)</li>
  *   <li>{@code String[]} → {@code string[]}</li>
  *   <li>{@code List<T>} → {@code T[]}</li>
@@ -62,6 +66,21 @@ public final class GenerateTypeScript {
             PhenotypeFileDTO.class,
             AutocompleteItemDTO.class,
             VocabularyTermDTO.class);
+
+    /**
+     * Java value types whose wire shape is not a DTO interface, keyed to the
+     * TypeScript declarations emitted for them. Fields of these types
+     * reference the alias by its simple name, so the concept has the same
+     * name on both sides. Declarations are built from the Java constants so
+     * the two cannot disagree.
+     */
+    private static final Map<Class<?>, String> VALUE_TYPES = Map.of(
+            YesNoUnknown.class, """
+                    // Wire shape of org.zfin.zirc.entity.YesNoUnknown (ZFIN-10617):
+                    // true / false / "unknown"; null on a field means unanswered.
+                    export const UNKNOWN_ANSWER = '%s';
+                    export type YesNoUnknown = boolean | typeof UNKNOWN_ANSWER;
+                    """.formatted(YesNoUnknown.UNKNOWN_WIRE_VALUE));
 
     /** Extra interfaces emitted by hand — types the React client uses
      *  that don't have a matching Java DTO (the RFC 7807 problem
@@ -101,6 +120,8 @@ public final class GenerateTypeScript {
                 // mirror exists and what the generator covers.
 
                 """);
+
+        VALUE_TYPES.values().forEach(decl -> sb.append(decl).append('\n'));
 
         for (Class<?> dto : DTO_CLASSES) {
             sb.append(renderInterface(dto));
@@ -168,6 +189,7 @@ public final class GenerateTypeScript {
     private static String tsScalar(Class<?> c) {
         if (c == String.class || c == char.class || c == Character.class) {return "string";}
         if (c == boolean.class || c == Boolean.class) {return "boolean";}
+        if (VALUE_TYPES.containsKey(c)) {return c.getSimpleName();}
         if (c == int.class || c == Integer.class
                 || c == long.class || c == Long.class
                 || c == double.class || c == Double.class

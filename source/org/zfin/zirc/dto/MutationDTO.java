@@ -8,6 +8,7 @@ import org.zfin.zirc.entity.GenotypingAssay;
 import org.zfin.zirc.entity.Lesion;
 import org.zfin.zirc.entity.Mutation;
 import org.zfin.zirc.entity.Phenotype;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.util.Comparator;
 import java.util.List;
@@ -47,7 +48,7 @@ public record MutationDTO(
         // widget writes that answer into this same field.
         String inducedBackground,
         // Lethality
-        Boolean homozygousLethal,
+        YesNoUnknown homozygousLethal,
         String lethalityStageTypical,
         String lethalitySpecificTimepoint,
         String lethalityWindowStart,

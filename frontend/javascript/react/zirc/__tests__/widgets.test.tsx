@@ -560,3 +560,44 @@ describe('attachmentsList widget', () => {
         h.cleanupFetch();
     });
 });
+
+describe('yesNoRadio widget', () => {
+    const yesNoSchema = (withUnknown: boolean) => ({
+        type: 'object',
+        properties: {
+            lethal: withUnknown
+                ? { title: 'lethal', type: ['boolean', 'string', 'null'], enum: [true, false, 'unknown', null] }
+                : { title: 'lethal', type: ['boolean', 'null'] },
+        },
+    });
+
+    it('offers only Yes and No for a plain nullable boolean', () => {
+        const h = renderForm({
+            schema: yesNoSchema(false),
+            uischema: control('yesNoRadio', 'lethal'),
+            data: { lethal: null },
+        });
+        assert.equal(screen.queryByLabelText('Unknown'), null);
+        assert.ok(screen.getByLabelText('Yes'));
+        assert.ok(screen.getByLabelText('No'));
+        h.cleanupFetch();
+    });
+
+    it('offers Unknown when the schema enum includes it, and writes the string', async () => {
+        const h = renderForm({
+            schema: yesNoSchema(true),
+            uischema: control('yesNoRadio', 'lethal'),
+            data: { lethal: true },
+        });
+        const unknown = screen.getByLabelText('Unknown') as HTMLInputElement;
+        assert.equal(unknown.checked, false);
+
+        fireEvent.click(unknown);
+
+        await waitFor(() => {
+            assert.equal(h.latest().lethal, 'unknown');
+        });
+        assert.equal((screen.getByLabelText('Yes') as HTMLInputElement).checked, false);
+        h.cleanupFetch();
+    });
+});

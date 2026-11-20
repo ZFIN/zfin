@@ -9,6 +9,7 @@ import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
 import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.api.jsonschema.StringSchema;
+import org.zfin.zirc.api.jsonschema.YesNoUnknownSchema;
 import org.zfin.zirc.api.uischema.Control;
 import org.zfin.zirc.api.uischema.Group;
 import org.zfin.zirc.api.uischema.Options;
@@ -16,6 +17,7 @@ import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -159,7 +161,7 @@ public final class ZircMutationFormSchema {
         properties.put("inducedBackground",          StringSchema.of(
                 "Background on which the mutation was induced", 255));
         // Lethality
-        properties.put("homozygousLethal",           BooleanSchema.nullable("Homozygous Lethal"));
+        properties.put("homozygousLethal",           YesNoUnknownSchema.of("Homozygous Lethal"));
         properties.put("lethalityStageTypical",      StringSchema.of("Typical Lethality Stage", 255));
         properties.put("lethalitySpecificTimepoint", StringSchema.of("Specific Timepoint", 255));
         properties.put("lethalityWindowStart",       StringSchema.of("Lethality Window Start", 255));
@@ -376,7 +378,8 @@ public final class ZircMutationFormSchema {
                     Mutation::getInducedBackground,         (m, v) -> m.setInducedBackground(text(v))),
             // Lethality
             field("/homozygousLethal",
-                    Mutation::getHomozygousLethal,          (m, v) -> m.setHomozygousLethal(boolNullable(v))),
+                    Mutation::getHomozygousLethal,
+                    (m, v) -> m.setHomozygousLethal(YesNoUnknown.fromJson(v))),
             field("/lethalityStageTypical",
                     Mutation::getLethalityStageTypical,     (m, v) -> m.setLethalityStageTypical(text(v))),
             field("/lethalitySpecificTimepoint",
