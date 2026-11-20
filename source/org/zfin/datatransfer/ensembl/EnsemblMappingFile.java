@@ -31,6 +31,11 @@ import java.util.zip.GZIPInputStream;
  * already exist. An optional {@code conflict} column flags rows whose gene assignment is in doubt. Any other
  * column is ignored. A plain or gzipped file is accepted.
  *
+ * <p>When the file has {@code z11_source} and {@code is_match_to_xref} columns, rows whose z11 ID is known only
+ * from NCBI ({@code z11_source=ncbi}) and that Ensembl does not corroborate ({@code is_match_to_xref} of
+ * {@code no_xref} or {@code mismatch}) are not loaded; they are kept in {@link #unsupported()}. Each entry carries the
+ * row's {@code ncbi_gene_id} values so the load can compare them with the gene's NCBI Gene ID in the database.
+ *
  * <p>Only unambiguous accessions end up in {@link #entries()}. Everything else is kept, with the reason, in
  * {@link #rejected()} (unusable cell), {@link #conflicts()} (flagged by the file) or {@link #ambiguous()} (the
  * same ENSDARG given to several genes) so the load can report what it left out.
@@ -51,11 +56,17 @@ public class EnsemblMappingFile {
             "z12tu", "ENSDARG00160",
             "z12ab", "ENSDARG00180");
 
-    private static final Pattern ENSDARG = Pattern.compile("ENSDARG\\d{11}");
+    private static final String Z11_SOURCE = "z11_source";
+    private static final String XREF_MATCH = "is_match_to_xref";
+    private static final String Z11_SOURCE_NCBI = "ncbi";
+    /** Ensembl's xref gives no support for the row ({@code no_xref}) or names a different gene ({@code mismatch}). */
+    private static final Set<String> UNCORROBORATED_XREF = Set.of("no_xref", "mismatch");
+
+    private static final Pattern ENSDARG =Pattern.compile("ENSDARG\\d{11}");
     private static final Pattern GENE_ZDB_ID = Pattern.compile("ZDB-[A-Z]+-\\d{6}-\\d+");
 
     /** One gene -> ENSDARG -> assembly association to load. */
-    public record Entry(String zdbId, String ensdarg, String assemblyName, long lineNumber) {
+    public record Entry(String zdbId, String ensdarg, String assemblyName, long lineNumber, Set<String> ncbiGeneIds) {
     }
 
     /** A mapping cell that was not usable, with the reason. */
@@ -66,6 +77,14 @@ public class EnsemblMappingFile {
     public record Conflict(long lineNumber, String zdbId, String ensdarg, String assemblyName, String conflict) {
     }
 
+    /**
+     * Rows held back because the only evidence for the mapping is NCBI's (the file's {@code z11_source} is
+     * {@code ncbi}: ZFIN has no record of the z11 ID) and Ensembl does not corroborate it (the file's
+     * {@code is_match_to_xref} is {@code no_xref} or {@code mismatch}).
+     */
+    public record Unsupported(long lineNumber, String zdbId, String ensdarg, String assemblyName, String z11Source, String xref) {
+    }
+
     /** An ENSDARG the file assigns to more than one gene (in this assembly), so it is not loaded for any of them. */
     public record Ambiguous(long lineNumber, String zdbId, String ensdarg, String assemblyName, Set<String> genes) {
     }
@@ -73,6 +92,7 @@ public class EnsemblMappingFile {
     private final List<Entry> entries = new ArrayList<>();
     private final List<Rejected> rejected = new ArrayList<>();
     private final List<Conflict> conflicts = new ArrayList<>();
+    private final List<Unsupported> unsupported = new ArrayList<>();
     private final List<Ambiguous> ambiguous = new ArrayList<>();
     private final Map<String, Set<String>> genesByAccession = new HashMap<>();
     private final Set<String> assemblyColumnsPresent = new LinkedHashSet<>();
@@ -116,7 +136,8 @@ public class EnsemblMappingFile {
             Map<String, Entry> unique = new LinkedHashMap<>();
             for (CSVRecord record : parser) {
                 result.rowCount++;
-                result.readRow(record, header.containsKey("conflict"), includeConflicts, unique);
+                result.readRow(record, header.containsKey("conflict"),
+                        header.containsKey(Z11_SOURCE) && header.containsKey(XREF_MATCH), includeConflicts, unique);
             }
             for (Entry entry : unique.values()) {
                 Set<String> genes = result.genesByAccession.get(entry.assemblyName() + "|" + entry.ensdarg());
@@ -130,10 +151,20 @@ public class EnsemblMappingFile {
         return result;
     }
 
-    private void readRow(CSVRecord record, boolean hasConflictColumn, boolean includeConflicts, Map<String, Entry> unique) {
+    private void readRow(CSVRecord record, boolean hasConflictColumn, boolean hasEvidenceColumns, boolean includeConflicts,
+                         Map<String, Entry> unique) {
         long line = record.getRecordNumber() + 1;
         String zdbId = value(record, "zdb_id");
         String conflict = hasConflictColumn ? value(record, "conflict") : "";
+        String z11Source = hasEvidenceColumns ? value(record, Z11_SOURCE) : "";
+        String xref = hasEvidenceColumns ? value(record, XREF_MATCH) : "";
+        Set<String> ncbiGeneIds = new TreeSet<>();
+        for (String id : value(record, "ncbi_gene_id").split("\\|")) {
+            if (!id.trim().isEmpty()) {
+                ncbiGeneIds.add(id.trim());
+            }
+        }
+        boolean ncbiOnlyUncorroborated = Z11_SOURCE_NCBI.equals(z11Source) && UNCORROBORATED_XREF.contains(xref);
         for (String column : assemblyColumnsPresent) {
             String ensdarg = value(record, column);
             if (ensdarg.isEmpty()) {
@@ -164,7 +195,11 @@ public class EnsemblMappingFile {
                 conflicts.add(new Conflict(line, zdbId, ensdarg, assemblyName, conflict));
                 continue;
             }
-            Entry entry = new Entry(zdbId, ensdarg, assemblyName, line);
+            if (ncbiOnlyUncorroborated) {
+                unsupported.add(new Unsupported(line, zdbId, ensdarg, assemblyName, z11Source, xref));
+                continue;
+            }
+            Entry entry = new Entry(zdbId, ensdarg, assemblyName, line, ncbiGeneIds);
             if (unique.putIfAbsent(zdbId + "|" + ensdarg + "|" + assemblyName, entry) != null) {
                 duplicateCount++;
             }
@@ -185,6 +220,10 @@ public class EnsemblMappingFile {
 
     public List<Conflict> conflicts() {
         return conflicts;
+    }
+
+    public List<Unsupported> unsupported() {
+        return unsupported;
     }
 
     public List<Ambiguous> ambiguous() {
