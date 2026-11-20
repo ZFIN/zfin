@@ -270,6 +270,34 @@ public class PublicationAPIController {
         return response;
     }
 
+    @JsonView(View.API.class)
+    @RequestMapping(value = "/{pubID}/ncbi-links", method = RequestMethod.GET)
+    public JsonResultResponse<PublicationNcbiLink> getPublicationNcbiLinks(@PathVariable String pubID,
+                                                                           @RequestParam(value = "filter.zdbID", required = false) String zdbID,
+                                                                           @RequestParam(value = "filter.symbol", required = false) String symbol,
+                                                                           @RequestParam(value = "filter.accession", required = false) String accession,
+                                                                           @RequestParam(value = "filter.type", required = false) String type,
+                                                                           @RequestParam(value = "filter.assembly", required = false) String assembly,
+                                                                           @RequestParam(value = "filter.dblinkDate", required = false) String dblinkDate,
+                                                                           @Version Pagination pagination) {
+        LocalDateTime startTime = LocalDateTime.now();
+        PublicationNcbiLinkFilter filter = PublicationNcbiLinkFilter.fromRequest(zdbID, symbol, accession, type, assembly, dblinkDate);
+        PaginationResult<PublicationNcbiLink> links = publicationRepository.getNcbiLinksByPublication(pubID, filter, pagination);
+        JsonResultResponse<PublicationNcbiLink> response = new JsonResultResponse<>();
+        response.setTotal(links.getTotalCount());
+        response.setResults(links.getPopulatedResults());
+        PublicationNcbiLinkFacets facets = publicationRepository.getNcbiLinkFacets(pubID, filter);
+        response.addSupplementalData("linkTypes", PublicationNcbiLinkFacets.options(facets.types()));
+        response.addSupplementalData("linkTypeCounts", facets.types());
+        response.addSupplementalData("assemblies", PublicationNcbiLinkFacets.options(facets.assemblies()));
+        response.addSupplementalData("assemblyCounts", facets.assemblies());
+        response.addSupplementalData("dblinkDates", PublicationNcbiLinkFacets.options(facets.dblinkDates()));
+        response.addSupplementalData("dblinkDateCounts", facets.dblinkDates());
+        response.setHttpServletRequest(request);
+        response.calculateRequestDuration(startTime);
+        return response;
+    }
+
     @JsonView(View.AntibodyDetailsAPI.class)
     @RequestMapping(value = "/{publicationID}/antibodies")
     public JsonResultResponse<Antibody> getSequenceView(@PathVariable("publicationID") String publicationID,

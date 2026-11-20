@@ -141,6 +141,7 @@ PublicationViewController {
         if(CollectionUtils.isNotEmpty(clones.getPopulatedResults())){
             model.addAttribute("hasProbes", true);
         }
+        model.addAttribute("hasNcbiLinks", publicationRepository.hasNcbiLinks(publication.getZdbID()));
 
         //set up the menu for the left hand navigation
         PublicationNavigationMenu navigationMenu = new PublicationNavigationMenu();

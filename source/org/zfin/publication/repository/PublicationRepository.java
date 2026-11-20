@@ -28,6 +28,9 @@ import org.zfin.orthology.Ortholog;
 import org.zfin.profile.Person;
 import org.zfin.publication.*;
 import org.zfin.publication.presentation.DashboardPublicationList;
+import org.zfin.publication.presentation.PublicationNcbiLink;
+import org.zfin.publication.presentation.PublicationNcbiLinkFacets;
+import org.zfin.publication.presentation.PublicationNcbiLinkFilter;
 import org.zfin.publication.presentation.MetricsByDateBean;
 import org.zfin.publication.presentation.MetricsOnDateBean;
 import org.zfin.publication.presentation.PublicationMetricsFormBean;
@@ -163,6 +166,12 @@ public interface PublicationRepository extends PaginationParameter {
     List<Marker> getSTRByPublication(String pubID);
 
     List<Marker> getGenesAndMarkersByPublication(String pubID);
+
+    boolean hasNcbiLinks(String pubID);
+
+    PublicationNcbiLinkFacets getNcbiLinkFacets(String pubID, PublicationNcbiLinkFilter filter);
+
+    PaginationResult<PublicationNcbiLink> getNcbiLinksByPublication(String pubID, PublicationNcbiLinkFilter filter, Pagination pagination);
 
     List<Marker> getMarkersByTypeForPublication(String pubID, MarkerType markerType);
 

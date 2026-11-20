@@ -89,6 +89,15 @@
                  data-url="/action/api/publication/${publication.zdbID}/marker"
                  data-title="${GENES}"
             ></div>
+            <c:if test="${hasNcbiLinks}">
+                <%-- show="true": the tag would otherwise pick up the page's navigationMenu request
+                     attribute and hide this sub-section, which has no menu entry of its own --%>
+                <z:section title="NCBI Gene and RefSeq Accessions Attributed to this Publication" show="true">
+                    <div class="__react-root" id="PublicationNcbiLinkTable__0"
+                         data-url="/action/api/publication/${publication.zdbID}/ncbi-links"
+                    ></div>
+                </z:section>
+            </c:if>
         </z:section>
 
         <z:section title="${PROBES}">

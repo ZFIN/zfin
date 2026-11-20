@@ -27,6 +27,9 @@ export const columnDefinitionType = shape({
     key: string,
     filterName: string,
     filterOptions: arrayOf(string),
+    filterOptionFromSupplementalData: string,
+    // supplementalData key of an {option: count} map; the count is shown next to each option
+    filterOptionCountsFromSupplementalData: string,
     accessor: string,
     hideIfAllNull: bool,
 });
