@@ -1138,16 +1138,44 @@ select distinct mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
 \copy (select * from vega_transcript) to './downloadsStaging/vega_transcript.txt' with delimiter as '	' null as '';
 drop view vega_transcript;
 
--- the changing assembly version number in db_name
--- is apt to come back to bite us so I am opting for the zdb_id
+-- Ensembl gene IDs, one row per marker per assembly, Assembly in the last column.
+-- GRCz11 rows are published as they are. For the newer assemblies (GRCz12tu,
+-- GRCz12ab, GRCz13ab) only strict 1:1 associations within an assembly are kept:
+-- a gene with several ENSDARGs, or an ENSDARG on several genes, is left out.
+-- The reference databases are found by name, the way the Ensembl(<assembly>)
+-- foreign_db entries are created.
 --! echo ''./downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';'
 create view ensembl_1_to_1 as
-select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev,dblink_acc_num
- from marker, db_link, so_zfin_mapping
+select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num,
+       substring(fdb_db_name from 'Ensembl\((.*)\)') as assembly
+ from marker, db_link, so_zfin_mapping, foreign_db_contains, foreign_db
  where mrkr_zdb_id = dblink_linked_recid
    and szm_object_type = mrkr_type
-   and dblink_fdbcont_zdb_id = 'ZDB-FDBCONT-061018-1'
- order by 1;
+   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name = 'Ensembl(GRCz11)'
+union all
+select mrkr_zdb_id, szm_term_ont_id, mrkr_abbrev, dblink_acc_num,
+       substring(fdb_db_name from 'Ensembl\((.*)\)') as assembly
+ from (select dblink_linked_recid, dblink_acc_num, dblink_fdbcont_zdb_id,
+              count(*) over (partition by dblink_fdbcont_zdb_id, dblink_linked_recid) as per_marker,
+              count(*) over (partition by dblink_fdbcont_zdb_id, dblink_acc_num) as per_accession
+         from db_link
+        where dblink_fdbcont_zdb_id in (select fdbcont_zdb_id
+                                          from foreign_db_contains, foreign_db
+                                         where fdbcont_fdb_db_id = fdb_db_pk_id
+                                           and fdb_db_name in ('Ensembl(GRCz12tu)', 'Ensembl(GRCz12ab)', 'Ensembl(GRCz13ab)')
+                                           and fdbcont_organism_common_name = 'Zebrafish')) as links,
+      marker, so_zfin_mapping, foreign_db_contains, foreign_db
+ where mrkr_zdb_id = dblink_linked_recid
+   and szm_object_type = mrkr_type
+   and dblink_fdbcont_zdb_id = fdbcont_zdb_id
+   and fdbcont_fdb_db_id = fdb_db_pk_id
+   and fdb_db_name in ('Ensembl(GRCz12tu)', 'Ensembl(GRCz12ab)', 'Ensembl(GRCz13ab)')
+   and fdbcont_organism_common_name = 'Zebrafish'
+   and per_marker = 1
+   and per_accession = 1
+ order by 1, 5, 4;
 \copy (select * from ensembl_1_to_1) to './downloadsStaging/ensembl_1_to_1.txt' with delimiter as '	' null as '';
 drop view ensembl_1_to_1;
 
