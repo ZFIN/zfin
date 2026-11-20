@@ -7,6 +7,7 @@ import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
 import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.api.jsonschema.StringSchema;
+import org.zfin.zirc.api.jsonschema.YesNoUnknownSchema;
 import org.zfin.zirc.api.uischema.Control;
 import org.zfin.zirc.api.uischema.Group;
 import org.zfin.zirc.api.uischema.Options;
@@ -14,6 +15,7 @@ import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Phenotype;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -108,7 +110,7 @@ public final class ZircPhenotypeFormSchema {
         properties.put("segregation",            StringSchema.of("Segregation", 255));
         properties.put("type",                   StringSchema.of("Phenotype type", 255));
         // Background dependence (ZFIN-10449) — last row on the form.
-        properties.put("backgroundDependent",    BooleanSchema.nullableOrUnknown(
+        properties.put("backgroundDependent",    YesNoUnknownSchema.of(
                 "Is phenotype background dependent"));
         properties.put("backgroundComment",      StringSchema.of("Background comment", 5000));
         // Phenotype images (ZFIN-10449) — summary rows only. Uploads go
@@ -196,7 +198,7 @@ public final class ZircPhenotypeFormSchema {
                 // Non-Mendelian reveal above, but keyed on a boolean.
                 Group.of(null, List.of(
                         new Control("#/properties/backgroundDependent",
-                                Options.of().withWidget("yesNoRadio").withAllowUnknown(true), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/backgroundComment",
                                 Options.of().withMulti(true), showWhenBackgroundDependent)
                 ))
@@ -214,12 +216,9 @@ public final class ZircPhenotypeFormSchema {
             field("/nonMendelianComment",     Phenotype::getNonMendelianComment,     (p, v) -> p.setNonMendelianComment(text(v))),
             field("/segregation",             Phenotype::getSegregation,             (p, v) -> p.setSegregation(text(v))),
             field("/type",                    Phenotype::getType,                    (p, v) -> p.setType(text(v))),
-            field("/backgroundDependent",     p -> Boolean.TRUE.equals(p.getBackgroundDependentUnknown()) ? "unknown" : p.getBackgroundDependent(),
-                    (p, v) -> {
-                        boolean unknown = isUnknown(v);
-                        p.setBackgroundDependentUnknown(unknown ? Boolean.TRUE : null);
-                        p.setBackgroundDependent(unknown ? null : boolNullable(v));
-                    }),
+            field("/backgroundDependent",
+                    Phenotype::getBackgroundDependent,
+                    (p, v) -> p.setBackgroundDependent(YesNoUnknown.fromJson(v))),
             field("/backgroundComment",       Phenotype::getBackgroundComment,       (p, v) -> p.setBackgroundComment(text(v)))
     );
 
@@ -236,10 +235,6 @@ public final class ZircPhenotypeFormSchema {
         if (v == null || v.isNull()) {return null;}
         String s = v.asText();
         return s.isBlank() ? null : s.trim();
-    }
-
-    private static boolean isUnknown(JsonNode v) {
-        return v != null && v.isTextual() && "unknown".equals(v.asText());
     }
 
     private static Boolean boolNullable(JsonNode v) {

@@ -3,6 +3,7 @@ package org.zfin.zirc.dto;
 import jakarta.validation.constraints.NotNull;
 import org.zfin.zirc.entity.Phenotype;
 import org.zfin.zirc.entity.PhenotypeFile;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.util.Comparator;
 import java.util.List;
@@ -35,9 +36,9 @@ public record PhenotypeDTO(
         // Single-valued scalar text columns
         String segregation,
         String type,
-        // Background dependence (ZFIN-10449). Nullable boolean: null is
-        // "unanswered", distinct from an explicit false.
-        Object backgroundDependent, // Boolean, or "unknown"
+        // Background dependence (ZFIN-10449). Yes / No / Unknown (ZFIN-10617);
+        // null is "unanswered", distinct from an explicit answer.
+        YesNoUnknown backgroundDependent,
         String backgroundComment,
         // Phenotype images (ZFIN-10449) — summary rows; the bytes come from
         // GET /api/zirc/phenotypes/attachments/{id}/content
@@ -65,7 +66,7 @@ public record PhenotypeDTO(
                 p.getNonMendelianComment(),
                 p.getSegregation(),
                 p.getType(),
-                Boolean.TRUE.equals(p.getBackgroundDependentUnknown()) ? "unknown" : p.getBackgroundDependent(),
+                p.getBackgroundDependent(),
                 p.getBackgroundComment(),
                 files);
     }

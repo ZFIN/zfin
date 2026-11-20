@@ -13,6 +13,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
@@ -83,11 +84,19 @@ public class Phenotype implements Serializable {
      * status badge must distinguish from an explicit "no".
      */
     @Column(name = "p_background_dependent")
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Boolean backgroundDependent;
 
-    /** True when the submitter answered "unknown"; backgroundDependent is then null. */
-    @Column(name = "p_background_dependent_unknown")
-    private Boolean backgroundDependentUnknown;
+    /**
+     * Set only alongside a NULL {@link #backgroundDependent} (DB CHECK constraint).
+     * Read and written through {@link #getBackgroundDependent()} / {@link #setBackgroundDependent}
+     * so the pair cannot drift apart.
+     */
+    @Column(name = "p_background_dependent_unknown", nullable = false)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private boolean backgroundDependentUnknown;
 
     /** Only shown by the form when {@link #backgroundDependent} is true. */
     @Column(name = "p_background_comment")
@@ -106,4 +115,13 @@ public class Phenotype implements Serializable {
     @OrderBy("uploadedAt")
     private Set<PhenotypeFile> files = new HashSet<>();
 
+    /** Is the phenotype background dependent: yes / no / unknown, or {@code null} when unanswered (ZFIN-10617). */
+    public YesNoUnknown getBackgroundDependent() {
+        return YesNoUnknown.fromColumns(backgroundDependent, backgroundDependentUnknown);
+    }
+
+    public void setBackgroundDependent(YesNoUnknown answer) {
+        this.backgroundDependent = answer == null ? null : answer.asBoolean();
+        this.backgroundDependentUnknown = answer == YesNoUnknown.UNKNOWN;
+    }
 }

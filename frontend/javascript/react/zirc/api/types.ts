@@ -6,6 +6,11 @@
 // See reference/zirc-architecture.md §3 for why this
 // mirror exists and what the generator covers.
 
+// Wire shape of org.zfin.zirc.entity.YesNoUnknown (ZFIN-10617):
+// true / false / "unknown"; null on a field means unanswered.
+export const UNKNOWN_ANSWER = 'unknown';
+export type YesNoUnknown = boolean | typeof UNKNOWN_ANSWER;
+
 export interface LineSubmissionDTO {
     zdbID: string;
     name: string | null;
@@ -56,7 +61,7 @@ export interface MutationDTO {
     talenSequence2: string | null;
     molecularlyCharacterized: boolean | null;
     inducedBackground: string | null;
-    homozygousLethal: boolean | 'unknown' | null;
+    homozygousLethal: YesNoUnknown | null;
     lethalityStageTypical: string | null;
     lethalitySpecificTimepoint: string | null;
     lethalityWindowStart: string | null;
@@ -189,7 +194,7 @@ export interface PhenotypeDTO {
     nonMendelianComment: string | null;
     segregation: string | null;
     type: string | null;
-    backgroundDependent: boolean | 'unknown' | null;
+    backgroundDependent: YesNoUnknown | null;
     backgroundComment: string | null;
     attachments: PhenotypeFileDTO[];
 }

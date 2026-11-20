@@ -9,6 +9,7 @@ import org.zfin.zirc.api.jsonschema.JsonSchema;
 import org.zfin.zirc.api.jsonschema.NumberSchema;
 import org.zfin.zirc.api.jsonschema.ObjectSchema;
 import org.zfin.zirc.api.jsonschema.StringSchema;
+import org.zfin.zirc.api.jsonschema.YesNoUnknownSchema;
 import org.zfin.zirc.api.uischema.Control;
 import org.zfin.zirc.api.uischema.Group;
 import org.zfin.zirc.api.uischema.Options;
@@ -16,6 +17,7 @@ import org.zfin.zirc.api.uischema.Rule;
 import org.zfin.zirc.api.uischema.UiSchemaElement;
 import org.zfin.zirc.api.uischema.VerticalLayout;
 import org.zfin.zirc.entity.Mutation;
+import org.zfin.zirc.entity.YesNoUnknown;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -159,7 +161,7 @@ public final class ZircMutationFormSchema {
         properties.put("inducedBackground",          StringSchema.of(
                 "Background on which the mutation was induced", 255));
         // Lethality
-        properties.put("homozygousLethal",           BooleanSchema.nullableOrUnknown("Homozygous Lethal"));
+        properties.put("homozygousLethal",           YesNoUnknownSchema.of("Homozygous Lethal"));
         properties.put("lethalityStageTypical",      StringSchema.of("Typical Lethality Stage", 255));
         properties.put("lethalitySpecificTimepoint", StringSchema.of("Specific Timepoint", 255));
         properties.put("lethalityWindowStart",       StringSchema.of("Lethality Window Start", 255));
@@ -315,7 +317,7 @@ public final class ZircMutationFormSchema {
                         null),
                 Group.of("Lethality", List.of(
                         new Control("#/properties/homozygousLethal",
-                                Options.of().withWidget("yesNoRadio").withAllowUnknown(true), null),
+                                Options.of().withWidget("yesNoRadio"), null),
                         new Control("#/properties/lethalityStageTypical",
                                 Options.of().withWidget("selectWithOther").withStandardValues(LETHALITY_STAGES),
                                 showWhenLethal),
@@ -376,12 +378,8 @@ public final class ZircMutationFormSchema {
                     Mutation::getInducedBackground,         (m, v) -> m.setInducedBackground(text(v))),
             // Lethality
             field("/homozygousLethal",
-                    m -> Boolean.TRUE.equals(m.getHomozygousLethalUnknown()) ? "unknown" : m.getHomozygousLethal(),
-                    (m, v) -> {
-                        boolean unknown = isUnknown(v);
-                        m.setHomozygousLethalUnknown(unknown ? Boolean.TRUE : null);
-                        m.setHomozygousLethal(unknown ? null : boolNullable(v));
-                    }),
+                    Mutation::getHomozygousLethal,
+                    (m, v) -> m.setHomozygousLethal(YesNoUnknown.fromJson(v))),
             field("/lethalityStageTypical",
                     Mutation::getLethalityStageTypical,     (m, v) -> m.setLethalityStageTypical(text(v))),
             field("/lethalitySpecificTimepoint",
@@ -513,10 +511,6 @@ public final class ZircMutationFormSchema {
             if (NUCLEOTIDE_ALPHABET.indexOf(c) >= 0) {out.append(c);}
         }
         return out.isEmpty() ? null : out.toString();
-    }
-
-    private static boolean isUnknown(JsonNode v) {
-        return v != null && v.isTextual() && "unknown".equals(v.asText());
     }
 
     private static Boolean boolNullable(JsonNode v) {

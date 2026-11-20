@@ -240,7 +240,7 @@
       "elements" : [ {
         "options" : {
           "alphabet" : "ACGT",
-          "helpText" : "At least 20 nt directly preceding the variant / transgene.",
+          "helpText" : "At least 20 nt directly preceding the variant / transgene in genomic DNA.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
           "multi" : true,
           "widget" : "nucleotideSequence"
@@ -250,7 +250,7 @@
       }, {
         "options" : {
           "alphabet" : "ACGT",
-          "helpText" : "At least 20 nt directly following the variant / transgene.",
+          "helpText" : "At least 20 nt directly following the variant / transgene in genomic DNA.",
           "infoHref" : "https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions",
           "multi" : true,
           "widget" : "nucleotideSequence"

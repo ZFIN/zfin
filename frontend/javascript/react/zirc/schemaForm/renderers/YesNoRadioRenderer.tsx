@@ -14,22 +14,26 @@ import { FieldHistory } from '../../components/FieldHistory';
 import { FieldComments } from '../../components/FieldComments';
 import { FieldAccessories } from '../../components/FieldAccessories';
 import { ValueDisplay } from '../../components/ValueDisplay';
+import { UNKNOWN_ANSWER } from '../../api/types';
 
 /**
- * 2-state Yes/No radio for nullable booleans. Matches the reference form's
- * pattern: neither radio is checked until the user picks, and once picked
- * stays one of true/false (no "Unspecified" option to un-set).
+ * Yes/No radio for nullable booleans. Matches the reference form's pattern:
+ * no radio is checked until the user picks, and once picked stays answered
+ * (no "Unspecified" option to un-set).
+ *
+ * A third "Unknown" radio appears when the field's schema lists UNKNOWN_ANSWER in
+ * its enum (YesNoUnknownSchema, ZFIN-10617) — the schema is the single place
+ * a field opts in, so there is no matching uiSchema option to keep in step.
  *
  * Tester: any Control whose uiSchema sets options.widget = 'yesNoRadio'.
  */
-function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, uischema }: ControlProps) {
+function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, uischema, schema }: ControlProps) {
     if (visible === false) {return null;}
     const fieldName = leafOf(path);
     const labelId = `fr-label-${fieldName}`;
     const name = `fr-${fieldName}-group`;
     const view = viewConfigFrom(config);
-    const allowUnknown = (uischema as { options?: { allowUnknown?: boolean } } | undefined)
-        ?.options?.allowUnknown === true;
+    const allowUnknown = schema.enum?.includes(UNKNOWN_ANSWER) === true;
 
     if (view.readonly) {
         return (
@@ -39,7 +43,7 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, 
                     {label}
                 </th>
                 <td>
-                    <ValueDisplay value={data === 'unknown' ? 'Unknown' : data}/>
+                    <ValueDisplay value={data === UNKNOWN_ANSWER ? 'Unknown' : data}/>
                     <FieldHistory
                         recId={view.recId}
                         scope='field'
@@ -99,9 +103,9 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, 
                                 id={`fr-${fieldName}-unknown`}
                                 className='form-check-input'
                                 name={name}
-                                value='unknown'
-                                checked={data === 'unknown'}
-                                onChange={() => handleChange(path, 'unknown')}
+                                value={UNKNOWN_ANSWER}
+                                checked={data === UNKNOWN_ANSWER}
+                                onChange={() => handleChange(path, UNKNOWN_ANSWER)}
                             />
                             <label className='form-check-label' htmlFor={`fr-${fieldName}-unknown`}>Unknown</label>
                         </div>

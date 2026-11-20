@@ -63,7 +63,8 @@
       },
       "homozygousLethal" : {
         "title" : "Homozygous Lethal",
-        "type" : [ "boolean", "null" ]
+        "enum" : [ true, false, "unknown", null ],
+        "type" : [ "boolean", "string", "null" ]
       },
       "inducedBackground" : {
         "maxLength" : 255,

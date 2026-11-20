@@ -49,6 +49,18 @@ public class JsonSchemaSerializationTest {
     }
 
     @Test
+    public void yesNoUnknownEmitsEnumWithUnknownAndNull() throws Exception {
+        String json = MAPPER.writeValueAsString(YesNoUnknownSchema.of("Homozygous Lethal"));
+        assertEquals(
+                "{\n" +
+                "  \"title\" : \"Homozygous Lethal\",\n" +
+                "  \"enum\" : [ true, false, \"unknown\", null ],\n" +
+                "  \"type\" : [ \"boolean\", \"string\", \"null\" ]\n" +
+                "}",
+                json);
+    }
+
+    @Test
     public void nullableBooleanEmitsArrayType() throws Exception {
         String json = MAPPER.writeValueAsString(BooleanSchema.nullable("Background Changeable"));
         assertEquals(
