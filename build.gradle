@@ -1974,7 +1974,10 @@ task npmInstall(type: Exec) {
 
     inputs.file 'package.json'
     inputs.file 'package-lock.json'
-    outputs.dir 'node_modules'
+    // The hidden lockfile npm writes into node_modules on every install, rather than the whole
+    // node_modules tree: one file to fingerprint instead of tens of thousands, so the up-to-date
+    // check stays cheap now that npmBuild (and so every dirtydeploy) depends on this task.
+    outputs.file 'node_modules/.package-lock.json'
 }
 
 // analytics.js is a static file (webroot/analytics.js, alongside robots.txt and
@@ -1986,6 +1989,11 @@ task npmInstall(type: Exec) {
 task npmBuild(type: Exec) {
     description = 'Build frontend assets with webpack'
     group = 'build'
+
+    // webpack comes from node_modules, which is git-ignored, so a fresh clone or worktree has none
+    // and `npm run build` fails with "webpack: not found". npmInstall is skipped when
+    // node_modules is already current with package-lock.json, and re-run when the lock changes.
+    dependsOn npmInstall
 
     commandLine 'npm', 'run', 'build'
 
