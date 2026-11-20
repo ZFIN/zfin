@@ -85,6 +85,10 @@ public class Phenotype implements Serializable {
     @Column(name = "p_background_dependent")
     private Boolean backgroundDependent;
 
+    /** True when the submitter answered "unknown"; backgroundDependent is then null. */
+    @Column(name = "p_background_dependent_unknown")
+    private Boolean backgroundDependentUnknown;
+
     /** Only shown by the form when {@link #backgroundDependent} is true. */
     @Column(name = "p_background_comment")
     private String backgroundComment;

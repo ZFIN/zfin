@@ -37,7 +37,7 @@ public record PhenotypeDTO(
         String type,
         // Background dependence (ZFIN-10449). Nullable boolean: null is
         // "unanswered", distinct from an explicit false.
-        Boolean backgroundDependent,
+        Object backgroundDependent, // Boolean, or "unknown"
         String backgroundComment,
         // Phenotype images (ZFIN-10449) — summary rows; the bytes come from
         // GET /api/zirc/phenotypes/attachments/{id}/content
@@ -65,7 +65,7 @@ public record PhenotypeDTO(
                 p.getNonMendelianComment(),
                 p.getSegregation(),
                 p.getType(),
-                p.getBackgroundDependent(),
+                Boolean.TRUE.equals(p.getBackgroundDependentUnknown()) ? "unknown" : p.getBackgroundDependent(),
                 p.getBackgroundComment(),
                 files);
     }

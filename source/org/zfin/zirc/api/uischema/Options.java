@@ -65,6 +65,9 @@ public record Options(
         // (mutationsList, assaysList, attachmentsList, …). The editor
         // derives its autosave skip-set + mirror-sync keys from these.
         Boolean managesOwnPersistence,
+        // For the yesNoRadio widget — adds an "Unknown" radio after "No".
+        // The value on the wire is the string "unknown".
+        Boolean allowUnknown,
         // Editing this field changes what the parent's collapsed card
         // displays, so a successful PATCH on it should invalidate the
         // parent query. Set on the field that feeds the parent card label

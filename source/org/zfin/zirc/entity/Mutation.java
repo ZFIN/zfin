@@ -109,6 +109,10 @@ public class Mutation implements Serializable {
     @Column(name = "m_homozygous_lethal")
     private Boolean homozygousLethal;
 
+    /** True when the submitter answered "unknown"; homozygousLethal is then null. */
+    @Column(name = "m_homozygous_lethal_unknown")
+    private Boolean homozygousLethalUnknown;
+
     @Column(name = "m_lethality_stage_typical")
     private String lethalityStageTypical;
 

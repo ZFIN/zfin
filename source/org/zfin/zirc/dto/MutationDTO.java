@@ -47,7 +47,7 @@ public record MutationDTO(
         // widget writes that answer into this same field.
         String inducedBackground,
         // Lethality
-        Boolean homozygousLethal,
+        Object homozygousLethal, // Boolean, or "unknown"
         String lethalityStageTypical,
         String lethalitySpecificTimepoint,
         String lethalityWindowStart,
@@ -130,7 +130,7 @@ public record MutationDTO(
                 m.getTalenSequence2(),
                 m.getMolecularlyCharacterized(),
                 m.getInducedBackground(),
-                m.getHomozygousLethal(),
+                Boolean.TRUE.equals(m.getHomozygousLethalUnknown()) ? "unknown" : m.getHomozygousLethal(),
                 m.getLethalityStageTypical(),
                 m.getLethalitySpecificTimepoint(),
                 m.getLethalityWindowStart(),

@@ -56,7 +56,7 @@ export interface MutationDTO {
     talenSequence2: string | null;
     molecularlyCharacterized: boolean | null;
     inducedBackground: string | null;
-    homozygousLethal: boolean | null;
+    homozygousLethal: boolean | 'unknown' | null;
     lethalityStageTypical: string | null;
     lethalitySpecificTimepoint: string | null;
     lethalityWindowStart: string | null;
@@ -189,7 +189,7 @@ export interface PhenotypeDTO {
     nonMendelianComment: string | null;
     segregation: string | null;
     type: string | null;
-    backgroundDependent: boolean | null;
+    backgroundDependent: boolean | 'unknown' | null;
     backgroundComment: string | null;
     attachments: PhenotypeFileDTO[];
 }

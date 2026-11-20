@@ -28,6 +28,8 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, 
     const labelId = `fr-label-${fieldName}`;
     const name = `fr-${fieldName}-group`;
     const view = viewConfigFrom(config);
+    const allowUnknown = (uischema as { options?: { allowUnknown?: boolean } } | undefined)
+        ?.options?.allowUnknown === true;
 
     if (view.readonly) {
         return (
@@ -37,7 +39,7 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, 
                     {label}
                 </th>
                 <td>
-                    <ValueDisplay value={data}/>
+                    <ValueDisplay value={data === 'unknown' ? 'Unknown' : data}/>
                     <FieldHistory
                         recId={view.recId}
                         scope='field'
@@ -90,6 +92,20 @@ function YesNoRadioRenderer({ data, handleChange, path, label, visible, config, 
                         />
                         <label className='form-check-label' htmlFor={`fr-${fieldName}-false`}>No</label>
                     </div>
+                    {allowUnknown && (
+                        <div className='form-check form-check-inline'>
+                            <input
+                                type='radio'
+                                id={`fr-${fieldName}-unknown`}
+                                className='form-check-input'
+                                name={name}
+                                value='unknown'
+                                checked={data === 'unknown'}
+                                onChange={() => handleChange(path, 'unknown')}
+                            />
+                            <label className='form-check-label' htmlFor={`fr-${fieldName}-unknown`}>Unknown</label>
+                        </div>
+                    )}
                 </div>
             </td>
         </tr>
