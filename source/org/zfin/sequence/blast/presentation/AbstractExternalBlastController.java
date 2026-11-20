@@ -24,7 +24,7 @@ import java.util.Map;
 public abstract class AbstractExternalBlastController {
 
 
-    public static Map<String, String> getHiddenVariables(Sequence sequence, Database database, boolean isShortSequence) {
+    public static Map<String, String> getHiddenVariables(Sequence sequence, Database database) {
 
         Map<String, String> hiddenVariables = new HashMap<>();
 
@@ -47,21 +47,10 @@ public abstract class AbstractExternalBlastController {
                 hiddenVariables.put("DATABASE", "nr");
                 hiddenVariables.put("EQ_MENU", "Danio rerio (taxid:7955)");
             }
-            // ensemble
-            else if (database.getAbbrev() == Database.AvailableAbbrev.ENSEMBL) {
-                hiddenVariables.put("_query_sequence", sequence.getData());
-                hiddenVariables.put("species", "Danio_rerio");
-                if (isShortSequence) {
-                    hiddenVariables.put("method", "BLASTN");
-                    hiddenVariables.put("sensitivity", "OLIGO");
-                } else {
-                    hiddenVariables.put("method", "BLAT");
-                    hiddenVariables.put("sensitivity", "LOW");
-                }
-            }
-            // ucsc
+            // ucsc: the assembly is selected by the db parameter in blast_database.blastdb_path.
+            // Do not send "org": UCSC then falls back to its default zebrafish assembly (danRer11)
+            // and ignores db (ZFIN-10602).
             else if (database.getAbbrev() == Database.AvailableAbbrev.UCSC_BLAT) {
-                hiddenVariables.put("org", "Zebrafish");
                 hiddenVariables.put("type", "hyperlink");
                 hiddenVariables.put("userSeq", sequence.getData());
             }
@@ -119,7 +108,7 @@ public abstract class AbstractExternalBlastController {
             else if (database.getAbbrev() == Database.AvailableAbbrev.BLASTP) {
                 hiddenVariables.put("QUERY", sequence.getData());
             }
-            // ensemble?
+            // SIB (ExPASy) BLAST
             else if (database.getAbbrev() == Database.AvailableAbbrev.PBLAST) {
                 hiddenVariables.put("sequence", sequence.getData());
             }
