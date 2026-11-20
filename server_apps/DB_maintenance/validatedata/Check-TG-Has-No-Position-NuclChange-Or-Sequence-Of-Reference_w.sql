@@ -2,7 +2,8 @@ select feature_zdb_id, feature_name
  from feature
  where feature_type = 'TRANSGENIC_INSERTION'
 and exists (Select 'x' from feature_dna_mutation_detail
-    	   	   where fdmd_feature_zdb_id =feature_zdb_id
+    	   	   join variant on var_zdb_id = fdmd_variant_zdb_id
+    	   	   where var_feature_zdb_id = feature_zdb_id
 		   and (fdmd_dna_position_start is not null
 		       or fdmd_dna_position_end is not null
 		       or fdmd_dna_sequence_of_reference_accession_number is not null

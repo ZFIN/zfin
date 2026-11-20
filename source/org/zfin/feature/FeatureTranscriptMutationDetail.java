@@ -20,8 +20,9 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @Column(name = "ftmd_zdb_id")
     private String zdbID;
     @ManyToOne
-    @JoinColumn(name = "ftmd_feature_zdb_id")
-    private Feature feature;
+    @JoinColumn(name = "ftmd_variant_zdb_id", nullable = false)
+    @org.hibernate.annotations.Cascade(org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+    private Variant variant;
     @ManyToOne
     @JoinColumn(name = "ftmd_transcript_consequence_term_zdb_id")
     private TranscriptConsequence transcriptConsequence;
@@ -30,12 +31,22 @@ public class FeatureTranscriptMutationDetail implements Comparable<FeatureTransc
     @Column(name = "ftmd_exon_number")
     private Integer exonNumber   ;
 
-    public Feature getFeature() {
-        return feature;
+    public Variant getVariant() {
+        return variant;
     }
 
+    public void setVariant(Variant variant) {
+        this.variant = variant;
+    }
+
+    /** The feature, reached through the variant (ZFIN-10622). */
+    public Feature getFeature() {
+        return variant == null ? null : variant.getFeature();
+    }
+
+    /** Attaches this detail to the feature's primary variant (Variant 1), creating it if needed. */
     public void setFeature(Feature feature) {
-        this.feature = feature;
+        this.variant = feature == null ? null : feature.getOrCreatePrimaryVariant();
     }
 
     public String getZdbID() {

@@ -76,8 +76,9 @@ public class HibernateFeatureRepository implements FeatureRepository {
             select distinct feature from Feature as feature, PublicationAttribution as pubAttribution
             left outer join fetch feature.featureAssay
             left outer join fetch feature.featureMarkerRelations
-            left outer join fetch feature.featureDnaMutationDetailSet
-            left outer join fetch feature.featureProteinMutationDetailSet
+            left outer join fetch feature.variants fvar
+            left outer join fetch fvar.featureDnaMutationDetailSet
+            left outer join fetch fvar.featureProteinMutationDetailSet
             where pubAttribution.publication.zdbID = :publicationID
             AND pubAttribution.sourceType = :type
             AND feature.zdbID = pubAttribution.dataZdbID
@@ -181,7 +182,7 @@ public class HibernateFeatureRepository implements FeatureRepository {
 
     @Override
     public List<Feature> getFeaturesWithGenomicMutDets() {
-        String hql = "select distinct fs.feature from FeatureGenomicMutationDetail fs ";
+        String hql = "select distinct fs.variant.feature from FeatureGenomicMutationDetail fs ";
         Query<Feature> query = currentSession().createQuery(hql, Feature.class);
         return query.list();
     }
@@ -227,14 +228,16 @@ public class HibernateFeatureRepository implements FeatureRepository {
         Boolean startDateIsNull = startDate == null;
         Boolean featureIDIsNull = featureID == null || featureID.isEmpty();
         String hql = """
-            select distinct fs.feature
+            select distinct f
             from FeatureGenomicMutationDetail fs
-            where (:includeSanger = true OR fs.feature.abbreviation not like 'sa%')
+            join fs.variant fvar
+            join fvar.feature f
+            where (:includeSanger = true OR f.abbreviation not like 'sa%')
             and (:startDateIsNull = true OR fs.fgmdModifiedAt >= :startDate)
-            and (:featureIDIsNull = true OR fs.feature.zdbID = :featureID)
+            and (:featureIDIsNull = true OR f.zdbID = :featureID)
             and not exists (
                 select 1 from VariantSequence vs, RecordAttribution ra
-                where vs.vseqDataZDB = fs.feature.zdbID
+                where vs.variant.feature = f
                 and ra.dataZdbID = vs.zdbID
                 and ra.sourceZdbID = :submittedFlankSeqPub
             )
@@ -298,8 +301,8 @@ public class HibernateFeatureRepository implements FeatureRepository {
         String hql = """
             select distinct f from FeatureMarkerRelationship f
             join f.feature feature
-            left outer join feature.featureProteinMutationDetailSet
-            left outer join feature.featureProteinMutationDetailSet
+            left outer join feature.variants fvar
+            left outer join fvar.featureProteinMutationDetailSet
             join feature.publications attribution
             where attribution.publication.zdbID = :zdbID
             """;
@@ -785,11 +788,17 @@ public class HibernateFeatureRepository implements FeatureRepository {
         return query.getSingleResult();
     }
 
-    public VariantSequence getFeatureVariant(Feature feature) {
+    public VariantSequence getVariantSequence(Feature feature) {
         Session session = HibernateUtil.currentSession();
-        String hqlSeq = " select vs from  VariantSequence vs where vs.vseqDataZDB =:ftrID";
+        // The flanking sequence of the feature's primary variant (Variant 1).
+        String hqlSeq = """
+            select vs from VariantSequence vs
+            where vs.variant.feature = :feature
+            and vs.variant.variantNumber = :variantNumber
+            """;
         Query<VariantSequence> queryLab = session.createQuery(hqlSeq, VariantSequence.class);
-        queryLab.setParameter("ftrID", feature.getZdbID());
+        queryLab.setParameter("feature", feature);
+        queryLab.setParameter("variantNumber", Variant.PRIMARY_VARIANT_NUMBER);
         return queryLab.uniqueResult();
     }
 
@@ -817,6 +826,19 @@ public class HibernateFeatureRepository implements FeatureRepository {
         query.setParameter("assembly", assembly.getName());
         query.setParameter("feature", feature);
         return query.getResultList().stream().findFirst().orElse(null);
+    }
+
+    @Override
+    public List<FeatureLocation> getVariantLocations(Feature feature) {
+        String hql = """
+            select fl from FeatureLocation fl
+            join fetch fl.variant v
+            where fl.feature = :feature
+            order by v.variantNumber, fl.assembly desc, fl.zdbID
+            """;
+        return HibernateUtil.currentSession().createQuery(hql, FeatureLocation.class)
+            .setParameter("feature", feature)
+            .getResultList();
     }
 
     public List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails() {

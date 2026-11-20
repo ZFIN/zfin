@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.MutationDetailsPresentation;
 import org.zfin.framework.presentation.EntityPresentation;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.ontology.presentation.TermPresentation;
 import org.zfin.sequence.ForeignDB;
 import org.zfin.sequence.ReferenceDatabase;
@@ -41,6 +42,18 @@ public class MutationDetailsConversionService {
         return details;
     }
 
+    /**
+     * The mutation details of one variant of a feature (ZFIN-10622): a Complex feature's
+     * variants each have their own type and DNA, transcript and protein details.
+     */
+    public MutationDetailsPresentation convert(Variant variant, boolean showLink) {
+        MutationDetailsPresentation details = new MutationDetailsPresentation();
+        details.setDnaChangeStatement(dnaMutationStatement(variant.getVariantType(), variant.getFeatureDnaMutationDetail(), showLink));
+        details.setTranscriptChangeStatement(transcriptMutationStatement(variant.getFeatureTranscriptMutationDetailSet(), showLink));
+        details.setProteinChangeStatement(proteinMutationStatement(variant.getFeatureProteinMutationDetail(), showLink));
+        return details;
+    }
+
     public String getMutationTypeStatement(Feature feature) {
         if (feature == null || feature.getType() == null) {
             return "";
@@ -56,9 +69,15 @@ public class MutationDetailsConversionService {
         if (feature == null || feature.getType() == null) {
             return "";
         }
-        FeatureDnaMutationDetail dnaChange = feature.getFeatureDnaMutationDetail();
+        return dnaMutationStatement(feature.getType(), feature.getFeatureDnaMutationDetail(), showLinks);
+    }
+
+    private String dnaMutationStatement(FeatureTypeEnum type, FeatureDnaMutationDetail dnaChange, boolean showLinks) {
+        if (type == null) {
+            return "";
+        }
         String change = null;
-        switch (feature.getType()) {
+        switch (type) {
             case POINT_MUTATION:
                 change = pointMutationStatement(dnaChange);
                 break;
@@ -89,7 +108,10 @@ public class MutationDetailsConversionService {
     }
 
     public String getTranscriptMutationStatement(Feature feature, boolean showLinks) {
-        Set<FeatureTranscriptMutationDetail> consequences = feature.getFeatureTranscriptMutationDetailSet();
+        return transcriptMutationStatement(feature.getFeatureTranscriptMutationDetailSet(), showLinks);
+    }
+
+    private String transcriptMutationStatement(Set<FeatureTranscriptMutationDetail> consequences, boolean showLinks) {
         if (CollectionUtils.isEmpty(consequences)) {
             return null;
         }
@@ -108,7 +130,10 @@ public class MutationDetailsConversionService {
         if (feature == null) {
             return "";
         }
-        FeatureProteinMutationDetail proteinConsequence = feature.getFeatureProteinMutationDetail();
+        return proteinMutationStatement(feature.getFeatureProteinMutationDetail(), showLinks);
+    }
+
+    private String proteinMutationStatement(FeatureProteinMutationDetail proteinConsequence, boolean showLinks) {
         String term = null;
         if (proteinConsequence != null && proteinConsequence.getProteinConsequence() != null) {
             term = termDisplay(proteinConsequence.getProteinConsequence(), showLinks);

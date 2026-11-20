@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureNote;
+import org.zfin.feature.Variant;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.feature.service.MutationDetailsConversionService;
@@ -103,7 +104,7 @@ public class FeatureDetailController {
         form.setDnaChangeAttributions(FeatureService.getDnaChangeAttributions(feature));
         form.setTranscriptConsequenceAttributions(FeatureService.getTranscriptConsequenceAttributions(feature));
         form.setProteinConsequenceAttributions(FeatureService.getProteinConsequenceAttributions(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getVariantSequence(feature));
         form.setVarSeqAttributions(FeatureService.getFlankSeqAttr(feature));
         if (feature.getAbbreviation().startsWith("hi")) {
             form.setAaLink(FeatureService.getAALink(feature));
@@ -112,8 +113,9 @@ public class FeatureDetailController {
         form.setZircGenoLink(FeatureService.getZIRCGenoLink(feature));
         form.setZShareOrigPub(zebrashareRepository.getZebraSharePublicationForFeature(feature));
         form.setSingleAffectedGeneFeature(featureRepository.isSingleAffectedGeneAlleles(feature));
-        form.setVarSequence(RepositoryFactory.getFeatureRepository().getFeatureVariant(feature));
+        form.setVarSequence(RepositoryFactory.getFeatureRepository().getVariantSequence(feature));
         form.setVarType(FeatureService.getVarType(feature));
+        form.setVariantDisplays(FeatureService.getVariantDisplays(feature, mutationDetailsConversionService));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
         model.addAttribute("isDeficiency",feature.getType().equals(FeatureTypeEnum.DEFICIENCY));
@@ -145,21 +147,27 @@ public class FeatureDetailController {
 
     @RequestMapping(value = "{zdbID}/mutation-detail-citations")
     public String showMutationDetailCitationList(Model model, @PathVariable String zdbID, @RequestParam(required = false) String orderBy,
-                                                 @RequestParam(required = true) String type) {
+                                                 @RequestParam(required = true) String type,
+                                                 @RequestParam(required = false) Integer variant) {
         Feature feature = featureRepository.getFeatureByID(zdbID);
         MutationDetailAttributionList.Type detailType = MutationDetailAttributionList.Type.fromString(type);
         MutationDetailAttributionList bean = new MutationDetailAttributionList(feature, detailType);
+        // A Complex feature's variant blocks link with their variant number; without one, Variant 1.
+        int variantNumber = variant == null ? Variant.PRIMARY_VARIANT_NUMBER : variant;
+        Variant selectedVariant = feature.getVariants() == null ? null : feature.getVariants().stream()
+            .filter(v -> v.getVariantNumber() == variantNumber)
+            .findFirst().orElse(null);
         List<PublicationAttribution> attributions = null;
         if (detailType != null) {
             switch (detailType) {
                 case DNA:
-                    attributions = FeatureService.getDnaChangeAttributions(feature);
+                    attributions = FeatureService.getDnaChangeAttributions(selectedVariant);
                     break;
                 case TRANSCRIPT:
-                    attributions = FeatureService.getTranscriptConsequenceAttributions(feature);
+                    attributions = FeatureService.getTranscriptConsequenceAttributions(selectedVariant);
                     break;
                 case PROTEIN:
-                    attributions = FeatureService.getProteinConsequenceAttributions(feature);
+                    attributions = FeatureService.getProteinConsequenceAttributions(selectedVariant);
                     break;
             }
         }
