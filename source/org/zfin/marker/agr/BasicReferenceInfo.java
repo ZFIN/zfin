@@ -49,6 +49,35 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
         }
     }
 
+    List<AuthorReferenceDTO> buildAuthors(Publication reference) {
+        List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(reference.getAuthorPubs())) {
+            for (PubmedPublicationAuthor authorPub : reference.getAuthorPubs()) {
+                AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
+                authorRef.setFirstName(authorPub.getFirstName());
+                authorRef.setLastName(authorPub.getLastName());
+                if (authorPub.getFirstName() != null && authorPub.getFirstName().length() > 0) {
+                    authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
+                } else if (authorPub.getLastName().length() > 0) {
+                    authorRef.setName(authorPub.getLastName());
+                } else {
+                    authorRef.setName("ZFIN");
+                }
+                authorRef.setReferenceId("PMID:" + reference.getAccessionNumber());
+                authorReferences.add(authorRef);
+            }
+        } else {
+            // No per-author rows: split the free-text authors string.
+            for (String name : AuthorStringParser.parse(reference.getAuthors())) {
+                AuthorReferenceDTO parsedAuthor = new AuthorReferenceDTO();
+                parsedAuthor.setName(name);
+                parsedAuthor.setReferenceId("ZFIN:" + reference.getZdbID());
+                authorReferences.add(parsedAuthor);
+            }
+        }
+        return authorReferences;
+    }
+
     public AllReferenceDTO getAllReferenceInfo() {
         List<Publication> allReferences = getPublicationRepository().getAllPublications();
         System.out.println(allReferences.size());
@@ -92,40 +121,7 @@ public class BasicReferenceInfo extends AbstractScriptWrapper {
                             dto.setPages(reference.getPages());
                             dto.setVolume(reference.getVolume());
                             dto.setResourceAbbreviation(reference.getJournal().getMedAbbrevOrDefault());
-                            List<AuthorReferenceDTO> authorReferences = new ArrayList<>();
-
-                            if (CollectionUtils.isNotEmpty(reference.getAuthorPubs())){
-                                for (PubmedPublicationAuthor authorPub: reference.getAuthorPubs()){
-                                    AuthorReferenceDTO authorRef = new AuthorReferenceDTO();
-                                    authorRef.setFirstName(authorPub.getFirstName());
-                                    authorRef.setLastName(authorPub.getLastName());
-                                    if (authorPub.getFirstName()!= null && authorPub.getFirstName().length() > 0) {
-                                        authorRef.setName(authorPub.getLastName() + "," + authorPub.getFirstName().charAt(0) + ".");
-                                    }
-                                    else if (authorPub.getLastName().length() >0 ){
-                                        authorRef.setName(authorPub.getLastName());
-                                    }
-                                    else {
-                                        authorRef.setName("ZFIN");
-                                    }
-                                    authorRef.setReferenceId("PMID:"+reference.getAccessionNumber());
-                                    authorReferences.add(authorRef);
-                                }
-                            }
-                            else {
-                                    AuthorReferenceDTO nonPubMedAuthors = new AuthorReferenceDTO();
-                                    nonPubMedAuthors.setName(reference.getAuthors());
-                                    nonPubMedAuthors.setReferenceId("ZFIN:"+reference.getZdbID());
-                                    authorReferences.add(nonPubMedAuthors);
-                            }
-                            dto.setAuthors(authorReferences);
-                            if (dto.getAuthors().isEmpty()) {
-                                AuthorReferenceDTO finalTry = new AuthorReferenceDTO();
-                                finalTry.setName(reference.getAuthors());
-                                finalTry.setReferenceId("ZFIN:"+reference.getZdbID());
-                                authorReferences.add(finalTry);
-                                dto.setAuthors(authorReferences);
-                            }
+                            dto.setAuthors(buildAuthors(reference));
                             List<MODReferenceTypeDTO> MODReferenceTypes = new ArrayList<>();
                             MODReferenceTypeDTO pubType = new MODReferenceTypeDTO();
                             pubType.setSource("ZFIN");
