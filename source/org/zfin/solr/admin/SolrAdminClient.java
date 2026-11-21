@@ -407,16 +407,37 @@ public final class SolrAdminClient {
         String dirName = "snapshot." + name;
         File tmp = new File(location, dirName + ".tar.gz.tmp");
         File archive = new File(location, dirName + ".tar.gz");
-        runTar(location, "-czf", tmp.getName(), dirName);
+        runTarGz(location, true, "-cf", tmp.getName(), dirName);
         java.nio.file.Files.move(tmp.toPath(), archive.toPath(), java.nio.file.StandardCopyOption.REPLACE_EXISTING);
         deleteRecursively(new File(location, dirName));
         logger.info("snapshot archived: {} ({})", archive, humanSize(archive.length()));
     }
 
-    private static void runTar(File workDir, String... args) throws Exception {
+    /** True when pigz is on PATH; checked once. pigz writes standard gzip, so archives interoperate with plain {@code tar -z}. */
+    private static final boolean HAS_PIGZ = onPath("pigz");
+
+    private static boolean onPath(String exe) {
+        String path = System.getenv("PATH");
+        if (path == null) return false;
+        for (String dir : path.split(File.pathSeparator)) {
+            if (new File(dir, exe).canExecute()) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Run tar with gzip compression. Creating an archive uses pigz (parallel
+     * gzip) when it is on PATH; extracting always uses tar's built-in {@code -z}.
+     * gzip decompression is single-threaded even in pigz, so there is little to
+     * gain, and bsdtar (macOS) doesn't pass {@code -d} to a compress program on
+     * extract, so {@code --use-compress-program=pigz} would fail there.
+     */
+    private static void runTarGz(File workDir, boolean create, String... args) throws Exception {
         java.util.List<String> cmd = new java.util.ArrayList<>();
         cmd.add("tar");
+        cmd.add(create && HAS_PIGZ ? "--use-compress-program=pigz" : "-z");
         cmd.addAll(java.util.Arrays.asList(args));
+        logger.info("running: {}", String.join(" ", cmd));
         Process p = new ProcessBuilder(cmd).directory(workDir).redirectErrorStream(true).start();
         String out = new String(p.getInputStream().readAllBytes());
         if (p.waitFor() != 0) {
@@ -447,7 +468,7 @@ public final class SolrAdminClient {
         boolean extracted = false;
         if (!dir.isDirectory() && archive.isFile()) {
             logger.info("extracting {}", archive);
-            runTar(new File(location), "-xzf", archive.getName());
+            runTarGz(new File(location), false, "-xf", archive.getName());
             extracted = true;
         }
         try {
