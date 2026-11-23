@@ -29,6 +29,14 @@ import static org.zfin.repository.RepositoryFactory.getSequenceRepository;
 @Log4j2
 public class Gff3Writer {
 
+    // Both files are cut from NCBI's GRCz12tu annotation (NCBIGff3Processor loads
+    // GCF_049306965.1_GRCz12tu_genomic.gff), so they carry the same assembly directives.
+    static final List<String> GFF3_HEADER = List.of(
+        "##gff-version 3",
+        "#!genome-build " + GenomeLocation.GRCZ12TU,
+        "#!genome-build-accession NCBI_Assembly:GCF_049306965.1",
+        "##species https://www.ncbi.nlm.nih.gov/Taxonomy/Browser/wwwtax.cgi?id=7955");
+
     Gff3NcbiDAO dao = new Gff3NcbiDAO();
     Gff3NcbiAttributesDAO pairDo = new Gff3NcbiAttributesDAO();
 
@@ -146,14 +154,17 @@ public class Gff3Writer {
         if (file.exists() && !addToFile) {
             file.delete();
         }
+        // The RefSeq file is appended chromosome by chromosome: only its first chunk gets the header.
+        boolean writeHeader = !file.exists();
         // load all attributes with key: gene_id
         Map<Long, String> geneIdPairsMap = pairDo.getGeneIDAttributePairsMap();
         try {
             FileWriter outputfile = new FileWriter(file, addToFile);
             CSVWriter writer = new CSVWriter(outputfile, '\t', CSVWriter.NO_QUOTE_CHARACTER, CSVWriter.DEFAULT_ESCAPE_CHARACTER, CSVWriter.DEFAULT_LINE_END);
 
-            String[] header = {"##gff-version 3"};
-            writer.writeNext(header);
+            if (writeHeader) {
+                GFF3_HEADER.forEach(line -> writer.writeNext(new String[]{line}));
+            }
             List<String[]> collect = records.stream().map(record -> {
                 String[] line = new String[9];
                 line[0] = record.getChromosome();
