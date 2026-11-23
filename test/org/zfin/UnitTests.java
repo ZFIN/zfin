@@ -8,6 +8,7 @@ import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.marker.agr.AuthorStringParserTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.datatransfer.go.GafErrorSummaryTest;
 import org.zfin.datatransfer.go.GafJobEntryFormattersTest;
@@ -75,6 +76,7 @@ import org.zfin.util.*;
 //        ActiveSourceTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
+        AuthorStringParserTest.class,
         BeanCompareServiceTest.class,
         //BlastNonDBTest.class,
         BlastPresentationServiceTest.class,
