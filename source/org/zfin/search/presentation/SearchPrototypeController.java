@@ -38,6 +38,7 @@ import java.io.*;
 import java.util.*;
 
 import static org.zfin.repository.RepositoryFactory.getMarkerRepository;
+import org.zfin.search.service.FishSearchSort;
 import static org.zfin.search.service.FacetBuilderService.categorySupportsAttributionSort;
 import static org.zfin.search.service.FacetBuilderService.categorySupportsSort;
 
@@ -199,7 +200,7 @@ public class SearchPrototypeController {
         Map<String, String> facetMap = Category.getFacetMap();
 
         //handle sorting... move this a separate method?  use an enum?
-        model = handleSorting(model, query, baseUrl, sort, category);
+        model = handleSorting(model, query, baseUrl, sort, category, q);
 
         // If results only matched in one category, the controller calls itself with this extra flag,
         // the 'We picked your category' message will keep showing up unless the category gets added to
@@ -725,7 +726,7 @@ public class SearchPrototypeController {
         return "search/phenotype";
     }
 
-    public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort, String category) {
+    public Model handleSorting(Model model, SolrQuery query, String baseUrl, String sort, String category, String q) {
         URLCreator urlWithoutSort = new URLCreator(baseUrl);
         urlWithoutSort.removeNameValuePair("sort");
         model.addAttribute("baseUrlWithoutSort", urlWithoutSort.getURL());
@@ -757,6 +758,8 @@ public class SearchPrototypeController {
             model.addAttribute("sortDisplay", "Least Attributed First");
             model.addAttribute("showAttributionCount", true);
         } else {
+            // ZFIN-10392: no meaningful relevance without a query, so Fish use the fish ordering instead
+            FishSearchSort.applyTo(query, category, q, sort);
             model.addAttribute("sortDisplay", "by Relevance");
         }
 

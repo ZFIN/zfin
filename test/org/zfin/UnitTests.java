@@ -58,6 +58,7 @@ import org.zfin.uniprot.UniProtReportAdapterTest;
 import org.zfin.uniprot.secondary.UniProtSecondaryReportAdapterTest;
 import org.zfin.properties.ZfinPropertiesTest;
 import org.zfin.publication.PublicationTest;
+import org.zfin.search.service.FishSearchSortTest;
 import org.zfin.sequence.blast.SequenceTest;
 import org.zfin.sequence.blast.presentation.BlastPresentationServiceTest;
 import org.zfin.sequence.reno.presentation.RunCandidatePresentationTest;
@@ -128,6 +129,7 @@ import org.zfin.util.*;
         ReportConfigurationTest.class,
         RunCandidatePresentationTest.class,
         RunPresentationTest.class,
+        FishSearchSortTest.class,
         SearchCriterionTest.class,
         SectionVisibilityTest.class,
         SequenceTest.class,
