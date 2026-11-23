@@ -15,12 +15,16 @@ import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFPEPT;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_DNA;
 import static org.zfin.datatransfer.ncbi.NCBIDirectPort.FDCONT_REFSEQ_RNA;
 import static org.zfin.datatransfer.ncbi.port.PortHelper.stringStartsWithLetter;
+import static org.zfin.mapping.GenomeLocation.GRCZ12TU;
 
 /**
  * Makes {@code db_link_assembly} match NCBI's gene2accession for RefSeq RNA, protein and genomic
  * {@code db_link} rows (ZFIN-10510): each such row is linked to exactly the assemblies NCBI
  * annotates its accession against. Links are added and removed, so an accession NCBI drops from
  * an assembly loses that link. Accessions absent from gene2accession are left untouched.
+ *
+ * <p>{@link #reconcileMarkerAssemblies} then carries those links up to the marker
+ * ({@code marker_assembly}, ZFIN-10531) for every current assembly except GRCz12tu.
  *
  * <p>Run by {@link NCBIDirectPort} after every load, and on demand by
  * {@link RefSeqAssemblyBackfillTask}. Works inside the caller's Hibernate session and transaction.
@@ -32,6 +36,17 @@ class RefSeqAssemblyReconciler {
 
     record Changes(List<Link> toAdd, List<Link> toRemove) {
     }
+
+    record MarkerAssemblyChanges(int added, int removed) {
+    }
+
+    // The RefSeq db_link rows whose assemblies a marker inherits, as a SQL condition on db_link.
+    private static final String REFSEQ_DBLINK = "dblink_fdbcont_zdb_id in (:refseqRna, :refPept, :refseqDna)";
+
+    // The assemblies whose marker_assembly rows come from the RefSeq links: every current assembly
+    // but GRCz12tu, whose rows markerAssemblyUpdate.sql and NCBIGff3Processor write from the gene's
+    // NCBI genome location instead.
+    private static final String REFSEQ_DERIVED_ASSEMBLY = "a_is_current and a_name <> :grcz12tu";
 
     /**
      * Maps each RefSeq accession (version stripped) named in non-suppressed zebrafish rows to the
@@ -117,6 +132,50 @@ class RefSeqAssemblyReconciler {
                     .executeUpdate();
         }
         return changes;
+    }
+
+    /**
+     * Makes {@code marker_assembly} agree with {@code db_link_assembly} for the RefSeq-derived
+     * assemblies (GRCz13ab, GRCz12ab, ...; see {@link #REFSEQ_DERIVED_ASSEMBLY}): a marker is on
+     * such an assembly exactly when one of its RefSeq accessions is. Run after {@link #reconcile},
+     * so the marker rows follow this run's links. Without it the gene page's Genome Assembly field,
+     * which reads marker_assembly, never shows those assemblies (ZFIN-10531).
+     */
+    static MarkerAssemblyChanges reconcileMarkerAssemblies(Session session) {
+        int removed = session.createNativeMutationQuery("""
+                delete from marker_assembly ma
+                 using assembly a
+                 where a.a_pk_id = ma.ma_a_pk_id
+                   and %s
+                   and not exists (select 1
+                                     from db_link
+                                     join db_link_assembly on dbla_dblink_zdb_id = dblink_zdb_id
+                                    where dblink_linked_recid = ma.ma_mrkr_zdb_id
+                                      and dbla_a_pk_id = ma.ma_a_pk_id
+                                      and %s)
+                """.formatted(REFSEQ_DERIVED_ASSEMBLY, REFSEQ_DBLINK))
+                .setParameter("grcz12tu", GRCZ12TU)
+                .setParameter("refseqRna", FDCONT_REFSEQ_RNA)
+                .setParameter("refPept", FDCONT_REFPEPT)
+                .setParameter("refseqDna", FDCONT_REFSEQ_DNA)
+                .executeUpdate();
+        int added = session.createNativeMutationQuery("""
+                insert into marker_assembly (ma_mrkr_zdb_id, ma_a_pk_id)
+                select distinct dblink_linked_recid, dbla_a_pk_id
+                  from db_link
+                  join db_link_assembly on dbla_dblink_zdb_id = dblink_zdb_id
+                  join assembly on a_pk_id = dbla_a_pk_id
+                  join marker on mrkr_zdb_id = dblink_linked_recid
+                 where %s
+                   and %s
+                on conflict (ma_a_pk_id, ma_mrkr_zdb_id) do nothing
+                """.formatted(REFSEQ_DBLINK, REFSEQ_DERIVED_ASSEMBLY))
+                .setParameter("grcz12tu", GRCZ12TU)
+                .setParameter("refseqRna", FDCONT_REFSEQ_RNA)
+                .setParameter("refPept", FDCONT_REFPEPT)
+                .setParameter("refseqDna", FDCONT_REFSEQ_DNA)
+                .executeUpdate();
+        return new MarkerAssemblyChanges(added, removed);
     }
 
     /**

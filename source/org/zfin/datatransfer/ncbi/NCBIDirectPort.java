@@ -3409,9 +3409,12 @@ public class NCBIDirectPort extends AbstractScriptWrapper {
             createTransaction();
             RefSeqAssemblyReconciler.Changes changes =
                     RefSeqAssemblyReconciler.reconcile(refSeqAccessionAssemblyIds, currentSession());
+            RefSeqAssemblyReconciler.MarkerAssemblyChanges markerChanges =
+                    RefSeqAssemblyReconciler.reconcileMarkerAssemblies(currentSession());
             flushAndCommitCurrentSession();
             print(LOG, "RefSeq assembly reconciliation: " + changes.toAdd().size() + " links added, "
-                    + changes.toRemove().size() + " removed.\n");
+                    + changes.toRemove().size() + " removed; marker assemblies: " + markerChanges.added()
+                    + " added, " + markerChanges.removed() + " removed.\n");
         } catch (RuntimeException e) {
             rollbackTransaction();
             print(LOG, "ERROR: Could not reconcile RefSeq assemblies: " + e.getMessage() + "\n");

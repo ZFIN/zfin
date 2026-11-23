@@ -871,16 +871,21 @@ public class Marker extends SequenceFeature implements Serializable, Comparable,
     }
 
     public List<Assembly> getAllAssemblies() {
+        if (CollectionUtils.isEmpty(assemblies)) {
+            return List.of();
+        }
         return assemblies.stream().sorted(Comparator.comparing(Assembly::getOrder)).toList();
     }
 
     /**
      * The assemblies for the Genome Assembly field of the gene page summary (ZFIN-10531): the
-     * gene's current assemblies (a_is_current: GRCz12tu, GRCz12ab, ...) if it is on any, otherwise
-     * its older ones (GRCz11), newest first; empty if it has no assembly ("Unknown").
+     * gene's current assemblies (a_is_current: GRCz13ab, GRCz12ab, GRCz12tu) if it is on any,
+     * otherwise its older ones (GRCz11), newest first; empty if it has no assembly ("Unknown").
      * <p>
      * marker_assembly keeps every assembly a gene was placed on, so a gene on GRCz12tu usually
-     * still has its GRCz11 link; only the display drops it.
+     * still has its GRCz11 link; only the display drops it. GRCz12tu rows come from the gene's
+     * NCBI genome location, the other current assemblies' rows from its RefSeq accessions
+     * (RefSeqAssemblyReconciler.reconcileMarkerAssemblies).
      */
     public List<Assembly> getDisplayAssemblies() {
         if (CollectionUtils.isEmpty(assemblies)) {
