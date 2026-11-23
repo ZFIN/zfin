@@ -3,7 +3,7 @@
 
 <%-- A Complex feature (ZFIN-10622): one block per variant, each with everything a single-variant
      feature shows in its Variants section (see feature-view-variants.jsp and
-     feature-view-mut-details.jsp). --%>
+     the mutation details in feature-view.jsp). --%>
 <c:set var="hideLocationLink" value="${empty formBean.feature.affectedGenes || isDeficiency}"/>
 
 <c:forEach var="variant" items="${formBean.variantDisplays}">

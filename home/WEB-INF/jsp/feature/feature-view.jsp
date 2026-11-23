@@ -58,7 +58,11 @@
                     <jsp:include page="feature-view-variants.jsp"/>
 
                     <z:section title="Effect on DNA/cDNA, transcript, protein (from publications)">
-                        <jsp:include page="feature-view-mut-details.jsp"/>
+                        <zfin2:mutationDetailsAttributeList feature="${formBean.feature}"
+                                                            mutationDetails="${formBean.mutationDetails}"
+                                                            dnaChangeAttributions="${formBean.dnaChangeAttributions}"
+                                                            transcriptConsequenceAttributions="${formBean.transcriptConsequenceAttributions}"
+                                                            proteinConsequenceAttributions="${formBean.proteinConsequenceAttributions}"/>
                     </z:section>
                 </c:otherwise>
             </c:choose>
