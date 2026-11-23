@@ -6,6 +6,7 @@ import htsjdk.samtools.reference.ReferenceSequence;
 import org.apache.commons.lang.StringUtils;
 import org.zfin.feature.Feature;
 import org.zfin.feature.FeatureGenomicMutationDetail;
+import org.zfin.feature.Variant;
 import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.HibernateFeatureRepository;
 import org.zfin.framework.HibernateUtil;
@@ -234,7 +235,7 @@ public class GenomicLocationService {
 				// .add(null), which combination produced a double-DELETE at flush
 				// (StaleStateException "actual row count: 0; expected: 1"). The fgmd
 				// is cleared field-wise from editFeatureDTO when locationDeleted=true.
-				VariantSequence vrSeq = featureRepository.getFeatureVariant(feature);
+				VariantSequence vrSeq = featureRepository.getVariantSequence(feature);
 				if (vrSeq != null) {
 					HibernateUtil.currentSession().delete(vrSeq);
 					return UpsertResult.DELETED;
@@ -282,7 +283,7 @@ public class GenomicLocationService {
 	}
 
 	private UpsertResult insertOrUpdateFlankSeq(Feature ftr, String seq1, String seq2, int offset) {
-		VariantSequence vrSeq = featureRepository.getFeatureVariant(ftr);
+		VariantSequence vrSeq = featureRepository.getVariantSequence(ftr);
 		boolean newSequence = vrSeq == null;
 		if (newSequence) {
 			vrSeq = new VariantSequence();
@@ -294,8 +295,10 @@ public class GenomicLocationService {
 		FeatureGenomicMutationDetail detail = ftr.getFeatureGenomicMutationDetail();
 		String vfsVariation = variationNotation(ftr.getType(), detail.getFgmdSeqRef(), detail.getFgmdSeqVar());
 		String vfsTargetSequence = vfsVariation == null ? null : seq1 + "[" + vfsVariation + "]" + seq2;
+		// The flanking sequence surrounds the primary variant's mutation -- the same variant the
+		// genomic detail above belongs to.
 		boolean updateMade = hasFlankSeqChanged(vrSeq,
-			ftr.getZdbID(),
+			detail.getVariant(),
 			seq1,
 			seq2,
 			offset,
@@ -335,16 +338,10 @@ public class GenomicLocationService {
 
 	}
 
-	private boolean hasFlankSeqChanged(VariantSequence vrSeq, String zdbID, String vfsLeftEnd, String vfsRightEnd, int vfsOffsetStart, int vfsOffsetStop, String vfsFlankType, String vfsFlankOrigin, String vfsType, String vfsTargetSequence, String vfsVariation) {
+	private boolean hasFlankSeqChanged(VariantSequence vrSeq, Variant variant, String vfsLeftEnd, String vfsRightEnd, int vfsOffsetStart, int vfsOffsetStop, String vfsFlankType, String vfsFlankOrigin, String vfsType, String vfsTargetSequence, String vfsVariation) {
 		boolean changed = false;
-		if (zdbID == null) {
-			System.out.println("zdbID is null");
-		}
-		if (vrSeq.getVseqDataZDB() == null) {
-			System.out.println("vseqDataZDB is null");
-		}
-		if (!Objects.equals(vrSeq.getVseqDataZDB(), zdbID)) {
-			vrSeq.setVseqDataZDB(zdbID);
+		if (!Objects.equals(vrSeq.getVariant(), variant)) {
+			vrSeq.setVariant(variant);
 			changed = true;
 		}
 		if (!Objects.equals(vrSeq.getVfsLeftEnd(), vfsLeftEnd)) {

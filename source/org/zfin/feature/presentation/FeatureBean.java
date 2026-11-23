@@ -60,6 +60,8 @@ public class FeatureBean {
     private FeatureDBLink zircGenoLink;
     private boolean isSingleAffectedGeneFeature;
     private String varType;
+    /** One entry per variant of a Complex feature; empty for a single-variant feature. */
+    private List<VariantDisplay> variantDisplays;
 
     public String getDeleteURL() {
         return "";

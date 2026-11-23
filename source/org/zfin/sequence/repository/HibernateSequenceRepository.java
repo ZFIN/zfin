@@ -1364,19 +1364,21 @@ public class HibernateSequenceRepository implements SequenceRepository {
         // its ManyToOne back to Feature with an explicit ON condition.
         String hql = """
             select new org.zfin.feature.FeatureDeletionSizeRow(
-                       fdmd.feature.zdbID,
-                       fdmd.feature.abbreviation,
-                       fdmd.feature.type,
+                       f.zdbID,
+                       f.abbreviation,
+                       f.type,
                        loc.assembly,
                        loc.chromosome,
                        loc.startLocation,
                        loc.endLocation,
                        fdmd.numberRemovedBasePair)
               from FeatureDnaMutationDetail fdmd
-              left join FeatureLocation loc on loc.feature = fdmd.feature
-             where fdmd.feature.type in (:types)
+              join fdmd.variant fvar
+              join fvar.feature f
+              left join FeatureLocation loc on loc.feature = f
+             where f.type in (:types)
                and fdmd.numberRemovedBasePair is not null
-             order by fdmd.feature.zdbID
+             order by f.zdbID
             """;
         return HibernateUtil.currentSession()
                 .createQuery(hql, FeatureDeletionSizeRow.class)

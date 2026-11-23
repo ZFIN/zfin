@@ -3,9 +3,9 @@
 <%@ attribute name="location" required="true" type="org.zfin.mapping.FeatureGenomeLocation" %>
 <%@ attribute name="hideLink" required="false" type="java.lang.Boolean" %>
 
-Chr ${location.chromosome}: ${location.start}
+Chr ${location.chromosome}: <fmt:formatNumber value="${location.start}" pattern="##,###"/>
 <c:if test="${!empty location.end && location.start != location.end}">
-    - ${location.end}
+    - <fmt:formatNumber value="${location.end}" pattern="##,###"/>
 </c:if>
 <c:if test="${!empty location.assembly}">
     (${location.assembly})

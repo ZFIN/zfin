@@ -6,11 +6,14 @@ select feature_zdb_id, feature_name
                       and fmrel_type = 'is allele of') 
    and (exists (select 'x' 
                   from feature_dna_mutation_detail 
-                 where fdmd_feature_zdb_id = feature_zdb_id) 
+                 join variant on var_zdb_id = fdmd_variant_zdb_id 
+                 where var_feature_zdb_id = feature_zdb_id) 
         or exists (select 'x' 
                      from feature_transcript_mutation_detail 
-                    where ftmd_feature_zdb_id = feature_zdb_id) 
+                    join variant on var_zdb_id = ftmd_variant_zdb_id 
+                    where var_feature_zdb_id = feature_zdb_id) 
         or exists (select 'x' 
                      from feature_protein_mutation_detail 
-                    where fpmd_feature_zdb_id = feature_zdb_id));
+                    join variant on var_zdb_id = fpmd_variant_zdb_id 
+                    where var_feature_zdb_id = feature_zdb_id));
 

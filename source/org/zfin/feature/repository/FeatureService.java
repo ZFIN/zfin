@@ -12,6 +12,8 @@ import org.zfin.Species;
 import org.zfin.expression.ExpressionResult2;
 import org.zfin.expression.Figure;
 import org.zfin.feature.*;
+import org.zfin.feature.presentation.VariantDisplay;
+import org.zfin.feature.service.MutationDetailsConversionService;
 import org.zfin.fish.repository.FishService;
 import org.zfin.framework.api.JsonResultResponse;
 import org.zfin.framework.api.Pagination;
@@ -174,23 +176,34 @@ public class FeatureService {
             feature.getZdbID(), RecordAttribution.SourceType.FEATURE_TYPE);
     }
 
+    // The feature-level attributions are those of its primary variant (Variant 1); a Complex
+    // feature's other variants are attributed through the Variant overloads.
+
     public static List<PublicationAttribution> getDnaChangeAttributions(Feature feature) {
-        if (feature.getFeatureDnaMutationDetail() == null) {
+        return getDnaChangeAttributions(feature.getPrimaryVariant());
+    }
+
+    public static List<PublicationAttribution> getDnaChangeAttributions(Variant variant) {
+        if (variant == null || variant.getFeatureDnaMutationDetail() == null) {
             return null;
         }
 
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-            feature.getFeatureDnaMutationDetail().getZdbID(),
+            variant.getFeatureDnaMutationDetail().getZdbID(),
             RecordAttribution.SourceType.STANDARD);
     }
 
     public static List<PublicationAttribution> getTranscriptConsequenceAttributions(Feature feature) {
-        if (CollectionUtils.isEmpty(feature.getFeatureTranscriptMutationDetailSet())) {
+        return getTranscriptConsequenceAttributions(feature.getPrimaryVariant());
+    }
+
+    public static List<PublicationAttribution> getTranscriptConsequenceAttributions(Variant variant) {
+        if (variant == null || CollectionUtils.isEmpty(variant.getFeatureTranscriptMutationDetailSet())) {
             return null;
         }
 
         SortedSet<PublicationAttribution> attributions = new TreeSet<>();
-        for (FeatureTranscriptMutationDetail detail : feature.getFeatureTranscriptMutationDetailSet()) {
+        for (FeatureTranscriptMutationDetail detail : variant.getFeatureTranscriptMutationDetailSet()) {
             attributions.addAll(RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
                 detail.getZdbID(), RecordAttribution.SourceType.STANDARD));
         }
@@ -198,17 +211,21 @@ public class FeatureService {
     }
 
     public static List<PublicationAttribution> getProteinConsequenceAttributions(Feature feature) {
-        if (feature.getFeatureProteinMutationDetail() == null) {
+        return getProteinConsequenceAttributions(feature.getPrimaryVariant());
+    }
+
+    public static List<PublicationAttribution> getProteinConsequenceAttributions(Variant variant) {
+        if (variant == null || variant.getFeatureProteinMutationDetail() == null) {
             return null;
         }
 
         return RepositoryFactory.getInfrastructureRepository().getPublicationAttributions(
-            feature.getFeatureProteinMutationDetail().getZdbID(),
+            variant.getFeatureProteinMutationDetail().getZdbID(),
             RecordAttribution.SourceType.STANDARD);
     }
 
     public static List<PublicationAttribution> getFlankSeqAttr(Feature feature) {
-        VariantSequence varSeq = RepositoryFactory.getFeatureRepository().getFeatureVariant(feature);
+        VariantSequence varSeq = RepositoryFactory.getFeatureRepository().getVariantSequence(feature);
         if (varSeq == null) {
             return null;
         }
@@ -225,6 +242,35 @@ public class FeatureService {
             return null;
         }
         return aaLink;
+    }
+
+    /**
+     * The variants of a feature with more than one (a Complex feature), each with the full set of
+     * data a single-variant feature shows in its Variants section: type, location, nucleotide
+     * change, notes and the DNA/cDNA, transcript and protein effects with their citations.
+     * Empty for a single-variant feature, whose Variants section is built from the feature.
+     * A variant with locations on several assemblies shows the one on the latest assembly.
+     */
+    public static List<VariantDisplay> getVariantDisplays(Feature feature, MutationDetailsConversionService conversionService) {
+        SortedSet<Variant> variants = feature.getVariants();
+        if (variants == null || variants.size() < 2) {
+            return Collections.emptyList();
+        }
+        Map<String, FeatureLocation> locationByVariant = new HashMap<>();
+        for (FeatureLocation location : RepositoryFactory.getFeatureRepository().getVariantLocations(feature)) {
+            locationByVariant.putIfAbsent(location.getVariant().getZdbID(), location);
+        }
+        List<VariantDisplay> displays = new ArrayList<>(variants.size());
+        for (Variant variant : variants) {
+            VariantDisplay display = new VariantDisplay(variant);
+            display.setLocation(locationByVariant.get(variant.getZdbID()));
+            display.setMutationDetails(conversionService.convert(variant, true));
+            display.setDnaChangeAttributions(getDnaChangeAttributions(variant));
+            display.setTranscriptConsequenceAttributions(getTranscriptConsequenceAttributions(variant));
+            display.setProteinConsequenceAttributions(getProteinConsequenceAttributions(variant));
+            displays.add(display);
+        }
+        return displays;
     }
 
     public static String getVarType(Feature feature) {

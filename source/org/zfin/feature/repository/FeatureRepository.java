@@ -112,11 +112,14 @@ public interface FeatureRepository {
 
     FeatureAssay getFeatureAssay(Feature feature);
 
-    VariantSequence getFeatureVariant(Feature feature);
+    VariantSequence getVariantSequence(Feature feature);
 
     String getAALink(Feature feature);
 
     FeatureLocation getAllFeatureLocationsForAssembly(AssemblyEnum assembly, Feature feature);
+
+    /** Locations that place one of the feature's variants (sfcl_variant_zdb_id set). */
+    List<FeatureLocation> getVariantLocations(Feature feature);
 
     List<FeatureGenomicMutationDetail> getAllFeatureGenomicMutationDetails();
 

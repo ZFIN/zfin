@@ -125,8 +125,9 @@ public class FeatureRepositoryTest extends AbstractDatabaseTest {
     @Test
     public void submittedFlankingSequenceFeaturesAreNeverRecalculationCandidates() {
         Set<String> submitted = new HashSet<>(HibernateUtil.currentSession().createNativeQuery("""
-            select v.vfseq_data_zdb_id
+            select var.var_feature_zdb_id
             from variant_flanking_sequence v
+            join variant var on var.var_zdb_id = v.vfseq_variant_zdb_id
             join record_attribution ra on ra.recattrib_data_zdb_id = v.vfseq_zdb_id
             where ra.recattrib_source_zdb_id = :pub
             """, String.class)

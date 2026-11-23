@@ -593,7 +593,7 @@ drop view allele;
 
 create view dnaMutationDetail as
 select fdmd_zdb_id,
-    fdmd_feature_zdb_id,
+    var_feature_zdb_id as fdmd_feature_zdb_id,
     (select term_ont_id 
        from term where fdmd_dna_mutation_term_zdb_id = term_zdb_id),
     fdmd_dna_sequence_of_reference_accession_number,
@@ -607,26 +607,29 @@ select fdmd_zdb_id,
     (select term_ont_id as id2
        from term where fdmd_gene_localization_term_zdb_id =term_Zdb_id),
      feature_type
-  from feature_dna_mutation_detail, feature
-  where fdmd_feature_zdb_id = feature_zdb_id;
+  from feature_dna_mutation_detail, variant, feature
+  where fdmd_variant_zdb_id = var_zdb_id
+    and var_feature_zdb_id = feature_zdb_id;
 \copy (select * from dnaMutationDetail) to './intermineData/dnaMutationDetail/dnaMutationDetail.txt' with delimiter as '|' null as '';
 drop view dnaMutationDetail;
 
 create view transcriptMutationDetail as
 select ftmd_zdb_id,
     (select term_ont_id from term where term_zdb_id = ftmd_transcript_consequence_term_zdb_id),
-    ftmd_feature_zdb_id,
+    var_feature_zdb_id as ftmd_feature_zdb_id,
     ftmd_exon_number,
     ftmd_intron_number, feature_type
   from feature_transcript_mutation_detail
+  , variant
   , feature
- where ftmd_feature_zdb_id = feature_zdb_id;
+ where ftmd_variant_zdb_id = var_zdb_id
+   and var_feature_zdb_id = feature_zdb_id;
 \copy (select * from transcriptMutationDetail) to './intermineData/transcriptMutationDetail/transcriptMutationDetail.txt' with delimiter as '|' null as '';
 drop view transcriptMutationDetail;
 
 create view proteinMutationDetail as
 select fpmd_zdb_id,
-    fpmd_feature_zdb_id,
+    var_feature_zdb_id as fpmd_feature_zdb_id,
     fpmd_sequence_of_reference_accession_number,
     fpmd_fdbcont_zdb_id,
     fpmd_protein_position_start,
@@ -636,7 +639,8 @@ select fpmd_zdb_id,
     fpmd_number_amino_acids_removed,
     fpmd_number_amino_acids_added,
     (select term_ont_id as id3 from term where fpmd_protein_consequence_term_zdb_id=term_Zdb_id), feature_abbrev
- from feature_protein_mutation_detail, feature
-      where fpmd_feature_zdb_id = feature_zdb_id;
+ from feature_protein_mutation_detail, variant, feature
+      where fpmd_variant_zdb_id = var_zdb_id
+        and var_feature_zdb_id = feature_zdb_id;
 \copy (select * from proteinMutationDetail) to './intermineData/proteinMutationDetail/proteinMutationDetail.txt' with delimiter as '|' null as '';
 drop view proteinMutationDetail;
