@@ -218,11 +218,11 @@ public class ReportGenerator {
             for (Map<String, Object> table : dataTables) {
                 String caption = (String) table.get(TABLE_CAPTION);
                 String sheetName = caption != null && !caption.isEmpty() ? caption : "Data";
-                // Sheet names must be <= 31 chars and unique
+                // Sheet names must be <= 31 chars and unique; only add a suffix when the name is taken.
                 if (sheetName.length() > 31) {
                     sheetName = sheetName.substring(0, 31);
                 }
-                if (sheetIndex > 0) {
+                if (workbook.getSheet(sheetName) != null) {
                     sheetName = sheetName.substring(0, Math.min(sheetName.length(), 28)) + "_" + sheetIndex;
                 }
                 Sheet sheet = workbook.createSheet(sheetName);
@@ -262,7 +262,17 @@ public class ReportGenerator {
     private void writeCsv(File outputFile) throws IOException {
         try (CSVPrinter printer = new CSVPrinter(new FileWriter(outputFile), CSVFormat.DEFAULT)) {
             List<Map<String, Object>> dataTables = (List<Map<String, Object>>) root.get(DATA_TABLES);
+            boolean firstTable = true;
             for (Map<String, Object> table : dataTables) {
+                if (!firstTable) {
+                    // keep several tables apart in one CSV: blank line, then the caption
+                    printer.println();
+                    String caption = (String) table.get(TABLE_CAPTION);
+                    if (caption != null && !caption.isEmpty()) {
+                        printer.printRecord(caption);
+                    }
+                }
+                firstTable = false;
                 List<String> header = (List<String>) table.get(TABLE_HEADER);
                 if (header != null && !header.isEmpty()) {
                     printer.printRecord(header);
