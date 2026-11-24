@@ -51,10 +51,12 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
         Session session = HibernateUtil.currentSession();
         session.beginTransaction();
         RefSeqAssemblyReconciler.Changes changes;
+        RefSeqAssemblyReconciler.MarkerAssemblyChanges markerChanges;
         try {
             changes = RefSeqAssemblyReconciler.reconcile(
                     RefSeqAssemblyReconciler.buildAccessionAssemblyMap(gene2AccessionDTOs, NcbiAssemblyResolver.fromDatabase()),
                     session);
+            markerChanges = RefSeqAssemblyReconciler.reconcileMarkerAssemblies(session);
             session.getTransaction().commit();
         } catch (RuntimeException e) {
             session.getTransaction().rollback();
@@ -62,7 +64,8 @@ public class RefSeqAssemblyBackfillTask extends AbstractScriptWrapper {
         }
 
         log.info("Finished RefSeq Assembly Backfill Task. Links added: " + changes.toAdd().size()
-                + ", removed: " + changes.toRemove().size());
+                + ", removed: " + changes.toRemove().size()
+                + ". Marker assemblies added: " + markerChanges.added() + ", removed: " + markerChanges.removed());
     }
 
     private static File getDownloadDirectory() {

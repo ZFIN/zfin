@@ -113,9 +113,14 @@ public class PseudoGeneViewController {
                 .tracks(GenomeBrowserTrack.getGenomeBrowserTracks(GenomeBrowserTrack.Page.GENE_SEQUENCE));
             geneBean.setRefSeqLocations(refseqBuilder.build());
             // if GRCz12 then show jBrowse image
-            Assembly latestAssembly = genomeLocation.get(0).getMarker().getLatestAssembly();
+            // The assembly of the location drawn, not the gene's newest assembly: a pseudogene can
+            // be on GRCz13ab through its RefSeq accessions (ZFIN-10531) with no location there.
+            Assembly latestAssembly = gene.getAllAssemblies().stream()
+                .filter(assembly -> assembly.getName().equals(landmark.getAssembly()))
+                .findFirst()
+                .orElse(null);
             GenomeBrowserImage genomeBrowserImageSequence = refseqBuilder.build();
-            if (latestAssembly.getName().equals(GRCZ12TU)) {
+            if (latestAssembly != null && latestAssembly.getName().equals(GRCZ12TU)) {
                 geneBean.setRefSeqLocations(genomeBrowserImageSequence);
                 TreeSet<BrowserLink> locations = MappingService.getJBrowserBrowserLinks(genomeLocation, genomeBrowserImageSequence, latestAssembly);
                 geneBean.setLocations(locations);

@@ -137,8 +137,17 @@ public class GeneViewController {
         geneBean.setProteinDetailDomainBean(markerService.getProteinDomainDetailBean(gene));
 
         // sequence section: if not empty
-        Assembly latestAssembly = gene.getLatestAssembly();
-        List<MarkerGenomeLocation> genomeMarkerLocationList = getLinkageRepository().getGenomeLocationByMarkerAndAssembly(gene, latestAssembly);
+        // The newest of the gene's assemblies that it has a genome location on. Not simply the
+        // newest assembly: a gene can be on GRCz13ab through its RefSeq accessions (ZFIN-10531)
+        // without any GRCz13ab location to draw.
+        List<MarkerGenomeLocation> allGenomeLocations = getLinkageRepository().getGenomeLocationByMarkerAndAssembly(gene, null);
+        Assembly latestAssembly = gene.getAllAssemblies().stream()
+            .filter(assembly -> allGenomeLocations.stream().anyMatch(location -> assembly.getName().equals(location.getAssembly())))
+            .findFirst()
+            .orElse(null);
+        List<MarkerGenomeLocation> genomeMarkerLocationList = latestAssembly == null ? List.of() : allGenomeLocations.stream()
+            .filter(location -> latestAssembly.getName().equals(location.getAssembly()))
+            .toList();
         List<MarkerGenomeLocation> markerGenomeLocations = genomeMarkerLocationList.stream()
             .filter(markerGenomeLocation -> markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN_NCBI) ||
                                             markerGenomeLocation.getSource().equals(GenomeLocation.Source.ZFIN)).toList();
