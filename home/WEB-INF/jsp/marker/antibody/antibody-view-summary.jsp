@@ -50,7 +50,7 @@
         <z:ifHasData test="${formBean.abRegistryIDs != null && formBean.abRegistryIDs.size() > 0}" noDataMessage="None">
             <ul class="comma-separated">
             <c:forEach var="abreg" items="${formBean.abRegistryIDs}">
-                <c:set var="url">http://antibodyregistry.org/search.php?q=${abreg}</c:set>
+                <c:set var="url">${formBean.abRegistryUrlPrefix}${abreg}</c:set>
                 <li><zfin2:externalLink href="${url}">${abreg}</zfin2:externalLink></li>
             </c:forEach>
             </ul>

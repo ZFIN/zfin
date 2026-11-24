@@ -27,6 +27,8 @@ public class AntibodyMarkerBean extends MarkerBean {
     private int numberOfDistinctComposedTerms ;
     private List<MarkerRelationshipPresentation> antigenGenes;
     private List<String> abRegistryIDs;
+    /** foreign_db ABRegistry URL prefix; the link for an ID is this prefix + the ID. */
+    private String abRegistryUrlPrefix;
     private Antibody antibody;
 
     public String getDeleteURL() {

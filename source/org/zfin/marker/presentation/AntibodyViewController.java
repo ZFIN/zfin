@@ -18,6 +18,7 @@ import org.zfin.marker.MarkerRelationship;
 import org.zfin.marker.repository.MarkerRepository;
 import org.zfin.marker.service.MarkerService;
 import org.zfin.repository.RepositoryFactory;
+import org.zfin.sequence.ForeignDB;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,9 @@ import static org.zfin.repository.RepositoryFactory.getPublicationRepository;
 @Controller
 @RequestMapping("/antibody")
 public class AntibodyViewController {
+
+    /** Used for the Antibody Registry link when the ABRegistry foreign_db row has no URL prefix. */
+    private static final String DEFAULT_AB_REGISTRY_URL_PREFIX = "https://www.antibodyregistry.org/";
 
     private final Logger logger = LogManager.getLogger(AntibodyViewController.class);
 
@@ -80,6 +84,11 @@ public class AntibodyViewController {
         antibodyBean.setSuppliers(markerRepository.getSuppliersForMarker(antibody.getZdbID()));
 
         antibodyBean.setAbRegistryIDs(markerRepository.getABRegIDs(antibody.getZdbID()));
+        ForeignDB abRegistry = RepositoryFactory.getSequenceRepository()
+                .getForeignDBByName(ForeignDB.AvailableName.ABREGISTRY);
+        String abRegistryPrefix = abRegistry == null ? null : abRegistry.getDbUrlPrefix();
+        antibodyBean.setAbRegistryUrlPrefix(StringUtils.isEmpty(abRegistryPrefix)
+                ? DEFAULT_AB_REGISTRY_URL_PREFIX : abRegistryPrefix);
 
 //      CITATIONS
         antibodyBean.setNumPubs(getPublicationRepository().getNumberDirectPublications(antibody.getZdbID()));
