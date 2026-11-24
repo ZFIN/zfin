@@ -10,6 +10,7 @@ import org.zfin.antibody.repository.AntibodyRepository;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.marker.ui.AntibodyRPCService;
 import org.zfin.gwt.root.dto.AntibodyDTO;
+import org.zfin.gwt.root.ui.ValidationException;
 import org.zfin.gwt.root.dto.AntibodyTypesDTO;
 import org.zfin.gwt.root.dto.MarkerDTO;
 import org.zfin.gwt.root.server.DTOConversionService;
@@ -156,7 +157,15 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
     }
 
     @Override
-    public void updateAntibodyHeaders(AntibodyDTO dto) {
+    public void updateAntibodyHeaders(AntibodyDTO dto) throws ValidationException {
+
+        // validate before anything is changed, so a bad registry ID leaves the antibody as it was
+        String registryID;
+        try {
+            registryID = AntibodyService.normalizeAndValidateRegistryID(dto.getRegistryID());
+        } catch (IllegalArgumentException e) {
+            throw new ValidationException(e.getMessage());
+        }
 
         Antibody antibody = (Antibody) HibernateUtil.currentSession().get(Antibody.class, dto.getZdbID());
 
@@ -170,7 +179,7 @@ public class AntibodyRPCServiceImpl extends ZfinRemoteServiceServlet implements 
             InfrastructureService.insertUpdate(antibody, "Antibody Name", oldName, antibody.getName());
             HibernateUtil.currentSession().update(antibody);
         }
-        AntibodyService.setABRegistryID(antibody,dto.getRegistryID());
+        AntibodyService.setABRegistryID(antibody, registryID);
 
         HibernateUtil.flushAndCommitCurrentSession();
         }

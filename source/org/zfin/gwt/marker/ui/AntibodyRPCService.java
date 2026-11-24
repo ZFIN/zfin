@@ -1,5 +1,6 @@
 package org.zfin.gwt.marker.ui;
 
+import org.zfin.gwt.root.ui.ValidationException;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.rpc.RemoteService;
 import com.google.gwt.user.client.rpc.ServiceDefTarget;
@@ -31,5 +32,5 @@ public interface AntibodyRPCService extends RemoteService {
 
     AntibodyDTO updateAntibodyData(AntibodyDTO antibodyDTO);
 
-    void updateAntibodyHeaders(AntibodyDTO dto);
+    void updateAntibodyHeaders(AntibodyDTO dto) throws ValidationException;
 }

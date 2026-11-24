@@ -34,6 +34,8 @@ import org.zfin.util.MatchType;
 import org.zfin.util.MatchingService;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static org.zfin.repository.RepositoryFactory.*;
@@ -72,7 +74,55 @@ public class AntibodyService {
         return getMarkerRepository().getABRegID(abMrkr.zdbID);
     }
 
+    // An Antibody Registry ID (RRID without the prefix): AB_ followed by digits. Input is also accepted as
+    // RRID:AB_n, in any case, with surrounding spaces; it is stored as AB_n.
+    private static final Pattern REGISTRY_ID_INPUT = Pattern.compile("(?i)(?:RRID:\\s*)?AB_(\\d+)");
+
+    /**
+     * Splits a comma-separated list of Antibody Registry IDs, trims it, drops empty entries, normalizes each
+     * (RRID:AB_n, rrid:ab_n, Ab_n and ab_n become AB_n), and removes duplicates, keeping the order.
+     *
+     * @throws IllegalArgumentException naming every entry that is not an Antibody Registry ID; nothing is returned
+     *                                  for a list with a bad entry, so the caller can reject the whole submission
+     */
+    public static List<String> normalizeAndValidateRegistryIDs(String commaSeparatedIDs) {
+        Set<String> normalized = new LinkedHashSet<>();
+        List<String> invalid = new ArrayList<>();
+        if (commaSeparatedIDs != null) {
+            for (String entry : commaSeparatedIDs.split(",")) {
+                String trimmed = entry.trim();
+                if (trimmed.isEmpty()) {
+                    continue;
+                }
+                Matcher matcher = REGISTRY_ID_INPUT.matcher(trimmed);
+                if (matcher.matches()) {
+                    normalized.add("AB_" + matcher.group(1));
+                } else {
+                    invalid.add("Invalid Antibody Registry ID \"" + trimmed + "\": IDs look like AB_123456");
+                }
+            }
+        }
+        if (!invalid.isEmpty()) {
+            throw new IllegalArgumentException(String.join("; ", invalid));
+        }
+        return new ArrayList<>(normalized);
+    }
+
+    /**
+     * For a field that holds one ID: the normalized ID, or null if the value is empty.
+     *
+     * @throws IllegalArgumentException if the value is not an Antibody Registry ID, or holds more than one
+     */
+    public static String normalizeAndValidateRegistryID(String registryID) {
+        List<String> ids = normalizeAndValidateRegistryIDs(registryID);
+        if (ids.size() > 1) {
+            throw new IllegalArgumentException("Enter only one Antibody Registry ID here: " + String.join(", ", ids));
+        }
+        return ids.isEmpty() ? null : ids.get(0);
+    }
+
     public static void setABRegistryID(Antibody antibody, String newRegistryID) {
+        newRegistryID = normalizeAndValidateRegistryID(newRegistryID);
         if (getMarkerRepository().getABRegID(antibody.getZdbID()) != null) {
             ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
             MarkerDBLink mdb = getMarkerRepository().getDBLink(antibody, getMarkerRepository().getABRegID(antibody.getZdbID()), refDB);
@@ -101,7 +151,7 @@ public class AntibodyService {
     }
 
     public static void setABRegistryIDs(Antibody antibody, String newRegistryIDs) {
-        List<String> listOfIDs = List.of(newRegistryIDs.split("\\s*,\\s*"));
+        List<String> listOfIDs = normalizeAndValidateRegistryIDs(newRegistryIDs);
         List<String> existingIDs = getMarkerRepository().getABRegIDs(antibody.getZdbID());
         ReferenceDatabase refDB = getSequenceRepository().getReferenceDatabase(ForeignDB.AvailableName.ABREGISTRY, ForeignDBDataType.DataType.OTHER, ForeignDBDataType.SuperType.SUMMARY_PAGE, Species.Type.ZEBRAFISH);
 

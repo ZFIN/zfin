@@ -39,12 +39,21 @@ public abstract class MarkerEditCallBack<T> extends HandlesErrorCallBack<T> {
         // only new one here
         if (handleDBLinkNotFound(throwable)) return;
         if (handleDuplicateEntry(throwable)) return;
+        if (handleValidationError(throwable)) return;
         displayMessage(message + (showTrace ? throwable : "") );
     }
 
     public void onFinish() {
         if (module != null && eventType != null)
             AppUtils.fireAjaxCall(module, eventType);
+    }
+
+    private boolean handleValidationError(Throwable t) {
+        if (t instanceof ValidationException) {
+            displayMessage(t.getMessage());
+            return true;
+        }
+        return false;
     }
 
     private boolean handleDBLinkNotFound(Throwable t) {
