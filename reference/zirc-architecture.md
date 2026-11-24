@@ -124,7 +124,8 @@ Forms uiSchema (`uiSchema()`) describes **layout and per-control
 rendering hints**. Both are emitted as **typed records** from Java and
 serialized to JSON by Jackson. JSON Schema records live under
 `org.zfin.zirc.api.jsonschema` (`ObjectSchema`, `StringSchema`,
-`BooleanSchema`, `NumberSchema`, `ArraySchema`, `ConstSchema`); uiSchema
+`BooleanSchema`, `NumberSchema`, `ArraySchema`, `ConstSchema`,
+`YesNoUnknownSchema`); uiSchema
 records live under `org.zfin.zirc.api.uischema` (`VerticalLayout`,
 `Group`, `Control`, `Options`, `Rule`). The `type` discriminator is
 emitted via a `@JsonProperty("type")` accessor on each record so
@@ -134,7 +135,7 @@ Jackson's `SORT_PROPERTIES_ALPHABETICALLY` keeps the snapshot stable.
 public static JsonSchema schema() {
     Map<String, JsonSchema> properties = new LinkedHashMap<>();
     properties.put("alleleDesignation", StringSchema.of("Allele Designation", 255));
-    properties.put("homozygousLethal",  BooleanSchema.nullable("Homozygous Lethal"));
+    properties.put("homozygousLethal",  YesNoUnknownSchema.of("Homozygous Lethal"));
     ...
     return ObjectSchema.of(properties);
 }
@@ -155,6 +156,18 @@ public static UiSchemaElement uiSchema() {
     ));
 }
 ```
+
+A yes/no question that also accepts "Unknown" (ZFIN-10617) uses
+`YesNoUnknownSchema` rather than `BooleanSchema`. Its `enum` is what makes
+the yesNoRadio widget show the third radio — there is no uiSchema option
+for it. On the Java side the value is the `YesNoUnknown` enum: the entity
+exposes one `YesNoUnknown` getter/setter over the nullable boolean column
+plus an `_unknown` flag column (a CHECK constraint keeps them exclusive),
+the DTO carries it as-is (Jackson writes `true` / `false` / `"unknown"`),
+and the field descriptor parses PATCH values with `YesNoUnknown.fromJson`,
+which rejects anything else with a 400. The TypeScript generator emits a matching
+`YesNoUnknown` type alias and `UNKNOWN_ANSWER` constant in `types.ts`
+(see `GenerateTypeScript.VALUE_TYPES`), which the renderer imports.
 
 Use the static factories (`StringSchema.of`, `BooleanSchema.nullable`,
 `NumberSchema.of`, `ArraySchema.of`, `ObjectSchema.of`, `Group.of`,

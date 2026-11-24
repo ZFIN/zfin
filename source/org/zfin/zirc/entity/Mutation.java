@@ -16,6 +16,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
 import jakarta.persistence.OrderColumn;
 import jakarta.persistence.Table;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
@@ -107,7 +108,19 @@ public class Mutation implements Serializable {
     private String mutationType;
 
     @Column(name = "m_homozygous_lethal")
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private Boolean homozygousLethal;
+
+    /**
+     * Set only alongside a NULL {@link #homozygousLethal} (DB CHECK constraint).
+     * Read and written through {@link #getHomozygousLethal()} / {@link #setHomozygousLethal}
+     * so the pair cannot drift apart.
+     */
+    @Column(name = "m_homozygous_lethal_unknown", nullable = false)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private boolean homozygousLethalUnknown;
 
     @Column(name = "m_lethality_stage_typical")
     private String lethalityStageTypical;
@@ -172,4 +185,13 @@ public class Mutation implements Serializable {
     @OrderColumn(name = "mp_sort_order")
     private List<String> publications = new ArrayList<>();
 
+    /** Homozygous lethal: yes / no / unknown, or {@code null} when unanswered (ZFIN-10617). */
+    public YesNoUnknown getHomozygousLethal() {
+        return YesNoUnknown.fromColumns(homozygousLethal, homozygousLethalUnknown);
+    }
+
+    public void setHomozygousLethal(YesNoUnknown answer) {
+        this.homozygousLethal = answer == null ? null : answer.asBoolean();
+        this.homozygousLethalUnknown = answer == YesNoUnknown.UNKNOWN;
+    }
 }

@@ -14,6 +14,7 @@ package org.zfin.zirc.api.jsonschema;
  *   <li>{@link ArraySchema}   — {@code {type: "array", items, title?, maxItems?, uniqueItems?}}</li>
  *   <li>{@link ObjectSchema}  — {@code {type: "object", title?, properties}}</li>
  *   <li>{@link ConstSchema}   — {@code {const: <value>, title?}}, no {@code type} field (used inside {@code oneOf})</li>
+ *   <li>{@link YesNoUnknownSchema} — nullable boolean that also accepts {@code "unknown"}</li>
  * </ul>
  *
  * <p>Nullable strings and booleans emit {@code "type": ["string", "null"]}
@@ -26,5 +27,6 @@ package org.zfin.zirc.api.jsonschema;
  */
 public sealed interface JsonSchema
         permits StringSchema, BooleanSchema, NumberSchema,
-                ArraySchema, ObjectSchema, ConstSchema {
+                ArraySchema, ObjectSchema, ConstSchema,
+                YesNoUnknownSchema {
 }

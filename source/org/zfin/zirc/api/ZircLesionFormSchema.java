@@ -231,7 +231,7 @@ public final class ZircLesionFormSchema {
                                 Options.of()
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withHelpText("At least 20 nt directly preceding the variant / transgene.")
+                                        .withHelpText("At least 20 nt directly preceding the variant / transgene in genomic DNA.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null),
@@ -239,7 +239,7 @@ public final class ZircLesionFormSchema {
                                 Options.of()
                                         .withWidget("nucleotideSequence")
                                         .withAlphabet(NUCLEOTIDE_ALPHABET)
-                                        .withHelpText("At least 20 nt directly following the variant / transgene.")
+                                        .withHelpText("At least 20 nt directly following the variant / transgene in genomic DNA.")
                                         .withMulti(true)
                                         .withInfoHref("https://wiki.zfin.org/display/general/Transgene+Insertion+Sequence+Conventions"),
                                 null)
