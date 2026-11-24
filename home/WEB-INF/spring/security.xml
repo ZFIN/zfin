@@ -227,6 +227,14 @@
         <security:intercept-url pattern="/ajax/curation/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/curation/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <security:intercept-url pattern="/action/analytics/**" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <!-- Construct edits (ConstructEditController, ConstructMarkerRelationshipAPIController) are curator-only.
+             Matched by HTTP method so the public construct page (GET /action/construct/view/**) stays open. -->
+        <security:intercept-url pattern="/action/construct/**" method="POST" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/**" method="PUT" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/construct/**" method="DELETE" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/api/construct/**" method="POST" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/api/construct/**" method="PUT" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
+        <security:intercept-url pattern="/action/api/construct/**" method="DELETE" access="hasAuthority('root') or ${DISABLE_SECURITY}"/>
         <!-- ZIRC line-submission curator workflow: any signed-in user.
              This is a holding-pattern measure pending Phase C3, which
              will tighten to per-role / per-owner checks. Without it,
