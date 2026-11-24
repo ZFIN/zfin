@@ -5,8 +5,12 @@
 -- edited marker_relationship (MR) but not construct_marker_relationship (CMR). regen_construct_marker treats CMR as the
 -- source of truth, so a rename or component edit of these 28 constructs would revert the fix.
 -- Do not call regen_construct_marker: once the tables match it is not needed.
--- construct_component_trigger fires update_construct_name on the component updates; names come from cc_component
--- text, not the linked marker, so construct names do not change.
+--
+-- The construct_component rows that link the "GFP"/"YFP" text component to the old marker are deliberately NOT
+-- re-pointed. regen_construct() (the Regen-Construct_d job) treats a component whose text differs from the linked
+-- marker's abbreviation as stale and rewrites the text, which would turn "sf"+"sfGFP" into "sfsfGFP". The rename/edit
+-- flow also rebuilds components from the name text by abbreviation, so those links do not affect construct_marker_
+-- relationship or marker_relationship. Merging sf+GFP into one sfGFP component is a curator decision.
 
 -- 1. re-point CMR (keeps the CMREL id, so its attribution stays attached)
 UPDATE construct_marker_relationship r
@@ -32,16 +36,3 @@ FROM construct_marker_relationship r
          JOIN record_attribution ra ON ra.recattrib_data_zdb_id = r.conmrkrrel_zdb_id
 WHERE r.conmrkrrel_mrkr_zdb_id IN ('ZDB-EFG-221115-1', 'ZDB-EFG-230215-1')
   AND NOT EXISTS (SELECT 1 FROM record_attribution x WHERE x.recattrib_data_zdb_id = o.mrel_zdb_id);
-
--- 3. components still linked to GFP/YFP on constructs whose CMR now points at sfGFP/LanYFP.
--- The sf+GFP / lan+YFP text-plus-marker pairs are deliberately not merged (curator decision).
-UPDATE construct_component SET cc_component_zdb_id = 'ZDB-EFG-221115-1'
-WHERE cc_component_zdb_id = 'ZDB-EFG-070117-2'
-  AND cc_construct_zdb_id IN (SELECT conmrkrrel_construct_zdb_id FROM construct_marker_relationship WHERE conmrkrrel_mrkr_zdb_id = 'ZDB-EFG-221115-1')
-  -- guard: leave constructs that legitimately still have the old marker (e.g. two cassettes, sfGFP and GFP)
-  AND NOT EXISTS (SELECT 1 FROM construct_marker_relationship o WHERE o.conmrkrrel_construct_zdb_id = cc_construct_zdb_id AND o.conmrkrrel_mrkr_zdb_id = 'ZDB-EFG-070117-2');
-UPDATE construct_component SET cc_component_zdb_id = 'ZDB-EFG-230215-1'
-WHERE cc_component_zdb_id = 'ZDB-EFG-070409-1'
-  AND cc_construct_zdb_id IN (SELECT conmrkrrel_construct_zdb_id FROM construct_marker_relationship WHERE conmrkrrel_mrkr_zdb_id = 'ZDB-EFG-230215-1')
-  -- guard: leave constructs that legitimately still have the old marker (e.g. two cassettes, sfGFP and GFP)
-  AND NOT EXISTS (SELECT 1 FROM construct_marker_relationship o WHERE o.conmrkrrel_construct_zdb_id = cc_construct_zdb_id AND o.conmrkrrel_mrkr_zdb_id = 'ZDB-EFG-070409-1');

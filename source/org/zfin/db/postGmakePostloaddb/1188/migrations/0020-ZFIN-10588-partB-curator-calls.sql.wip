@@ -13,8 +13,13 @@
 --   2. Rename it to drop ".wip":  git mv 0020-ZFIN-10588-partB-curator-calls.sql.wip 0020-ZFIN-10588-partB-curator-calls.sql
 --   3. Run gradle liquibasePostBuild (it runs once and is then recorded).
 --
--- Applies only the confident calls (40 of the 44 Part B rows; the CSV rows for "curator decision" are EXCLUDED):
---   - 38 x "add to CMR":  insert the marker_relationship-only row into construct_marker_relationship.
+-- Applies only the confident calls (41 of the 44 Part B rows; the CSV rows for "curator decision" are EXCLUDED):
+--   - 27 x "add to CMR":  insert the marker_relationship-only row into construct_marker_relationship
+--         (25 plain adds, plus the 2 "add" halves of the replace rows below).
+--   - 11 x "delete from MR": the MR-only row is a gene-level fragment of a more specific relationship that is already
+--         in both tables and matches the construct name (needs curator confirmation, see the CSV "confidence" column).
+--   - 2  x "replace": delete the stale relationship from MR and CMR (hsp70.1 on ZDB-TGCONSTRCT-070205-1, EGFP on
+--         ZDB-GTCONSTRCT-130122-1); the component marker is added to CMR by the "add" block.
 --   - 1  x "change CMR type": ZDB-CMREL-150506-2025 (EMTB on ZDB-TGCONSTRCT-141218-7) promoter of -> coding sequence of.
 --         This also resolves the MR-only EMTB row ZDB-MREL-230322-5.
 --   - 1  x "delete from CMR": ZDB-CMREL-150506-7850 (ptch1 promoter of on ZDB-TGCONSTRCT-130123-2; the name says ptch2).
@@ -60,35 +65,83 @@ WHERE zactvd_zdb_id IN (
                         AND m.mrel_mrkr_2_zdb_id = r.conmrkrrel_mrkr_zdb_id
                         AND m.mrel_type = r.conmrkrrel_relationship_type));
 
--- 3. add to CMR (MREL id, construct, marker, type): only MR rows that still match and still have no CMR row
+-- 3. replace: delete the stale relationship from MR and CMR (MREL id, CMREL id, construct, marker, type).
+--    Only when both rows still exist with these values.
+DELETE FROM zdb_active_data
+WHERE zactvd_zdb_id IN (
+    SELECT x.mrel_zdb_id
+    FROM marker_relationship x
+             JOIN (VALUES
+             ('ZDB-MREL-090504-4', 'ZDB-CMREL-150506-3136', 'ZDB-GTCONSTRCT-130122-1', 'ZDB-EFG-070117-1', 'coding sequence of'),
+             ('ZDB-MREL-070205-14', 'ZDB-CMREL-150506-61', 'ZDB-TGCONSTRCT-070205-1', 'ZDB-GENE-990415-91', 'promoter of')
+                  ) AS c(mrel_id, cmrel_id, construct_id, marker_id, rel_type)
+                  ON x.mrel_zdb_id = c.mrel_id AND x.mrel_mrkr_1_zdb_id = c.construct_id
+                      AND x.mrel_mrkr_2_zdb_id = c.marker_id AND x.mrel_type = c.rel_type
+             JOIN construct_marker_relationship r ON r.conmrkrrel_zdb_id = c.cmrel_id
+        AND r.conmrkrrel_construct_zdb_id = c.construct_id AND r.conmrkrrel_mrkr_zdb_id = c.marker_id
+        AND r.conmrkrrel_relationship_type = c.rel_type
+    UNION ALL
+    SELECT r.conmrkrrel_zdb_id
+    FROM construct_marker_relationship r
+             JOIN (VALUES
+             ('ZDB-MREL-090504-4', 'ZDB-CMREL-150506-3136', 'ZDB-GTCONSTRCT-130122-1', 'ZDB-EFG-070117-1', 'coding sequence of'),
+             ('ZDB-MREL-070205-14', 'ZDB-CMREL-150506-61', 'ZDB-TGCONSTRCT-070205-1', 'ZDB-GENE-990415-91', 'promoter of')
+                  ) AS c(mrel_id, cmrel_id, construct_id, marker_id, rel_type)
+                  ON r.conmrkrrel_zdb_id = c.cmrel_id AND r.conmrkrrel_construct_zdb_id = c.construct_id
+                      AND r.conmrkrrel_mrkr_zdb_id = c.marker_id AND r.conmrkrrel_relationship_type = c.rel_type
+             JOIN marker_relationship x ON x.mrel_zdb_id = c.mrel_id AND x.mrel_mrkr_1_zdb_id = c.construct_id
+        AND x.mrel_mrkr_2_zdb_id = c.marker_id AND x.mrel_type = c.rel_type);
+
+-- 4. delete from MR (MREL id, construct, marker, type, the more specific marker that is already in both tables).
+--    Only when the MR-only row still has no CMR row and the specific relationship is still present in both tables.
+DELETE FROM zdb_active_data
+WHERE zactvd_zdb_id IN (
+    SELECT x.mrel_zdb_id
+    FROM marker_relationship x
+             JOIN (VALUES
+             ('ZDB-MREL-150506-3', 'ZDB-TGCONSTRCT-070117-10', 'ZDB-GENE-991129-7', 'promoter of', 'ZDB-GENE-050626-121'),
+             ('ZDB-MREL-150506-17', 'ZDB-TGCONSTRCT-100810-1', 'ZDB-MIRNAG-050609-26', 'promoter of', 'ZDB-MIRNAG-081208-7'),
+             ('ZDB-MREL-150506-23', 'ZDB-TGCONSTRCT-110128-11', 'ZDB-GENE-030710-1', 'promoter of', 'ZDB-TSCRIPT-090929-7192'),
+             ('ZDB-MREL-150506-24', 'ZDB-TGCONSTRCT-110128-12', 'ZDB-GENE-030710-1', 'promoter of', 'ZDB-TSCRIPT-090929-7193'),
+             ('ZDB-MREL-150506-25', 'ZDB-TGCONSTRCT-110128-13', 'ZDB-GENE-030710-1', 'promoter of', 'ZDB-TSCRIPT-090929-7194'),
+             ('ZDB-MREL-150506-26', 'ZDB-TGCONSTRCT-110204-7', 'ZDB-GENE-990415-270', 'promoter of', 'ZDB-TSCRIPT-090929-6116'),
+             ('ZDB-MREL-150506-27', 'ZDB-TGCONSTRCT-110505-1', 'ZDB-GENE-991129-7', 'promoter of', 'ZDB-GENE-050626-121'),
+             ('ZDB-MREL-150506-28', 'ZDB-TGCONSTRCT-110505-6', 'ZDB-GENE-991129-7', 'promoter of', 'ZDB-GENE-050626-121'),
+             ('ZDB-MREL-150506-29', 'ZDB-TGCONSTRCT-110505-7', 'ZDB-GENE-991129-7', 'promoter of', 'ZDB-GENE-050626-121'),
+             ('ZDB-MREL-150506-40', 'ZDB-TGCONSTRCT-130125-3', 'ZDB-GENE-000209-4', 'coding sequence of', 'ZDB-TSCRIPT-090929-1560'),
+             ('ZDB-MREL-150506-41', 'ZDB-TGCONSTRCT-130125-4', 'ZDB-GENE-000209-4', 'coding sequence of', 'ZDB-TSCRIPT-090929-1561')
+                  ) AS c(mrel_id, construct_id, marker_id, rel_type, specific_marker_id)
+                  ON x.mrel_zdb_id = c.mrel_id AND x.mrel_mrkr_1_zdb_id = c.construct_id
+                      AND x.mrel_mrkr_2_zdb_id = c.marker_id AND x.mrel_type = c.rel_type
+    WHERE NOT EXISTS (SELECT 1 FROM construct_marker_relationship r
+                      WHERE r.conmrkrrel_construct_zdb_id = x.mrel_mrkr_1_zdb_id
+                        AND r.conmrkrrel_mrkr_zdb_id = x.mrel_mrkr_2_zdb_id
+                        AND r.conmrkrrel_relationship_type = x.mrel_type)
+      AND EXISTS (SELECT 1 FROM marker_relationship s
+                  WHERE s.mrel_mrkr_1_zdb_id = c.construct_id AND s.mrel_mrkr_2_zdb_id = c.specific_marker_id
+                    AND s.mrel_type = c.rel_type)
+      AND EXISTS (SELECT 1 FROM construct_marker_relationship sr
+                  WHERE sr.conmrkrrel_construct_zdb_id = c.construct_id AND sr.conmrkrrel_mrkr_zdb_id = c.specific_marker_id
+                    AND sr.conmrkrrel_relationship_type = c.rel_type));
+
+-- 5. add to CMR (MREL id, construct, marker, type): only MR rows that still match and still have no CMR row
 CREATE TEMP TABLE tmp_partb_add AS
 SELECT get_id('CMREL') AS cmrel_id, o.mrel_zdb_id, o.mrel_mrkr_1_zdb_id AS construct_id,
        o.mrel_mrkr_2_zdb_id AS marker_id, o.mrel_type AS rel_type
 FROM marker_relationship o
          JOIN (VALUES
              ('ZDB-MREL-150506-2', 'ZDB-GTCONSTRCT-130122-1', 'ZDB-EFG-070117-2', 'coding sequence of'),
-             ('ZDB-MREL-150506-3', 'ZDB-TGCONSTRCT-070117-10', 'ZDB-GENE-991129-7', 'promoter of'),
              ('ZDB-MREL-150506-10', 'ZDB-TGCONSTRCT-070205-1', 'ZDB-GENE-050321-1', 'promoter of'),
              ('ZDB-MREL-151208-27', 'ZDB-TGCONSTRCT-071016-1', 'ZDB-GENE-990712-15', 'promoter of'),
              ('ZDB-MREL-150506-14', 'ZDB-TGCONSTRCT-090702-1', 'ZDB-EREGION-070122-1', 'promoter of'),
              ('ZDB-MREL-150506-16', 'ZDB-TGCONSTRCT-100520-1', 'ZDB-EREGION-120130-1', 'coding sequence of'),
-             ('ZDB-MREL-150506-17', 'ZDB-TGCONSTRCT-100810-1', 'ZDB-MIRNAG-050609-26', 'promoter of'),
              ('ZDB-MREL-150506-19', 'ZDB-TGCONSTRCT-100914-3', 'ZDB-EREGION-120130-1', 'coding sequence of'),
              ('ZDB-MREL-150506-20', 'ZDB-TGCONSTRCT-101118-1', 'ZDB-GENE-990415-87', 'coding sequence of'),
-             ('ZDB-MREL-150506-23', 'ZDB-TGCONSTRCT-110128-11', 'ZDB-GENE-030710-1', 'promoter of'),
-             ('ZDB-MREL-150506-24', 'ZDB-TGCONSTRCT-110128-12', 'ZDB-GENE-030710-1', 'promoter of'),
-             ('ZDB-MREL-150506-25', 'ZDB-TGCONSTRCT-110128-13', 'ZDB-GENE-030710-1', 'promoter of'),
-             ('ZDB-MREL-150506-26', 'ZDB-TGCONSTRCT-110204-7', 'ZDB-GENE-990415-270', 'promoter of'),
              ('ZDB-MREL-230319-1', 'ZDB-TGCONSTRCT-110329-1', 'ZDB-EREGION-141218-2', 'coding sequence of'),
-             ('ZDB-MREL-150506-27', 'ZDB-TGCONSTRCT-110505-1', 'ZDB-GENE-991129-7', 'promoter of'),
-             ('ZDB-MREL-150506-28', 'ZDB-TGCONSTRCT-110505-6', 'ZDB-GENE-991129-7', 'promoter of'),
-             ('ZDB-MREL-150506-29', 'ZDB-TGCONSTRCT-110505-7', 'ZDB-GENE-991129-7', 'promoter of'),
              ('ZDB-MREL-150506-30', 'ZDB-TGCONSTRCT-110808-3', 'ZDB-GENE-040808-67', 'coding sequence of'),
              ('ZDB-MREL-150506-32', 'ZDB-TGCONSTRCT-120320-2', 'ZDB-EFG-070117-1', 'coding sequence of'),
              ('ZDB-MREL-150506-39', 'ZDB-TGCONSTRCT-121213-8', 'ZDB-EFG-070925-1', 'coding sequence of'),
              ('ZDB-MREL-161110-2', 'ZDB-TGCONSTRCT-130123-2', 'ZDB-GENE-980526-44', 'promoter of'),
-             ('ZDB-MREL-150506-40', 'ZDB-TGCONSTRCT-130125-3', 'ZDB-GENE-000209-4', 'coding sequence of'),
-             ('ZDB-MREL-150506-41', 'ZDB-TGCONSTRCT-130125-4', 'ZDB-GENE-000209-4', 'coding sequence of'),
              ('ZDB-MREL-150506-49', 'ZDB-TGCONSTRCT-140508-15', 'ZDB-GENE-980526-260', 'promoter of'),
              ('ZDB-MREL-150506-48', 'ZDB-TGCONSTRCT-140508-15', 'ZDB-EFG-070117-1', 'coding sequence of'),
              ('ZDB-MREL-150506-51', 'ZDB-TGCONSTRCT-140508-35', 'ZDB-EREGION-111230-3', 'promoter of'),
