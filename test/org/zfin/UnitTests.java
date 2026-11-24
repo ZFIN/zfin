@@ -8,6 +8,7 @@ import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
+import org.zfin.marker.agr.AuthorFormatCheckerTest;
 import org.zfin.marker.agr.AuthorStringParserTest;
 import org.zfin.database.DatabaseServiceTest;
 import org.zfin.datatransfer.go.GafErrorSummaryTest;
@@ -36,6 +37,7 @@ import org.zfin.gwt.root.util.WidgetUtilTest;
 import org.zfin.infrastructure.ActiveDataTest;
 import org.zfin.infrastructure.SerializationTests;
 import org.zfin.infrastructure.TrieMapTest;
+import org.zfin.infrastructure.ant.PublicationAuthorFormatReportTaskTest;
 import org.zfin.infrastructure.ant.ReportConfigurationTest;
 import org.zfin.marker.MergeMarkerUnitTest;
 import org.zfin.marker.presentation.DbLinkDisplayComparatorTest;
@@ -76,6 +78,8 @@ import org.zfin.util.*;
 //        ActiveSourceTest.class,
         AnatomyPresentationTest.class,
         AntibodySearchCriteriaTest.class,
+        AuthorFormatCheckerTest.class,
+        PublicationAuthorFormatReportTaskTest.class,
         AuthorStringParserTest.class,
         BeanCompareServiceTest.class,
         //BlastNonDBTest.class,
