@@ -7,6 +7,7 @@ import org.zfin.anatomy.presentation.AnatomyPresentationTest;
 import org.zfin.anatomy.presentation.RelationshipTypeSortingTest;
 import org.zfin.anatomy.presentation.SortAnatomyResultsTest;
 import org.zfin.anatomy.presentation.StagePresentationTest;
+import org.zfin.antibody.AntibodyRegistryIdValidationTest;
 import org.zfin.antibody.presentation.AntibodySearchCriteriaTest;
 import org.zfin.marker.agr.AuthorStringParserTest;
 import org.zfin.database.DatabaseServiceTest;
@@ -75,6 +76,7 @@ import org.zfin.util.*;
         ActiveDataTest.class,
 //        ActiveSourceTest.class,
         AnatomyPresentationTest.class,
+        AntibodyRegistryIdValidationTest.class,
         AntibodySearchCriteriaTest.class,
         AuthorStringParserTest.class,
         BeanCompareServiceTest.class,

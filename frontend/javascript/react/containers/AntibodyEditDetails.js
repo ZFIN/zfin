@@ -42,6 +42,7 @@ const AntibodyEditDetails = ({
         Form,
         reset,
         setMeta,
+        setFieldMeta,
         values,
         meta: { isValid, isSubmitting, isSubmitted, serverError }
     } = useForm({
@@ -56,7 +57,14 @@ const AntibodyEditDetails = ({
                 });
                 setAntibodyDetails(updated);
             } catch (error) {
-                setMeta({ serverError: error });
+                // a validation failure (HTTP 422) names the field; show its message on that field
+                const fieldError = error?.responseJSON?.fieldErrors?.find(e => e.field === 'abregistryIDs');
+                if (fieldError) {
+                    setFieldMeta('abregistryIDs', { error: fieldError.message });
+                    setMeta({ serverError: null });
+                } else {
+                    setMeta({ serverError: error });
+                }
                 throw error;
             }
         },
@@ -103,6 +111,11 @@ const AntibodyEditDetails = ({
                 label='Antibody Registry ID'
                 field='abregistryIDs'
                 id='abregistryIDs'
+                validate={() => {
+                    // editing the field clears an error returned by the server
+                    setFieldMeta('abregistryIDs', { error: null });
+                    return false;
+                }}
             />
 
             <FormGroup
