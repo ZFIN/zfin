@@ -76,6 +76,10 @@ public class FeatureAddView extends AbstractFeatureView implements Revertible {
     @UiHandler("featureTypeBox")
     void onChangeFeatureType(@SuppressWarnings("unused") ChangeEvent event) {
         super.onChangeFeatureType(event);
+        if (isComplexSelected()) {
+            // the name of a new Complex feature is lab designation + line number (ZFIN-10623)
+            featureNameBox.setText("");
+        }
         publicNoteBox.setEnabled(true);
         curatorNoteBox.setEnabled(true);
         featureAliasBox.setEnabled(true);

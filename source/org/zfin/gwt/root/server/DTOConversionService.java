@@ -13,6 +13,7 @@ import org.zfin.construct.presentation.ConstructPresentation;
 import org.zfin.expression.*;
 import org.zfin.feature.*;
 import org.zfin.feature.presentation.FeaturePresentation;
+import org.zfin.feature.repository.FeatureRepository;
 import org.zfin.feature.repository.FeatureService;
 import org.zfin.framework.HibernateUtil;
 import org.zfin.gwt.curation.dto.DiseaseAnnotationDTO;
@@ -639,7 +640,10 @@ public class DTOConversionService {
 
         // Assembly info date is no longer entered manually -- it is inferred from whether a
         // chromosome (location) was supplied at all (see FeatureRPCServiceImpl.isLocationRemoved).
-        if (org.zfin.gwt.root.util.StringUtils.isEmpty(featureDTO.getFeatureChromosome())) {
+        boolean hasLocation = featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION
+            ? featureDTO.getVariants().stream().anyMatch(VariantDTO::hasLocation)
+            : !org.zfin.gwt.root.util.StringUtils.isEmpty(featureDTO.getFeatureChromosome());
+        if (!hasLocation) {
             feature.setFtrAssemblyInfoDate(new Date());
         } else {
             feature.setFtrAssemblyInfoDate(null);
@@ -930,6 +934,22 @@ public class DTOConversionService {
                 }
                 featureDTO.setTranscriptChangeDTOSet(set);
             }
+            if (feature.getType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+                // A Complex feature's locations and mutation details belong to its variants; the
+                // form edits them there, so the feature-level copies (Variant 1's) are left empty.
+                featureDTO.setVariants(convertToVariantDTOs(feature));
+                featureDTO.setFeatureChromosome(null);
+                featureDTO.setFeatureAssembly(null);
+                featureDTO.setAssembly(null);
+                featureDTO.setFeatureStartLoc(null);
+                featureDTO.setFeatureEndLoc(null);
+                featureDTO.setEvidence(null);
+                featureDTO.setHasOtherLocationAssemblies(false);
+                featureDTO.setProteinChangeDTO(null);
+                featureDTO.setDnaChangeDTO(null);
+                featureDTO.setFgmdChangeDTO(null);
+                featureDTO.setTranscriptChangeDTOSet(null);
+            }
         }
         int length = 0;
         if (feature.getLineNumber() != null)
@@ -938,6 +958,73 @@ public class DTOConversionService {
             length = length + feature.getFeaturePrefix().getAbbreviation().length();
         featureDTO.setOptionalName(featureDTO.getName().substring(0, featureDTO.getName().length() - length));
         return featureDTO;
+    }
+
+    /**
+     * The variants of a Complex feature for the curation form (ZFIN-10623), each with its location
+     * and mutation details. A variant can have locations on several assemblies; the form edits one,
+     * the same one getVariantLocations() lists first (the current assembly).
+     * <p/>
+     * Complex features curated before variants existed may still have a feature-level location
+     * (one with no variant). It is shown as Variant 1's location, and saving the form attaches it
+     * to Variant 1 (FeatureRPCServiceImpl.saveComplexVariants).
+     */
+    public static List<VariantDTO> convertToVariantDTOs(Feature feature) {
+        FeatureRepository featureRepository = RepositoryFactory.getFeatureRepository();
+        Map<String, FeatureLocation> locationByVariant = new HashMap<>();
+        for (FeatureLocation location : featureRepository.getVariantLocations(feature)) {
+            locationByVariant.putIfAbsent(location.getVariant().getZdbID(), location);
+        }
+
+        List<VariantDTO> variantDTOs = new ArrayList<>();
+        if (feature.getVariants() != null) {
+            for (Variant variant : feature.getVariants()) {
+                VariantDTO dto = new VariantDTO();
+                dto.setZdbID(variant.getZdbID());
+                dto.setVariantNumber(variant.getVariantNumber());
+                dto.setVariantType(variant.getVariantType());
+                setVariantLocation(dto, locationByVariant.get(variant.getZdbID()));
+                dto.setFgmdChangeDTO(convertToFeatureGenomicMutationDetailDTO(variant.getFeatureGenomicMutationDetail()));
+                dto.setDnaChangeDTO(convertToMutationDetailDnaDTO(variant.getFeatureDnaMutationDetail()));
+                dto.setProteinChangeDTO(convertToMutationDetailProteinDTO(variant.getFeatureProteinMutationDetail()));
+                Set<MutationDetailTranscriptChangeDTO> transcriptDTOs = new HashSet<>();
+                for (FeatureTranscriptMutationDetail detail : variant.getFeatureTranscriptMutationDetailSet()) {
+                    transcriptDTOs.add(convertToMutationDetailTranscriptDTO(detail));
+                }
+                dto.setTranscriptChangeDTOSet(transcriptDTOs);
+                variantDTOs.add(dto);
+            }
+        }
+
+        VariantDTO primary = variantDTOs.stream()
+            .filter(dto -> dto.getVariantNumber() == Variant.PRIMARY_VARIANT_NUMBER)
+            .findFirst()
+            .orElse(null);
+        if (primary == null || !primary.hasLocation()) {
+            FeatureLocation featureLevelLocation = featureRepository.getLocationByFeature(feature);
+            if (featureLevelLocation != null && featureLevelLocation.getVariant() == null) {
+                if (primary == null) {
+                    primary = new VariantDTO();
+                    primary.setVariantNumber(Variant.PRIMARY_VARIANT_NUMBER);
+                    variantDTOs.add(0, primary);
+                }
+                setVariantLocation(primary, featureLevelLocation);
+            }
+        }
+        return variantDTOs;
+    }
+
+    private static void setVariantLocation(VariantDTO dto, FeatureLocation location) {
+        if (location == null) {
+            return;
+        }
+        dto.setChromosome(location.getChromosome());
+        dto.setAssembly(location.getAssembly());
+        dto.setStartLocation(location.getStartLocation());
+        dto.setEndLocation(location.getEndLocation());
+        if (location.getLocationEvidence() != null) {
+            dto.setEvidence(FeatureService.getFeatureGenomeLocationEvidenceCode(location.getLocationEvidence().getZdbID()));
+        }
     }
 
     private static MutationDetailTranscriptChangeDTO convertToMutationDetailTranscriptDTO(FeatureTranscriptMutationDetail detail) {

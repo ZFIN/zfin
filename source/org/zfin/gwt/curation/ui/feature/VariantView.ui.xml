@@ -1,0 +1,112 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui='urn:ui:com.google.gwt.uibinder'
+        xmlns:g='urn:import:com.google.gwt.user.client.ui'
+        xmlns:zfin='urn:import:org.zfin.gwt.root.ui'
+        xmlns:zfin-feature='urn:import:org.zfin.gwt.curation.ui.feature'
+        >
+
+    <ui:style>
+        .variant-block {
+            border-top: 1px solid darkgrey;
+            margin-top: 4px;
+            padding-top: 4px;
+        }
+
+        .grey-text {
+            color: darkgrey;
+            font-style: italic;
+            font-size: small;
+        }
+
+        .valign-top {
+            vertical-align: top;
+        }
+
+        .italics {
+            font-style: italic;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+    </ui:style>
+
+    <!-- One variant of a Complex feature (ZFIN-10623): type, location and mutation details,
+         laid out like the single-variant rows of FeatureAddView / FeatureEditView. -->
+    <g:FlowPanel styleName="{style.variant-block}">
+        <g:Grid width="100%">
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label ui:field="variantTypeLabel" styleName="{style.bold}"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <zfin:StringListBox ui:field="variantTypeBox"/>
+                        <g:Label text="&nbsp;&nbsp;"/>
+                        <g:Anchor ui:field="cancelLink" text="Cancel" visible="false"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label text="Assembly information"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:HorizontalPanel>
+                        <g:Label text="Chromosome"/>
+                        <zfin:StringTextBox ui:field="chromosome" visibleLength="5"/>
+                        <g:Label text="Assembly"/>
+                        <zfin:StringListBox ui:field="assembly"/>
+                        <g:Label text="Start Location" ui:field="startLocationLabel"/>
+                        <g:FlowPanel>
+                            <zfin:NumberTextBox ui:field="startLocation" visibleLength="13"/>
+                            <g:HTML ui:field="startLocHint" visible="false" styleName="{style.grey-text}"/>
+                        </g:FlowPanel>
+                        <g:HorizontalPanel ui:field="endLocationPanel">
+                            <g:Label text="End Location"/>
+                            <g:FlowPanel>
+                                <zfin:NumberTextBox ui:field="endLocation" visibleLength="13"/>
+                                <g:HTML ui:field="endLocHint" visible="false" styleName="{style.grey-text}"/>
+                            </g:FlowPanel>
+                        </g:HorizontalPanel>
+                        <g:Label text="EvidenceCode"/>
+                        <zfin:StringListBox ui:field="evidenceCode"/>
+                    </g:HorizontalPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label text="Variant info" horizontalAlignment="right" styleName="{style.italics}"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-feature:GenomicMutationDetailView ui:field="genomicMutationDetailView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label text="DNA / cDNA" horizontalAlignment="right" styleName="{style.italics}"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-feature:MutationDetailDNAView ui:field="mutationDetailDnaView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label text="Transcript" horizontalAlignment="right" styleName="{style.italics}"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-feature:MutationDetailTranscriptView ui:field="mutationDetailTranscriptView"/>
+                </g:customCell>
+            </g:row>
+            <g:row>
+                <g:customCell styleName="{style.valign-top}">
+                    <g:Label text="Protein" horizontalAlignment="right" styleName="{style.italics}"/>
+                </g:customCell>
+                <g:customCell>
+                    <zfin-feature:MutationDetailProteinView ui:field="mutationDetailProteinView"/>
+                </g:customCell>
+            </g:row>
+        </g:Grid>
+    </g:FlowPanel>
+</ui:UiBinder>

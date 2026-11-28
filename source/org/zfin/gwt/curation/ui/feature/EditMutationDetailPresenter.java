@@ -18,13 +18,13 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
 
     public EditMutationDetailPresenter(FeatureEditView editView) {
         super(editView);
-        view.mutationDetailDnaView.zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
+        view.getMutationDetailDnaView().zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent blurEvent) {
                 handleDirty();
             }
         });
-        view.mutationDetailProteinView.zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
+        view.getMutationDetailProteinView().zfinAccessionBox.getPresenter().addBlurHandler(new BlurHandler() {
             @Override
             public void onBlur(BlurEvent blurEvent) {
                 handleDirty();
@@ -36,7 +36,7 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
     public boolean isDirty() {
 
         BooleanCollector col = new BooleanCollector(true);
-        GenomicMutationDetailView genMutView=view.genomicMutationDetailView;
+        GenomicMutationDetailView genMutView=view.getGenomicMutationDetailView();
         FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO=dto.getFgmdChangeDTO();
         if (fgmdChangeDTO == null) {
             for (IsDirtyWidget widget : genMutView.getValueFields())
@@ -47,7 +47,7 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(genMutView.seqVariant.isDirty(fgmdChangeDTO.getFgmdSeqVar()));
         }
 
-        MutationDetailDNAView mutationDetailDnaView = view.mutationDetailDnaView;
+        MutationDetailDNAView mutationDetailDnaView = view.getMutationDetailDnaView();
         MutationDetailDnaChangeDTO dnaChangeDTO = dto.getDnaChangeDTO();
 
         if (dnaChangeDTO == null) {
@@ -67,7 +67,7 @@ public class EditMutationDetailPresenter extends MutationDetailPresenter {
             col.addBoolean(mutationDetailDnaView.intronNumber.isDirty(dnaChangeDTO.getIntronNumber()));
             col.addBoolean(mutationDetailDnaView.zfinAccessionBox.getAccessionNumber().isDirty(dnaChangeDTO.getSequenceReferenceAccessionNumber()));
         }
-        MutationDetailProteinView mutationDetailProteinView = view.mutationDetailProteinView;
+        MutationDetailProteinView mutationDetailProteinView = view.getMutationDetailProteinView();
         MutationDetailProteinChangeDTO proteinChangeDTO = dto.getProteinChangeDTO();
         if (proteinChangeDTO == null) {
             for (IsDirtyWidget widget : mutationDetailProteinView.getValueFields())

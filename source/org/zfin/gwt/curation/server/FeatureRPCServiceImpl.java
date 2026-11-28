@@ -165,8 +165,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
     }
 
     private void updateFeatureLocation(FeatureLocation fl, FeatureDTO dto) throws ValidationException {
+        updateFeatureLocation(fl, dto.getFeatureChromosome(), dto.getFeatureAssembly(), dto.getFeatureStartLoc(),
+            dto.getFeatureEndLoc(), dto.getEvidence(), dto.getPublicationZdbID());
+    }
+
+    private void updateFeatureLocation(FeatureLocation fl, String chromosome, String assembly, Integer start,
+                                       Integer end, String evidence, String publicationID) throws ValidationException {
         // check if no value was submitted. If so then delete it
-        if (isLocationRemoved(dto)) {
+        if (StringUtils.isEmpty(chromosome)) {
             // Remove ALL attribution rows for this FL — not just the one matching
             // dto.getPublicationZdbID() — because Location.references no longer
             // cascades deletes, and any surviving record_attribution row whose
@@ -187,21 +193,20 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         // If the assembly is changing, only allow changing to a current assembly (GRCz12tu or GRCz11)
         String previousAssembly = fl.getAssembly();
-        String newAssembly = dto.getFeatureAssembly();
+        String newAssembly = assembly;
         if (previousAssembly != null && newAssembly != null
                 && !previousAssembly.equals(newAssembly)
                 && currentAssemblyEnum(newAssembly) == null) {
             throw new ValidationException("Assembly can only be changed to "
                     + AssemblyEnum.GRCZ12TU.getName() + " or " + AssemblyEnum.GRCZ11.getName());
         }
-        validateLocationWithinChromosome(dto.getFeatureAssembly(), dto.getFeatureChromosome(),
-            dto.getFeatureStartLoc(), dto.getFeatureEndLoc());
-        fl.setChromosome(dto.getFeatureChromosome());
-        fl.setAssembly(dto.getFeatureAssembly());
-        fl.setStartLocation(dto.getFeatureStartLoc());
-        fl.setEndLocation(dto.getFeatureEndLoc());
+        validateLocationWithinChromosome(assembly, chromosome, start, end);
+        fl.setChromosome(chromosome);
+        fl.setAssembly(assembly);
+        fl.setStartLocation(start);
+        fl.setEndLocation(end);
         // convert code into TermID and then get GenericTerm
-        String evidenceCodeTerm = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(dto.getEvidence());
+        String evidenceCodeTerm = FeatureService.getFeatureGenomeLocationEvidenceCodeTerm(evidence);
         if (StringUtils.isEmpty(evidenceCodeTerm)) {
             // sfcl_evidence_code is NOT NULL, so a location that keeps its chromosome but
             // loses its evidence code cannot be saved either. Report it as a validation
@@ -210,7 +215,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
         fl.setLocationEvidence(ontologyRepository.getTermByZdbID(evidenceCodeTerm));
         HibernateUtil.currentSession().save(fl);
-        infrastructureRepository.insertPublicAttribution(fl.getZdbID(), dto.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+        infrastructureRepository.insertPublicAttribution(fl.getZdbID(), publicationID, RecordAttribution.SourceType.STANDARD);
     }
 
     /**
@@ -281,7 +286,12 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         // Assembly info date is no longer entered manually -- infer it from whether a location is
         // present at all, and log the transition to the updates table for auditability.
         Date previousAssemblyInfoDate = feature.getFtrAssemblyInfoDate();
-        if (isLocationRemoved(featureDTO)) {
+        boolean isComplex = featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION;
+        // A Complex feature's locations are on its variants (ZFIN-10623).
+        boolean noLocation = isComplex
+            ? featureDTO.getVariants().stream().noneMatch(VariantDTO::hasLocation)
+            : isLocationRemoved(featureDTO);
+        if (noLocation) {
             if (previousAssemblyInfoDate == null) {
                 Date now = new Date();
                 feature.setFtrAssemblyInfoDate(now);
@@ -294,6 +304,385 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             feature.setFtrAssemblyInfoDate(null);
         }
 
+        // get labs of origin for feature
+        Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
+        if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
+            if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
+                Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
+                featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
+            }
+        } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
+            featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
+        } else {
+            throw new ValidationException("Feature cannot be saved without lab of origin");
+        }
+        Set<FeatureTranscriptMutationDetail> addTranscriptAttribution;
+        if (isComplex) {
+            saveComplexVariants(feature, featureDTO);
+            addTranscriptAttribution = new HashSet<>();
+        } else {
+            if (feature.getVariants() != null && feature.getVariants().size() > 1) {
+                throw new ValidationException("This feature has " + feature.getVariants().size()
+                    + " variants and can only be saved as a Complex feature");
+            }
+            addTranscriptAttribution = saveSingleVariant(feature, featureDTO);
+        }
+
+        try {
+
+            featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
+
+        } catch (ConstraintViolationException e) {
+
+            String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
+            DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
+            e.printStackTrace();
+            throw duplicateEntryException;
+
+
+        }
+        if (!StringUtils.equals(oldFtrName, newFtrName)) {
+
+            FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
+            if (featureAlias != null) {
+                infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
+            }
+        }
+        HibernateUtil.flushAndCommitCurrentSession();
+
+        return getFeature(featureDTO.getZdbID());
+    }
+
+    /**
+     * Saves the variants of a Complex feature from the curation form (ZFIN-10623): each variant's
+     * type, its chromosome location and its genomic, DNA, transcript and protein mutation details.
+     * Variants the form no longer has are deleted, and the rest are numbered 1, 2, ... in form order.
+     * <p/>
+     * A variant left completely empty on the form is not saved: Complex features curated before
+     * variants existed show two empty variant blocks, and their other fields must stay editable
+     * without curating variants. Every variant that is saved needs a type.
+     * <p/>
+     * The flanking sequence is not computed here; it is per feature (one location) and Complex
+     * features get theirs per variant with ZFIN-10641.
+     */
+    void saveComplexVariants(Feature feature, FeatureDTO featureDTO) throws ValidationException {
+        Session session = HibernateUtil.currentSession();
+        String publicationID = featureDTO.getPublicationZdbID();
+        if (feature.getVariants() == null) {
+            feature.setVariants(new TreeSet<>());
+        }
+
+        List<VariantDTO> variantDTOs = new ArrayList<>();
+        for (VariantDTO dto : featureDTO.getVariants()) {
+            if (dto.getZdbID() == null && dto.isEmpty()) {
+                continue;
+            }
+            if (dto.getVariantType() == null) {
+                throw new ValidationException("Variant " + (variantDTOs.size() + 1) + " needs a variant type");
+            }
+            if (!COMPLEX_VARIANT_TYPES.contains(dto.getVariantType())) {
+                throw new ValidationException("A variant of a Complex feature cannot be of type " + dto.getVariantType().getDisplay());
+            }
+            variantDTOs.add(dto);
+        }
+
+        Map<String, Variant> existingById = new HashMap<>();
+        for (Variant variant : feature.getVariants()) {
+            existingById.put(variant.getZdbID(), variant);
+        }
+        // A variant the form shows without an ID is new -- except Variant 1 of a feature whose type
+        // was just changed to Complex: its single variant stays Variant 1 rather than being replaced.
+        Set<String> referencedIds = variantDTOs.stream().map(VariantDTO::getZdbID)
+            .filter(Objects::nonNull).collect(Collectors.toSet());
+        Variant primary = feature.getPrimaryVariant();
+        if (!variantDTOs.isEmpty() && variantDTOs.get(0).getZdbID() == null
+                && primary != null && !referencedIds.contains(primary.getZdbID())) {
+            variantDTOs.get(0).setZdbID(primary.getZdbID());
+            referencedIds.add(primary.getZdbID());
+        }
+
+        // Delete the variants no longer on the form before renumbering the others, so the
+        // (feature, variant number) key never holds two variants at once.
+        for (Variant variant : new ArrayList<>(feature.getVariants())) {
+            if (!referencedIds.contains(variant.getZdbID())) {
+                deleteVariant(feature, variant);
+            }
+        }
+
+        for (VariantDTO dto : variantDTOs) {
+            if (dto.getZdbID() != null && !existingById.containsKey(dto.getZdbID())) {
+                throw new ValidationException("Variant " + dto.getZdbID() + " does not belong to " + feature.getAbbreviation());
+            }
+        }
+        // Park the kept variants on numbers past any the form can use, so assigning their final
+        // numbers below never meets one still held by another variant.
+        int parkingNumber = RENUMBERING_OFFSET;
+        for (VariantDTO dto : variantDTOs) {
+            if (dto.getZdbID() != null) {
+                renumber(feature, existingById.get(dto.getZdbID()), parkingNumber++);
+            }
+        }
+        session.flush();
+
+        int variantNumber = Variant.PRIMARY_VARIANT_NUMBER;
+        for (VariantDTO dto : variantDTOs) {
+            Variant variant = dto.getZdbID() == null ? null : existingById.get(dto.getZdbID());
+            if (variant == null) {
+                variant = new Variant(feature, variantNumber, dto.getVariantType());
+                feature.getVariants().add(variant);
+                session.save(variant);
+            } else {
+                renumber(feature, variant, variantNumber);
+                variant.setVariantType(dto.getVariantType());
+            }
+            session.flush();
+
+            FeatureLocation location = saveVariantLocation(feature, variant, dto, publicationID);
+            saveVariantMutationDetails(feature, variant, location, dto, publicationID);
+            variantNumber++;
+        }
+        session.flush();
+    }
+
+    private static final int RENUMBERING_OFFSET = 10000;
+
+    /** Feature.variants is sorted by variant number: take the variant out while its number changes. */
+    private static void renumber(Feature feature, Variant variant, int variantNumber) {
+        feature.getVariants().remove(variant);
+        variant.setVariantNumber(variantNumber);
+        feature.getVariants().add(variant);
+    }
+
+    /** The single-variant types a variant of a Complex feature can have (ZFIN-10623 mockup). */
+    private static final Set<FeatureTypeEnum> COMPLEX_VARIANT_TYPES = EnumSet.of(FeatureTypeEnum.POINT_MUTATION,
+        FeatureTypeEnum.DELETION, FeatureTypeEnum.INSERTION, FeatureTypeEnum.INDEL, FeatureTypeEnum.MNV);
+
+    /**
+     * The location the form edits for a variant: its location on the current assembly (as
+     * DTOConversionService.convertToVariantDTOs() picks it). Variant 1 falls back to a
+     * feature-level location left from before variants existed, which then becomes Variant 1's.
+     */
+    private FeatureLocation getVariantLocation(Feature feature, Variant variant) {
+        if (variant.getZdbID() != null) {
+            for (FeatureLocation location : featureRepository.getVariantLocations(feature)) {
+                if (location.getVariant().getZdbID().equals(variant.getZdbID())) {
+                    return location;
+                }
+            }
+        }
+        if (variant.getVariantNumber() == Variant.PRIMARY_VARIANT_NUMBER) {
+            FeatureLocation featureLevel = featureRepository.getLocationByFeature(feature);
+            if (featureLevel != null && featureLevel.getVariant() == null) {
+                return featureLevel;
+            }
+        }
+        return null;
+    }
+
+    /** @return the variant's location after the save, or null if it has none */
+    private FeatureLocation saveVariantLocation(Feature feature, Variant variant, VariantDTO dto, String publicationID)
+        throws ValidationException {
+        FeatureLocation location = getVariantLocation(feature, variant);
+        Integer end = dto.getVariantType() == FeatureTypeEnum.POINT_MUTATION ? dto.getStartLocation() : dto.getEndLocation();
+        if (!dto.hasLocation()) {
+            if (location != null) {
+                // updateFeatureLocation() removes the location when no chromosome is given
+                updateFeatureLocation(location, null, null, null, null, null, publicationID);
+            }
+            return null;
+        }
+        if (location == null) {
+            location = new FeatureLocation();
+            location.setFeature(feature);
+        } else if (location.getVariant() != null && variant.getZdbID().equals(location.getVariant().getZdbID())
+                && StringUtils.equals(dto.getChromosome(), location.getChromosome())
+                && StringUtils.equals(dto.getAssembly(), location.getAssembly())
+                && Objects.equals(dto.getStartLocation(), location.getStartLocation())
+                && Objects.equals(end, location.getEndLocation())
+                && Objects.equals(dto.getEvidence(), location.getLocationEvidence() != null
+                    ? FeatureService.getFeatureGenomeLocationEvidenceCode(location.getLocationEvidence().getZdbID()) : null)) {
+            return location;
+        }
+        location.setVariant(variant);
+        updateFeatureLocation(location, dto.getChromosome(), dto.getAssembly(), dto.getStartLocation(), end,
+            dto.getEvidence(), publicationID);
+        return location;
+    }
+
+    private void saveVariantMutationDetails(Feature feature, Variant variant, FeatureLocation location, VariantDTO dto,
+                                            String publicationID) throws ValidationException {
+        Session session = HibernateUtil.currentSession();
+        String label = "Variant " + variant.getVariantNumber() + " ";
+
+        // genomic: sequence of reference / variant
+        FeatureGenomicMutationDetail fgmd = variant.getFeatureGenomicMutationDetail();
+        if (dto.getFgmdChangeDTO() != null) {
+            boolean isNew = fgmd == null;
+            if (isNew) {
+                fgmd = new FeatureGenomicMutationDetail();
+                variant.setFeatureGenomicMutationDetail(fgmd);
+            }
+            String oldSeqRef = fgmd.getFgmdSeqRef();
+            DTOConversionService.updateFeatureGenomicMutationDetailWithDTO(fgmd, dto.getFgmdChangeDTO());
+            validateReferenceSequence(fgmd, location);
+            if (!Objects.equals(oldSeqRef, fgmd.getFgmdSeqRef())) {
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), label + "Sequence of Reference",
+                    oldSeqRef, fgmd.getFgmdSeqRef(), publicationID);
+            }
+            if (isNew) {
+                session.save(fgmd);
+            }
+            // as for a single-variant INDEL: equal-length reference and variant make it an MNV
+            if (variant.getVariantType() == FeatureTypeEnum.INDEL
+                    && fgmd.getFgmdSeqRef() != null && fgmd.getFgmdSeqVar() != null
+                    && fgmd.getFgmdSeqRef().length() == fgmd.getFgmdSeqVar().length()
+                    && fgmd.getFgmdSeqRef().length() > 1) {
+                variant.setVariantType(FeatureTypeEnum.MNV);
+            }
+            session.flush();
+            if (isNew) {
+                infrastructureRepository.insertMutationDetailAttribution(fgmd.getZdbID(), publicationID);
+            }
+        } else if (fgmd != null) {
+            String detailID = fgmd.getZdbID();
+            variant.setFeatureGenomicMutationDetail(null);
+            session.flush();
+            infrastructureRepository.deleteActiveDataByZdbID(detailID);
+        }
+
+        // DNA / cDNA
+        FeatureDnaMutationDetail dnaDetail = variant.getFeatureDnaMutationDetail();
+        if (dto.getDnaChangeDTO() != null) {
+            boolean isNew = dnaDetail == null;
+            if (isNew) {
+                dnaDetail = new FeatureDnaMutationDetail();
+                variant.setFeatureDnaMutationDetail(dnaDetail);
+            }
+            FeatureDnaMutationDetail oldDetail = dnaDetail.clone();
+            Integer oldRemovedBasePair = dnaDetail.getNumberRemovedBasePair();
+            if (StringUtils.isEmpty(dto.getDnaChangeDTO().getSequenceReferenceAccessionNumber())) {
+                dnaDetail.setDnaSequenceReferenceAccessionNumber(null);
+                dnaDetail.setReferenceDatabase(null);
+            }
+            DTOConversionService.updateDnaMutationDetailWithDTO(dnaDetail, dto.getDnaChangeDTO());
+            validateDeletionLength(dnaDetail, location, variant.getVariantType());
+            if (!Objects.equals(oldRemovedBasePair, dnaDetail.getNumberRemovedBasePair())) {
+                infrastructureRepository.insertUpdatesTable(feature.getZdbID(), label + "Deletion size (bp)",
+                    oldRemovedBasePair == null ? null : oldRemovedBasePair.toString(),
+                    dnaDetail.getNumberRemovedBasePair() == null ? null : dnaDetail.getNumberRemovedBasePair().toString(),
+                    publicationID);
+            }
+            if (variant.getVariantType() == FeatureTypeEnum.INDEL
+                    && Objects.equals(dnaDetail.getNumberRemovedBasePair(), dnaDetail.getNumberAddedBasePair())
+                    && dnaDetail.getNumberRemovedBasePair() != null && dnaDetail.getNumberRemovedBasePair() > 1) {
+                variant.setVariantType(FeatureTypeEnum.MNV);
+            }
+            if (isNew) {
+                session.save(dnaDetail);
+            }
+            session.flush();
+            if (isNew || !dnaDetail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(dnaDetail.getZdbID(), publicationID);
+            }
+        } else if (dnaDetail != null) {
+            String detailID = dnaDetail.getZdbID();
+            variant.setFeatureDnaMutationDetail(null);
+            session.flush();
+            infrastructureRepository.deleteActiveDataByZdbID(detailID);
+        }
+
+        // protein
+        FeatureProteinMutationDetail proteinDetail = variant.getFeatureProteinMutationDetail();
+        if (dto.getProteinChangeDTO() != null) {
+            boolean isNew = proteinDetail == null;
+            if (isNew) {
+                proteinDetail = new FeatureProteinMutationDetail();
+                variant.setFeatureProteinMutationDetail(proteinDetail);
+            }
+            FeatureProteinMutationDetail oldDetail = proteinDetail.clone();
+            if (StringUtils.isEmpty(dto.getProteinChangeDTO().getSequenceReferenceAccessionNumber())) {
+                proteinDetail.setProteinSequenceReferenceAccessionNumber(null);
+                proteinDetail.setReferenceDatabase(null);
+            }
+            DTOConversionService.updateProteinMutationDetailWithDTO(proteinDetail, dto.getProteinChangeDTO());
+            if (isNew) {
+                session.save(proteinDetail);
+            }
+            session.flush();
+            if (isNew || !proteinDetail.equals(oldDetail)) {
+                infrastructureRepository.insertMutationDetailAttribution(proteinDetail.getZdbID(), publicationID);
+            }
+        } else if (proteinDetail != null) {
+            String detailID = proteinDetail.getZdbID();
+            variant.setFeatureProteinMutationDetail(null);
+            session.flush();
+            infrastructureRepository.deleteActiveDataByZdbID(detailID);
+        }
+
+        // transcript consequences: never updated in place, only added or removed (as for a single variant)
+        Set<String> keptTranscriptIds = dto.getTranscriptChangeDTOSet().stream()
+            .map(MutationDetailTranscriptChangeDTO::getZdbID)
+            .filter(StringUtils::isNotEmpty)
+            .collect(Collectors.toSet());
+        List<String> removedTranscriptIds = new ArrayList<>();
+        Iterator<FeatureTranscriptMutationDetail> iterator = variant.getFeatureTranscriptMutationDetailSet().iterator();
+        while (iterator.hasNext()) {
+            FeatureTranscriptMutationDetail detail = iterator.next();
+            if (!keptTranscriptIds.contains(detail.getZdbID())) {
+                removedTranscriptIds.add(detail.getZdbID());
+                iterator.remove();
+            }
+        }
+        List<FeatureTranscriptMutationDetail> addedTranscripts = new ArrayList<>();
+        for (MutationDetailTranscriptChangeDTO transcriptDTO : dto.getTranscriptChangeDTOSet()) {
+            if (StringUtils.isEmpty(transcriptDTO.getZdbID())) {
+                FeatureTranscriptMutationDetail detail = DTOConversionService.convertToTranscriptMutationDetail(null, transcriptDTO);
+                variant.addTranscriptMutationDetail(detail);
+                session.save(detail);
+                addedTranscripts.add(detail);
+            }
+        }
+        session.flush();
+        for (String detailID : removedTranscriptIds) {
+            infrastructureRepository.deleteActiveDataByZdbID(detailID);
+        }
+        for (FeatureTranscriptMutationDetail detail : addedTranscripts) {
+            infrastructureRepository.insertMutationDetailAttribution(detail.getZdbID(), publicationID);
+        }
+    }
+
+    /**
+     * Deletes a variant with its locations and mutation details. Hibernate deletes the rows; their
+     * zdb_active_data entries (and with them the attributions) are removed afterwards, the same way
+     * a single variant's mutation details are deleted.
+     */
+    private void deleteVariant(Feature feature, Variant variant) throws ValidationException {
+        Session session = HibernateUtil.currentSession();
+        for (FeatureLocation location : featureRepository.getVariantLocations(feature)) {
+            if (location.getVariant().getZdbID().equals(variant.getZdbID())) {
+                updateFeatureLocation(location, null, null, null, null, null, null);
+            }
+        }
+        List<String> activeDataIds = new ArrayList<>();
+        activeDataIds.add(variant.getZdbID());
+        variant.getFeatureGenomicMutationDetailSet().forEach(detail -> activeDataIds.add(detail.getZdbID()));
+        variant.getFeatureDnaMutationDetailSet().forEach(detail -> activeDataIds.add(detail.getZdbID()));
+        variant.getFeatureTranscriptMutationDetailSet().forEach(detail -> activeDataIds.add(detail.getZdbID()));
+        variant.getFeatureProteinMutationDetailSet().forEach(detail -> activeDataIds.add(detail.getZdbID()));
+        feature.getVariants().remove(variant);
+        session.flush();
+        for (String zdbID : activeDataIds) {
+            infrastructureRepository.deleteActiveDataByZdbID(zdbID);
+        }
+    }
+
+    /**
+     * Location, flanking sequence and mutation details of a feature with a single variant: every
+     * feature type except Complex (see saveComplexVariants()).
+     *
+     * @return the new transcript mutation details, which get their attribution once saved
+     */
+    private Set<FeatureTranscriptMutationDetail> saveSingleVariant(Feature feature, FeatureDTO featureDTO) throws ValidationException {
 //update FeatureLocation information
         FeatureLocation fgl = featureRepository.getLocationByFeature(feature);
         boolean locationUpdated = false;
@@ -381,18 +770,6 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
         }
 
 
-        // get labs of origin for feature
-        Organization existingLabOfOrigin = featureRepository.getLabByFeature(feature);
-        if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin != null) {
-            if (false == featureDTO.getLabOfOrigin().equals(existingLabOfOrigin.getZdbID())) {
-                Organization newLabOfOrigin = profileRepository.getOrganizationByZdbID(featureDTO.getLabOfOrigin());
-                featureRepository.setLabOfOriginForFeature(newLabOfOrigin, feature);
-            }
-        } else if (featureDTO.getLabOfOrigin() != null && existingLabOfOrigin == null) {
-            featureRepository.addLabOfOriginForFeature(feature, featureDTO.getLabOfOrigin());
-        } else {
-            throw new ValidationException("Feature cannot be saved without lab of origin");
-        }
         FeatureDnaMutationDetail detail = feature.getFeatureDnaMutationDetail();
         if (featureDTO.getDnaChangeDTO() != null) {
 
@@ -515,29 +892,7 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
 
         }
-        try {
-
-            featureRepository.update(feature, addTranscriptAttribution, featureDTO.getPublicationZdbID());
-
-        } catch (ConstraintViolationException e) {
-
-            String message = "FEATURE_TRACKING table violation: feature with name " + feature.getName() + " already exists in tracking table";
-            DuplicateEntryException duplicateEntryException = new DuplicateEntryException(message);
-            e.printStackTrace();
-            throw duplicateEntryException;
-
-
-        }
-        if (!StringUtils.equals(oldFtrName, newFtrName)) {
-
-            FeatureAlias featureAlias = mutantRepository.getSpecificDataAlias(feature, oldFtrName);
-            if (featureAlias != null) {
-                infrastructureRepository.insertPublicAttribution(featureAlias.getZdbID(), featureDTO.getPublicationZdbID(), RecordAttribution.SourceType.STANDARD);
-            }
-        }
-        HibernateUtil.flushAndCommitCurrentSession();
-
-        return getFeature(featureDTO.getZdbID());
+        return addTranscriptAttribution;
     }
 
     private boolean featureLocationNeedsUpdate(FeatureDTO featureDTO, FeatureLocation fgl) {
@@ -775,6 +1130,16 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
                 }
             }
 
+            if (feature.getType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+                // a Complex feature's locations and mutation details are on its variants, and it has
+                // at least two of them
+                long enteredVariants = featureDTO.getVariants().stream().filter(variant -> !variant.isEmpty()).count();
+                if (enteredVariants < 2) {
+                    throw new ValidationException("A Complex feature needs at least two variants");
+                }
+                saveComplexVariants(feature, featureDTO);
+            }
+
             if (StringUtils.isNotEmpty((featureDTO.getFeatureChromosome()))) {
                 validateLocationWithinChromosome(featureDTO.getFeatureAssembly(), featureDTO.getFeatureChromosome(),
                     featureDTO.getFeatureStartLoc(), featureDTO.getFeatureEndLoc());
@@ -908,7 +1273,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
             solrDoc.put(FieldName.DATE, new Date());
             solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
-            SolrService.addDocument(solrDoc);
+            // The feature is committed at this point: an unreachable or failing Solr must not
+            // report the save as failed (nor skip the Alliance submission below). The next full
+            // index build picks the feature up.
+            try {
+                SolrService.addDocument(solrDoc);
+            } catch (Exception e) {
+                logger.error("Feature " + feature.getZdbID() + " was saved but could not be added to the Solr index", e);
+            }
 
             AlleleService service = new AlleleService();
             service.submitAlleleToAlliance(feature);

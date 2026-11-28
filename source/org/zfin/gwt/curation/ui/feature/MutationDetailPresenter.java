@@ -21,15 +21,32 @@ public class MutationDetailPresenter {
 
     public static final String MISSENSE = "SO:0001583";
     public static final String STOP_GAIN = "SO:0001587";
-    protected AbstractFeatureView view;
+    protected MutationDetailWidgets view;
     protected Set<MutationDetailTranscriptChangeDTO> dtoSet = new HashSet<>(3);
     protected FeatureDTO dto;
 
-    public MutationDetailPresenter(AbstractFeatureView view) {
+    public MutationDetailPresenter(MutationDetailWidgets view) {
         this.view = view;
     }
 
     public void go() {
+        go(null);
+    }
+
+    /**
+     * Loads the controlled vocabularies into the DNA, transcript and protein lists.
+     *
+     * @param afterListsLoaded run once all five lists are filled -- values can only be selected
+     *                         after that (a variant block populated from a saved variant), or null
+     */
+    public void go(final Runnable afterListsLoaded) {
+        final int[] pendingLists = {5};
+        final Runnable listLoaded = () -> {
+            pendingLists[0]--;
+            if (pendingLists[0] == 0 && afterListsLoaded != null) {
+                afterListsLoaded.run();
+            }
+        };
         // retrieve DNA change list
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_CHANGE_LIST_START);
         FeatureRPCService.App.getInstance().getDnaChangeList(new ZfinAsyncCallback<List<MutationDetailControlledVocabularyTermDTO>>("Failed to read Curator info", null) {
@@ -37,13 +54,14 @@ public class MutationDetailPresenter {
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setNucleotideChangeList(termList, view);
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_CHANGE_LIST_STOP);
+                listLoaded.run();
             }
 
-            private void setNucleotideChangeList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
-                featureView.mutationDetailDnaView.nucleotideChangeList.clear();
-                featureView.mutationDetailDnaView.nucleotideChangeList.addItem("----");
+            private void setNucleotideChangeList(List<MutationDetailControlledVocabularyTermDTO> termList, MutationDetailWidgets featureView) {
+                featureView.getMutationDetailDnaView().nucleotideChangeList.clear();
+                featureView.getMutationDetailDnaView().nucleotideChangeList.addItem("----");
                 for (MutationDetailControlledVocabularyTermDTO dto : termList)
-                    featureView.mutationDetailDnaView.nucleotideChangeList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
+                    featureView.getMutationDetailDnaView().nucleotideChangeList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
             }
         });
         // retrieve DNA localization
@@ -53,13 +71,14 @@ public class MutationDetailPresenter {
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setGeneLocalizationList(termList, view);
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_DNA_LOCALIZATION_CHANGE_LIST_STOP);
+                listLoaded.run();
             }
 
-            private void setGeneLocalizationList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
-                featureView.mutationDetailDnaView.localizationTerm.clear();
-                featureView.mutationDetailDnaView.localizationTerm.addItem("----");
+            private void setGeneLocalizationList(List<MutationDetailControlledVocabularyTermDTO> termList, MutationDetailWidgets featureView) {
+                featureView.getMutationDetailDnaView().localizationTerm.clear();
+                featureView.getMutationDetailDnaView().localizationTerm.addItem("----");
                 for (MutationDetailControlledVocabularyTermDTO dto : termList)
-                    featureView.mutationDetailDnaView.localizationTerm.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
+                    featureView.getMutationDetailDnaView().localizationTerm.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
             }
         });
         // retrieve Protein consequence list
@@ -69,13 +88,14 @@ public class MutationDetailPresenter {
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinConsequenceList(termList, view);
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_PROTEIN_CONSEQUENCE_LIST_STOP);
+                listLoaded.run();
             }
 
-            private void setProteinConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
-                featureView.mutationDetailProteinView.proteinTermList.clear();
-                featureView.mutationDetailProteinView.proteinTermList.addItem("----");
+            private void setProteinConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, MutationDetailWidgets featureView) {
+                featureView.getMutationDetailProteinView().proteinTermList.clear();
+                featureView.getMutationDetailProteinView().proteinTermList.addItem("----");
                 for (MutationDetailControlledVocabularyTermDTO dto : termList)
-                    featureView.mutationDetailProteinView.proteinTermList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
+                    featureView.getMutationDetailProteinView().proteinTermList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
             }
         });
         // retrieve amino acid list
@@ -85,13 +105,14 @@ public class MutationDetailPresenter {
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setProteinLists(termList, view);
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_AMINO_ACID_LIST_STOP);
+                listLoaded.run();
             }
 
-            private void setProteinLists(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
-                featureView.mutationDetailProteinView.proteinWTTermList.clear();
-                featureView.mutationDetailProteinView.proteinWTTermList.addItem("----");
-                featureView.mutationDetailProteinView.proteinMutatedTerm.clear();
-                featureView.mutationDetailProteinView.proteinMutatedTerm.addItem("----");
+            private void setProteinLists(List<MutationDetailControlledVocabularyTermDTO> termList, MutationDetailWidgets featureView) {
+                featureView.getMutationDetailProteinView().proteinWTTermList.clear();
+                featureView.getMutationDetailProteinView().proteinWTTermList.addItem("----");
+                featureView.getMutationDetailProteinView().proteinMutatedTerm.clear();
+                featureView.getMutationDetailProteinView().proteinMutatedTerm.addItem("----");
                 int index = 0;
                 for (MutationDetailControlledVocabularyTermDTO dto : termList) {
                     // do not include stop item in Wildtype list
@@ -101,8 +122,8 @@ public class MutationDetailPresenter {
 
 
 
-                    featureView.mutationDetailProteinView.proteinMutatedTerm.addItem(displayName, dto.getTerm().getOboID());
-                    featureView.mutationDetailProteinView.proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
+                    featureView.getMutationDetailProteinView().proteinMutatedTerm.addItem(displayName, dto.getTerm().getOboID());
+                    featureView.getMutationDetailProteinView().proteinWTTermList.addItem(displayName, dto.getTerm().getOboID());
                     index++;
                 }
             }
@@ -114,13 +135,14 @@ public class MutationDetailPresenter {
             public void onSuccess(List<MutationDetailControlledVocabularyTermDTO> termList) {
                 setTranscriptConsequenceList(termList, view);
                 AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.GET_TRANSCRIPT_CONSEQUENCE_LIST_STOP);
+                listLoaded.run();
             }
 
-            private void setTranscriptConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, AbstractFeatureView featureView) {
-                featureView.mutationDetailTranscriptView.consequenceList.clear();
-                featureView.mutationDetailTranscriptView.consequenceList.addItem("----");
+            private void setTranscriptConsequenceList(List<MutationDetailControlledVocabularyTermDTO> termList, MutationDetailWidgets featureView) {
+                featureView.getMutationDetailTranscriptView().consequenceList.clear();
+                featureView.getMutationDetailTranscriptView().consequenceList.addItem("----");
                 for (MutationDetailControlledVocabularyTermDTO dto : termList) {
-                    featureView.mutationDetailTranscriptView.consequenceList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
+                    featureView.getMutationDetailTranscriptView().consequenceList.addItem(dto.getDisplayName(), dto.getTerm().getOboID());
                 }
             }
         });
@@ -130,12 +152,12 @@ public class MutationDetailPresenter {
         int elementIndex = 0;
 
         if (dtoSet.isEmpty()) {
-            view.mutationDetailTranscriptView.emptyDataTable();
+            view.getMutationDetailTranscriptView().emptyDataTable();
             return;
         }
         for (MutationDetailTranscriptChangeDTO dto : dtoSet) {
             DeleteTranscriptConsequence deleteAnchor = new DeleteTranscriptConsequence(dto, view);
-            view.mutationDetailTranscriptView.addConsequenceRow(dto, deleteAnchor, elementIndex);
+            view.getMutationDetailTranscriptView().addConsequenceRow(dto, deleteAnchor, elementIndex);
             elementIndex++;
         }
     }
@@ -240,9 +262,7 @@ public class MutationDetailPresenter {
 
     private class DeleteTranscriptConsequence extends Anchor {
 
-        AbstractFeatureView view;
-
-        public DeleteTranscriptConsequence(final MutationDetailTranscriptChangeDTO dto, final AbstractFeatureView view) {
+        public DeleteTranscriptConsequence(final MutationDetailTranscriptChangeDTO dto, final MutationDetailWidgets view) {
             super("(X)");
 
             addClickHandler(new ClickHandler() {
@@ -250,7 +270,7 @@ public class MutationDetailPresenter {
                 public void onClick(ClickEvent event) {
                     dtoSet.remove(dto);
                     populateTranscriptDataTable();
-                    view.mutationDetailTranscriptView.resetGUI();
+                    view.getMutationDetailTranscriptView().resetGUI();
                     handleDirty();
                 }
             });

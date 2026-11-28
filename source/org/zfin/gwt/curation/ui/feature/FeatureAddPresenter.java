@@ -8,6 +8,7 @@ import org.zfin.gwt.curation.ui.FeatureValidationService;
 import org.zfin.gwt.root.dto.CuratorNoteDTO;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeaturePrefixDTO;
+import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.gwt.root.dto.NoteDTO;
 import org.zfin.gwt.root.event.AjaxCallEventType;
 import org.zfin.gwt.root.ui.FeatureEditCallBack;
@@ -155,8 +156,14 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
     }
 
     public void handleDirty() {
-        view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(createDTOFromGUI()));
-        view.saveButton.setEnabled(FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
+        FeatureDTO featureDTO = createDTOFromGUI();
+        view.featureDisplayName.setText(FeatureValidationService.generateFeatureDisplayName(featureDTO));
+        boolean saveable = FeatureValidationService.isFeatureSaveable(featureDTO);
+        // ZFIN-10623: a Complex feature cannot be saved until its variants are complete
+        String variantError = featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION
+                ? FeatureValidationService.validateComplexVariants(featureDTO) : null;
+        view.setVariantsMessage(variantError);
+        view.saveButton.setEnabled(saveable && variantError == null);
     }
 
     public void createFeature() {
@@ -171,6 +178,13 @@ public class FeatureAddPresenter extends AbstractFeaturePresenter implements Han
         if (view.mutationDetailProteinView.hasAASelected() && view.mutationDetailProteinView.hasPlusMinusUsed()) {
             view.setError("Cannot select Amino Acids and defines plus / minus fields");
             return;
+        }
+        if (featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            String variantError = view.validateVariantMutationDetails();
+            if (variantError != null) {
+                setError(variantError);
+                return;
+            }
         }
         view.working();
         AppUtils.fireAjaxCall(FeatureModule.getModuleInfo(), AjaxCallEventType.CREATE_FEATURE_START);

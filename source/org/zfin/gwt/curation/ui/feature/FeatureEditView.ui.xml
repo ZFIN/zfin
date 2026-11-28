@@ -116,6 +116,20 @@
                 </g:customCell>
             </g:row>
             <g:row>
+                <!-- ZFIN-10623: the variants of a Complex feature, shown instead of the location and
+                     mutation detail rows below -->
+                <g:customCell styleName="{style.valign-top} {style.grey-background}">
+                    <g:Label ui:field="complexVariantsLabel" text="Variants" visible="false"/>
+                </g:customCell>
+                <g:customCell>
+                    <g:FlowPanel ui:field="complexVariantsPanel" visible="false">
+                        <g:VerticalPanel ui:field="variantBlocksPanel" width="100%"/>
+                        <g:Button ui:field="addVariantButton" text="Add Variant"/>
+                        <g:Label ui:field="variantsMessage" styleName="clickable-error"/>
+                    </g:FlowPanel>
+                </g:customCell>
+            </g:row>
+            <g:row>
 
                 <g:customCell styleName="{style.grey-background}">
                     <g:Label ui:field="chromosomeLabel" text="Assembly information"/>

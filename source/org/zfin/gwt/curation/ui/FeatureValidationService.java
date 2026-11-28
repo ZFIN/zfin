@@ -4,9 +4,9 @@ import com.google.gwt.user.client.Window;
 import org.zfin.gwt.root.dto.FeatureDTO;
 import org.zfin.gwt.root.dto.FeatureGenomeMutationDetailChangeDTO;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.dto.VariantDTO;
 import org.zfin.gwt.root.util.StringUtils;
 
-import java.util.Objects;
 
 /**
  */
@@ -29,6 +29,34 @@ public class FeatureValidationService {
         if (!isFeatureSaveable(featureDTO))
             return "You must specify a lab prefix, feature type, and feature line number, assembly, start and end positions.";
 
+        String locationError = validateLocationAndSequences(featureDTO);
+        if (locationError != null) {
+            return locationError;
+        }
+        if (featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            String variantError = validateComplexVariants(featureDTO);
+            if (variantError != null) {
+                return variantError;
+            }
+        }
+
+        if (featureDTO.getPublicNote()!=null) {
+            if (featureDTO.getPublicNote().getNoteTag()==null) {
+
+                {
+                    return "please enter note type";
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Location and genomic sequence checks for one variant: the feature's own location and
+     * sequences, or one variant of a Complex feature (see validateComplexVariants()).
+     */
+    private static String validateLocationAndSequences(FeatureDTO featureDTO) {
         if (StringUtils.isNotEmpty(featureDTO.getFeatureChromosome())) {
 
             if (featureDTO.getFeatureStartLoc() != null && featureDTO.getFeatureEndLoc() != null) {
@@ -81,25 +109,53 @@ public class FeatureValidationService {
         if (missingMutationDetailSequence != null) {
             return missingMutationDetailSequence;
         }
-
-        if (featureDTO.getPublicNote()!=null) {
-            if (featureDTO.getPublicNote().getNoteTag()==null) {
-
-                {
-                    return "please enter note type";
-                }
-            }
-        }
-
-        FeatureTypeEnum featureTypeEnum = featureDTO.getFeatureType();
-        if (Objects.requireNonNull(featureTypeEnum) == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
-            if (featureDTO.getPublicNoteList() == null) {
-                boolean yes = Window.confirm("Do you want to briefly summarize authors statement about " + featureTypeEnum.getDisplay() + "?");
-                return (yes ? "Briefly summarize authors' statement about " + featureTypeEnum.getDisplay() + " in a public note." : null);
-            }
-        }
-
         return null;
+    }
+
+    /**
+     * The variants of a Complex feature (ZFIN-10623). A new Complex feature needs at least two
+     * variants. Every variant that is saved needs a type and passes the same location and sequence
+     * checks as a single-variant feature of that type. When editing, Variants 1 and 2 may be left
+     * completely empty -- Complex features curated before variants existed have none -- but a
+     * variant added with "Add Variant" has to be filled in or cancelled.
+     *
+     * @return an error message, or null when the variants can be saved
+     */
+    public static String validateComplexVariants(FeatureDTO featureDTO) {
+        boolean isNewFeature = StringUtils.isEmpty(featureDTO.getZdbID());
+        int enteredVariants = 0;
+        for (int index = 0; index < featureDTO.getVariants().size(); index++) {
+            VariantDTO variant = featureDTO.getVariants().get(index);
+            int variantNumber = index + 1;
+            if (!isNewFeature && variantNumber <= 2 && variant.getZdbID() == null && variant.isEmpty()) {
+                continue;
+            }
+            if (variant.getVariantType() == null) {
+                return "Select a type for Variant " + variantNumber + (variantNumber > 2 ? ", or cancel it" : "");
+            }
+            enteredVariants++;
+            String error = validateLocationAndSequences(toFeatureDTO(variant));
+            if (error != null) {
+                return "Variant " + variantNumber + ": " + error;
+            }
+        }
+        if (isNewFeature && enteredVariants < 2) {
+            return "A Complex feature needs at least two variants";
+        }
+        return null;
+    }
+
+    /** A variant seen as a single-variant feature of the variant's type, for the shared checks. */
+    private static FeatureDTO toFeatureDTO(VariantDTO variant) {
+        FeatureDTO dto = new FeatureDTO();
+        dto.setFeatureType(variant.getVariantType());
+        dto.setFeatureChromosome(variant.getChromosome());
+        dto.setFeatureAssembly(variant.getAssembly());
+        dto.setFeatureStartLoc(variant.getStartLocation());
+        dto.setFeatureEndLoc(variant.getEndLocation());
+        dto.setEvidence(variant.getEvidence());
+        dto.setFgmdChangeDTO(variant.getFgmdChangeDTO());
+        return dto;
     }
 
     /**

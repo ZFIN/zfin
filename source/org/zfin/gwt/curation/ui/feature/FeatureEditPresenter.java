@@ -155,12 +155,20 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         col.addBoolean(view.labOfOriginBox.isDirty(dto.getLabOfOrigin()));
         col.addBoolean(view.featureNameBox.isDirty(dto.getOptionalName()));
         col.addBoolean(mutationDetailPresenter.isDirty());
+        if (view.isComplexSelected()) {
+            col.addBoolean(view.areVariantsChanged());
+        }
         return col.arrivedValue();
     }
 
 
     public void onDirtyValueNotification(boolean isDirty) {
-        view.saveButton.setEnabled(isDirty && FeatureValidationService.isFeatureSaveable(createDTOFromGUI()));
+        FeatureDTO featureDTO = createDTOFromGUI();
+        // ZFIN-10623: a Complex feature cannot be saved until its variants are complete
+        String variantError = featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION
+                ? FeatureValidationService.validateComplexVariants(featureDTO) : null;
+        view.setVariantsMessage(variantError);
+        view.saveButton.setEnabled(isDirty && variantError == null && FeatureValidationService.isFeatureSaveable(featureDTO));
         view.revertButton.setEnabled(isDirty);
     }
 
@@ -225,6 +233,12 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         view.mutationDetailDnaView.populateFields(dto.getDnaChangeDTO());
         mutationDetailPresenter.setDtoSet(dto.getTranscriptChangeDTOSet());
         view.genomicMutationDetailView.populateFields(dto.getFgmdChangeDTO(),dto.getFeatureType(),dto.getKnownInsertionSite());
+        // ZFIN-10623: a Complex feature shows all its variants
+        if (dto.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            view.populateVariants(dto.getVariants());
+        } else {
+            view.clearVariants();
+        }
 
         // Recalculate dirty state after all fields are populated
         handleDirty();
@@ -264,6 +278,13 @@ public class FeatureEditPresenter extends AbstractFeaturePresenter {
         if (errorMessage != null) {
             setError(errorMessage);
             return;
+        }
+        if (featureDTO.getFeatureType() == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            errorMessage = view.validateVariantMutationDetails();
+            if (errorMessage != null) {
+                setError(errorMessage);
+                return;
+            }
         }
 
         if (!confirmLocationRemoval(featureDTO)) {

@@ -102,6 +102,9 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
     protected MutationDetailProteinChangeDTO proteinChangeDTO;
     protected FeatureGenomeMutationDetailChangeDTO fgmdChangeDTO;
     protected Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet;
+    // ZFIN-10623: the variants of a Complex feature, in order (Variant 1, 2, ...). Empty for any
+    // other feature type, whose single variant is carried by the fields above.
+    protected List<VariantDTO> variants = new ArrayList<>();
 
     public String getFeatureSequence() {
         return featureSequence;
@@ -353,6 +356,14 @@ public class FeatureDTO extends RelatedEntityDTO implements HasExternalNotes, Fi
 
     public void setTranscriptChangeDTOSet(Set<MutationDetailTranscriptChangeDTO> transcriptChangeDTOSet) {
         this.transcriptChangeDTOSet = transcriptChangeDTOSet;
+    }
+
+    public List<VariantDTO> getVariants() {
+        return variants;
+    }
+
+    public void setVariants(List<VariantDTO> variants) {
+        this.variants = variants == null ? new ArrayList<>() : variants;
     }
 
     public void addTranscriptChange(MutationDetailTranscriptChangeDTO dto) {
