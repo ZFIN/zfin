@@ -192,6 +192,21 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
 
     public void fetchReferenceSequenceIfReady() {
         String featureType = view.featureTypeBox.getSelected();
+        Integer startLoc = view.featureStartLoc.getBoxValue();
+        Integer endLoc = FeatureTypeEnum.POINT_MUTATION.getName().equals(featureType) ? startLoc : view.featureEndLoc.getBoxValue();
+        fetchReferenceSequence(featureType, view.featureChromosome.getText(),
+                view.featureAssembly.getSelectedItemText(), startLoc, endLoc, view.genomicMutationDetailView);
+    }
+
+    /**
+     * Fill in the Sequence of Reference for a location: the feature's own, or one variant's of a
+     * Complex feature (VariantView).
+     *
+     * @param featureType the type of the (single) variant, as FeatureTypeEnum name
+     * @param target      the view whose Sequence of Reference is set
+     */
+    public void fetchReferenceSequence(String featureType, String chromosome, String assembly,
+                                       Integer startLoc, Integer endLoc, final GenomicMutationDetailView target) {
         if (featureType == null) return;
 
         boolean needsRefSeq = featureType.equals(FeatureTypeEnum.DELETION.getName())
@@ -200,39 +215,29 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!needsRefSeq) return;
 
-        String chromosome = view.featureChromosome.getText();
-        String assembly = view.featureAssembly.getSelectedItemText();
-        Integer startLoc = view.featureStartLoc.getBoxValue();
-        Integer endLoc;
-        if (featureType.equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
-            endLoc = startLoc;
-        } else {
-            endLoc = view.featureEndLoc.getBoxValue();
-        }
-
         // Location incomplete: clear any previously auto-calculated value rather than keeping it stale.
         boolean locationComplete = chromosome != null && !chromosome.trim().isEmpty()
                 && assembly != null && !assembly.trim().isEmpty()
                 && startLoc != null && endLoc != null
                 && (assembly.equals("GRCz11") || assembly.equals("GRCz12tu"));
         if (!locationComplete) {
-            view.genomicMutationDetailView.setReferenceSequence("");
+            target.setReferenceSequence("");
             return;
         }
 
-        view.genomicMutationDetailView.setReferenceSequenceLoading();
+        target.setReferenceSequenceLoading();
 
         FeatureRPCService.App.getInstance().getReferenceSequence(assembly, chromosome, startLoc, endLoc,
                 new FeatureEditCallBack<String>("Failed to fetch reference sequence", this) {
                     @Override
                     public void onSuccess(String result) {
                         lastLocationError = null;
-                        view.genomicMutationDetailView.setReferenceSequence(result);
+                        target.setReferenceSequence(result);
                     }
 
                     @Override
                     public void onFailure(Throwable throwable) {
-                        view.genomicMutationDetailView.setReferenceSequence("");
+                        target.setReferenceSequence("");
                         if (throwable instanceof ValidationException) {
                             reportLocationError(throwable.getMessage());
                             return;
@@ -264,7 +269,15 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
     }
 
     public void autoCalcDeletionLength() {
-        String featureType = view.featureTypeBox.getSelected();
+        autoCalcDeletionLength(view.featureTypeBox.getSelected(), view.featureStartLoc.getBoxValue(),
+                view.featureEndLoc.getBoxValue(), view.mutationDetailDnaView);
+    }
+
+    /**
+     * Fill in the deletion size from a location: the feature's own, or one variant's of a Complex
+     * feature (VariantView).
+     */
+    public static void autoCalcDeletionLength(String featureType, Integer start, Integer end, MutationDetailDNAView dnaView) {
         if (featureType == null) return;
 
         boolean hasDeletionLength = featureType.equals(FeatureTypeEnum.DELETION.getName())
@@ -272,8 +285,6 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
                 || featureType.equals(FeatureTypeEnum.MNV.getName());
         if (!hasDeletionLength) return;
 
-        Integer start = view.featureStartLoc.getBoxValue();
-        Integer end = view.featureEndLoc.getBoxValue();
         // Location incomplete or invalid: nothing to compute against. The field is directly
         // editable now, so leave whatever the curator has already typed in alone.
         if (start == null || end == null || end < start) return;
@@ -282,8 +293,8 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         // entered (or overridden) a deletion size, further location edits must not silently stomp
         // it. A save-time mismatch between this value and the start/end location is caught by
         // FeatureRPCServiceImpl.validateDeletionLength().
-        if (view.mutationDetailDnaView.getDeletionLength() == null) {
-            view.mutationDetailDnaView.setDeletionLength(end - start + 1);
+        if (dnaView.getDeletionLength() == null) {
+            dnaView.setDeletionLength(end - start + 1);
         }
     }
 
@@ -315,6 +326,11 @@ public abstract class AbstractFeaturePresenter implements HandlesError {
         featureDTO.setAbbreviation(FeatureValidationService.getAbbreviationFromName(featureDTO));
         // Assembly info date is no longer entered manually -- the server derives it from whether
         // a location is present at all (FeatureRPCServiceImpl.editFeatureDTO / DTOConversionService).
+        if (featureTypeEnum == FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            // a Complex feature's locations and mutation details are on its variants (ZFIN-10623)
+            featureDTO.setVariants(view.getVariantDTOs());
+            return featureDTO;
+        }
         // genome Location
         featureDTO.setEvidence(view.featureEvidenceCode.getSelectedItemText());
         featureDTO.setFeatureChromosome(view.featureChromosome.getText());

@@ -8,9 +8,13 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.*;
 import org.zfin.gwt.root.dto.FeatureTypeEnum;
+import org.zfin.gwt.root.dto.VariantDTO;
 import org.zfin.gwt.root.ui.*;
 
-public abstract class AbstractFeatureView extends Composite implements Revertible {
+import java.util.ArrayList;
+import java.util.List;
+
+public abstract class AbstractFeatureView extends Composite implements Revertible, MutationDetailWidgets {
 
     AbstractFeaturePresenter presenter;
 
@@ -88,8 +92,45 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     HTML startLocHint;
     @UiField
     HTML endLocHint;
+    // ZFIN-10623: the variants of a Complex feature, one VariantView each
+    @UiField
+    Label complexVariantsLabel;
+    @UiField
+    FlowPanel complexVariantsPanel;
+    @UiField
+    VerticalPanel variantBlocksPanel;
+    @UiField
+    Button addVariantButton;
+    @UiField
+    Label variantsMessage;
+
+    private final List<VariantView> variantViews = new ArrayList<>();
+    // variants shown when the feature was loaded, to tell whether one was added or cancelled since
+    private int loadedVariantCount;
+    // the type selected before the latest change, so a feature turned Complex keeps its variant
+    private FeatureTypeEnum lastFeatureType;
 
     public AbstractFeatureView() {
+    }
+
+    @Override
+    public GenomicMutationDetailView getGenomicMutationDetailView() {
+        return genomicMutationDetailView;
+    }
+
+    @Override
+    public MutationDetailDNAView getMutationDetailDnaView() {
+        return mutationDetailDnaView;
+    }
+
+    @Override
+    public MutationDetailTranscriptView getMutationDetailTranscriptView() {
+        return mutationDetailTranscriptView;
+    }
+
+    @Override
+    public MutationDetailProteinView getMutationDetailProteinView() {
+        return mutationDetailProteinView;
     }
 
     @UiHandler("showHideToggle")
@@ -268,6 +309,14 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         errorLabel.clearAllErrors();
         message.setText("");
         String featureType = featureTypeBox.getSelected();
+        FeatureTypeEnum selectedType = FeatureTypeEnum.getTypeForName(featureType);
+        // only when the curator changes the type: loading a feature into the edit form passes no event
+        if (event != null && selectedType == FeatureTypeEnum.COMPLEX_SUBSTITUTION && variantViews.isEmpty()
+                && lastFeatureType != null && MutationDetailType.hasFeatureType(lastFeatureType.name(), false)) {
+            // the variant entered so far becomes Variant 1 of the Complex feature
+            addVariantView().populate(getSingleVariantDTO(lastFeatureType));
+        }
+        lastFeatureType = selectedType;
 
         if (hasMutationDetails()) {
             showMutationDetail();
@@ -355,9 +404,12 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             case INVERSION:
             case TRANSLOC:
             case DEFICIENCY:
-            case COMPLEX_SUBSTITUTION:
                 // enable feature names
                 featureNameBox.setEnabled(true);
+                break;
+            case COMPLEX_SUBSTITUTION:
+                // ZFIN-10623: the feature name box is blocked out; the name is lab designation +
+                // line number. Location and mutation details are entered per variant.
                 break;
             case UNSPECIFIED:
                 dominantCheckBox.setEnabled(false);
@@ -385,16 +437,35 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
         chromosomeLabel.setVisible(showChromosomeRow);
         chromosomePanel.setVisible(showChromosomeRow);
 
-        boolean isPointMutation = featureTypeSelected == FeatureTypeEnum.POINT_MUTATION;
+        configureLocationFields(featureTypeSelected, startLocationLabel, endLocationPanel, startLocHint, endLocHint,
+                featureStartLoc, featureEndLoc);
+
+        boolean isComplex = featureTypeSelected == FeatureTypeEnum.COMPLEX_SUBSTITUTION;
+        showComplexVariants(isComplex);
+        if (isComplex) {
+            noMutationDetailMessage.setVisible(false);
+        }
+
+        presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
+        presenter.autoCalcDeletionLength();
+    }
+
+    /**
+     * Location field labels and hints for a variant type: shared by the feature's own location row
+     * and the location row of each variant of a Complex feature (VariantView).
+     */
+    static void configureLocationFields(FeatureTypeEnum type, Label startLocationLabel, HorizontalPanel endLocationPanel,
+                                        HTML startLocHint, HTML endLocHint, NumberTextBox startLoc, NumberTextBox endLoc) {
+        boolean isPointMutation = type == FeatureTypeEnum.POINT_MUTATION;
         endLocationPanel.setVisible(!isPointMutation);
         startLocationLabel.setText(isPointMutation ? "Location" : "Start Location");
         if (isPointMutation) {
-            featureEndLoc.setNumber(featureStartLoc.getBoxValue());
+            endLoc.setNumber(startLoc.getBoxValue());
         }
 
-        boolean isDeletionOrIndel = featureTypeSelected == FeatureTypeEnum.DELETION
-                || featureTypeSelected == FeatureTypeEnum.INDEL;
-        boolean isInsertion = featureTypeSelected == FeatureTypeEnum.INSERTION;
+        boolean isDeletionOrIndel = type == FeatureTypeEnum.DELETION
+                || type == FeatureTypeEnum.INDEL;
+        boolean isInsertion = type == FeatureTypeEnum.INSERTION;
         boolean showLocHints = isDeletionOrIndel || isInsertion;
         startLocHint.setVisible(showLocHints);
         endLocHint.setVisible(showLocHints);
@@ -405,12 +476,137 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
             startLocHint.setHTML("Position of<br/>5' flanking nucleotide");
             endLocHint.setHTML("Position of<br/>3' flanking nucleotide");
         }
+    }
 
-        presenter.updateMutagenOnFeatureTypeChange(featureTypeSelected);
-        presenter.autoCalcDeletionLength();
+    // ─── variants of a Complex feature (ZFIN-10623) ───────────────────────────
+
+    boolean isComplexSelected() {
+        return FeatureTypeEnum.getTypeForName(featureTypeBox.getSelected()) == FeatureTypeEnum.COMPLEX_SUBSTITUTION;
+    }
+
+    /** A Complex feature has at least two variants, so it always shows two variant blocks. */
+    private void showComplexVariants(boolean show) {
+        complexVariantsLabel.setVisible(show);
+        complexVariantsPanel.setVisible(show);
+        if (show) {
+            while (variantViews.size() < 2) {
+                addVariantView();
+            }
+        }
+    }
+
+    @UiHandler("addVariantButton")
+    void onClickAddVariant(@SuppressWarnings("unused") ClickEvent event) {
+        addVariantView();
+        handleChanges();
+    }
+
+    VariantView addVariantView() {
+        VariantView variantView = new VariantView(this);
+        variantViews.add(variantView);
+        variantBlocksPanel.add(variantView);
+        renumberVariantViews();
+        return variantView;
+    }
+
+    void removeVariantView(VariantView variantView) {
+        variantViews.remove(variantView);
+        variantBlocksPanel.remove(variantView);
+        renumberVariantViews();
+        handleChanges();
+    }
+
+    private void renumberVariantViews() {
+        for (int i = 0; i < variantViews.size(); i++) {
+            variantViews.get(i).setVariantNumber(i + 1, i >= 2);
+        }
+    }
+
+    void onVariantChanged() {
+        handleChanges();
+    }
+
+    List<VariantDTO> getVariantDTOs() {
+        List<VariantDTO> dtos = new ArrayList<>();
+        for (VariantView variantView : variantViews) {
+            dtos.add(variantView.getDto());
+        }
+        return dtos;
+    }
+
+    /** Show the saved variants of a Complex feature (at least two blocks). */
+    void populateVariants(List<VariantDTO> variants) {
+        clearVariants();
+        if (variants != null) {
+            for (VariantDTO variant : variants) {
+                addVariantView().populate(variant);
+            }
+        }
+        loadedVariantCount = variantViews.size();
+        showComplexVariants(isComplexSelected());
+        if (variantViews.size() > loadedVariantCount) {
+            // the padding blocks count as loaded: they are not an addition
+            loadedVariantCount = variantViews.size();
+        }
+    }
+
+    void clearVariants() {
+        variantViews.clear();
+        variantBlocksPanel.clear();
+        loadedVariantCount = 0;
+        variantsMessage.setText("");
+    }
+
+    /** True when a variant was edited, added or cancelled since the feature was loaded. */
+    boolean areVariantsChanged() {
+        if (variantViews.size() != loadedVariantCount) {
+            return true;
+        }
+        for (VariantView variantView : variantViews) {
+            if (variantView.isChanged()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void setVariantsMessage(String text) {
+        variantsMessage.setText(text == null ? "" : text);
+    }
+
+    /** @return the first problem with a variant's protein change, or null */
+    String validateVariantMutationDetails() {
+        for (VariantView variantView : variantViews) {
+            String error = variantView.validateMutationDetails();
+            if (error != null) {
+                return error;
+            }
+        }
+        return null;
+    }
+
+    /** The single variant entered in the feature's own fields, as a variant of the given type. */
+    private VariantDTO getSingleVariantDTO(FeatureTypeEnum type) {
+        VariantDTO dto = new VariantDTO();
+        dto.setVariantType(type);
+        dto.setChromosome(featureChromosome.getText());
+        dto.setAssembly(featureAssembly.getSelectedItemText());
+        dto.setStartLocation(featureStartLoc.getBoxValue());
+        dto.setEndLocation(featureEndLoc.getBoxValue());
+        dto.setEvidence(featureEvidenceCode.getSelectedItemText());
+        dto.setFgmdChangeDTO(genomicMutationDetailView.getDto());
+        dto.setDnaChangeDTO(mutationDetailDnaView.getDto());
+        dto.setProteinChangeDTO(mutationDetailProteinView.getDto());
+        if (mutationDetailTranscriptView.getPresenter() != null) {
+            dto.setTranscriptChangeDTOSet(new java.util.HashSet<>(mutationDetailTranscriptView.getPresenter().getDtoSet()));
+        }
+        return dto;
     }
 
     public void resetGUI() {
+        clearVariants();
+        showComplexVariants(false);
+        lastFeatureType = null;
         featureTypeBox.setSelectedIndex(0);
         labOfOriginBox.setSelectedIndex(0);
         labOfOriginBox.setDirty(false);
@@ -495,32 +691,50 @@ public abstract class AbstractFeatureView extends Composite implements Revertibl
     }
 
     public void onclickSaveButton(ClickEvent event) {
+        if (isComplexSelected()) {
+            for (VariantView variantView : variantViews) {
+                variantView.applySaveDefaults();
+            }
+            return;
+        }
+        applyMutationDetailDefaults(this, getFeatureType());
+    }
+
+    /**
+     * Defaults filled in on save for one variant: the feature's own, or one variant of a Complex
+     * feature (VariantView).
+     *
+     * @param featureType the type of the variant, as FeatureTypeEnum name
+     */
+    static void applyMutationDetailDefaults(MutationDetailWidgets widgets, String featureType) {
+        MutationDetailProteinView proteinView = widgets.getMutationDetailProteinView();
+        MutationDetailTranscriptView transcriptView = widgets.getMutationDetailTranscriptView();
         // if no consequence is selected and AA selection is used then default to substitution
-        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
-                mutationDetailProteinView.hasNonStopAASelected()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
+        if (proteinView.proteinTermList.getSelectedIndex() == 0 &&
+                proteinView.hasNonStopAASelected()) {
+            proteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_SUBSTITUTION);
         }
         // if no consequence is selected and plus AA is used then default to Insertion
-        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
-                mutationDetailProteinView.hasPlusFieldOnly()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
+        if (proteinView.proteinTermList.getSelectedIndex() == 0 &&
+                proteinView.hasPlusFieldOnly()) {
+            proteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_INSERTION);
         }
         // if no consequence is selected and minus AA is used then default to Deletion
-        if (mutationDetailProteinView.proteinTermList.getSelectedIndex() == 0 &&
-                mutationDetailProteinView.hasMinusFieldOnly()) {
-            mutationDetailProteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
+        if (proteinView.proteinTermList.getSelectedIndex() == 0 &&
+                proteinView.hasMinusFieldOnly()) {
+            proteinView.proteinTermList.setIndexForText(MutationDetailProteinView.AMINO_ACID_DELETION);
         }
         // if no transcript consequence and protein: AA > AA for a Point mutation create
-        if (getFeatureType().equals(FeatureTypeEnum.POINT_MUTATION.getName())) {
+        if (FeatureTypeEnum.POINT_MUTATION.getName().equals(featureType)) {
             // substitution is a missense consequence on the transcript level
-            if (mutationDetailProteinView.hasNonStopAASelected()) {
-                if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
-                    mutationDetailTranscriptView.getPresenter().setMissenseTerm();
+            if (proteinView.hasNonStopAASelected()) {
+                if (transcriptView.getPresenter().getDtoSet().isEmpty()) {
+                    transcriptView.getPresenter().setMissenseTerm();
                 }
             }
-            else if (mutationDetailProteinView.hasStopCodon()) {
-                if (mutationDetailTranscriptView.getPresenter().getDtoSet().isEmpty()) {
-                    mutationDetailTranscriptView.getPresenter().setStopGainTerm();
+            else if (proteinView.hasStopCodon()) {
+                if (transcriptView.getPresenter().getDtoSet().isEmpty()) {
+                    transcriptView.getPresenter().setStopGainTerm();
                 }
             }
         }
