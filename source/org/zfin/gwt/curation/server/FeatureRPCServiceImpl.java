@@ -1273,7 +1273,14 @@ public class FeatureRPCServiceImpl extends RemoteServiceServlet implements Featu
             }
             solrDoc.put(FieldName.DATE, new Date());
             solrDoc.put(FieldName.MUTAGEN, feature.getFeatureAssay().getMutagen().toString());
-            SolrService.addDocument(solrDoc);
+            // The feature is committed at this point: an unreachable or failing Solr must not
+            // report the save as failed (nor skip the Alliance submission below). The next full
+            // index build picks the feature up.
+            try {
+                SolrService.addDocument(solrDoc);
+            } catch (Exception e) {
+                logger.error("Feature " + feature.getZdbID() + " was saved but could not be added to the Solr index", e);
+            }
 
             AlleleService service = new AlleleService();
             service.submitAlleleToAlliance(feature);
