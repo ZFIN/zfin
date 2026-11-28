@@ -1,5 +1,7 @@
 package org.zfin.feature.presentation;
 
+import org.zfin.mapping.ComplexFlankingSequence;
+
 import lombok.Getter;
 import lombok.Setter;
 import org.zfin.ExternalNote;
@@ -62,6 +64,8 @@ public class FeatureBean {
     private String varType;
     /** One entry per variant of a Complex feature; empty for a single-variant feature. */
     private List<VariantDisplay> variantDisplays;
+    /** A Complex feature's one flanking-sequence section (ZFIN-10641); null when it has none. */
+    private ComplexFlankingSequence complexFlankingSequence;
 
     public String getDeleteURL() {
         return "";

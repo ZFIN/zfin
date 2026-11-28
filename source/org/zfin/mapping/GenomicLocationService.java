@@ -19,6 +19,11 @@ import org.zfin.sequence.gff.AssemblyEnum;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -31,7 +36,7 @@ import static org.zfin.gwt.root.dto.FeatureTypeEnum.*;
 import static org.zfin.util.ZfinCollectionUtils.isIn;
 
 
-public class GenomicLocationService {
+public class GenomicLocationService implements AutoCloseable {
 
 	// Reached through the image's /research symlink shim rather than a dedicated mount:
 	// /research/zprodmore resolves to ${DOCKER_RESEARCH_PATH}/vol/prod, which is
@@ -157,6 +162,148 @@ public class GenomicLocationService {
 	}
 
 	public record FlankingSequencePair(String fivePrime, String threePrime) {
+	}
+
+	/** Longest stretch of reference shown between two variants before it is shortened with an ellipsis. */
+	private static final int MAX_BETWEEN_VARIANTS = 2 * FLANKING_OFFSET;
+
+	/** Assemblies a Complex feature's sequence is read from, most preferred first. */
+	private static final List<AssemblyEnum> COMPLEX_SEQUENCE_ASSEMBLIES = List.of(AssemblyEnum.GRCZ12TU, AssemblyEnum.GRCZ11);
+
+	/** One located variant of a Complex feature: its type, location and mutation detail. */
+	private record LocatedVariant(Variant variant, FeatureTypeEnum type, int start, int end) {
+
+		/** Last reference base before the variant's change. */
+		int lastBaseBefore() {
+			return type == INSERTION ? start : start - 1;
+		}
+
+		/** First reference base after the variant's change. */
+		int firstBaseAfter() {
+			return switch (type) {
+				case POINT_MUTATION -> start + 1;
+				case INSERTION -> Math.max(end, start + 1);
+				default -> end + 1;
+			};
+		}
+	}
+
+	/**
+	 * The flanking sequence of a Complex feature as one piece (ZFIN-10641): FLANKING_OFFSET
+	 * bases upstream of the lowest variant, each variant's change, the reference between
+	 * consecutive variants and FLANKING_OFFSET bases downstream of the highest variant, read from
+	 * the assembly FASTA. The flanks match what upsertFlankingSequence() stores for a single
+	 * variant. Uses the variants that have a type and a location on the first assembly of
+	 * COMPLEX_SEQUENCE_ASSEMBLIES that locates any; returns null when none do, when they lie on
+	 * different chromosomes or outside the chromosome, or when the feature is not Complex.
+	 */
+	public ComplexFlankingSequence computeComplexFlankingSequence(Feature feature) {
+		if (feature.getType() != COMPLEX_SUBSTITUTION) {
+			return null;
+		}
+		Map<AssemblyEnum, Map<String, FeatureLocation>> locationsByAssembly = new LinkedHashMap<>();
+		for (FeatureLocation location : featureRepository.getVariantLocations(feature)) {
+			AssemblyEnum assembly = supportedAssemblyFor(location.getAssembly());
+			if (assembly != null && featureLocationIsNotEmpty(location) && location.getChromosome() != null) {
+				locationsByAssembly.computeIfAbsent(assembly, a -> new LinkedHashMap<>())
+					.putIfAbsent(location.getVariant().getZdbID(), location);
+			}
+		}
+		for (AssemblyEnum assembly : COMPLEX_SEQUENCE_ASSEMBLIES) {
+			Map<String, FeatureLocation> locations = locationsByAssembly.get(assembly);
+			if (locations == null) {
+				continue;
+			}
+			List<LocatedVariant> located = new ArrayList<>();
+			String chromosome = null;
+			for (Variant variant : feature.getVariants()) {
+				FeatureLocation location = locations.get(variant.getZdbID());
+				FeatureTypeEnum type = variant.getVariantType();
+				if (location == null || type == null || !FLANKING_SEQUENCE_TYPES.contains(type)) {
+					continue;
+				}
+				if (chromosome != null && !chromosome.equals(location.getChromosome())) {
+					return null;
+				}
+				if (!locationWithinChromosome(assembly, location)) {
+					return null;
+				}
+				chromosome = location.getChromosome();
+				int start = location.getStartLocation();
+				int end = type == POINT_MUTATION ? start : location.getEndLocation();
+				located.add(new LocatedVariant(variant, type, start, end));
+			}
+			if (located.isEmpty()) {
+				continue;
+			}
+			return new ComplexFlankingSequence(assembly.getName(), complexSegments(assembly, chromosome, located));
+		}
+		return null;
+	}
+
+	private List<ComplexFlankingSequence.Segment> complexSegments(AssemblyEnum assembly, String chromosome, List<LocatedVariant> located) {
+		located.sort(Comparator.comparingInt(LocatedVariant::start)
+			.thenComparingInt(LocatedVariant::end)
+			.thenComparingInt(v -> v.variant().getVariantNumber()));
+		IndexedFastaSequenceFile ref = getIndexedFastaSequenceFile(assembly);
+		List<ComplexFlankingSequence.Segment> segments = new ArrayList<>();
+		LocatedVariant first = located.get(0);
+		addReference(segments, subsequence(ref, chromosome, first.lastBaseBefore() - FLANKING_OFFSET + 1, first.lastBaseBefore()));
+		for (int i = 0; i < located.size(); i++) {
+			LocatedVariant current = located.get(i);
+			segments.add(new ComplexFlankingSequence.Segment(variationOf(ref, chromosome, current), true));
+			if (i + 1 < located.size()) {
+				// overlapping variants have no reference between them
+				int from = current.firstBaseAfter();
+				int to = located.get(i + 1).lastBaseBefore();
+				if (to - from + 1 > MAX_BETWEEN_VARIANTS) {
+					addReference(segments, subsequence(ref, chromosome, from, from + FLANKING_OFFSET - 1) + " ... "
+						+ subsequence(ref, chromosome, to - FLANKING_OFFSET + 1, to));
+				} else {
+					addReference(segments, subsequence(ref, chromosome, from, to));
+				}
+			}
+		}
+		LocatedVariant last = located.get(located.size() - 1);
+		addReference(segments, subsequence(ref, chromosome, last.firstBaseAfter(), last.firstBaseAfter() + FLANKING_OFFSET - 1));
+		return segments;
+	}
+
+	private static void addReference(List<ComplexFlankingSequence.Segment> segments, String sequence) {
+		if (!sequence.isEmpty()) {
+			segments.add(new ComplexFlankingSequence.Segment(sequence, false));
+		}
+	}
+
+	/**
+	 * The variant's change in the notation single-variant flanks use (variationNotation()). The
+	 * reference side falls back to the assembly when the mutation detail has none; a variant
+	 * sequence that was never curated shows as '?'.
+	 */
+	private String variationOf(IndexedFastaSequenceFile ref, String chromosome, LocatedVariant located) {
+		FeatureGenomicMutationDetail detail = located.variant().getFeatureGenomicMutationDetail();
+		String seqRef = detail == null ? null : detail.getFgmdSeqRef();
+		String seqVar = detail == null ? null : detail.getFgmdSeqVar();
+		if (StringUtils.isBlank(seqRef) && located.type() != INSERTION) {
+			seqRef = subsequence(ref, chromosome, located.start(), located.end());
+		}
+		if (StringUtils.isBlank(seqVar) && located.type() != DELETION) {
+			seqVar = "?";
+		}
+		return variationNotation(located.type(), seqRef, seqVar);
+	}
+
+	/** Closes the FASTA files this instance opened. */
+	@Override
+	public void close() {
+		for (IndexedFastaSequenceFile file : fastaFilesByAssembly.values()) {
+			try {
+				file.close();
+			} catch (IOException e) {
+				// nothing was written; a failed close only leaks the handle
+			}
+		}
+		fastaFilesByAssembly.clear();
 	}
 
 	/**

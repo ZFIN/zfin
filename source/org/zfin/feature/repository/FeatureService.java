@@ -270,6 +270,13 @@ public class FeatureService {
             display.setProteinConsequenceAttributions(getProteinConsequenceAttributions(variant));
             displays.add(display);
         }
+        // lowest position first, matching the order of the variants in the flanking sequence
+        // (ZFIN-10641); variants without a location follow in variant-number order
+        displays.sort(Comparator
+            .comparing((VariantDisplay d) -> d.getLocation() == null || d.getLocation().getStartLocation() == null)
+            .thenComparing(d -> d.getLocation() == null ? null : d.getLocation().getStartLocation(), Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparing(d -> d.getLocation() == null ? null : d.getLocation().getEndLocation(), Comparator.nullsLast(Comparator.naturalOrder()))
+            .thenComparingInt(VariantDisplay::getVariantNumber));
         return displays;
     }
 

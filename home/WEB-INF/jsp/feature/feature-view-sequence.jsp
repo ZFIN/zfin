@@ -4,6 +4,12 @@
 
 <z:attributeList>
     <z:attributeListItem label="Flanking Sequence">
+    <c:choose>
+    <%-- ZFIN-10641: a Complex feature shows one sequence for all its variants, in genomic order --%>
+    <c:when test="${!empty formBean.complexFlankingSequence}">
+        <span style="word-wrap: break-word;"><c:forEach var="segment" items="${formBean.complexFlankingSequence.segments}"><c:choose><c:when test="${segment.variation}"><span style="color: red;">[<c:out value="${segment.sequence}"/>]</span></c:when><c:otherwise><c:out value="${segment.sequence}"/></c:otherwise></c:choose></c:forEach></span>
+    </c:when>
+    <c:otherwise>
     <z:ifHasData
             test="${!empty formBean.feature.featureGenomicMutationDetailSet && !(formBean.varSequence.vfsVariation.contains('null'))}"
             noDataMessage="None">
@@ -33,6 +39,8 @@
             </jsp:body>
 
     </z:ifHasData>
+    </c:otherwise>
+    </c:choose>
     </z:attributeListItem>
 
 
