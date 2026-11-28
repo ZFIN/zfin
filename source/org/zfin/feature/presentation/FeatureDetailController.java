@@ -21,6 +21,8 @@ import org.zfin.gwt.root.dto.FeatureTypeEnum;
 import org.zfin.infrastructure.PublicationAttribution;
 import org.zfin.infrastructure.repository.InfrastructureRepository;
 import org.zfin.infrastructure.seo.CanonicalLinkConfig;
+import org.zfin.mapping.ComplexFlankingSequence;
+import org.zfin.mapping.GenomicLocationService;
 import org.zfin.mapping.MappingService;
 import org.zfin.mapping.presentation.BrowserLink;
 import org.zfin.mapping.repository.LinkageRepository;
@@ -116,6 +118,7 @@ public class FeatureDetailController {
         form.setVarSequence(RepositoryFactory.getFeatureRepository().getVariantSequence(feature));
         form.setVarType(FeatureService.getVarType(feature));
         form.setVariantDisplays(FeatureService.getVariantDisplays(feature, mutationDetailsConversionService));
+        form.setComplexFlankingSequence(getComplexFlankingSequence(feature));
         retrieveSortedGenotypeData(feature, form);
         retrievePubData(feature, form);
         model.addAttribute("isDeficiency",feature.getType().equals(FeatureTypeEnum.DEFICIENCY));
@@ -123,6 +126,22 @@ public class FeatureDetailController {
         model.addAttribute(LookupStrings.DYNAMIC_TITLE, Area.FEATURE.getTitleString() + feature.getName());
 
         return "feature/feature-view";
+    }
+
+    /**
+     * The combined flanking sequence of a Complex feature, read from the assembly FASTA. A page
+     * view must not fail because the FASTA is unreadable: the section then falls back to "None".
+     */
+    private static ComplexFlankingSequence getComplexFlankingSequence(Feature feature) {
+        if (feature.getType() != FeatureTypeEnum.COMPLEX_SUBSTITUTION) {
+            return null;
+        }
+        try (GenomicLocationService service = new GenomicLocationService()) {
+            return service.computeComplexFlankingSequence(feature);
+        } catch (RuntimeException e) {
+            LOG.error("Could not compute the flanking sequence of " + feature.getZdbID(), e);
+            return null;
+        }
     }
 
     @RequestMapping("/flank-seq")
